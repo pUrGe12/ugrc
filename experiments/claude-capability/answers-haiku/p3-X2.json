@@ -1,0 +1,976 @@
+{
+  "question": "What limonene and nerolidol titers does the paper report, and are they consistent across sections?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%limonene%' OR lower(text) LIKE '%nerolidol%' ORDER BY page, id",
+      "rows": 11
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND (row_no BETWEEN 33 AND 42) ORDER BY row_no, col_no",
+      "rows": 46
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (2,11) AND (text LIKE '%limonene%' OR text LIKE '%nerolidol%' OR id IN ('p11.L0','p11.L1','p11.L2','p11.L14','p11.L15','p11.L16','p11.L19','p11.L20','p11.L21')) ORDER BY page, line_no",
+      "rows": 9
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=11 AND line_no BETWEEN 0 AND 3) OR (page=11 AND line_no BETWEEN 12 AND 22) OR (page=2 AND line_no BETWEEN 47 AND 52) OR (page=13 AND line_no BETWEEN 53 AND 57) ORDER BY page, line_no",
+      "rows": 25
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=10 ORDER BY line_no DESC LIMIT 25",
+      "rows": 25
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=11 AND line_no<=2 ORDER BY line_no",
+      "rows": 2
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%14.12%' OR text LIKE '%32.33%' OR text LIKE '%14,120%' OR text LIKE '%32,330%' OR text LIKE '%22.8%' OR text LIKE '%70.5%' OR text LIKE '%22,800%' OR text LIKE '%70,500%' OR text LIKE '%LN62%' OR text LIKE '%LSF6%'",
+      "rows": 8
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=10 AND line_no BETWEEN 46 AND 50 OR (page=9 AND line_no<=3) ORDER BY page, line_no",
+      "rows": 8
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 17,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 53,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 53
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['4.3,', 'four', 'Two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4.3' is written exactly so in the document (e.g. p10.L42): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.3\", \"atom\": \"p10.L42\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['[16].'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'16' is written exactly so in the document (e.g. p2.L32): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"16\", \"atom\": \"p2.L32\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['[22–24].', '4.3,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'22–24' is written exactly so in the document (e.g. p2.L51): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"22–24\", \"atom\": \"p2.L51\"} — never shorten it",
+          "'4.3' is written exactly so in the document (e.g. p10.L42): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.3\", \"atom\": \"p10.L42\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['[21],'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'21' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"21\", \"atom\": \"p11.L15\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['[24].', '2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'24' is written exactly so in the document (e.g. p11.L20): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"24\", \"atom\": \"p11.L20\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[14]",
+        "why": "your own words contain number(s) ['100', '[21]);'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p9.L16): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p9.L16\"} — never shorten it",
+          "'21' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"21\", \"atom\": \"p11.L15\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[16]",
+        "why": "your own words contain number(s) ['96', '[24]).', '4.3', '2.', '(22,800', '22.8', '(70,500', '70.50', '([21]', '[24])', '4.3:', '14.12', '32.33', '2', '22.8', '70.50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'96' is written exactly so in the document (e.g. p15.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"96\", \"atom\": \"p15.L45\"} — never shorten it",
+          "'24' is written exactly so in the document (e.g. p11.L20): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"24\", \"atom\": \"p11.L20\"} — never shorten it",
+          "'4.3' is written exactly so in the document (e.g. p10.L42): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.3\", \"atom\": \"p10.L42\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'22,800' is written exactly so in the document (e.g. p9.T2.r35c6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"22,800\", \"atom\": \"p9.T2.r35c6\"} — never shorten it",
+          "'22.8' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"22.8\", \"atom\": \"p11.L15\"} — never shorten it",
+          "'70,500' is written exactly so in the document (e.g. p9.T2.r40c6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70,500\", \"atom\": \"p9.T2.r40c6\"} — never shorten it",
+          "'70.50' is written exactly so in the document (e.g. p2.L49): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70.50\", \"atom\": \"p2.L49\"} — never shorten it",
+          "'21' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"21\", \"atom\": \"p11.L15\"} — never shorten it",
+          "'24' is written exactly so in the document (e.g. p11.L20): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"24\", \"atom\": \"p11.L20\"} — never shorten it",
+          "'4.3' is written exactly so in the document (e.g. p10.L42): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.3\", \"atom\": \"p10.L42\"} — never shorten it",
+          "'14.12' is written exactly so in the document (e.g. p11.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"14.12\", \"atom\": \"p11.L1\"} — never shorten it",
+          "'32.33' is written exactly so in the document (e.g. p11.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"32.33\", \"atom\": \"p11.L1\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'22.8' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"22.8\", \"atom\": \"p11.L15\"} — never shorten it",
+          "'70.50' is written exactly so in the document (e.g. p2.L49): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70.50\", \"atom\": \"p2.L49\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[52]",
+        "why": "your own words contain number(s) ['22.8', '70.50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'22.8' is written exactly so in the document (e.g. p11.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"22.8\", \"atom\": \"p11.L15\"} — never shorten it",
+          "'70.50' is written exactly so in the document (e.g. p2.L49): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70.50\", \"atom\": \"p2.L49\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 9703,
+    "cache_read_input_tokens": 63006,
+    "cache_creation_input_tokens": 21360
+  },
+  "runs": [
+    {
+      "text": "The paper gives limonene and nerolidol titers in several places. The values fall into separate sets that do not match.\n\nA. Section "
+    },
+    {
+      "quote": "4.3",
+      "atom": "p10.L42"
+    },
+    {
+      "text": ", opening sentence (carried over the page break): limonene and nerolidol reach "
+    },
+    {
+      "quote": "14.12",
+      "atom": "p11.L1"
+    },
+    {
+      "text": " g/L and "
+    },
+    {
+      "quote": "32.33",
+      "atom": "p11.L1"
+    },
+    {
+      "text": " g/L, respectively, \""
+    },
+    {
+      "quote": "in 5-L bioreactors",
+      "atom": "p11.L2"
+    },
+    {
+      "text": "\", after the shake-flask sentence citing "
+    },
+    {
+      "quote": "[16]",
+      "atom": "p10.L48"
+    },
+    {
+      "text": ". The sentence does not say which strain these values come from.\n\nB. Introduction: maximum nerolidol titer \""
+    },
+    {
+      "quote": "Maximum titers of 70.50",
+      "atom": "p2.L49"
+    },
+    {
+      "text": "\" g/L.\n\nC. Section "
+    },
+    {
+      "quote": "4.3",
+      "atom": "p10.L42"
+    },
+    {
+      "text": ", later paragraph: \""
+    },
+    {
+      "quote": "limonene reached 22.8",
+      "atom": "p11.L15"
+    },
+    {
+      "text": "\" g/L, labelled the highest reported "
+    },
+    {
+      "quote": "[21]",
+      "atom": "p11.L15"
+    },
+    {
+      "text": ". \""
+    },
+    {
+      "quote": "(E)-Nerolidol reached 70.50",
+      "atom": "p11.L20"
+    },
+    {
+      "text": "\" g/L, cited "
+    },
+    {
+      "quote": "[24]",
+      "atom": "p11.L20"
+    },
+    {
+      "text": ".\n\nD. "
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ": (S)-limonene "
+    },
+    {
+      "quote": "22,800",
+      "atom": "p9.T2.r35c6"
+    },
+    {
+      "text": " mg/L (strain HBQA7 → LSF6, fed-batch, "
+    },
+    {
+      "quote": "100",
+      "atom": "p9.T2.r35c5"
+    },
+    {
+      "text": " h, ref. "
+    },
+    {
+      "quote": "[21]",
+      "atom": "p9.T2.r35c7"
+    },
+    {
+      "text": "); (E)-nerolidol "
+    },
+    {
+      "quote": "70,500",
+      "atom": "p9.T2.r40c6"
+    },
+    {
+      "text": " mg/L (strain HBQA7 → LN62, fed-batch, "
+    },
+    {
+      "quote": "96",
+      "atom": "p9.T2.r40c5"
+    },
+    {
+      "text": " h, ref. "
+    },
+    {
+      "quote": "[24]",
+      "atom": "p9.T2.r40c7"
+    },
+    {
+      "text": ").\n\nConsistency: the maximum values agree across the introduction, Section "
+    },
+    {
+      "quote": "4.3",
+      "atom": "p10.L42"
+    },
+    {
+      "text": ", and the table. Limonene at "
+    },
+    {
+      "quote": "22,800",
+      "atom": "p9.T2.r35c6"
+    },
+    {
+      "text": " mg/L is the same value as "
+    },
+    {
+      "quote": "22.8",
+      "atom": "p11.L15"
+    },
+    {
+      "text": " g/L, and nerolidol at "
+    },
+    {
+      "quote": "70,500",
+      "atom": "p9.T2.r40c6"
+    },
+    {
+      "text": " mg/L matches "
+    },
+    {
+      "quote": "70.50",
+      "atom": "p2.L49"
+    },
+    {
+      "text": " g/L once the units are converted. The same references are cited for each maximum in the text and the table.\n\nThe exception is the first set of values in Section "
+    },
+    {
+      "quote": "4.3",
+      "atom": "p10.L42"
+    },
+    {
+      "text": " (item A above). Those values, "
+    },
+    {
+      "quote": "14.12",
+      "atom": "p11.L1"
+    },
+    {
+      "text": " and "
+    },
+    {
+      "quote": "32.33",
+      "atom": "p11.L1"
+    },
+    {
+      "text": " g/L, do not appear in the table or anywhere else in the document, and the text does not identify their strain or study. They are lower than the maxima, which is not contradictory if they describe a different strain or condition, but the paper does not reconcile them with the maxima quoted above."
+    }
+  ],
+  "rendered": "The paper gives limonene and nerolidol titers in several places. The values fall into separate sets that do not match.\n\nA. Section 4.3[1], opening sentence (carried over the page break): limonene and nerolidol reach 14.12[2] g/L and 32.33[3] g/L, respectively, \"in 5-L bioreactors[4]\", after the shake-flask sentence citing [16][5]. The sentence does not say which strain these values come from.\n\nB. Introduction: maximum nerolidol titer \"Maximum titers of 70.50[6]\" g/L.\n\nC. Section 4.3[7], later paragraph: \"limonene reached 22.8[8]\" g/L, labelled the highest reported [21][9]. \"(E)-Nerolidol reached 70.50[10]\" g/L, cited [24][11].\n\nD. Table 2[12]: (S)-limonene 22,800[13] mg/L (strain HBQA7 → LSF6, fed-batch, 100[14] h, ref. [21][15]); (E)-nerolidol 70,500[16] mg/L (strain HBQA7 → LN62, fed-batch, 96[17] h, ref. [24][18]).\n\nConsistency: the maximum values agree across the introduction, Section 4.3[19], and the table. Limonene at 22,800[20] mg/L is the same value as 22.8[21] g/L, and nerolidol at 70,500[22] mg/L matches 70.50[23] g/L once the units are converted. The same references are cited for each maximum in the text and the table.\n\nThe exception is the first set of values in Section 4.3[24] (item A above). Those values, 14.12[25] and 32.33[26] g/L, do not appear in the table or anywhere else in the document, and the text does not identify their strain or study. They are lower than the maxima, which is not contradictory if they describe a different strain or condition, but the paper does not reconcile them with the maxima quoted above.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "4.3",
+      "source": {
+        "atom": "p10.L42",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "4.3. Production of other heterologous compounds",
+        "bbox": [
+          306.6,
+          663.7,
+          473.9,
+          671.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "4.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "14.12",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "14.12"
+    },
+    {
+      "kind": "quote",
+      "quote": "32.33",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "32.33"
+    },
+    {
+      "kind": "quote",
+      "quote": "in 5-L bioreactors",
+      "source": {
+        "atom": "p11.L2",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "L^(cid:0) 1, respectively, in 5-L bioreactors.",
+        "bbox": [
+          37.6,
+          687.2,
+          165.7,
+          699.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "in 5-L bioreactors"
+    },
+    {
+      "kind": "quote",
+      "quote": "[16]",
+      "source": {
+        "atom": "p10.L48",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "[16]. This achieved efficient biosynthesis of various terpenoids in shake",
+        "bbox": [
+          306.6,
+          737.0,
+          557.6,
+          744.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "[16]"
+    },
+    {
+      "kind": "quote",
+      "quote": "Maximum titers of 70.50",
+      "source": {
+        "atom": "p2.L49",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "monoterpenes and sesquiterpenes [19–21]. Maximum titers of 70.50,",
+        "bbox": [
+          37.6,
+          557.0,
+          288.7,
+          566.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Maximum titers of 70.50"
+    },
+    {
+      "kind": "quote",
+      "quote": "4.3",
+      "source": {
+        "atom": "p10.L42",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "4.3. Production of other heterologous compounds",
+        "bbox": [
+          306.6,
+          663.7,
+          473.9,
+          671.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "4.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "limonene reached 22.8",
+      "source": {
+        "atom": "p11.L15",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "limonene reached 22.8 g L^(cid:0) 1 (highest reported) [21]; S-(+)-linalool",
+        "bbox": [
+          306.6,
+          136.1,
+          557.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "limonene reached 22.8"
+    },
+    {
+      "kind": "quote",
+      "quote": "[21]",
+      "source": {
+        "atom": "p11.L15",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "limonene reached 22.8 g L^(cid:0) 1 (highest reported) [21]; S-(+)-linalool",
+        "bbox": [
+          306.6,
+          136.1,
+          557.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "[21]"
+    },
+    {
+      "kind": "quote",
+      "quote": "(E)-Nerolidol reached 70.50",
+      "source": {
+        "atom": "p11.L20",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "(C15). (E)-Nerolidol reached 70.50 g L^(cid:0) 1 [24]. β-Caryophyllene, inte-",
+        "bbox": [
+          306.6,
+          188.4,
+          557.7,
+          200.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "(E)-Nerolidol reached 70.50"
+    },
+    {
+      "kind": "quote",
+      "quote": "[24]",
+      "source": {
+        "atom": "p11.L20",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "(C15). (E)-Nerolidol reached 70.50 g L^(cid:0) 1 [24]. β-Caryophyllene, inte-",
+        "bbox": [
+          306.6,
+          188.4,
+          557.7,
+          200.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "[24]"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "22,800",
+      "source": {
+        "atom": "p9.T2.r35c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "22,800",
+        "bbox": [
+          491.4,
+          376.2,
+          511.1,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "22,800"
+    },
+    {
+      "kind": "quote",
+      "quote": "100",
+      "source": {
+        "atom": "p9.T2.r35c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "100",
+        "bbox": [
+          462.2,
+          376.2,
+          473.0,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "100"
+    },
+    {
+      "kind": "quote",
+      "quote": "[21]",
+      "source": {
+        "atom": "p9.T2.r35c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[21]",
+        "bbox": [
+          523.9,
+          376.2,
+          536.5,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "[21]"
+    },
+    {
+      "kind": "quote",
+      "quote": "70,500",
+      "source": {
+        "atom": "p9.T2.r40c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "70,500",
+        "bbox": [
+          491.4,
+          419.0,
+          511.1,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "70,500"
+    },
+    {
+      "kind": "quote",
+      "quote": "96",
+      "source": {
+        "atom": "p9.T2.r40c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "96",
+        "bbox": [
+          465.8,
+          419.0,
+          473.0,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "96"
+    },
+    {
+      "kind": "quote",
+      "quote": "[24]",
+      "source": {
+        "atom": "p9.T2.r40c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[24]",
+        "bbox": [
+          523.9,
+          419.0,
+          536.5,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 18,
+      "rendered": "[24]"
+    },
+    {
+      "kind": "quote",
+      "quote": "4.3",
+      "source": {
+        "atom": "p10.L42",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "4.3. Production of other heterologous compounds",
+        "bbox": [
+          306.6,
+          663.7,
+          473.9,
+          671.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 19,
+      "rendered": "4.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "22,800",
+      "source": {
+        "atom": "p9.T2.r35c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "22,800",
+        "bbox": [
+          491.4,
+          376.2,
+          511.1,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 20,
+      "rendered": "22,800"
+    },
+    {
+      "kind": "quote",
+      "quote": "22.8",
+      "source": {
+        "atom": "p11.L15",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "limonene reached 22.8 g L^(cid:0) 1 (highest reported) [21]; S-(+)-linalool",
+        "bbox": [
+          306.6,
+          136.1,
+          557.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 21,
+      "rendered": "22.8"
+    },
+    {
+      "kind": "quote",
+      "quote": "70,500",
+      "source": {
+        "atom": "p9.T2.r40c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "70,500",
+        "bbox": [
+          491.4,
+          419.0,
+          511.1,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 22,
+      "rendered": "70,500"
+    },
+    {
+      "kind": "quote",
+      "quote": "70.50",
+      "source": {
+        "atom": "p2.L49",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "monoterpenes and sesquiterpenes [19–21]. Maximum titers of 70.50,",
+        "bbox": [
+          37.6,
+          557.0,
+          288.7,
+          566.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 23,
+      "rendered": "70.50"
+    },
+    {
+      "kind": "quote",
+      "quote": "4.3",
+      "source": {
+        "atom": "p10.L42",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "4.3. Production of other heterologous compounds",
+        "bbox": [
+          306.6,
+          663.7,
+          473.9,
+          671.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 24,
+      "rendered": "4.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "14.12",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 25,
+      "rendered": "14.12"
+    },
+    {
+      "kind": "quote",
+      "quote": "32.33",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 26,
+      "rendered": "32.33"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T08:55:46+00:00",
+  "paper": "p3",
+  "probe": "X2",
+  "cat": "cross-source",
+  "expect": "two different studies: the multicopy-integration platform gave limonene 14.12 g/L and nerolidol 32.33 g/L in 5-L bioreactors (p11.L1-2, ref [16]); later optimisations gave (S)-limonene 22.8 g/L (p11.L15, ref [21], Table 2 22,800) and (E)-nerolidol 70.50 g/L (p11.L20, ref [24], Table 2 70,500). Not a contradiction, different strains and studies.",
+  "trap": "reporting one pair as the only values, or calling the pairs inconsistent"
+}

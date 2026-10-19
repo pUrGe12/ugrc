@@ -1,0 +1,274 @@
+{
+  "question": "By how many percentage points did the surface fluorine mass ratio fall through the Cyrene-based separation?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=5 AND line_no BETWEEN 14 AND 20 OR text LIKE '%12.49%' OR text LIKE '%0.14%'",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract(a.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) - CAST(regexp_extract(b.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['12.35'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "3d77803c405379e511940ae37df2f17d364cfc08f7045fd47edf128c15fe3110",
+  "leads": {
+    "sentences": [
+      "p5.L16:50"
+    ],
+    "measures": [
+      "p5.L16:50#77",
+      "p5.L16:50#123"
+    ],
+    "matched": 76
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1670,
+    "cache_read_input_tokens": 16519,
+    "cache_creation_input_tokens": 6537
+  },
+  "runs": [
+    {
+      "text": "The surface fluorine mass ratio fell from "
+    },
+    {
+      "measure": "p5.L16:50#77"
+    },
+    {
+      "text": " on the cathode rejects to "
+    },
+    {
+      "measure": "p5.L16:50#123"
+    },
+    {
+      "text": " after the Cyrene-based separation, a drop of "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) - CAST(regexp_extract(b.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points.",
+      "support": [
+        {
+          "atom": "p5.L17",
+          "quote": "fluorine element on the surface of the cathode rejects was 12.49%"
+        },
+        {
+          "atom": "p5.L18",
+          "quote": "reduced to 0.14% after the Cyrene-based separa-"
+        }
+      ]
+    }
+  ],
+  "rendered": "The surface fluorine mass ratio fell from 12.49%[1] on the cathode rejects to 0.14%[2] after the Cyrene-based separation, a drop of 12.35[3] percentage points.[4][5]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "12.49%",
+      "source": {
+        "atom": "p5.L17",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+        "bbox": [
+          310.5,
+          223.1,
+          561.6,
+          232.7
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p5.L16:50#77",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "ratio",
+        "property_p": 0.8,
+        "about": [
+          "fluorine element"
+        ],
+        "method": [],
+        "quantity": [
+          "mass ratio"
+        ],
+        "sentence": "p5.L16:50",
+        "read_by": "judge"
+      },
+      "n": 1,
+      "rendered": "12.49%"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.14%",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+        "bbox": [
+          310.5,
+          235.2,
+          561.6,
+          243.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p5.L16:50#123",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "ratio",
+        "property_p": 0.71,
+        "about": [
+          "fluorine element"
+        ],
+        "method": [],
+        "quantity": [
+          "mass ratio"
+        ],
+        "sentence": "p5.L16:50",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "0.14%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) - CAST(regexp_extract(b.text,'([0-9]+\\.[0-9]+)%',1) AS DOUBLE) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 12.35,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L17",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+          "bbox": [
+            310.5,
+            223.1,
+            561.6,
+            232.7
+          ]
+        },
+        {
+          "atom": "p5.L18",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+          "bbox": [
+            310.5,
+            235.2,
+            561.6,
+            243.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "12.35"
+    },
+    {
+      "kind": "support",
+      "quote": "fluorine element on the surface of the cathode rejects was 12.49%",
+      "source": {
+        "atom": "p5.L17",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+        "bbox": [
+          310.5,
+          223.1,
+          561.6,
+          232.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "fluorine element on the surface of the cathode rejects was 12.49%"
+    },
+    {
+      "kind": "support",
+      "quote": "reduced to 0.14% after the Cyrene-based separa-",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+        "bbox": [
+          310.5,
+          235.2,
+          561.6,
+          243.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "reduced to 0.14% after the Cyrene-based separa-"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-18T08:47:07+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "susmat-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "12.49% to 0.14% (p5.L17-18): 12.35 points",
+  "trap": ""
+}

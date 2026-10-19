@@ -1,0 +1,207 @@
+{
+  "question": "What definition of 1C is used, and what share of theoretical capacity is reached on the first discharge at 0.1C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE kind IN ('line','cell') AND (text ILIKE '%1C%' OR text ILIKE '%theoretical%' OR text ILIKE '%0.1C%' OR text ILIKE '%C rate%' OR text ILIKE '%current density%') ORDER BY page, id",
+      "rows": 14
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=5 AND line_no BETWEEN 58 AND 66) OR (page=3 AND line_no BETWEEN 1 AND 9) OR (page=1 AND line_no BETWEEN 9 AND 13) ORDER BY page, line_no",
+      "rows": 23
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['0.1C,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'0.1C' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p1.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2B.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2B' is written exactly so in the document (e.g. p5.L61): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2B\", \"atom\": \"p5.L61\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1329,
+    "cache_read_input_tokens": 15603,
+    "cache_creation_input_tokens": 3109
+  },
+  "runs": [
+    {
+      "text": "The document defines the C-rate by a reference specific current: "
+    },
+    {
+      "quote": "C = 1675 mA/gS",
+      "atom": "p5.L62"
+    },
+    {
+      "text": ". On the first discharge at the slow rate of "
+    },
+    {
+      "quote": "0.1C",
+      "atom": "p5.L62"
+    },
+    {
+      "text": ", the material reaches "
+    },
+    {
+      "quote": "91% of theoretical capacity",
+      "atom": "p5.L63"
+    },
+    {
+      "text": ", as stated in the text describing the galvanostatic profiles in Figure "
+    },
+    {
+      "quote": "2B",
+      "atom": "p5.L61"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The document defines the C-rate by a reference specific current: C = 1675 mA/gS[1]. On the first discharge at the slow rate of 0.1C[2], the material reaches 91% of theoretical capacity[3], as stated in the text describing the galvanostatic profiles in Figure 2B[4].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "C = 1675 mA/gS",
+      "source": {
+        "atom": "p5.L62",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+        "bbox": [
+          60.5,
+          742.3,
+          300.4,
+          753.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "C = 1675 mA/gS"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.1C",
+      "source": {
+        "atom": "p5.L62",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+        "bbox": [
+          60.5,
+          742.3,
+          300.4,
+          753.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "0.1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "91% of theoretical capacity",
+      "source": {
+        "atom": "p5.L63",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "91% of theoretical capacity and visual distinction between the",
+        "bbox": [
+          60.5,
+          753.4,
+          300.5,
+          763.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "91% of theoretical capacity"
+    },
+    {
+      "kind": "quote",
+      "quote": "2B",
+      "source": {
+        "atom": "p5.L61",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "representative profiles shown in Figure 2B. On first discharge at",
+        "bbox": [
+          60.5,
+          728.6,
+          300.5,
+          741.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "2B"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-18T07:11:54+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "nanolett-6b05172",
+  "probe": "C3",
+  "cat": "C",
+  "expect": "C = 1675 mA/gS; 91% (p5.L62-63)",
+  "trap": "the 35 wt% sulfur"
+}

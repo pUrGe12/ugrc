@@ -1,0 +1,388 @@
+{
+  "question": "Rank water, glycerol, ethylene glycol and diethylene glycol by their hydrogen-bonding strength δh, giving each value.",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p5.T1' ORDER BY row_no, col_no",
+      "rows": 29
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%δH%' OR text ILIKE '%ethylene glycol%' OR text ILIKE '%EG %' ORDER BY page, line_no",
+      "rows": 34
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, about, sentence FROM measures WHERE id IN ('p6.L76:33#232','p6.L76:33#241','p6.L72:0#83') OR (page=6 AND text IN ('26.0'))",
+      "rows": 3
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "measure:cut",
+        "text:number",
+        "measure:cut"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "water",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 3,
+          "of": "glycerol",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 5,
+          "of": "ethylene glycol",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 9,
+          "of": "diethylene glycol",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "measure:cut",
+        "where": "runs[1]",
+        "why": "measure p6.L72:0#83 reads '42.3 MPa^1' as a value, but it cannot be shown as it is: '42.3 MPa^1' occurs in p6.L73 only as part of a longer word or number (its text: 'bonding with a δH value of 42.3 MPa^1/2. However, water is not')",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'",
+          "or quote the value yourself with a quote run, as the line has it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "measure:cut",
+        "where": "runs[7]",
+        "why": "measure p6.L76:33#241 reads '20.7 MPa^1' as a value, but it cannot be shown as it is: '20.7 MPa^1' occurs in p6.L80 only as part of a longer word or number (its text: 'values of δH (29.3 and 20.7 MPa^1/2, respectively), also work well')",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'",
+          "or quote the value yourself with a quote run, as the line has it"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "42.3 MPa^1/2",
+      "atom": "p6.L73",
+      "of": "water",
+      "sentence": "p6.L72:0",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "water"
+      ],
+      "run": 1
+    },
+    {
+      "quote": "29.3",
+      "atom": "p6.L80",
+      "of": "glycerol",
+      "sentence": "p6.L76:33",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "glycerol"
+      ],
+      "run": 3
+    },
+    {
+      "quote": "26.0",
+      "atom": "p5.T1.r6c4",
+      "of": "ethylene glycol",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 5
+    },
+    {
+      "quote": "20.7",
+      "atom": "p6.L80",
+      "of": "diethylene glycol",
+      "sentence": "p6.L76:33",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "diethylene glycol"
+      ],
+      "run": 9
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "dfdaca79728c0eb0f7e0bfbd444026344ff336efb7581aac5342ce1ff0e357d1",
+  "leads": {
+    "sentences": [
+      "p5.L107:10",
+      "p6.L76:33",
+      "p6.L72:0",
+      "p5.L100:37",
+      "p2.L104:24",
+      "p2.L73:38",
+      "p6.L64:59"
+    ],
+    "measures": [
+      "p6.L76:33#232",
+      "p6.L76:33#241",
+      "p6.L72:0#83"
+    ],
+    "matched": 56
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3247,
+    "cache_read_input_tokens": 44269,
+    "cache_creation_input_tokens": 12039
+  },
+  "runs": [
+    {
+      "text": "Ranking by hydrogen-bonding strength δh, strongest first. First, water: δh "
+    },
+    {
+      "quote": "42.3 MPa^1/2",
+      "atom": "p6.L73",
+      "of": "water"
+    },
+    {
+      "text": ". Second, glycerol: δh "
+    },
+    {
+      "quote": "29.3",
+      "atom": "p6.L80",
+      "of": "glycerol"
+    },
+    {
+      "text": ". Third, ethylene glycol (EG): δh "
+    },
+    {
+      "quote": "26.0",
+      "atom": "p5.T1.r6c4",
+      "of": "ethylene glycol"
+    },
+    {
+      "text": " (from "
+    },
+    {
+      "table": "p5.T1"
+    },
+    {
+      "text": "). Fourth, diethylene glycol: δh "
+    },
+    {
+      "quote": "20.7",
+      "atom": "p6.L80",
+      "of": "diethylene glycol"
+    },
+    {
+      "text": ". The order is water, glycerol, ethylene glycol, diethylene glycol."
+    }
+  ],
+  "rendered": "Ranking by hydrogen-bonding strength δh, strongest first. First, water: δh 42.3 MPa^1/2[1]. Second, glycerol: δh 29.3[2]. Third, ethylene glycol (EG): δh 26.0[3] (from Table 1[4]). Fourth, diethylene glycol: δh 20.7[5]. The order is water, glycerol, ethylene glycol, diethylene glycol.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "42.3 MPa^1/2",
+      "source": {
+        "atom": "p6.L73",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "bonding with a δH value of 42.3 MPa^1/2. However, water is not",
+        "bbox": [
+          46.8,
+          244.7,
+          290.5,
+          255.7
+        ]
+      },
+      "strength": "verbatim",
+      "of": "water",
+      "n": 1,
+      "rendered": "42.3 MPa^1/2"
+    },
+    {
+      "kind": "quote",
+      "quote": "29.3",
+      "source": {
+        "atom": "p6.L80",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "values of δH (29.3 and 20.7 MPa^1/2, respectively), also work well",
+        "bbox": [
+          46.8,
+          328.7,
+          290.6,
+          339.6
+        ]
+      },
+      "strength": "verbatim",
+      "of": "glycerol",
+      "n": 2,
+      "rendered": "29.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "26.0",
+      "source": {
+        "atom": "p5.T1.r6c4",
+        "kind": "cell",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "26.0",
+        "bbox": [
+          203.9,
+          736.5,
+          217.0,
+          744.0
+        ],
+        "table": "Table 1",
+        "row": 6,
+        "col": 4,
+        "column_header": "δh [MPa]^1/2"
+      },
+      "strength": "verbatim",
+      "of": "ethylene glycol",
+      "n": 3,
+      "rendered": "26.0"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p5.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 5,
+        "caption": "Table 1. Hansen solubility parameters of PVDF, NMP, DMF, EG and HSP distance of PVDF-solvent.",
+        "bbox": [
+          46.3,
+          677.7,
+          291.0,
+          746.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "20.7",
+      "source": {
+        "atom": "p6.L80",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "values of δH (29.3 and 20.7 MPa^1/2, respectively), also work well",
+        "bbox": [
+          46.8,
+          328.7,
+          290.6,
+          339.6
+        ]
+      },
+      "strength": "verbatim",
+      "of": "diethylene glycol",
+      "n": 5,
+      "rendered": "20.7"
+    }
+  ],
+  "seals": {
+    "extraction": "6b070d4f372ad360ee3c4866e36f3d1b67d1e0ae809608709c04ef0fb109d310",
+    "readings": "5b727b40e250b1a853ac5c550975589ead58b2ee2800d1cd6729b45d4b8323e4"
+  },
+  "created_at": "2026-10-18T08:48:16+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "cssc-2020",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "water 42.3 > glycerol 29.3 > EG 26.0 (Table 1) > DEG 20.7 MPa^1/2 (p6.L72-80)",
+  "trap": ""
+}

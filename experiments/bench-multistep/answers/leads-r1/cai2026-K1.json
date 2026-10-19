@@ -1,0 +1,332 @@
+{
+  "question": "How many entries in Table 1 have a status that includes 'Completed'?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND col_no=6 ORDER BY row_no",
+      "rows": 34
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, string_agg(col_no || ':' || text, ' | ' ORDER BY col_no) AS row_text FROM cells WHERE table_id='p2.T1' GROUP BY row_no ORDER BY row_no",
+      "rows": 44
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1', '8'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "'8' is written exactly so in the document (e.g. p2.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p2.L7\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L35:56",
+      "p5.L53:56",
+      "p3.L5:29",
+      "p13.L102:53",
+      "p13.L11:61",
+      "p15.L69:10",
+      "p16.L1:0",
+      "p17.L21:0",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p6.L25:0",
+      "p3.L39:20"
+    ],
+    "measures": [
+      "p1.L35:56#13",
+      "p1.L35:56#58",
+      "p1.L35:56#118",
+      "p1.L35:56#134",
+      "p1.L35:56#148",
+      "p3.L5:29#136",
+      "p15.L69:10#216",
+      "p3.L39:20#10",
+      "p3.L39:20#114",
+      "p3.L39:20#133",
+      "p3.L39:20#139",
+      "p3.L39:20#161"
+    ],
+    "matched": 71
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3512,
+    "cache_read_input_tokens": 34328,
+    "cache_creation_input_tokens": 12620
+  },
+  "runs": [
+    {
+      "text": "The number of entries in the Status column of the clinical trials table whose Status cell includes 'Completed' is: "
+    },
+    {
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p2.T1' AND col_no=6 AND text ILIKE '%Completed%'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": ". These are Atu027, TKM-080301, NBF-006, the polymer-based siG12D entry, NU-0129, the RNA/proteasome tumor-antigen entry, APN401, and STP705, as counted in "
+    },
+    {
+      "table": "p2.T1"
+    },
+    {
+      "text": ". Each such entry has a single Completed status cell in the Status column."
+    }
+  ],
+  "rendered": "The number of entries in the Status column of the clinical trials table whose Status cell includes 'Completed' is: 8[1]. These are Atu027, TKM-080301, NBF-006, the polymer-based siG12D entry, NU-0129, the RNA/proteasome tumor-antigen entry, APN401, and STP705, as counted in Table 1[2]. Each such entry has a single Completed status cell in the Status column.",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p2.T1' AND col_no=6 AND text ILIKE '%Completed%'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 8,
+      "strength": "computed from verbatim",
+      "n_sources": 8,
+      "sources": [
+        {
+          "atom": "p2.T1.r13c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            467.7,
+            388.1,
+            474.0
+          ],
+          "table": "Table 1",
+          "row": 13,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r18c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed, Phase",
+          "bbox": [
+            357.7,
+            510.5,
+            407.4,
+            516.8
+          ],
+          "table": "Table 1",
+          "row": 18,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r30c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            613.3,
+            388.1,
+            619.7
+          ],
+          "table": "Table 1",
+          "row": 30,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r35c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            656.1,
+            388.1,
+            662.5
+          ],
+          "table": "Table 1",
+          "row": 35,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r39c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            690.4,
+            388.1,
+            696.8
+          ],
+          "table": "Table 1",
+          "row": 39,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r44c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            733.3,
+            388.1,
+            739.6
+          ],
+          "table": "Table 1",
+          "row": 44,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r4c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            390.5,
+            388.1,
+            396.9
+          ],
+          "table": "Table 1",
+          "row": 4,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r6c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            407.7,
+            388.1,
+            414.0
+          ],
+          "table": "Table 1",
+          "row": 6,
+          "col": 6,
+          "column_header": "Status"
+        }
+      ],
+      "n": 1,
+      "rendered": "8"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p2.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 2,
+        "caption": "Table 1 Clinical trials of siRNA-based anticancer drugs.",
+        "bbox": [
+          37.6,
+          354.6,
+          557.7,
+          740.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Table 1"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:49:16+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "cai2026",
+  "probe": "K1",
+  "cat": "K",
+  "expect": "8: Atu027, TKM-080301, NBF-006, siG12D (Completed, Phase 2 Unknown status), NU-0129, Tumor Antigen RNA and Proteasome siRNA, APN401, STP705 (p2.T1 column 6)",
+  "trap": ""
+}

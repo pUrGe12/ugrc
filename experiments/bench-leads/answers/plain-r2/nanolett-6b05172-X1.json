@@ -1,0 +1,265 @@
+{
+  "question": "What share of the 0.1C reversible capacity is retained at 1C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%0.1C%' OR text ILIKE '%1C%' OR text ILIKE '%retention%' OR text ILIKE '%rate capab%' OR text ILIKE '%retain%' ORDER BY page, id",
+      "rows": 18
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (1,5,6) AND (text ILIKE '%mAh%' OR text ILIKE '%%' ) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (5,6) AND line_no BETWEEN 69 AND 110 AND page=5 OR (page=6 AND line_no BETWEEN 20 AND 35) ORDER BY page, line_no",
+      "rows": 58
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "reversible capacity at the slow rate",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "high rate",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "reversible capacity at 1C",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "capacity at 1C relative to the slow rate",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['1C.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "700 mAh/gS",
+      "atom": "p5.L79",
+      "of": "reversible capacity at the slow rate",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "1C",
+      "atom": "p5.L87",
+      "of": "high rate",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "370 mAh/gS",
+      "atom": "p5.L87",
+      "of": "reversible capacity at 1C",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    },
+    {
+      "quote": "over 50% retention",
+      "atom": "p5.L88",
+      "of": "capacity at 1C relative to the slow rate",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2688,
+    "cache_read_input_tokens": 32838,
+    "cache_creation_input_tokens": 11057
+  },
+  "runs": [
+    {
+      "text": "At the slow rate the reversible capacity is "
+    },
+    {
+      "quote": "700 mAh/gS",
+      "atom": "p5.L79",
+      "of": "reversible capacity at the slow rate"
+    },
+    {
+      "text": ", and at the high rate of "
+    },
+    {
+      "quote": "1C",
+      "atom": "p5.L87",
+      "of": "high rate"
+    },
+    {
+      "text": " it is "
+    },
+    {
+      "quote": "370 mAh/gS",
+      "atom": "p5.L87",
+      "of": "reversible capacity at 1C"
+    },
+    {
+      "text": ". The paper states this as "
+    },
+    {
+      "quote": "over 50% retention",
+      "atom": "p5.L88",
+      "of": "capacity at 1C relative to the slow rate"
+    },
+    {
+      "text": " of capacity, so roughly half of the slow-rate reversible capacity is kept at the high rate."
+    }
+  ],
+  "rendered": "At the slow rate the reversible capacity is 700 mAh/gS[1], and at the high rate of 1C[2] it is 370 mAh/gS[3]. The paper states this as over 50% retention[4] of capacity, so roughly half of the slow-rate reversible capacity is kept at the high rate.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "700 mAh/gS",
+      "source": {
+        "atom": "p5.L79",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "results and reversible capacity (700 mAh/gS) and is capable of",
+        "bbox": [
+          324.5,
+          234.1,
+          564.4,
+          245.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "reversible capacity at the slow rate",
+      "n": 1,
+      "rendered": "700 mAh/gS"
+    },
+    {
+      "kind": "quote",
+      "quote": "1C",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "of": "high rate",
+      "n": 2,
+      "rendered": "1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "370 mAh/gS",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "of": "reversible capacity at 1C",
+      "n": 3,
+      "rendered": "370 mAh/gS"
+    },
+    {
+      "kind": "quote",
+      "quote": "over 50% retention",
+      "source": {
+        "atom": "p5.L88",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "emphasizes over 50% retention of capacity at 10 times the rate.",
+        "bbox": [
+          324.5,
+          333.5,
+          564.4,
+          343.5
+        ]
+      },
+      "strength": "verbatim",
+      "of": "capacity at 1C relative to the slow rate",
+      "n": 4,
+      "rendered": "over 50% retention"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-18T07:07:51+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "nanolett-6b05172",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "370 of ~700 mAh/gS: over 50% (the paper's words), ~53% computed (p5.L86-88)",
+  "trap": "a share of the theoretical capacity"
+}

@@ -1,0 +1,327 @@
+{
+  "question": "How does the review get from the known global cobalt reserves to the cobalt usable for batteries, and what amount results?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE regexp_matches(lower(text), 'reserve|cobalt usable|available for|battery industr|tons|tonnes|million') ORDER BY page, line_no",
+      "rows": 21
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p2.F1"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE id IN ('p1.L40','p1.L41','p1.L42','p1.L43','p1.L44','p1.L45','p1.L46','p1.L47','p2.L31','p2.L32','p2.L33') ORDER BY id",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2021'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2021' is written exactly so in the document (e.g. p2.L29): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2021\", \"atom\": \"p2.L29\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['2045.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2045' is written exactly so in the document (e.g. p1.L41): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2045\", \"atom\": \"p1.L41\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2543,
+    "cache_read_input_tokens": 36841,
+    "cache_creation_input_tokens": 6594
+  },
+  "runs": [
+    {
+      "text": "The review starts from the known global cobalt reserves, put at "
+    },
+    {
+      "quote": "≈7 million",
+      "atom": "p1.L42"
+    },
+    {
+      "text": " metric tons, taken from the United States Geological Survey "
+    },
+    {
+      "quote": "2021",
+      "atom": "p2.L29"
+    },
+    {
+      "text": " report on cobalt. It then recomputes how much of that is usable for batteries using a mining efficiency of "
+    },
+    {
+      "quote": "≈70% yearly mining efficiency",
+      "atom": "p2.L32"
+    },
+    {
+      "text": ", and an assumption that "
+    },
+    {
+      "quote": "≈40% of the mined cobalt directed toward battery manufacturing",
+      "atom": "p2.L32"
+    },
+    {
+      "text": ". The cobalt that survives these factors is the battery-usable share, which the "
+    },
+    {
+      "figure": "p2.F1"
+    },
+    {
+      "text": " panel c model uses to show depletion. The review's result is that the total usable battery-specific cobalt from the reserves comes to "
+    },
+    {
+      "quote": "≈2 million metric ton",
+      "atom": "p1.L47"
+    },
+    {
+      "text": " globally. The document reports this as the total cobalt available for battery industries, and it states that demand will exceed that amount before "
+    },
+    {
+      "quote": "2045",
+      "atom": "p1.L41"
+    },
+    {
+      "text": ". The document does not print the multiplication step itself; it gives only the inputs and the final approximate figure."
+    }
+  ],
+  "rendered": "The review starts from the known global cobalt reserves, put at ≈7 million[1] metric tons, taken from the United States Geological Survey 2021[2] report on cobalt. It then recomputes how much of that is usable for batteries using a mining efficiency of ≈70% yearly mining efficiency[3], and an assumption that ≈40% of the mined cobalt directed toward battery manufacturing[4]. The cobalt that survives these factors is the battery-usable share, which the Fig. 1[5] panel c model uses to show depletion. The review's result is that the total usable battery-specific cobalt from the reserves comes to ≈2 million metric ton[6] globally. The document reports this as the total cobalt available for battery industries, and it states that demand will exceed that amount before 2045[7]. The document does not print the multiplication step itself; it gives only the inputs and the final approximate figure.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "≈7 million",
+      "source": {
+        "atom": "p1.L42",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "uses metrics from known global cobalt reserves, ≈7 million",
+        "bbox": [
+          306.1,
+          554.9,
+          547.1,
+          564.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "≈7 million"
+    },
+    {
+      "kind": "quote",
+      "quote": "2021",
+      "source": {
+        "atom": "p2.L29",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Figure 1. a) Battery material price trends from 2010 to 2021. b) Market flow chart for cobalt. c) Model highlighting the depletion of global cobalt reserves",
+        "bbox": [
+          48.2,
+          531.6,
+          544.3,
+          539.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "2021"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈70% yearly mining efficiency",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing.",
+        "bbox": [
+          48.2,
+          560.1,
+          544.3,
+          568.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "≈70% yearly mining efficiency"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈40% of the mined cobalt directed toward battery manufacturing",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing.",
+        "bbox": [
+          48.2,
+          560.1,
+          544.3,
+          568.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "≈40% of the mined cobalt directed toward battery manufacturing"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p2.F1",
+        "kind": "figure",
+        "label": "Fig. 1",
+        "page": 2,
+        "caption": "Figure 1. a) Battery material price trends from 2010 to 2021. b) Market flow chart for cobalt. c) Model highlighting the depletion of global cobalt reserves specifically available for battery industries, leading to a shortage of cobalt based on the projected number of electric vehicles on road in the first half of the 21st century. In our calculation, we use the total global cobalt reserves obtained from United States Geological Survey 2021 report on cobalt^[7] (7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing. Our recomputed estimate for the total cobalt available for battery industries considering all these parameters is ≈2 million metric tons globally.",
+        "png": "figures/p2.F1.png",
+        "png_pixels_sha256": "88a9304af2599a8f7ab92a8b981485d5ee0cbfe55966d296453bd15ba903c806",
+        "bbox": [
+          56.2,
+          70.9,
+          536.2,
+          523.0
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Fig. 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈2 million metric ton",
+      "source": {
+        "atom": "p1.L47",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "≈2 million metric ton). This alarming scenario clearly illus-",
+        "bbox": [
+          306.1,
+          609.9,
+          547.1,
+          619.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "≈2 million metric ton"
+    },
+    {
+      "kind": "quote",
+      "quote": "2045",
+      "source": {
+        "atom": "p1.L41",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "tery manufacturing before 2045 (Figure 1c) (this calculation",
+        "bbox": [
+          306.1,
+          543.9,
+          547.1,
+          552.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "2045"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-18T08:51:18+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "aenm-2022",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "~7 million metric tons of reserves x ~70% mining efficiency x ~40% directed to batteries = ~2 million metric tons (p1.L42-47, Fig. 1 caption)",
+  "trap": ""
+}

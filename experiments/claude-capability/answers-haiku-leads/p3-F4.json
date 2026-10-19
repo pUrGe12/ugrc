@@ -1,0 +1,244 @@
+{
+  "question": "How much squalene did the engineered HBQA7 strain produce?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, table_id, row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND (text ILIKE '%squal%' OR text ILIKE '%HBQA7%') ORDER BY row_no, col_no",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%squalene%' ORDER BY page, id",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%squa%' OR text ILIKE '%lene%' ORDER BY page, id",
+      "rows": 9
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND row_no BETWEEN 36 AND 49 ORDER BY row_no, col_no",
+      "rows": 62
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%squal%' OR printed_text ILIKE '%squal%' UNION ALL SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%squal%'",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=11 AND id IN ('p11.L43','p11.L44','p11.L45','p11.L46','p11.L47','p11.L48') ORDER BY id",
+      "rows": 6
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%squal%' OR printed_text ILIKE '%squal%'",
+      "rows": null
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%squal%' OR text ILIKE '%HBQA%'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%squal%' OR array_to_string(printed_text, ' ') ILIKE '%squal%'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2,', '2,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "1de23c224e803ccf854cfe47619baaefd28a1ef2cfef2a6728d2953fd336d207",
+  "leads": {
+    "sentences": [
+      "p3.L58:57",
+      "p11.L43:42",
+      "p10.L26:50",
+      "p7.L55:10",
+      "p7.L79:71",
+      "p11.L39:0",
+      "p10.L28:39",
+      "p4.L6:25",
+      "p8.L79:32",
+      "p11.L50:63",
+      "p13.L87:68",
+      "p9.L41:0"
+    ],
+    "measures": [
+      "p3.L58:57#40",
+      "p3.L58:57#121",
+      "p10.L26:50#102",
+      "p7.L55:10#112",
+      "p7.L79:71#100",
+      "p10.L28:39#123",
+      "p8.L79:32#226",
+      "p8.L79:32#258"
+    ],
+    "matched": 177
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2577,
+    "cache_read_input_tokens": 60526,
+    "cache_creation_input_tokens": 13143
+  },
+  "runs": [
+    {
+      "text": "The document does not report any squalene titer for the engineered HBQA7 strain. Squalene appears only once, in a forward-looking remark that lists it among longer-chain terpenoids with \"un-tapped potential\" in S. marcescens, next to taxadiene and beta-carotene: \""
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p11.L47",
+          "quote": "longer-chain terpenoids (e.g., taxadiene, squa-"
+        }
+      ]
+    },
+    {
+      "text": "\" and \""
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p11.L48",
+          "quote": "lene, β-carotene)."
+        }
+      ]
+    },
+    {
+      "text": "\". The value-added product table, which lists products from engineered S. marcescens strains (including several HBQA7-derived strains), has no squalene entry, and no figure reports squalene. The question's premise therefore cannot be confirmed from this document. For reference, the table of engineered-strain products is shown here: "
+    },
+    {
+      "table": "p9.T2"
+    }
+  ],
+  "rendered": "The document does not report any squalene titer for the engineered HBQA7 strain. Squalene appears only once, in a forward-looking remark that lists it among longer-chain terpenoids with \"un-tapped potential\" in S. marcescens, next to taxadiene and beta-carotene: \"[1]\" and \"[2]\". The value-added product table, which lists products from engineered S. marcescens strains (including several HBQA7-derived strains), has no squalene entry, and no figure reports squalene. The question's premise therefore cannot be confirmed from this document. For reference, the table of engineered-strain products is shown here: Table 2[3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "longer-chain terpenoids (e.g., taxadiene, squa-",
+      "source": {
+        "atom": "p11.L47",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "polyketides) [135], and longer-chain terpenoids (e.g., taxadiene, squa-",
+        "bbox": [
+          306.6,
+          474.8,
+          557.7,
+          482.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "longer-chain terpenoids (e.g., taxadiene, squa-"
+    },
+    {
+      "kind": "support",
+      "quote": "lene, β-carotene).",
+      "source": {
+        "atom": "p11.L48",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "lene, β-carotene).",
+        "bbox": [
+          306.6,
+          483.7,
+          367.9,
+          493.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "lene, β-carotene)."
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Table 2"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-18T06:48:01+00:00",
+  "paper": "p3",
+  "probe": "F4",
+  "cat": "false premise",
+  "expect": "premise false: squalene is named only as untapped potential (p11.L47-48, hyphenated across lines as 'squa-' / 'lene'). No titer is reported.",
+  "trap": "inventing a titer; also tests whether a hyphen-broken word can be found at all"
+}

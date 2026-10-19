@@ -1,0 +1,506 @@
+{
+  "question": "Which NFA variant retained the most capacity after 100 cycles at C/3, what are its aluminium and iron contents, and what c lattice parameter does Table 1 give for it?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%retention%' OR text ILIKE '%C/3%' OR text ILIKE '%100 cycles%' OR text ILIKE '%100th%' ORDER BY page, id",
+      "rows": 9
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT * FROM cells WHERE table_id='p5.T1' ORDER BY row_no, col_no",
+      "rows": 99
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (2,9,10,11,12) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (10,11) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (4,5) AND (text ILIKE '%Al-rich%' OR text ILIKE '%Fe-rich%' OR text ILIKE '%NFA-A%' OR text ILIKE '%Table 1%' OR text ILIKE '%lattice%' OR text ILIKE '%Rietveld%' OR text ILIKE '%0.15%' OR text ILIKE '%Al%') ORDER BY page, line_no",
+      "rows": 60
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 17,
+      "rules": [
+        "text:number",
+        "text:number",
+        "quote:absent",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 17,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 19,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "NFA-A variant",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "NFA 811",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "NFA-F",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 9,
+          "of": "NFA-A",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 11,
+          "of": "NFA-A",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 17,
+          "of": "Al-rich NFA",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['0.15'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[11]",
+        "why": "'Fe0.05' occurs in p2.L110 only as part of a longer word or number (its text: '(NFA-F), and LiNi0.8Fe0.05Al0.15O2 (NFA-A). The sol–gel pro-')",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['0.05).', '1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "≈80% capacity retention after 100 cycles at C/3",
+      "atom": "p11.L59",
+      "of": "NFA-A variant",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "(≈70%)",
+      "atom": "p10.L50",
+      "of": "NFA 811",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    },
+    {
+      "quote": "(≈50%) variants",
+      "atom": "p11.L5",
+      "of": "NFA-F",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    },
+    {
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "atom": "p2.L110",
+      "of": "NFA-A",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 9
+    },
+    {
+      "quote": "15% Al",
+      "atom": "p10.L49",
+      "of": "NFA-A",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 11
+    },
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 17
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 6840,
+    "cache_read_input_tokens": 118235,
+    "cache_creation_input_tokens": 27655
+  },
+  "runs": [
+    {
+      "text": "The variant that retained the most capacity after cycling at C/3 was NFA-A, which the paper reports at "
+    },
+    {
+      "quote": "≈80% capacity retention after 100 cycles at C/3",
+      "atom": "p11.L59",
+      "of": "NFA-A variant"
+    },
+    {
+      "text": ", ahead of "
+    },
+    {
+      "quote": "NFA 811",
+      "atom": "p10.L50"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "(≈70%)",
+      "atom": "p10.L50",
+      "of": "NFA 811"
+    },
+    {
+      "text": " and NFA-F "
+    },
+    {
+      "quote": "(≈50%) variants",
+      "atom": "p11.L5",
+      "of": "NFA-F"
+    },
+    {
+      "text": ". NFA-A is the composition "
+    },
+    {
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "atom": "p2.L110",
+      "of": "NFA-A"
+    },
+    {
+      "text": ". Its aluminium content is "
+    },
+    {
+      "quote": "15% Al",
+      "atom": "p10.L49",
+      "of": "NFA-A"
+    },
+    {
+      "text": ", and its iron content is the Fe subscript shown in that same formula. "
+    },
+    {
+      "table": "p5.T1"
+    },
+    {
+      "text": " has no row named NFA-A; its aluminium-rich row is "
+    },
+    {
+      "quote": "Al-rich NFA",
+      "atom": "p5.T1.r5c1"
+    },
+    {
+      "text": ", and for that row the c lattice parameter is "
+    },
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The variant that retained the most capacity after cycling at C/3 was NFA-A, which the paper reports at ≈80% capacity retention after 100 cycles at C/3[1], ahead of NFA 811[2] (≈70%)[3] and NFA-F (≈50%) variants[4]. NFA-A is the composition LiNi0.8Fe0.05Al0.15O2[5]. Its aluminium content is 15% Al[6], and its iron content is the Fe subscript shown in that same formula. Table 1[7] has no row named NFA-A; its aluminium-rich row is Al-rich NFA[8], and for that row the c lattice parameter is 14.2232(4)[9].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "≈80% capacity retention after 100 cycles at C/3",
+      "source": {
+        "atom": "p11.L59",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "cycling (≈80% capacity retention after 100 cycles at C/3) when",
+        "bbox": [
+          306.2,
+          202.9,
+          547.1,
+          212.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A variant",
+      "n": 1,
+      "rendered": "≈80% capacity retention after 100 cycles at C/3"
+    },
+    {
+      "kind": "quote",
+      "quote": "NFA 811",
+      "source": {
+        "atom": "p10.L50",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "100 cycles when compared with the NFA 811 (≈70%) and NFA-F",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          322.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "NFA 811"
+    },
+    {
+      "kind": "quote",
+      "quote": "(≈70%)",
+      "source": {
+        "atom": "p10.L50",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "100 cycles when compared with the NFA 811 (≈70%) and NFA-F",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          322.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA 811",
+      "n": 3,
+      "rendered": "(≈70%)"
+    },
+    {
+      "kind": "quote",
+      "quote": "(≈50%) variants",
+      "source": {
+        "atom": "p11.L5",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "(≈50%) variants. From our operando Mössbauer measure-",
+        "bbox": [
+          51.0,
+          70.9,
+          291.9,
+          80.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-F",
+      "n": 4,
+      "rendered": "(≈50%) variants"
+    },
+    {
+      "kind": "quote",
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "source": {
+        "atom": "p2.L110",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(NFA-F), and LiNi0.8Fe0.05Al0.15O2 (NFA-A). The sol–gel pro-",
+        "bbox": [
+          303.3,
+          576.9,
+          544.3,
+          587.0
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 5,
+      "rendered": "LiNi0.8Fe0.05Al0.15O2"
+    },
+    {
+      "kind": "quote",
+      "quote": "15% Al",
+      "source": {
+        "atom": "p10.L49",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "The NFA-A variant with 15% Al maintained ≈80% capacity after",
+        "bbox": [
+          303.3,
+          301.9,
+          544.2,
+          311.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 6,
+      "rendered": "15% Al"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p5.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 5,
+        "caption": "Table 1. Structural parameters of the NFA variants determined through the Rietveld refinement using the neutron diffraction data (standard error provided in parenthesis).",
+        "bbox": [
+          51.0,
+          95.0,
+          547.6,
+          276.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Al-rich NFA",
+      "source": {
+        "atom": "p5.T1.r5c1",
+        "kind": "cell",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "Al-rich NFA",
+        "bbox": [
+          51.3,
+          147.7,
+          84.5,
+          154.7
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 1,
+        "column_header": "Structural parameters"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Al-rich NFA"
+    },
+    {
+      "kind": "quote",
+      "quote": "14.2232(4)",
+      "source": {
+        "atom": "p5.T1.r5c4",
+        "kind": "cell",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "14.2232(4)",
+        "bbox": [
+          253.5,
+          147.7,
+          283.1,
+          154.7
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 4,
+        "column_header": "c"
+      },
+      "strength": "verbatim",
+      "of": "Al-rich NFA",
+      "n": 9,
+      "rendered": "14.2232(4)"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T08:55:33+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "adma-2020",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "NFA-A (LiNi0.8Fe0.05Al0.15O2: 15% Al, 5% Fe), ~80% (p10.L49); Table 1 'Al-rich NFA' c = 14.2232(4)",
+  "trap": "NFA 811's 14.227(3)"
+}

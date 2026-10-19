@@ -1,0 +1,224 @@
+{
+  "question": "What was the sensitivity of the method for detecting S. typhimurium in human serum?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%typhimurium%' OR text ILIKE '%sensitiv%' OR text ILIKE '%detection limit%' OR text ILIKE '%LOD%' ORDER BY page, line_no",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, kind, text FROM atoms WHERE text ILIKE '%typhimurium%' OR text ILIKE '%sensitiv%' OR text ILIKE '%limit of detection%' OR text ILIKE '%serum%' ORDER BY page",
+      "rows": 59
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=6 AND line_no BETWEEN 50 AND 75) OR (page=3 AND line_no BETWEEN 20 AND 55) OR (page=7 AND line_no BETWEEN 40 AND 50) ORDER BY page, line_no",
+      "rows": 73
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%limit%' OR text ILIKE '%LOD%' OR text ILIKE '%CFU%' OR text ILIKE '%minimum%' OR text ILIKE '%lowest%' OR text ILIKE '%detectable%' ORDER BY page, id",
+      "rows": 18
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=7 AND line_no BETWEEN 50 AND 62) OR (page=8 AND line_no BETWEEN 1 AND 20) ORDER BY page, line_no",
+      "rows": 33
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['5)', 'seven'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p1.L39): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p1.L39\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2475,
+    "cache_read_input_tokens": 40411,
+    "cache_creation_input_tokens": 16149
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The document does not report a sensitivity (limit of detection or any detection threshold) for S. typhimurium in human serum. The serum work (Fig. "
+    },
+    {
+      "figure": "p8.F5"
+    },
+    {
+      "text": ") is qualitative: bacteria-spiked serum was classified by LDA, and the text says all bacteria were well classified with almost no overlap. The only LOD values given are for other bacteria in aqueous medium: "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p6.L59",
+          "quote": "P. aeruginosa had an LOD of OD600 =0.0034 (CD,"
+        }
+      ]
+    },
+    {
+      "text": " for P. aeruginosa, and "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p6.L61",
+          "quote": "presented an LOD of 0.0123 (CD, Fig. S17c)"
+        }
+      ]
+    },
+    {
+      "text": " for L. monocytogenes. For S. typhimurium the text reports only partial discrimination in aqueous solution: "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p6.L70",
+          "quote": "was achieved for S. typhimurium and S. aureus"
+        }
+      ]
+    },
+    {
+      "text": ". No serum-specific sensitivity figure is given for S. typhimurium."
+    }
+  ],
+  "rendered": "The document does not report a sensitivity (limit of detection or any detection threshold) for S. typhimurium in human serum. The serum work (Fig. Fig. 5[1]) is qualitative: bacteria-spiked serum was classified by LDA, and the text says all bacteria were well classified with almost no overlap. The only LOD values given are for other bacteria in aqueous medium: [2] for P. aeruginosa, and [3] for L. monocytogenes. For S. typhimurium the text reports only partial discrimination in aqueous solution: [4]. No serum-specific sensitivity figure is given for S. typhimurium.",
+  "citations": [
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p8.F5",
+        "kind": "figure",
+        "label": "Fig. 5",
+        "page": 8,
+        "caption": "Fig. 5. Discrimination of bacteria in clinical samples. (a) Color responses of BA@L-HGNRs toward live and autoclaved bacteria for intra-species viability-state differentiation of E. coli and E. faecium. (b) LDA for the differentiation of seven bacteria in human serum matrix. (c) LDA for the differentiation of serum samples from septic patients infected with E. coli and E. faecium.",
+        "png": "figures/p8.F5.png",
+        "png_pixels_sha256": "2fe92cd1d7b40d59ab70e5c0e1f549fb84e7880276c916027b488d1c83c54104",
+        "bbox": [
+          42.2,
+          56.3,
+          552.9,
+          172.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Fig. 5"
+    },
+    {
+      "kind": "support",
+      "quote": "P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+      "source": {
+        "atom": "p6.L59",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "(LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+        "bbox": [
+          306.6,
+          264.2,
+          557.6,
+          274.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "P. aeruginosa had an LOD of OD600 =0.0034 (CD,"
+    },
+    {
+      "kind": "support",
+      "quote": "presented an LOD of 0.0123 (CD, Fig. S17c)",
+      "source": {
+        "atom": "p6.L61",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "presented an LOD of 0.0123 (CD, Fig. S17c) versus 0.0125 (UV–vis,",
+        "bbox": [
+          306.6,
+          285.7,
+          557.6,
+          295.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "presented an LOD of 0.0123 (CD, Fig. S17c)"
+    },
+    {
+      "kind": "support",
+      "quote": "was achieved for S. typhimurium and S. aureus",
+      "source": {
+        "atom": "p6.L70",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "was achieved for S. typhimurium and S. aureus (Fig. S18b-c). Blind tests",
+        "bbox": [
+          306.6,
+          381.4,
+          557.7,
+          389.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "was achieved for S. typhimurium and S. aureus"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:23+00:00",
+  "paper": "p2",
+  "probe": "F6",
+  "cat": "false-premise",
+  "expect": "not reported; in spiked serum all seven were well classified with almost no overlap",
+  "trap": "inventing a sensitivity"
+}

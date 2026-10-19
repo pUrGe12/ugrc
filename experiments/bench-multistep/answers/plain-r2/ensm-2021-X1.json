@@ -1,0 +1,704 @@
+{
+  "question": "Using the review's equation for diffusion time and Table 5's diffusivity for ZrO2, how long would a lithium ion take to cross a 10 nm ZrO2 coating?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 18,
+  "turns": 14,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%diffusion time%' OR text ILIKE '%ZrO%' OR text ILIKE '%τ%' OR text ILIKE '%tau%' OR text ILIKE '%=%' ORDER BY page, top",
+      "rows": 68
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM cells WHERE table_id='p14.T5' OR text ILIKE '%ZrO%' ORDER BY page, row_no, col_no",
+      "rows": 94
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, line_no, text, strength FROM atoms WHERE page=12 AND id IN (SELECT id FROM lines WHERE page=12 AND line_no BETWEEN 30 AND 50) ORDER BY line_no",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, top FROM atoms WHERE page=12 AND top BETWEEN 300 AND 520 ORDER BY top",
+      "rows": 37
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, top, x0 FROM atoms WHERE page=12 AND top BETWEEN 60 AND 300 AND kind='line' ORDER BY top, x0",
+      "rows": 10
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, top, x0 FROM atoms WHERE page=13 AND top BETWEEN 0 AND 120 AND kind='line' ORDER BY top, x0",
+      "rows": 4
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, top, x0, x1 FROM atoms WHERE id IN ('p12.L34','p12.L35','p12.L36','p12.L37','p12.L38','p12.L39','p12.L40','p12.L41','p12.L42','p12.L43','p12.L44','p12.L45','p12.L46','p12.L47','p12.L48','p12.L49','p12.L50','p12.L51','p12.L52') ORDER BY top, x0",
+      "rows": 19
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT * FROM consts",
+      "rows": 11
+    },
+    {
+      "turn": 5,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p13.F10"
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%nm%' OR text ILIKE '%nanomet%' ORDER BY page, top",
+      "rows": 78
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH d AS (SELECT text FROM cells WHERE id='p14.T5.r13c2'),\nl AS (SELECT text FROM atoms WHERE id='p8.L23')\nSELECT regexp_extract((SELECT text FROM l), '∼([0-9]+) nm', 1) AS l_nm,\n       regexp_extract((SELECT text FROM d), '^([0-9.]+)', 1) AS D_mant,\n       regexp_extract((SELECT text FROM d), '([0-9]+)$', 1) AS D_exp,\n       CAST(regexp_extract((SELECT text FROM l), '∼([0-9]+) nm', 1) AS DOUBLE) * 1e-7 AS l_cm_test",
+      "rows": 1
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH v AS (SELECT CAST(regexp_extract((SELECT text FROM atoms WHERE id='p8.L23'), '∼([0-9]+) nm', 1) AS DOUBLE) AS l_nm,\n CAST(regexp_extract((SELECT text FROM cells WHERE id='p14.T5.r13c2'), '^([0-9.]+)', 1) AS DOUBLE) AS d_mant,\n CAST(regexp_extract((SELECT text FROM cells WHERE id='p14.T5.r13c2'), '([0-9]+)$', 1) AS DOUBLE) AS d_exp)\nSELECT (l_nm*1e-7)^2 / (d_mant*POWER(10,-d_exp)) AS t_s,\n (l_nm*1e-7)^2 / (d_mant*POWER(10,-d_exp)) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h,\n (l_nm*1e-7)^2 / (d_mant*POWER(10,-d_exp)) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day\nFROM v",
+      "rows": 1
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "sql:literal",
+        "sql:literal",
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "sql:literal",
+        "sql:literal",
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 11,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH v AS (SELECT CAST(regexp_extract((SELECT text FROM atoms WHERE id='p8.L23'), '∼([0-9]+) nm', 1) AS DOUBLE) AS l_nm, CAST(replace(replace(replace((SELECT text FROM cells WHERE id='p14.T5.r13c2'),' ',''),'×10^','e'),'−','-') AS DOUBLE) AS D_cm2s)\nSELECT (l_nm/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / D_cm2s AS t_s,\n(l_nm/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / D_cm2s / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h,\n(l_nm/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / D_cm2s / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day, D_cm2s FROM v",
+      "rows": 1
+    },
+    {
+      "turn": 12,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "lineage:no-source",
+        "lineage:no-source",
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 13,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s,\n(CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h,\n(CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day\nFROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "rows": 1
+    },
+    {
+      "turn": 14,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15,
+      "pairings": [
+        {
+          "run": 5,
+          "of": "ZrO2",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['10'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'10' is written exactly so in the document (e.g. p1.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p1.L59\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[5]",
+        "why": "the number 1e-7 is written into the value 'POWER((l_nm * 1e-7), 2) / (d_mant * POWER(10, -d_exp)) AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[7]",
+        "why": "the number 1e-7 is written into the value 'POWER((l_nm * 1e-7), 2) / (d_mant * POWER(10, -d_exp)) AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[9]",
+        "why": "the number 1e-7 is written into the value 'POWER((l_nm * 1e-7), 2) / (d_mant * POWER(10, -d_exp)) AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "sql:literal",
+        "where": "runs[9]",
+        "why": "the number 10 is written into the value \"POWER((l_nm / ((SELECT value FROM consts WHERE id = 'K.per_mega') * (SELECT value FROM consts WHERE id = 'K.per_kilo')) * 100), 2) / (d_mant * POWER(10, -d_exp)\" — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[11]",
+        "why": "the number 10 is written into the value \"POWER((l_nm / ((SELECT value FROM consts WHERE id = 'K.per_mega') * (SELECT value FROM consts WHERE id = 'K.per_kilo')) * 100), 2) / (d_mant * POWER(10, -d_exp)\" — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[13]",
+        "why": "the number 10 is written into the value \"POWER((l_nm / ((SELECT value FROM consts WHERE id = 'K.per_mega') * (SELECT value FROM consts WHERE id = 'K.per_kilo')) * 100), 2) / (d_mant * POWER(10, -d_exp)\" — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[9]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[11]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[13]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 30,
+    "output_tokens": 21455,
+    "cache_read_input_tokens": 277222,
+    "cache_creation_input_tokens": 34869
+  },
+  "runs": [
+    {
+      "text": "The review's diffusion-time equation is "
+    },
+    {
+      "quote": "𝑡 = 𝑙^2",
+      "atom": "p12.L38"
+    },
+    {
+      "text": " over D, the lithium-ion diffusivity, where l is the diffusion length (the coating thickness). Table values of diffusivity are used for D, as the review states: "
+    },
+    {
+      "quote": "taken from Table 5",
+      "atom": "p12.L40"
+    },
+    {
+      "text": ". The diffusivity of ZrO2 in that table is "
+    },
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2"
+    },
+    {
+      "text": " cm^2/s. For a coating of "
+    },
+    {
+      "quote": "10 nm",
+      "atom": "p8.L23"
+    },
+    {
+      "text": ", converting nm to cm and applying t = l^2/D gives a crossing time of about "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_s",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " seconds, which is about "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_h",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " hours, or about "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_day",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " days. This is a simple single-length estimate from the review's equation, so it is an order-of-magnitude figure rather than a measured value."
+    }
+  ],
+  "rendered": "The review's diffusion-time equation is 𝑡 = 𝑙^2[1] over D, the lithium-ion diffusivity, where l is the diffusion length (the coating thickness). Table values of diffusivity are used for D, as the review states: taken from Table 5[2]. The diffusivity of ZrO2 in that table is 1.7 ×10^− 18[3] cm^2/s. For a coating of 10 nm[4], converting nm to cm and applying t = l^2/D gives a crossing time of about 588,235[5] seconds, which is about 163[6] hours, or about 6.8[7] days. This is a simple single-length estimate from the review's equation, so it is an order-of-magnitude figure rather than a measured value.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "𝑡 = 𝑙^2",
+      "source": {
+        "atom": "p12.L38",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "ing the simple equation, 𝑡 = 𝑙^2",
+        "bbox": [
+          37.9,
+          598.5,
+          144.5,
+          610.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "𝑡 = 𝑙^2"
+    },
+    {
+      "kind": "quote",
+      "quote": "taken from Table 5",
+      "source": {
+        "atom": "p12.L40",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "taken from Table 5 , and ‘l’ is the diffusion length which is varied here",
+        "bbox": [
+          37.9,
+          612.7,
+          289.3,
+          620.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "taken from Table 5"
+    },
+    {
+      "kind": "quote",
+      "quote": "1.7 ×10^− 18",
+      "source": {
+        "atom": "p14.T5.r13c2",
+        "kind": "cell",
+        "page": 14,
+        "strength": "verbatim",
+        "text": "1.7 ×10^− 18",
+        "bbox": [
+          125.3,
+          199.4,
+          155.8,
+          206.6
+        ],
+        "table": "Table 5",
+        "row": 13,
+        "col": 2,
+        "column_header": "Li ion diffusivity (cm^2/s)"
+      },
+      "strength": "verbatim",
+      "of": "ZrO2",
+      "n": 3,
+      "rendered": "1.7 ×10^− 18"
+    },
+    {
+      "kind": "quote",
+      "quote": "10 nm",
+      "source": {
+        "atom": "p8.L23",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "of a thin coating layer ( ∼10 nm) on the surface of NCM materials, as",
+        "bbox": [
+          37.9,
+          654.4,
+          289.4,
+          662.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "10 nm"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_s",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 588235.294117647,
+      "strength": "computed from verbatim",
+      "n_sources": 7,
+      "sources": [
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        },
+        {
+          "atom": "p8.L23",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "of a thin coating layer ( ∼10 nm) on the surface of NCM materials, as",
+          "bbox": [
+            37.9,
+            654.4,
+            289.4,
+            662.5
+          ]
+        }
+      ],
+      "n": 5,
+      "rendered": "588,235"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_h",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 163.39869281045748,
+      "strength": "computed from verbatim",
+      "n_sources": 7,
+      "sources": [
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        },
+        {
+          "atom": "p8.L23",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "of a thin coating layer ( ∼10 nm) on the surface of NCM materials, as",
+          "bbox": [
+            37.9,
+            654.4,
+            289.4,
+            662.5
+          ]
+        }
+      ],
+      "n": 6,
+      "rendered": "163"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) AS t_s, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') AS t_h, (CAST(regexp_extract(a.text, '∼([0-9]+) nm', 1) AS DOUBLE)/((SELECT value FROM consts WHERE id='K.per_mega')*(SELECT value FROM consts WHERE id='K.per_kilo'))*100)^2 / CAST(replace(replace(replace(c.text,' ',''),'×10^','e'),'−','-') AS DOUBLE) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_day FROM cells c, atoms a WHERE c.id='p14.T5.r13c2' AND a.id='p8.L23'",
+      "column": "t_day",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 6.808278867102395,
+      "strength": "computed from verbatim",
+      "n_sources": 7,
+      "sources": [
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        },
+        {
+          "atom": "p8.L23",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "of a thin coating layer ( ∼10 nm) on the surface of NCM materials, as",
+          "bbox": [
+            37.9,
+            654.4,
+            289.4,
+            662.5
+          ]
+        }
+      ],
+      "n": 7,
+      "rendered": "6.8"
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-18T08:52:52+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "ensm-2021",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "t = l^2/D (p12.L38-39); l = 10 nm = 1e-6 cm, D = 1.7 x 10^-18 cm^2/s: t = 1e-12/1.7e-18 = 5.9 x 10^5 s (about 6.8 days)",
+  "trap": ""
+}

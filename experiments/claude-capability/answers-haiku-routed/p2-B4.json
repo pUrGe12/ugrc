@@ -1,0 +1,157 @@
+{
+  "question": "What volumetric ratios were used for the binary bacterial mixtures, and what ratio for the ternary mixtures?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%ratio%' OR text ILIKE '%v/v%' OR text ILIKE '%:1%' OR text ILIKE '%mixture%' ORDER BY page, line_no",
+      "rows": 50
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, sentence, text FROM sentences WHERE text ILIKE '%binary%' OR text ILIKE '%ternary%' OR text ILIKE '%mixed%' OR text ILIKE '%mixture%'",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=7 ORDER BY line_no",
+      "rows": 71
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p2.L46','p2.L47','p2.L48','p2.L49')",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1430,
+    "cache_read_input_tokens": 20910,
+    "cache_creation_input_tokens": 10749
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "Binary bacterial mixtures were tested at volumetric ratios of "
+    },
+    {
+      "quote": "volumetric ratios of 1:0, 1:4, 1:8, and 0:1",
+      "atom": "p7.L2"
+    },
+    {
+      "text": " (the end points being the single strains). Ternary mixtures were prepared at a "
+    },
+    {
+      "quote": "compositional ratio of 1:1:1",
+      "atom": "p7.L7"
+    },
+    {
+      "text": ", i.e. equal proportions of the strains in the mixture."
+    }
+  ],
+  "rendered": "Binary bacterial mixtures were tested at volumetric ratios of volumetric ratios of 1:0, 1:4, 1:8, and 0:1[1] (the end points being the single strains). Ternary mixtures were prepared at a compositional ratio of 1:1:1[2], i.e. equal proportions of the strains in the mixture.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "volumetric ratios of 1:0, 1:4, 1:8, and 0:1",
+      "source": {
+        "atom": "p7.L2",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "bacterial mixtures with volumetric ratios of 1:0, 1:4, 1:8, and 0:1 were",
+        "bbox": [
+          37.6,
+          66.8,
+          288.7,
+          74.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "volumetric ratios of 1:0, 1:4, 1:8, and 0:1"
+    },
+    {
+      "kind": "quote",
+      "quote": "compositional ratio of 1:1:1",
+      "source": {
+        "atom": "p7.L7",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "with a compositional ratio of 1:1:1 were investigated (Tables S16-S18).",
+        "bbox": [
+          37.6,
+          119.1,
+          288.7,
+          127.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "compositional ratio of 1:1:1"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:04+00:00",
+  "paper": "p2",
+  "probe": "B4",
+  "cat": "binding",
+  "expect": "binary 1:0, 1:4, 1:8, 0:1; ternary (and A+B) 1:1:1",
+  "trap": "inventing ratios"
+}

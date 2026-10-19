@@ -1,0 +1,228 @@
+{
+  "question": "How many patients were enrolled in the clinical study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%patient%' OR text ILIKE '%enrol%' OR text ILIKE '%clinical%' OR text ILIKE '%subject%' OR text ILIKE '%volunteer%' ORDER BY page, line_no",
+      "rows": 17
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, sentence FROM measures WHERE page IN (7,8) AND (array_to_string(about,' ') ILIKE '%serum%' OR array_to_string(about,' ') ILIKE '%subject%' OR array_to_string(about,' ') ILIKE '%patient%' OR sentence ILIKE '%serum%' OR sentence ILIKE '%septic%')",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (7,8) AND (text ILIKE '%serum%' OR text ILIKE '%sample%') ORDER BY page, line_no",
+      "rows": 15
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['three', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['three', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "8c7f06a5c468ebaf96c12bf89324eef9ca525050897eed9805d8bd3f15c923ff",
+  "leads": {
+    "sentences": [
+      "p7.L48:0",
+      "p7.L54:0"
+    ],
+    "measures": [],
+    "matched": 8
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2057,
+    "cache_read_input_tokens": 34118,
+    "cache_creation_input_tokens": 8709
+  },
+  "runs": [
+    {
+      "text": "The document reports "
+    },
+    {
+      "quote": "three",
+      "atom": "p7.L49"
+    },
+    {
+      "text": " enrolled subjects for the clinical serum study: independent serum samples were collected from "
+    },
+    {
+      "quote": "three",
+      "atom": "p7.L49"
+    },
+    {
+      "text": " enrolled subjects. These comprised septic patients with confirmed E. coli infection, septic patients with confirmed E. faecium infection, and healthy volunteers serving as the control. So the study enrolled "
+    },
+    {
+      "quote": "three",
+      "atom": "p7.L49"
+    },
+    {
+      "text": " subjects in total, of whom the septic patients formed the infection groups; the document gives no separate patient count beyond this."
+    }
+  ],
+  "rendered": "The document reports three[1] enrolled subjects for the clinical serum study: independent serum samples were collected from three[2] enrolled subjects. These comprised septic patients with confirmed E. coli infection, septic patients with confirmed E. faecium infection, and healthy volunteers serving as the control. So the study enrolled three[3] subjects in total, of whom the septic patients formed the infection groups; the document gives no separate patient count beyond this.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "three",
+      "source": {
+        "atom": "p7.L49",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "sepsis scenarios, independent serum samples were collected from three",
+        "bbox": [
+          306.6,
+          213.3,
+          557.6,
+          221.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "three"
+    },
+    {
+      "kind": "quote",
+      "quote": "three",
+      "source": {
+        "atom": "p7.L49",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "sepsis scenarios, independent serum samples were collected from three",
+        "bbox": [
+          306.6,
+          213.3,
+          557.6,
+          221.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "three"
+    },
+    {
+      "kind": "quote",
+      "quote": "three",
+      "source": {
+        "atom": "p7.L49",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "sepsis scenarios, independent serum samples were collected from three",
+        "bbox": [
+          306.6,
+          213.3,
+          557.6,
+          221.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "three"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-18T06:46:59+00:00",
+  "paper": "p2",
+  "probe": "A4",
+  "cat": "absent",
+  "expect": "the text says serum came from 'three enrolled subjects' (E. coli septic, E. faecium septic, healthy volunteers) - wording ambiguous",
+  "trap": "inventing a cohort size"
+}

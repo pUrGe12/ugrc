@@ -1,0 +1,140 @@
+{
+  "question": "Which bacterial strain had a viable count of 7.6 × 10^7 CFU/mL?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%7.6%' OR text ILIKE '%CFU%' ORDER BY page, id",
+      "rows": 4
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, value, unit FROM figure_facts WHERE statement ILIKE '%7.6%' OR statement ILIKE '%CFU%' OR value ILIKE '%7.6%'",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=3 AND id IN ('p3.L29','p3.L30','p3.L31','p3.L32','p3.L33','p3.L34','p3.L35')",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "E. sakazakii",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "3",
+  "pairings": [
+    {
+      "quote": "7.6 × 10^7 CFU/mL",
+      "atom": "p3.L32",
+      "of": "E. sakazakii",
+      "sentence": "p3.L28:66",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "E. sakazakii"
+      ],
+      "run": 1
+    }
+  ],
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 975,
+    "cache_read_input_tokens": 9465,
+    "cache_creation_input_tokens": 5536
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The strain is E. sakazakii. The viable count method lists the counts in order, each value written before its strain name: "
+    },
+    {
+      "quote": "7.6 × 10^7 CFU/mL",
+      "atom": "p3.L32",
+      "of": "E. sakazakii"
+    },
+    {
+      "text": " followed by "
+    },
+    {
+      "quote": "(E. sakazakii)",
+      "atom": "p3.L33"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The strain is E. sakazakii. The viable count method lists the counts in order, each value written before its strain name: 7.6 × 10^7 CFU/mL[1] followed by (E. sakazakii)[2].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "7.6 × 10^7 CFU/mL",
+      "source": {
+        "atom": "p3.L32",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(P. aeruginosa), 8.5 × 10^7 CFU/mL (E. coli), 7.6 × 10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          478.1,
+          288.7,
+          488.5
+        ]
+      },
+      "strength": "verbatim",
+      "of": "E. sakazakii",
+      "n": 1,
+      "rendered": "7.6 × 10^7 CFU/mL"
+    },
+    {
+      "kind": "quote",
+      "quote": "(E. sakazakii)",
+      "source": {
+        "atom": "p3.L33",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(E. sakazakii), 6.4 ×10^7 CFU/mL (S. typhimurium), 7.4 ×10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          488.6,
+          288.6,
+          498.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "(E. sakazakii)"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:56:56+00:00",
+  "paper": "p2",
+  "probe": "B2",
+  "cat": "binding",
+  "expect": "E. sakazakii",
+  "trap": "a neighbouring strain on the same line (E. coli, S. typhimurium)"
+}

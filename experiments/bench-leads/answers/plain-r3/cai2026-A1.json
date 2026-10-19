@@ -1,0 +1,161 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%Gao%' ORDER BY page, id",
+      "rows": 13
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (6,7) AND kind IN ('line','lines') OR (page IN (6,7) AND id LIKE 'p6.L%' ) ORDER BY page, id LIMIT 200",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%FOXM1%' OR text ILIKE '%dose%' OR text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%nmol%' OR text ILIKE '%μg%' ORDER BY page, id",
+      "rows": 11
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE text ILIKE '%55%' OR text ILIKE '%Gao%' OR table_id='p6.T2' AND row_no BETWEEN 1 AND 6 ORDER BY page, row_no, col_no",
+      "rows": 36
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, quantity, value, unit FROM figure_facts WHERE statement ILIKE '%dose%' OR statement ILIKE '%Gao%' OR statement ILIKE '%FOXM1%' OR unit IN ('mg/kg','nM','μg','nmol') OR quantity ILIKE '%dose%'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2222,
+    "cache_read_input_tokens": 47008,
+    "cache_creation_input_tokens": 9064
+  },
+  "runs": [
+    {
+      "text": "The document does not give a siRNA dose for Gao et al. Its only passage on that study describes the formulation and model. Gao et al. "
+    },
+    {
+      "text": "used a novel CL4H6-ionizable lipid, cholesterol, and DMG-PEG2000 to construct LNPs ",
+      "support": [
+        {
+          "atom": "p6.L4",
+          "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol"
+        }
+      ]
+    },
+    {
+      "text": "encapsulating si-FOXM1 via the tert-butanol dilution method, and tested the LNP-siFOXM1 in a BT549 lung metastasis model. ",
+      "support": [
+        {
+          "atom": "p6.L6",
+          "quote": "encapsulating si-FOXM1 via the tert-butanol dilution method."
+        }
+      ]
+    },
+    {
+      "text": "No dose (for example in mg/kg) is stated for that study anywhere in the text or in the tables.",
+      "absent": [
+        "mg/kg"
+      ]
+    }
+  ],
+  "rendered": "The document does not give a siRNA dose for Gao et al. Its only passage on that study describes the formulation and model. Gao et al. used a novel CL4H6-ionizable lipid, cholesterol, and DMG-PEG2000 to construct LNPs[1] encapsulating si-FOXM1 via the tert-butanol dilution method, and tested the LNP-siFOXM1 in a BT549 lung metastasis model.[2] No dose (for example in mg/kg) is stated for that study anywhere in the text or in the tables.[3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol"
+    },
+    {
+      "kind": "support",
+      "quote": "encapsulating si-FOXM1 via the tert-butanol dilution method.",
+      "source": {
+        "atom": "p6.L6",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "encapsulating si-FOXM1 via the tert-butanol dilution method. In the",
+        "bbox": [
+          37.6,
+          668.8,
+          288.6,
+          676.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "encapsulating si-FOXM1 via the tert-butanol dilution method."
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:13:36+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose"
+}

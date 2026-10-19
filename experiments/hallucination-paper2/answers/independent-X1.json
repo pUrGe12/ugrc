@@ -1,0 +1,448 @@
+{
+  "question": "Is the CD limit of detection lower than UV-vis for every strain where both are reported, and by how much?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 5,
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[6]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[8]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[10]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[17]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[19]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "2",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3826,
+    "cache_read_input_tokens": 18130,
+    "cache_creation_input_tokens": 7643
+  },
+  "runs": [
+    {
+      "text": "Yes. CD and UV–vis LODs are reported side by side for only a pair of strains, and CD is lower for both. The gap is large for P. aeruginosa and very small for L. monocytogenes.\n\n"
+    },
+    {
+      "text": "- P. aeruginosa: CD LOD "
+    },
+    {
+      "quote": "OD600 =0.0034",
+      "atom": "p6.L59"
+    },
+    {
+      "text": ", UV–vis LOD "
+    },
+    {
+      "quote": "0.0066",
+      "atom": "p6.L60"
+    },
+    {
+      "text": ". CD is lower by "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE) AS d FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "d",
+      "row": 0,
+      "fmt": "fixed4"
+    },
+    {
+      "text": " OD600 units. That is about "
+    },
+    {
+      "sql": "SELECT 100*(CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE))/CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) AS p FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "p",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": "% lower, roughly "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) / CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE) AS r FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "r",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": "-fold more sensitive.\n"
+    },
+    {
+      "text": "- L. monocytogenes: CD LOD "
+    },
+    {
+      "quote": "0.0123",
+      "atom": "p6.L61"
+    },
+    {
+      "text": ", UV–vis LOD "
+    },
+    {
+      "quote": "0.0125",
+      "atom": "p6.L61"
+    },
+    {
+      "text": ". CD is lower by only "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(text,'LOD of ([0-9.]+)',1) AS DOUBLE) AS d FROM lines WHERE id='p6.L61'",
+      "column": "d",
+      "row": 0,
+      "fmt": "fixed4"
+    },
+    {
+      "text": " OD600 units, about "
+    },
+    {
+      "sql": "SELECT 100*(CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(text,'LOD of ([0-9.]+)',1) AS DOUBLE))/CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) AS p FROM lines WHERE id='p6.L61'",
+      "column": "p",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": "% lower. That is a marginal difference.\n\n"
+    },
+    {
+      "text": "The paper states that "
+    },
+    {
+      "quote": "CD consistently achieved lower limit of detection (LOD) than UV–vis",
+      "atom": "p6.L58"
+    },
+    {
+      "text": ". That holds for both strains, but the size of the advantage varies a lot between them. E. coli and E. sakazakii were also tested across a concentration range, but no LOD values are given for them in this document. Their LOD figures, if any, would be in the supplementary material, which isn't included here."
+    }
+  ],
+  "rendered": "Yes. CD and UV–vis LODs are reported side by side for only a pair of strains, and CD is lower for both. The gap is large for P. aeruginosa and very small for L. monocytogenes.\n\n- P. aeruginosa: CD LOD OD600 =0.0034[1], UV–vis LOD 0.0066[2]. CD is lower by 0.0032[3] OD600 units. That is about 48[4]% lower, roughly 1.9[5]-fold more sensitive.\n- L. monocytogenes: CD LOD 0.0123[6], UV–vis LOD 0.0125[7]. CD is lower by only 0.0002[8] OD600 units, about 1.6[9]% lower. That is a marginal difference.\n\nThe paper states that CD consistently achieved lower limit of detection (LOD) than UV–vis[10]. That holds for both strains, but the size of the advantage varies a lot between them. E. coli and E. sakazakii were also tested across a concentration range, but no LOD values are given for them in this document. Their LOD figures, if any, would be in the supplementary material, which isn't included here.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "OD600 =0.0034",
+      "source": {
+        "atom": "p6.L59",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "(LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+        "bbox": [
+          306.6,
+          264.2,
+          557.6,
+          274.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "OD600 =0.0034"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.0066",
+      "source": {
+        "atom": "p6.L60",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Fig. S17a) versus 0.0066 (UV–vis, Fig. S17b), while L. monocytogenes",
+        "bbox": [
+          306.6,
+          275.2,
+          557.7,
+          284.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "0.0066"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE) AS d FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "d",
+      "row": 0,
+      "fmt": "fixed4",
+      "value": 0.0032,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p6.L59",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "(LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+          "bbox": [
+            306.6,
+            264.2,
+            557.6,
+            274.7
+          ]
+        },
+        {
+          "atom": "p6.L60",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "Fig. S17a) versus 0.0066 (UV–vis, Fig. S17b), while L. monocytogenes",
+          "bbox": [
+            306.6,
+            275.2,
+            557.7,
+            284.7
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "0.0032"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT 100*(CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE))/CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) AS p FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "p",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 48.484848484848484,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p6.L59",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "(LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+          "bbox": [
+            306.6,
+            264.2,
+            557.6,
+            274.7
+          ]
+        },
+        {
+          "atom": "p6.L60",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "Fig. S17a) versus 0.0066 (UV–vis, Fig. S17b), while L. monocytogenes",
+          "bbox": [
+            306.6,
+            275.2,
+            557.7,
+            284.7
+          ]
+        }
+      ],
+      "n": 4,
+      "rendered": "48"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(b.text,'versus ([0-9.]+)',1) AS DOUBLE) / CAST(regexp_extract(a.text,'=([0-9.]+)',1) AS DOUBLE) AS r FROM lines a, lines b WHERE a.id='p6.L59' AND b.id='p6.L60'",
+      "column": "r",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 1.9411764705882353,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p6.L59",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "(LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+          "bbox": [
+            306.6,
+            264.2,
+            557.6,
+            274.7
+          ]
+        },
+        {
+          "atom": "p6.L60",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "Fig. S17a) versus 0.0066 (UV–vis, Fig. S17b), while L. monocytogenes",
+          "bbox": [
+            306.6,
+            275.2,
+            557.7,
+            284.7
+          ]
+        }
+      ],
+      "n": 5,
+      "rendered": "1.9"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.0123",
+      "source": {
+        "atom": "p6.L61",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "presented an LOD of 0.0123 (CD, Fig. S17c) versus 0.0125 (UV–vis,",
+        "bbox": [
+          306.6,
+          285.7,
+          557.6,
+          295.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "0.0123"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.0125",
+      "source": {
+        "atom": "p6.L61",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "presented an LOD of 0.0123 (CD, Fig. S17c) versus 0.0125 (UV–vis,",
+        "bbox": [
+          306.6,
+          285.7,
+          557.6,
+          295.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "0.0125"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(text,'LOD of ([0-9.]+)',1) AS DOUBLE) AS d FROM lines WHERE id='p6.L61'",
+      "column": "d",
+      "row": 0,
+      "fmt": "fixed4",
+      "value": 0.00020000000000000052,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p6.L61",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "presented an LOD of 0.0123 (CD, Fig. S17c) versus 0.0125 (UV–vis,",
+          "bbox": [
+            306.6,
+            285.7,
+            557.6,
+            295.2
+          ]
+        }
+      ],
+      "n": 8,
+      "rendered": "0.0002"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT 100*(CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) - CAST(regexp_extract(text,'LOD of ([0-9.]+)',1) AS DOUBLE))/CAST(regexp_extract(text,'versus ([0-9.]+)',1) AS DOUBLE) AS p FROM lines WHERE id='p6.L61'",
+      "column": "p",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 1.600000000000004,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p6.L61",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "presented an LOD of 0.0123 (CD, Fig. S17c) versus 0.0125 (UV–vis,",
+          "bbox": [
+            306.6,
+            285.7,
+            557.6,
+            295.2
+          ]
+        }
+      ],
+      "n": 9,
+      "rendered": "1.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "CD consistently achieved lower limit of detection (LOD) than UV–vis",
+      "source": {
+        "atom": "p6.L58",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "detection. Moreover, CD consistently achieved lower limit of detection (LOD) than UV–vis. P. aeruginosa had an LOD of OD600 =0.0034 (CD,",
+        "bbox": [
+          306.6,
+          255.8,
+          557.7,
+          274.7
+        ],
+        "atoms": [
+          "p6.L58",
+          "p6.L59"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "CD consistently achieved lower limit of detection (LOD) than UV–vis"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-06T12:35:15+00:00",
+  "arm": "independent",
+  "probe": "X1"
+}

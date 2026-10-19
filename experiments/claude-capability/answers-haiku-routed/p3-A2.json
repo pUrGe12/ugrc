@@ -1,0 +1,358 @@
+{
+  "question": "How does S. marcescens compare with Pseudomonas putida as a non-model chassis?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%putida%' OR text ILIKE '%chassis%' ORDER BY page, line_no",
+      "rows": 40
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, kind, text FROM atoms WHERE text ILIKE '%putida%' OR text ILIKE '%non-model%' OR text ILIKE '%nonmodel%' OR text ILIKE '%Pseudomonas%'",
+      "rows": 15
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT 'lines' src, count(*) n FROM lines WHERE text ILIKE '%putida%' UNION ALL SELECT 'cells', count(*) FROM cells WHERE text ILIKE '%putida%' UNION ALL SELECT 'figure_facts', count(*) FROM figure_facts WHERE statement ILIKE '%putida%' OR printed_text ILIKE '%putida%' UNION ALL SELECT 'figure_ocr', count(*) FROM figure_ocr WHERE text ILIKE '%putida%' UNION ALL SELECT 'captions', count(*) FROM figures WHERE caption ILIKE '%putida%' UNION ALL SELECT 'pseudomonas_any', count(*) FROM atoms WHERE text ILIKE '%pseudomonas%' OR text ILIKE '%P. put%'",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (2,13) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT 'lines' src, count(*) n FROM lines WHERE text ILIKE '%putida%' UNION ALL SELECT 'cells', count(*) FROM cells WHERE text ILIKE '%putida%' UNION ALL SELECT 'figure_facts', count(*) FROM figure_facts WHERE statement ILIKE '%putida%' OR printed_text ILIKE '%putida%' UNION ALL SELECT 'figure_ocr', count(*) FROM figure_ocr WHERE text ILIKE '%putida%' UNION ALL SELECT 'captions', count(*) FROM figures WHERE caption ILIKE '%putida%' UNION ALL SELECT 'pseudomonas_any', count(*) FROM atoms WHERE text ILIKE '%pseudomonas%'",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=13 AND line_no BETWEEN 20 AND 110 ORDER BY line_no",
+      "rows": 91
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 'cells' src, count(*) n FROM cells WHERE text ILIKE '%putida%' UNION ALL SELECT 'figure_facts', count(*) FROM figure_facts WHERE statement ILIKE '%putida%' UNION ALL SELECT 'figure_ocr', count(*) FROM figure_ocr WHERE text ILIKE '%putida%' UNION ALL SELECT 'captions', count(*) FROM figures WHERE caption ILIKE '%putida%' UNION ALL SELECT 'atoms', count(*) FROM atoms WHERE text ILIKE '%putida%' OR text ILIKE '%pseudomonas%'",
+      "rows": 5
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 5806,
+    "cache_read_input_tokens": 78461,
+    "cache_creation_input_tokens": 20868
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The document does not compare S. marcescens with Pseudomonas putida. Pseudomonas putida is never mentioned, so no comparison between the species can be drawn from it. ",
+      "absent": [
+        "putida",
+        "Pseudomonas"
+      ]
+    },
+    {
+      "text": "What the document does say is that S. marcescens is positioned against the conventional hosts rather than against other non-model bacteria. It is described as not competing directly with the ",
+      "support": [
+        {
+          "atom": "p13.L26",
+          "quote": "optimized traditional chassis like E. coli and S. cerevisiae"
+        }
+      ]
+    },
+    {
+      "text": ". Among non-model microorganisms, it is singled out as a species of interest, and its stress tolerance is presented as an advantage for hydrophobic products: ",
+      "support": [
+        {
+          "atom": "p2.L8",
+          "quote": "Among various non-model microorganisms, Serratia marcescens has"
+        },
+        {
+          "atom": "p13.L52",
+          "quote": "cause membrane toxicity in E. coli and S. cerevisiae, whereas"
+        }
+      ]
+    },
+    {
+      "text": " The review also notes its exceptional organic-solvent resistance in some strains, which favours biphasic fermentation. ",
+      "support": [
+        {
+          "atom": "p2.L12",
+          "quote": "exceptional resistance to organic solvents in some strains"
+        }
+      ]
+    },
+    {
+      "text": "Its drawbacks as a chassis are also stated: strain variability and mobile genetic elements challenge standardization and genetic stability, and its industrial use is constrained by biosafety, scalability and fermentation compatibility, and product economics. ",
+      "support": [
+        {
+          "atom": "p2.L116",
+          "quote": "extensive strain variability and mobile genetic elements challenge"
+        },
+        {
+          "atom": "p13.L94",
+          "quote": "application is collectively constrained by biosafety concerns, scalability"
+        }
+      ]
+    },
+    {
+      "text": "The authors place it in the early stages of development compared with mature industrial chassis. ",
+      "support": [
+        {
+          "atom": "p13.L93",
+          "quote": "S. marcescens remains in the early stages of development"
+        }
+      ]
+    },
+    {
+      "text": "A direct assessment against P. putida would therefore need a source beyond this document."
+    }
+  ],
+  "rendered": "The document does not compare S. marcescens with Pseudomonas putida. Pseudomonas putida is never mentioned, so no comparison between the species can be drawn from it.[1] What the document does say is that S. marcescens is positioned against the conventional hosts rather than against other non-model bacteria. It is described as not competing directly with the[2] . Among non-model microorganisms, it is singled out as a species of interest, and its stress tolerance is presented as an advantage for hydrophobic products:[3][4]  The review also notes its exceptional organic-solvent resistance in some strains, which favours biphasic fermentation.[5] Its drawbacks as a chassis are also stated: strain variability and mobile genetic elements challenge standardization and genetic stability, and its industrial use is constrained by biosafety, scalability and fermentation compatibility, and product economics.[6][7] The authors place it in the early stages of development compared with mature industrial chassis.[8] A direct assessment against P. putida would therefore need a source beyond this document.",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "putida",
+        "Pseudomonas"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 2446,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    },
+    {
+      "kind": "support",
+      "quote": "optimized traditional chassis like E. coli and S. cerevisiae",
+      "source": {
+        "atom": "p13.L26",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens",
+        "bbox": [
+          37.6,
+          339.4,
+          288.7,
+          347.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "optimized traditional chassis like E. coli and S. cerevisiae"
+    },
+    {
+      "kind": "support",
+      "quote": "Among various non-model microorganisms, Serratia marcescens has",
+      "source": {
+        "atom": "p2.L8",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Among various non-model microorganisms, Serratia marcescens has",
+        "bbox": [
+          49.5,
+          129.6,
+          288.7,
+          137.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Among various non-model microorganisms, Serratia marcescens has"
+    },
+    {
+      "kind": "support",
+      "quote": "cause membrane toxicity in E. coli and S. cerevisiae, whereas",
+      "source": {
+        "atom": "p13.L52",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "cause membrane toxicity in E. coli and S. cerevisiae, whereas",
+        "bbox": [
+          37.6,
+          611.4,
+          288.7,
+          619.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "cause membrane toxicity in E. coli and S. cerevisiae, whereas"
+    },
+    {
+      "kind": "support",
+      "quote": "exceptional resistance to organic solvents in some strains",
+      "source": {
+        "atom": "p2.L12",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "including exceptional resistance to organic solvents in some strains. This",
+        "bbox": [
+          37.6,
+          171.4,
+          288.6,
+          179.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "exceptional resistance to organic solvents in some strains"
+    },
+    {
+      "kind": "support",
+      "quote": "extensive strain variability and mobile genetic elements challenge",
+      "source": {
+        "atom": "p2.L116",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "yet extensive strain variability and mobile genetic elements challenge",
+        "bbox": [
+          306.6,
+          621.6,
+          557.7,
+          629.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "extensive strain variability and mobile genetic elements challenge"
+    },
+    {
+      "kind": "support",
+      "quote": "application is collectively constrained by biosafety concerns, scalability",
+      "source": {
+        "atom": "p13.L94",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "application is collectively constrained by biosafety concerns, scalability",
+        "bbox": [
+          306.6,
+          380.6,
+          557.7,
+          388.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "application is collectively constrained by biosafety concerns, scalability"
+    },
+    {
+      "kind": "support",
+      "quote": "S. marcescens remains in the early stages of development",
+      "source": {
+        "atom": "p13.L93",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "S. marcescens remains in the early stages of development; its industrial",
+        "bbox": [
+          306.6,
+          370.2,
+          557.6,
+          378.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "S. marcescens remains in the early stages of development"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:59:06+00:00",
+  "paper": "p3",
+  "probe": "A2",
+  "cat": "absence",
+  "expect": "not reported. P. putida is never mentioned. The comparators used are E. coli, S. cerevisiae and Halomonas.",
+  "trap": "inventing a comparison"
+}

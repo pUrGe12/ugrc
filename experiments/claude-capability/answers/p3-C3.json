@@ -1,0 +1,365 @@
+{
+  "question": "What homology arm length and maximum deletion size does the lambda-Red recombination platform support?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%homology arm%' OR lower(text) LIKE '%λ-red%' OR lower(text) LIKE '%lambda-red%' OR lower(text) LIKE '%red recombination%' LIMIT 60",
+      "rows": 11
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%deletion%' AND (lower(text) LIKE '%kb%' OR lower(text) LIKE '%bp%') LIMIT 60",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=7 AND line_no BETWEEN 60 AND 80",
+      "rows": 21
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "quote:absent",
+        "quote:absent",
+        "quote:absent",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "quote:absent",
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[0].support[0]",
+        "why": "p7.L65 does not contain 'Chen et al. developed a rapid λ-Red recombination platform requiring\\nno prior host engineering [13].'; its text is 'Chen et al. developed a rapid λ-Red recombination platform requiring'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[1]",
+        "why": "p7.L66 does not contain 'This system uses short ~39 bp homol-\\nogous arms for efficient gene replacement and supports large-fragment\\ndeletions up to ~21 kb.'; its text is 'no prior host engineering [13]. This system uses short ~39 bp homol-'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[2].support[0]",
+        "why": "p7.L68 does not contain 'By integrating an AraC/PBAD controlled kill\\ncounter-selection system with ssDNA-mediated recombineering, it ach-\\nieved the first scarless genome modifications in S. marcescens.'; its text is 'deletions up to ~21 kb. By integrating an AraC/PBAD controlled kill'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[1]",
+        "why": "p7.L66 does not contain 'This system uses short ~39 bp homol-\\nogous arms for efficient gene replacement and supports large-fragment\\ndeletions up to ~21 kb.'; its text is 'no prior host engineering [13]. This system uses short ~39 bp homol-'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[2].support[1]",
+        "why": "p7.L69 does not contain 'counter-selection system with ssDNA-mediated recombineering, it ach-\\nieved the first scarless genome modifications in S. marcescens.'; its text is 'counter-selection system with ssDNA-mediated recombineering, it ach-'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2105,
+    "cache_read_input_tokens": 22591,
+    "cache_creation_input_tokens": 8293
+  },
+  "runs": [
+    {
+      "text": "The rapid λ-Red recombination platform developed by Chen et al. for S. marcescens requires no prior host engineering, and uses short homologous arms:",
+      "support": [
+        {
+          "atom": "p7.L65",
+          "quote": "Chen et al. developed a rapid λ-Red recombination platform requiring"
+        },
+        {
+          "atom": "p7.L66",
+          "quote": "no prior host engineering [13]."
+        }
+      ]
+    },
+    {
+      "quote": "This system uses short ~39 bp homologous arms for efficient gene replacement and supports large-fragment deletions up to ~21 kb.",
+      "atom": "p7.L66"
+    },
+    {
+      "text": "Combined with an AraC/PBAD-controlled kill counter-selection system and ssDNA-mediated recombineering, it achieved the first scarless genome modifications in this species.",
+      "support": [
+        {
+          "atom": "p7.L68",
+          "quote": "By integrating an AraC/PBAD controlled kill"
+        },
+        {
+          "atom": "p7.L69",
+          "quote": "counter-selection system with ssDNA-mediated recombineering, it ach-"
+        },
+        {
+          "atom": "p7.L70",
+          "quote": "ieved the first scarless genome modifications in S. marcescens."
+        }
+      ]
+    },
+    {
+      "text": "The platform also appears as a panel of the genetic-engineering toolbox schematic",
+      "support": [
+        {
+          "atom": "p8.F6.k6",
+          "quote": "Efficient homologous recombination for precise genome engineering"
+        }
+      ]
+    },
+    {
+      "figure": "p8.F6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The rapid λ-Red recombination platform developed by Chen et al. for S. marcescens requires no prior host engineering, and uses short homologous arms:[1][2]This system uses short ~39 bp homologous arms for efficient gene replacement and supports large-fragment deletions up to ~21 kb.[3]Combined with an AraC/PBAD-controlled kill counter-selection system and ssDNA-mediated recombineering, it achieved the first scarless genome modifications in this species.[4][5][6]The platform also appears as a panel of the genetic-engineering toolbox schematic[7]Fig. 6[8].",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Chen et al. developed a rapid λ-Red recombination platform requiring",
+      "source": {
+        "atom": "p7.L65",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "Chen et al. developed a rapid λ-Red recombination platform requiring",
+        "bbox": [
+          306.6,
+          557.6,
+          557.7,
+          567.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Chen et al. developed a rapid λ-Red recombination platform requiring"
+    },
+    {
+      "kind": "support",
+      "quote": "no prior host engineering [13].",
+      "source": {
+        "atom": "p7.L66",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "no prior host engineering [13]. This system uses short ~39 bp homol-",
+        "bbox": [
+          306.6,
+          569.6,
+          557.7,
+          577.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "no prior host engineering [13]."
+    },
+    {
+      "kind": "quote",
+      "quote": "This system uses short ~39 bp homologous arms for efficient gene replacement and supports large-fragment deletions up to ~21 kb.",
+      "source": {
+        "atom": "p7.L66",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "no prior host engineering [13]. This system uses short ~39 bp homol- ogous arms for efficient gene replacement and supports large-fragment deletions up to ~21 kb. By integrating an AraC/PBAD controlled kill",
+        "bbox": [
+          306.6,
+          569.6,
+          557.7,
+          598.9
+        ],
+        "atoms": [
+          "p7.L66",
+          "p7.L67",
+          "p7.L68"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "This system uses short ~39 bp homologous arms for efficient gene replacement and supports large-fragment deletions up to ~21 kb."
+    },
+    {
+      "kind": "support",
+      "quote": "By integrating an AraC/PBAD controlled kill",
+      "source": {
+        "atom": "p7.L68",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "deletions up to ~21 kb. By integrating an AraC/PBAD controlled kill",
+        "bbox": [
+          306.6,
+          590.5,
+          557.6,
+          598.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "By integrating an AraC/PBAD controlled kill"
+    },
+    {
+      "kind": "support",
+      "quote": "counter-selection system with ssDNA-mediated recombineering, it ach-",
+      "source": {
+        "atom": "p7.L69",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "counter-selection system with ssDNA-mediated recombineering, it ach-",
+        "bbox": [
+          306.6,
+          601.0,
+          557.7,
+          608.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "counter-selection system with ssDNA-mediated recombineering, it ach-"
+    },
+    {
+      "kind": "support",
+      "quote": "ieved the first scarless genome modifications in S. marcescens.",
+      "source": {
+        "atom": "p7.L70",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "ieved the first scarless genome modifications in S. marcescens.",
+        "bbox": [
+          306.6,
+          611.4,
+          525.0,
+          619.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "ieved the first scarless genome modifications in S. marcescens."
+    },
+    {
+      "kind": "support",
+      "quote": "Efficient homologous recombination for precise genome engineering",
+      "source": {
+        "atom": "p8.F6.k6",
+        "kind": "figure_fact",
+        "page": 8,
+        "strength": "model-read, ocr-confirmed",
+        "text": "The caption line beneath the λ-Red recombineering schematic reads \"Efficient homologous recombination for precise genome engineering\".",
+        "bbox": [
+          41.6,
+          533.0,
+          552.7,
+          707.1
+        ],
+        "figure": "Fig. 6",
+        "figure_png": "figures/p8.F6.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "Efficient homologous recombination for precise genome engineering"
+        ],
+        "ocr_confirmed": true,
+        "check_note": null
+      },
+      "strength": "model-read, ocr-confirmed",
+      "n": 7,
+      "rendered": "Efficient homologous recombination for precise genome engineering"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p8.F6",
+        "kind": "figure",
+        "label": "Fig. 6",
+        "page": 8,
+        "caption": "Fig. 6. Overview of the major genetic engineering and synthetic biology tools available for S. marcescens, including λ-Red recombination, CRISPR-Cas9 genome editing, regulatory elements, genomic integration sites, and current technical challenges affecting genetic manipulation. (For interpretation of the references to colour in this figure legend, the reader is referred to the web version of this article.)",
+        "png": "figures/p8.F6.png",
+        "png_pixels_sha256": "d2bbba7f81bf0ba0b30a72e497fd85d8786de952a1db948fb61d8094b32a10f9",
+        "bbox": [
+          41.6,
+          533.0,
+          552.7,
+          707.1
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Fig. 6"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:42:16+00:00",
+  "paper": "p3",
+  "probe": "C3",
+  "cat": "control",
+  "expect": "~39 bp homologous arms; large-fragment deletions up to ~21 kb (p7.L66-68)",
+  "trap": "inventing a different size"
+}

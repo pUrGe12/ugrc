@@ -1,0 +1,214 @@
+{
+  "question": "Which strain had the highest viable count and which the lowest?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%viab%' OR lower(text) LIKE '%cfu%' OR lower(text) LIKE '%viable count%' OR lower(text) LIKE '%colony%' ORDER BY page, id",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit, condition FROM figure_facts WHERE lower(statement) LIKE '%count%' OR lower(statement) LIKE '%highest%' OR lower(statement) LIKE '%lowest%' OR lower(statement) LIKE '%viab%' OR lower(statement) LIKE '%concentration%' ORDER BY figure_id, fact_no",
+      "rows": 25
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=3 AND line_no BETWEEN 20 AND 40 ORDER BY line_no",
+      "rows": 21
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['600', '0.1,', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'600' is written exactly so in the document (e.g. p3.L29): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"600\", \"atom\": \"p3.L29\"} — never shorten it",
+          "'0.1' is written exactly so in the document (e.g. p3.L29): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1\", \"atom\": \"p3.L29\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1912,
+    "cache_read_input_tokens": 28068,
+    "cache_creation_input_tokens": 9665
+  },
+  "runs": [
+    {
+      "text": "The highest viable count was for P. aeruginosa, at "
+    },
+    {
+      "quote": "9.2 × 10^7 CFU/mL",
+      "atom": "p3.L31"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "(P. aeruginosa)",
+      "atom": "p3.L32"
+    },
+    {
+      "text": ". The lowest was for S. typhimurium, at "
+    },
+    {
+      "quote": "6.4 ×10^7 CFU/mL",
+      "atom": "p3.L33"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "(S. typhimurium)",
+      "atom": "p3.L33"
+    },
+    {
+      "text": ". These plate-count values were measured after each culture was adjusted to the optical density stated in the methods, and the other strains fell between these extremes."
+    }
+  ],
+  "rendered": "The highest viable count was for P. aeruginosa, at 9.2 × 10^7 CFU/mL[1] (P. aeruginosa)[2]. The lowest was for S. typhimurium, at 6.4 ×10^7 CFU/mL[3] (S. typhimurium)[4]. These plate-count values were measured after each culture was adjusted to the optical density stated in the methods, and the other strains fell between these extremes.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "9.2 × 10^7 CFU/mL",
+      "source": {
+        "atom": "p3.L31",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "count method, with values recorded as: 9.2 × 10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          467.6,
+          288.6,
+          478.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "9.2 × 10^7 CFU/mL"
+    },
+    {
+      "kind": "quote",
+      "quote": "(P. aeruginosa)",
+      "source": {
+        "atom": "p3.L32",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(P. aeruginosa), 8.5 × 10^7 CFU/mL (E. coli), 7.6 × 10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          478.1,
+          288.7,
+          488.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "(P. aeruginosa)"
+    },
+    {
+      "kind": "quote",
+      "quote": "6.4 ×10^7 CFU/mL",
+      "source": {
+        "atom": "p3.L33",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(E. sakazakii), 6.4 ×10^7 CFU/mL (S. typhimurium), 7.4 ×10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          488.6,
+          288.6,
+          498.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "6.4 ×10^7 CFU/mL"
+    },
+    {
+      "kind": "quote",
+      "quote": "(S. typhimurium)",
+      "source": {
+        "atom": "p3.L33",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(E. sakazakii), 6.4 ×10^7 CFU/mL (S. typhimurium), 7.4 ×10^7 CFU/mL",
+        "bbox": [
+          37.6,
+          488.6,
+          288.6,
+          498.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "(S. typhimurium)"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T08:53:00+00:00",
+  "paper": "p2",
+  "probe": "B3",
+  "cat": "binding",
+  "expect": "highest P. aeruginosa 9.2 × 10^7; lowest S. typhimurium 6.4 × 10^7",
+  "trap": "misreading the strain-after-value layout"
+}

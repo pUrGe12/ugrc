@@ -1,0 +1,156 @@
+{
+  "question": "What share of lead-acid batteries is recycled in the US, and what share of a lead-acid cell's mass is lead or lead oxide?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'recycl|lead oxide|lead-acid|% of|percent') ORDER BY page, id LIMIT 80",
+      "rows": 80
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p3.L12','p3.L13','p3.L14','p3.L15','p3.L22','p3.L23','p3.L24') OR (page=3 AND line_no BETWEEN 10 AND 26) ORDER BY id",
+      "rows": 17
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['99%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'99%' is written exactly so in the document (e.g. p3.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"99%\", \"atom\": \"p3.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['70%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'70%' is written exactly so in the document (e.g. p3.L22): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70%\", \"atom\": \"p3.L22\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 981,
+    "cache_read_input_tokens": 19271,
+    "cache_creation_input_tokens": 4871
+  },
+  "runs": [
+    {
+      "text": "The document says that "
+    },
+    {
+      "quote": "About 99%",
+      "atom": "p3.L12"
+    },
+    {
+      "text": " of lead-acid batteries are estimated to be recycled in the United States. "
+    },
+    {
+      "text": "It also says that "
+    },
+    {
+      "quote": "almost 70%",
+      "atom": "p3.L22"
+    },
+    {
+      "text": " of the mass of a lead-acid cell is lead or lead oxide."
+    }
+  ],
+  "rendered": "The document says that About 99%[1] of lead-acid batteries are estimated to be recycled in the United States. It also says that almost 70%[2] of the mass of a lead-acid cell is lead or lead oxide.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "About 99%",
+      "source": {
+        "atom": "p3.L12",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "(SLI) batteries and uninterruptible power supplies. About 99%",
+        "bbox": [
+          36.9,
+          217.9,
+          294.8,
+          226.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "About 99%"
+    },
+    {
+      "kind": "quote",
+      "quote": "almost 70%",
+      "source": {
+        "atom": "p3.L22",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "nents, making them easy to recycle. Additionally, almost 70%",
+        "bbox": [
+          36.9,
+          337.5,
+          294.8,
+          346.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "almost 70%"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-18T07:08:36+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "mattod-2020",
+  "probe": "C2",
+  "cat": "C",
+  "expect": "about 99%; almost 70% (p3.L12-23)",
+  "trap": "swapping"
+}

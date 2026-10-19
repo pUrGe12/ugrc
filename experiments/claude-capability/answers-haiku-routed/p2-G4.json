@@ -1,0 +1,238 @@
+{
+  "question": "In Fig. 2a, which bacterium produces the largest |ΔCD| with BA@L-HGNRs?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p5.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, fact_no, statement, panel, value, unit, ocr_confirmed FROM figure_facts WHERE figure_id='p5.F2' AND (panel ILIKE '%a%' OR statement ILIKE '%CD difference%') ORDER BY fact_no",
+      "rows": 17
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, strength, text FROM atoms WHERE id IN ('p5.F2.k4','p5.F2.k0') OR (page=5 AND text ILIKE '%aeruginosa%') LIMIT 20",
+      "rows": 20
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 8,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "P.aeruginosa",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2a,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2a' is written exactly so in the document (e.g. p5.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2a\", \"atom\": \"p5.L23\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['134'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'134' is written exactly so in the document (e.g. p5.F2.k6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"134\", \"atom\": \"p5.F2.k6\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [
+    {
+      "quote": "about 192 mdeg",
+      "atom": "p5.F2.k4",
+      "of": "P.aeruginosa",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 3
+    }
+  ],
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1684,
+    "cache_read_input_tokens": 29712,
+    "cache_creation_input_tokens": 14710
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "In the first panel of the figure, the bacterium with the largest |ΔCD| for BA@L-HGNRs is "
+    },
+    {
+      "quote": "P.aeruginosa",
+      "atom": "p5.F2.o22"
+    },
+    {
+      "text": ", the first bar in the panel. Its L-probe bar reads "
+    },
+    {
+      "quote": "about 192 mdeg",
+      "atom": "p5.F2.k4",
+      "of": "P.aeruginosa"
+    },
+    {
+      "text": " with the L probe. This is far above the next bacterium, E.coli, which is near "
+    },
+    {
+      "quote": "134",
+      "atom": "p5.F2.k6"
+    },
+    {
+      "text": " mdeg with the L probe, so P. aeruginosa gives the largest |ΔCD| with BA@L-HGNRs. The values are read from the bars by a vision model, so they are approximate. "
+    },
+    {
+      "figure": "p5.F2"
+    }
+  ],
+  "rendered": "In the first panel of the figure, the bacterium with the largest |ΔCD| for BA@L-HGNRs is P.aeruginosa[1], the first bar in the panel. Its L-probe bar reads about 192 mdeg[2] with the L probe. This is far above the next bacterium, E.coli, which is near 134[3] mdeg with the L probe, so P. aeruginosa gives the largest |ΔCD| with BA@L-HGNRs. The values are read from the bars by a vision model, so they are approximate. Fig. 2[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "P.aeruginosa",
+      "source": {
+        "atom": "p5.F2.o22",
+        "kind": "ocr",
+        "page": 5,
+        "strength": "ocr",
+        "text": "P.aeruginosa",
+        "bbox": [
+          102.5,
+          425.6,
+          129.9,
+          430.2
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 1,
+      "rendered": "P.aeruginosa"
+    },
+    {
+      "kind": "quote",
+      "quote": "about 192 mdeg",
+      "source": {
+        "atom": "p5.F2.k4",
+        "kind": "figure_fact",
+        "page": 5,
+        "strength": "model-read",
+        "text": "In panel a, P.aeruginosa gives |ΔCD| of about 192 mdeg with the L probe.",
+        "bbox": [
+          62.7,
+          254.0,
+          532.4,
+          697.5
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "visual",
+        "printed_text": [],
+        "ocr_confirmed": false,
+        "check_note": "visual reading: nothing printed to check against"
+      },
+      "strength": "model-read",
+      "of": "P.aeruginosa",
+      "n": 2,
+      "rendered": "about 192 mdeg"
+    },
+    {
+      "kind": "quote",
+      "quote": "134",
+      "source": {
+        "atom": "p5.F2.k6",
+        "kind": "figure_fact",
+        "page": 5,
+        "strength": "model-read",
+        "text": "In panel a, E.coli gives |ΔCD| of about 134 mdeg with the L probe.",
+        "bbox": [
+          62.7,
+          254.0,
+          532.4,
+          697.5
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "visual",
+        "printed_text": [],
+        "ocr_confirmed": false,
+        "check_note": "visual reading: nothing printed to check against"
+      },
+      "strength": "model-read",
+      "n": 3,
+      "rendered": "134"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p5.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 5,
+        "caption": "Fig. 2. Construction and performance evaluation of intrinsic chiral single-probe sensor array. (a) CD difference induce by seven kinds of bacteria with BA@L-HGNRs and BA@D-HGNRs; (b) Optical response of BA@L-HGNRs toward seven kinds of bacteria; (c) CD spectra of BA@L-HGNRs incubated with seven kinds of bacteria; (d) CD difference induced by seven kinds of bacteria; (e) LDA and (f) HCA for the differentiation of seven bacteria with BA@L-HGNRs; (g) LDA for the differentiation of seven bacteria using BA@L-HGNRs based on conventional colorimetric outputs; (h) LDA for the differentiation of seven bacteria using L-HGNRs.",
+        "png": "figures/p5.F2.png",
+        "png_pixels_sha256": "8b4c4bf81908835db25b8b483c5b332dee1e40f9722cff57266e6f2aae7d7816",
+        "bbox": [
+          62.7,
+          254.0,
+          532.4,
+          697.5
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 2"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:44+00:00",
+  "paper": "p2",
+  "probe": "G4",
+  "cat": "figure",
+  "expect": "graded against the figure itself; must be labelled as a model reading",
+  "trap": "unlabelled or wrong reading"
+}

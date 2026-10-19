@@ -1,0 +1,334 @@
+{
+  "question": "Which delivery system in Table 2 has a particle size of 139.83 nm, and how is its release triggered?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c.table_id, c.row_no, c.col_no, c.text FROM cells c WHERE c.table_id = 'p6.T2' AND (c.text LIKE '%139%' OR c.table_id IN (SELECT 'p6.T2')) AND c.row_no IN (SELECT row_no FROM cells WHERE table_id='p6.T2' AND text LIKE '%139.83%') ORDER BY row_no, col_no",
+      "rows": 7
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text LIKE '%139.83%' OR text LIKE '%139%'",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 9 AND 13 ORDER BY row_no, col_no",
+      "rows": 24
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%ultrason%' OR text ILIKE '%US-EV%' OR text ILIKE '%HMME%'",
+      "rows": 4
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p7.L94','p7.L95','p7.L96','p7.L97','p7.L98','p7.L99','p7.L100') ORDER BY id",
+      "rows": 7
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p7.L108:0",
+      "p13.L82:56",
+      "p13.L121:18",
+      "p5.L83:48",
+      "p5.L39:15",
+      "p12.L126:7",
+      "p21.L7:49",
+      "p5.L53:56",
+      "p6.L25:0",
+      "p19.L103:62",
+      "p11.L17:44",
+      "p15.L22:46"
+    ],
+    "measures": [
+      "p7.L108:0#101",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p5.L83:48#71"
+    ],
+    "matched": 234
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2017,
+    "cache_read_input_tokens": 37161,
+    "cache_creation_input_tokens": 9118
+  },
+  "runs": [
+    {
+      "text": "The delivery system with a particle size of "
+    },
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6"
+    },
+    {
+      "text": " in "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " is the US-EV system: "
+    },
+    {
+      "quote": "US-EV",
+      "atom": "p6.T2.r11c2"
+    },
+    {
+      "text": ", loaded with "
+    },
+    {
+      "quote": "HMME siYTHDF1",
+      "atom": "p6.T2.r11c4"
+    },
+    {
+      "text": " and targeting "
+    },
+    {
+      "quote": "YTHDF1",
+      "atom": "p6.T2.r11c5"
+    },
+    {
+      "text": ". Its release mechanism is listed as "
+    },
+    {
+      "quote": "Ultrasonic Triggering",
+      "atom": "p6.T2.r11c7"
+    },
+    {
+      "text": ", so release is triggered by ultrasound. This matches the prose describing ultrasound-engineered tumor-derived exosomes (US-EV) co-delivering HMME and YTHDF1 siRNA: "
+    },
+    {
+      "quote": "ultrasound to stimulate tumor cells",
+      "atom": "p7.L94"
+    },
+    {
+      "text": ".\n"
+    }
+  ],
+  "rendered": "The delivery system with a particle size of 139.83 nm[1] in Table 2[2] is the US-EV system: US-EV[3], loaded with HMME siYTHDF1[4] and targeting YTHDF1[5]. Its release mechanism is listed as Ultrasonic Triggering[6], so release is triggered by ultrasound. This matches the prose describing ultrasound-engineered tumor-derived exosomes (US-EV) co-delivering HMME and YTHDF1 siRNA: ultrasound to stimulate tumor cells[7].\n",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "139.83 nm",
+      "source": {
+        "atom": "p6.T2.r11c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "139.83 nm",
+        "bbox": [
+          357.9,
+          170.5,
+          388.5,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "139.83 nm"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "US-EV",
+      "source": {
+        "atom": "p6.T2.r11c2",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "US-EV",
+        "bbox": [
+          110.8,
+          170.5,
+          128.7,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 2,
+        "column_header": "Materials"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "US-EV"
+    },
+    {
+      "kind": "quote",
+      "quote": "HMME siYTHDF1",
+      "source": {
+        "atom": "p6.T2.r11c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "HMME siYTHDF1",
+        "bbox": [
+          232.8,
+          170.5,
+          282.9,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 4,
+        "column_header": "Drug delivery"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "HMME siYTHDF1"
+    },
+    {
+      "kind": "quote",
+      "quote": "YTHDF1",
+      "source": {
+        "atom": "p6.T2.r11c5",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "YTHDF1",
+        "bbox": [
+          310.2,
+          170.5,
+          334.2,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 5,
+        "column_header": "Target"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "YTHDF1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Ultrasonic Triggering",
+      "source": {
+        "atom": "p6.T2.r11c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Ultrasonic Triggering",
+        "bbox": [
+          412.9,
+          170.5,
+          473.2,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 7,
+        "column_header": "Release mechanism"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Ultrasonic Triggering"
+    },
+    {
+      "kind": "quote",
+      "quote": "ultrasound to stimulate tumor cells",
+      "source": {
+        "atom": "p7.L94",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "ultrasound to stimulate tumor cells, producing ultrasound-engineered",
+        "bbox": [
+          306.6,
+          359.7,
+          557.6,
+          367.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "ultrasound to stimulate tumor cells"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:07:13+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "US-EV (HMME siYTHDF1, target YTHDF1): Ultrasonic Triggering, with Proton Sponge Effect (p6.T2 r11-12)",
+  "trap": "a neighbouring EV row"
+}

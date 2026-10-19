@@ -1,0 +1,234 @@
+{
+  "question": "Above what temperature does the DSC show PVDF dissolving in Cyrene, at what temperature were the cathode scraps stirred in Cyrene, and how far above the dissolution temperature is that?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(text, '(?i)(dissol|stir|°C|℃|DSC|endotherm|Cyrene)') ORDER BY page, top LIMIT 150",
+      "rows": 86
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, printed_text, value, unit FROM figure_facts WHERE figure_id IN ('p2.F2','p3.F3') ORDER BY figure_id, fact_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE id IN ('p3.L13','p3.L14','p3.L15','p4.L23','p4.L24','p4.L25','p4.L26') ORDER BY id",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L14'), 'stirring at (\\d+) °C', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p4.L24'), '~(\\d+) °C', 1) AS INTEGER)) AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "PVDF binder dissolution in Cyrene (DSC)",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "cathode scraps stirred in Cyrene",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "~90 °C",
+      "atom": "p4.L24",
+      "of": "PVDF binder dissolution in Cyrene (DSC)",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "100 °C",
+      "atom": "p3.L14",
+      "of": "cathode scraps stirred in Cyrene",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2020,
+    "cache_read_input_tokens": 34124,
+    "cache_creation_input_tokens": 6061
+  },
+  "runs": [
+    {
+      "text": "The DSC curves show the PVDF binder dissolving in Cyrene above about "
+    },
+    {
+      "quote": "~90 °C",
+      "atom": "p4.L24",
+      "of": "PVDF binder dissolution in Cyrene (DSC)"
+    },
+    {
+      "text": ". The cathode scraps were stirred in Cyrene at "
+    },
+    {
+      "quote": "100 °C",
+      "atom": "p3.L14",
+      "of": "cathode scraps stirred in Cyrene"
+    },
+    {
+      "text": ". That stirring temperature is "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L14'), 'stirring at (\\d+) °C', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p4.L24'), '~(\\d+) °C', 1) AS INTEGER)) AS diff FROM lines WHERE id='p3.L14'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " °C above the DSC dissolution temperature."
+    }
+  ],
+  "rendered": "The DSC curves show the PVDF binder dissolving in Cyrene above about ~90 °C[1]. The cathode scraps were stirred in Cyrene at 100 °C[2]. That stirring temperature is 10[3] °C above the DSC dissolution temperature.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "~90 °C",
+      "source": {
+        "atom": "p4.L24",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "further reveal that the PVDF binder dissolved in Cyrene at ~90 °C, indi-",
+        "bbox": [
+          33.7,
+          716.4,
+          284.8,
+          724.4
+        ]
+      },
+      "strength": "verbatim",
+      "of": "PVDF binder dissolution in Cyrene (DSC)",
+      "n": 1,
+      "rendered": "~90 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "100 °C",
+      "source": {
+        "atom": "p3.L14",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "immersed in 100 mL of Cyrene solvent. After stirring at 100 °C for",
+        "bbox": [
+          42.5,
+          651.1,
+          293.5,
+          659.0
+        ]
+      },
+      "strength": "verbatim",
+      "of": "cathode scraps stirred in Cyrene",
+      "n": 2,
+      "rendered": "100 °C"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L14'), 'stirring at (\\d+) °C', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p4.L24'), '~(\\d+) °C', 1) AS INTEGER)) AS diff FROM lines WHERE id='p3.L14'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int",
+      "value": 10,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p3.L14",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "immersed in 100 mL of Cyrene solvent. After stirring at 100 °C for",
+          "bbox": [
+            42.5,
+            651.1,
+            293.5,
+            659.0
+          ]
+        },
+        {
+          "atom": "p4.L24",
+          "kind": "line",
+          "page": 4,
+          "strength": "verbatim",
+          "text": "further reveal that the PVDF binder dissolved in Cyrene at ~90 °C, indi-",
+          "bbox": [
+            33.7,
+            716.4,
+            284.8,
+            724.4
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "10"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-18T08:49:27+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "susmat-2020",
+  "probe": "H1",
+  "cat": "H",
+  "expect": "DSC: ~90 °C (p4.L24); stirred at 100 °C for 1 h (p3.L14); 10 °C above",
+  "trap": "80 °C (barely soluble below it), a different statement"
+}

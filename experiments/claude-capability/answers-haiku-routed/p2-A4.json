@@ -1,0 +1,143 @@
+{
+  "question": "How many patients were enrolled in the clinical study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%patient%' OR text ILIKE '%enrol%' OR text ILIKE '%recruit%' OR text ILIKE '%septic%' OR text ILIKE '%donor%' ORDER BY page, top",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (7,8) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1141,
+    "cache_read_input_tokens": 20150,
+    "cache_creation_input_tokens": 12005
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The document reports "
+    },
+    {
+      "quote": "three",
+      "atom": "p7.L49"
+    },
+    {
+      "text": " enrolled subjects. Independent serum samples were collected from them: "
+    },
+    {
+      "quote": "enrolled subjects",
+      "atom": "p7.L50"
+    },
+    {
+      "text": ", including septic patients with confirmed E. coli infection, septic patients with confirmed E. faecium infection, and healthy volunteers serving as the control. The text does not give a separate patient count, so the number of patients alone is not stated; the total of enrolled subjects includes the healthy control group."
+    }
+  ],
+  "rendered": "The document reports three[1] enrolled subjects. Independent serum samples were collected from them: enrolled subjects[2], including septic patients with confirmed E. coli infection, septic patients with confirmed E. faecium infection, and healthy volunteers serving as the control. The text does not give a separate patient count, so the number of patients alone is not stated; the total of enrolled subjects includes the healthy control group.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "three",
+      "source": {
+        "atom": "p7.L49",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "sepsis scenarios, independent serum samples were collected from three",
+        "bbox": [
+          306.6,
+          213.3,
+          557.6,
+          221.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "three"
+    },
+    {
+      "kind": "quote",
+      "quote": "enrolled subjects",
+      "source": {
+        "atom": "p7.L50",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "enrolled subjects, including septic patients with confirmed E. coli",
+        "bbox": [
+          306.6,
+          223.7,
+          557.7,
+          231.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "enrolled subjects"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:36+00:00",
+  "paper": "p2",
+  "probe": "A4",
+  "cat": "absent",
+  "expect": "the text says serum came from 'three enrolled subjects' (E. coli septic, E. faecium septic, healthy volunteers) - wording ambiguous",
+  "trap": "inventing a cohort size"
+}

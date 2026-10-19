@@ -1,0 +1,180 @@
+{
+  "question": "How much squalene did the engineered HBQA7 strain produce?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%squalene%' OR text ILIKE '%HBQA7%' ORDER BY page, id",
+      "rows": 32
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, kind, strength, text FROM atoms WHERE text ILIKE '%squal%' OR text ILIKE '%squa%' OR text ILIKE '%triterpen%' OR text ILIKE '%farnesene%' ORDER BY page, id",
+      "rows": 2
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (11,12) AND (text ILIKE '%squa%' OR text ILIKE '%taxadiene%' OR text ILIKE '%HBQA%' OR text ILIKE '%lycopene%') ORDER BY id; SELECT id, page, line_no, text FROM lines WHERE page=11 AND line_no BETWEEN 40 AND 56 ORDER BY line_no;",
+      "rows": null
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (11,12) AND (text ILIKE '%squa%' OR text ILIKE '%taxadiene%' OR (line_no BETWEEN 44 AND 56 AND page=11)) ORDER BY page, line_no",
+      "rows": 13
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1947,
+    "cache_read_input_tokens": 30629,
+    "cache_creation_input_tokens": 8293
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The document does not report any squalene titer for the engineered HBQA7 strain. Squalene is mentioned only once, in the outlook on untapped potential, where longer-chain terpenoids such as taxadiene, squalene and β-carotene are listed as possible targets. The document gives no production value for it, and the product table of engineered strains does not include squalene. "
+    },
+    {
+      "text": "Squalene is named only as a possible target: ",
+      "support": [
+        {
+          "atom": "p11.L47",
+          "quote": "longer-chain terpenoids (e.g., taxadiene, squa-"
+        }
+      ]
+    },
+    {
+      "text": " (continued on the next line: lene, β-carotene).",
+      "support": [
+        {
+          "atom": "p11.L48",
+          "quote": "lene, β-carotene)."
+        }
+      ]
+    },
+    {
+      "text": " The HBQA7 strain is described in the same section as a chassis rationally selected for distinct phenotypic advantages.",
+      "support": [
+        {
+          "atom": "p11.L51",
+          "quote": "HBQA7 and JNB5–1 were rationally selected for distinct phenotypic"
+        }
+      ]
+    }
+  ],
+  "rendered": "The document does not report any squalene titer for the engineered HBQA7 strain. Squalene is mentioned only once, in the outlook on untapped potential, where longer-chain terpenoids such as taxadiene, squalene and β-carotene are listed as possible targets. The document gives no production value for it, and the product table of engineered strains does not include squalene. Squalene is named only as a possible target:[1]  (continued on the next line: lene, β-carotene).[2] The HBQA7 strain is described in the same section as a chassis rationally selected for distinct phenotypic advantages.[3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "longer-chain terpenoids (e.g., taxadiene, squa-",
+      "source": {
+        "atom": "p11.L47",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "polyketides) [135], and longer-chain terpenoids (e.g., taxadiene, squa-",
+        "bbox": [
+          306.6,
+          474.8,
+          557.7,
+          482.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "longer-chain terpenoids (e.g., taxadiene, squa-"
+    },
+    {
+      "kind": "support",
+      "quote": "lene, β-carotene).",
+      "source": {
+        "atom": "p11.L48",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "lene, β-carotene).",
+        "bbox": [
+          306.6,
+          483.7,
+          367.9,
+          493.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "lene, β-carotene)."
+    },
+    {
+      "kind": "support",
+      "quote": "HBQA7 and JNB5–1 were rationally selected for distinct phenotypic",
+      "source": {
+        "atom": "p11.L51",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "HBQA7 and JNB5–1 were rationally selected for distinct phenotypic",
+        "bbox": [
+          306.6,
+          515.1,
+          557.6,
+          524.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "HBQA7 and JNB5–1 were rationally selected for distinct phenotypic"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:58:49+00:00",
+  "paper": "p3",
+  "probe": "F4",
+  "cat": "false premise",
+  "expect": "premise false: squalene is named only as untapped potential (p11.L47-48, hyphenated across lines as 'squa-' / 'lene'). No titer is reported.",
+  "trap": "inventing a titer; also tests whether a hyphen-broken word can be found at all"
+}

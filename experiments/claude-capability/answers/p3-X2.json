@@ -1,0 +1,884 @@
+{
+  "question": "What limonene and nerolidol titers does the paper report, and are they consistent across sections?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 12,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE lower(text) LIKE '%limonene%' OR lower(text) LIKE '%nerolidol%'",
+      "rows": 11
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, label, page, caption FROM tables",
+      "rows": 3
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND row_no BETWEEN 33 AND 44 ORDER BY row_no, col_no",
+      "rows": 54
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE (page=2 AND line_no BETWEEN 44 AND 56) OR (page=11 AND line_no BETWEEN 1 AND 24) ORDER BY page, line_no",
+      "rows": 37
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=10 AND line_no > (SELECT max(line_no)-20 FROM lines WHERE page=10) ORDER BY line_no",
+      "rows": 20
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=11 AND line_no BETWEEN 24 AND 40 ORDER BY line_no",
+      "rows": 17
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%14.12%' OR text LIKE '%32.33%' OR text LIKE '%22.8%' OR text LIKE '%70.50%' OR text LIKE '%22,800%' OR text LIKE '%70,500%'",
+      "rows": 6
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT * FROM consts",
+      "rows": 11
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (SELECT CAST(replace(text,',','') AS DOUBLE) FROM cells WHERE id='p9.T2.r35c6')/(SELECT value FROM consts WHERE id='K.per_kilo') AS lim_g, (SELECT CAST(replace(text,',','') AS DOUBLE) FROM cells WHERE id='p9.T2.r40c6')/(SELECT value FROM consts WHERE id='K.per_kilo') AS ner_g",
+      "rows": 1
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 39,
+      "rules": [
+        "text:number",
+        "lineage:no-source",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(replace(c.text,',','') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r35c6' AND k.id='K.per_kilo'",
+      "rows": 1
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 39
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[28]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[30]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[32]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 7297,
+    "cache_read_input_tokens": 72855,
+    "cache_creation_input_tokens": 15161
+  },
+  "runs": [
+    {
+      "text": "The paper gives each of these terpenes at an early platform stage and at an optimized record stage, so the same compound appears with more than a single titer."
+    },
+    {
+      "text": "Platform stage. A universal terpenoid platform built by site-specific multicopy integration of the MVA pathway and terpene synthase genes was first evaluated in shake flasks and then in bioreactors, where limonene reached",
+      "support": [
+        {
+          "atom": "p10.L46",
+          "quote": "established a universal terpenoid platform via site-specific multicopy"
+        },
+        {
+          "atom": "p11.L2",
+          "quote": "respectively, in 5-L bioreactors."
+        }
+      ]
+    },
+    {
+      "quote": "14.12",
+      "atom": "p11.L1"
+    },
+    {
+      "text": "and nerolidol"
+    },
+    {
+      "quote": "32.33",
+      "atom": "p11.L1"
+    },
+    {
+      "text": "grams per liter, respectively."
+    },
+    {
+      "text": "Optimized stage. After terpene synthase engineering and fusion expression,",
+      "support": [
+        {
+          "atom": "p11.L14",
+          "quote": "tions included terpene synthase engineering and fusion expression"
+        }
+      ]
+    },
+    {
+      "quote": "limonene reached 22.8 g L",
+      "atom": "p11.L15"
+    },
+    {
+      "text": "per liter, flagged in the text as the"
+    },
+    {
+      "quote": "(highest reported)",
+      "atom": "p11.L15"
+    },
+    {
+      "text": "value, while for sesquiterpenes"
+    },
+    {
+      "quote": "(E)-Nerolidol reached 70.50 g L",
+      "atom": "p11.L20"
+    },
+    {
+      "text": "per liter."
+    },
+    {
+      "text": "Cross-section agreement. The introduction already announces the nerolidol record, listing",
+      "support": [
+        {
+          "atom": "p2.L50",
+          "quote": "(E)-nerolidol"
+        }
+      ]
+    },
+    {
+      "quote": "Maximum titers of 70.50,",
+      "atom": "p2.L49"
+    },
+    {
+      "text": "grams per liter. ",
+      "support": [
+        {
+          "atom": "p2.L51",
+          "quote": "yophyllene, and ((cid:0) )-α-bisabolol, respectively [22–24]."
+        }
+      ]
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": " lists the same optimized runs in milligrams per liter: limonene"
+    },
+    {
+      "quote": "22,800",
+      "atom": "p9.T2.r35c6"
+    },
+    {
+      "text": "for strain"
+    },
+    {
+      "quote": "LSF6",
+      "atom": "p9.T2.r35c2"
+    },
+    {
+      "text": "in"
+    },
+    {
+      "quote": "fed-batch",
+      "atom": "p9.T2.r35c4"
+    },
+    {
+      "text": "mode, and nerolidol"
+    },
+    {
+      "quote": "70,500",
+      "atom": "p9.T2.r40c6"
+    },
+    {
+      "text": "for strain"
+    },
+    {
+      "quote": "LN62",
+      "atom": "p9.T2.r40c2"
+    },
+    {
+      "text": ". Converting the table entries to grams per liter gives"
+    },
+    {
+      "sql": "SELECT CAST(replace(c.text,',','') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r35c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": "for limonene and"
+    },
+    {
+      "sql": "SELECT CAST(replace(c.text,',','') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r40c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": "for nerolidol, matching the values stated in the text and, for nerolidol, in the introduction."
+    },
+    {
+      "text": "Verdict: the reported figures are internally consistent. The lower platform values and the higher engineered values refer to different strains and stages of the same line of work, not to conflicting measurements of a single experiment, and the table, the applications section and the introduction agree once units are converted. The cultivation times attached to the record runs are also given in the table:",
+      "support": [
+        {
+          "atom": "p11.L3",
+          "quote": "To address precursor and accumulation limits, subsequent strategies"
+        }
+      ]
+    },
+    {
+      "quote": "100",
+      "atom": "p9.T2.r35c5"
+    },
+    {
+      "text": "hours for limonene and"
+    },
+    {
+      "quote": "96",
+      "atom": "p9.T2.r40c5"
+    },
+    {
+      "text": "hours for nerolidol."
+    },
+    {
+      "text": "For contrast, the compound whose numbers need care is α-bisabolol, whose record is reached by full chromosomal integration in a larger bioreactor",
+      "support": [
+        {
+          "atom": "p11.L25",
+          "quote": "mosomal integration of the pathway enabled an antibiotic-free strain"
+        },
+        {
+          "atom": "p11.L26",
+          "quote": "achieving a record 102.3 g L"
+        }
+      ]
+    },
+    {
+      "text": "; limonene and nerolidol show no such discrepancy."
+    }
+  ],
+  "rendered": "The paper gives each of these terpenes at an early platform stage and at an optimized record stage, so the same compound appears with more than a single titer.Platform stage. A universal terpenoid platform built by site-specific multicopy integration of the MVA pathway and terpene synthase genes was first evaluated in shake flasks and then in bioreactors, where limonene reached[1][2]14.12[3]and nerolidol32.33[4]grams per liter, respectively.Optimized stage. After terpene synthase engineering and fusion expression,[5]limonene reached 22.8 g L[6]per liter, flagged in the text as the(highest reported)[7]value, while for sesquiterpenes(E)-Nerolidol reached 70.50 g L[8]per liter.Cross-section agreement. The introduction already announces the nerolidol record, listing[9]Maximum titers of 70.50,[10]grams per liter.[11] Table 2[12] lists the same optimized runs in milligrams per liter: limonene22,800[13]for strainLSF6[14]infed-batch[15]mode, and nerolidol70,500[16]for strainLN62[17]. Converting the table entries to grams per liter gives22.80[18]for limonene and70.50[19]for nerolidol, matching the values stated in the text and, for nerolidol, in the introduction.Verdict: the reported figures are internally consistent. The lower platform values and the higher engineered values refer to different strains and stages of the same line of work, not to conflicting measurements of a single experiment, and the table, the applications section and the introduction agree once units are converted. The cultivation times attached to the record runs are also given in the table:[20]100[21]hours for limonene and96[22]hours for nerolidol.For contrast, the compound whose numbers need care is α-bisabolol, whose record is reached by full chromosomal integration in a larger bioreactor[23][24]; limonene and nerolidol show no such discrepancy.",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "established a universal terpenoid platform via site-specific multicopy",
+      "source": {
+        "atom": "p10.L46",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "established a universal terpenoid platform via site-specific multicopy",
+        "bbox": [
+          306.6,
+          716.0,
+          557.7,
+          724.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "established a universal terpenoid platform via site-specific multicopy"
+    },
+    {
+      "kind": "support",
+      "quote": "respectively, in 5-L bioreactors.",
+      "source": {
+        "atom": "p11.L2",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "L^(cid:0) 1, respectively, in 5-L bioreactors.",
+        "bbox": [
+          37.6,
+          687.2,
+          165.7,
+          699.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "respectively, in 5-L bioreactors."
+    },
+    {
+      "kind": "quote",
+      "quote": "14.12",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "14.12"
+    },
+    {
+      "kind": "quote",
+      "quote": "32.33",
+      "source": {
+        "atom": "p11.L1",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "flasks, with limonene and nerolidol reaching 14.12 g L^(cid:0) 1 and 32.33 g",
+        "bbox": [
+          37.6,
+          676.8,
+          288.7,
+          688.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "32.33"
+    },
+    {
+      "kind": "support",
+      "quote": "tions included terpene synthase engineering and fusion expression",
+      "source": {
+        "atom": "p11.L14",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "tions included terpene synthase engineering and fusion expression: (S)-",
+        "bbox": [
+          306.6,
+          129.6,
+          557.7,
+          137.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "tions included terpene synthase engineering and fusion expression"
+    },
+    {
+      "kind": "quote",
+      "quote": "limonene reached 22.8 g L",
+      "source": {
+        "atom": "p11.L15",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "limonene reached 22.8 g L^(cid:0) 1 (highest reported) [21]; S-(+)-linalool",
+        "bbox": [
+          306.6,
+          136.1,
+          557.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "limonene reached 22.8 g L"
+    },
+    {
+      "kind": "quote",
+      "quote": "(highest reported)",
+      "source": {
+        "atom": "p11.L15",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "limonene reached 22.8 g L^(cid:0) 1 (highest reported) [21]; S-(+)-linalool",
+        "bbox": [
+          306.6,
+          136.1,
+          557.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "(highest reported)"
+    },
+    {
+      "kind": "quote",
+      "quote": "(E)-Nerolidol reached 70.50 g L",
+      "source": {
+        "atom": "p11.L20",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "(C15). (E)-Nerolidol reached 70.50 g L^(cid:0) 1 [24]. β-Caryophyllene, inte-",
+        "bbox": [
+          306.6,
+          188.4,
+          557.7,
+          200.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "(E)-Nerolidol reached 70.50 g L"
+    },
+    {
+      "kind": "support",
+      "quote": "(E)-nerolidol",
+      "source": {
+        "atom": "p2.L50",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "60.32, and 102.3 g L^(cid:0) 1 have been reported for (E)-nerolidol, β-car-",
+        "bbox": [
+          37.6,
+          565.0,
+          288.7,
+          576.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "(E)-nerolidol"
+    },
+    {
+      "kind": "quote",
+      "quote": "Maximum titers of 70.50,",
+      "source": {
+        "atom": "p2.L49",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "monoterpenes and sesquiterpenes [19–21]. Maximum titers of 70.50,",
+        "bbox": [
+          37.6,
+          557.0,
+          288.7,
+          566.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "Maximum titers of 70.50,"
+    },
+    {
+      "kind": "support",
+      "quote": "yophyllene, and ((cid:0) )-α-bisabolol, respectively [22–24].",
+      "source": {
+        "atom": "p2.L51",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "yophyllene, and ((cid:0) )-α-bisabolol, respectively [22–24]. Heterologous",
+        "bbox": [
+          37.6,
+          577.3,
+          288.7,
+          587.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "yophyllene, and ((cid:0) )-α-bisabolol, respectively [22–24]."
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "22,800",
+      "source": {
+        "atom": "p9.T2.r35c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "22,800",
+        "bbox": [
+          491.4,
+          376.2,
+          511.1,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "22,800"
+    },
+    {
+      "kind": "quote",
+      "quote": "LSF6",
+      "source": {
+        "atom": "p9.T2.r35c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "HBQA7 → LSF6",
+        "bbox": [
+          114.6,
+          374.9,
+          159.3,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "LSF6"
+    },
+    {
+      "kind": "quote",
+      "quote": "fed-batch",
+      "source": {
+        "atom": "p9.T2.r35c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "fed-batch",
+        "bbox": [
+          397.0,
+          376.2,
+          423.4,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "fed-batch"
+    },
+    {
+      "kind": "quote",
+      "quote": "70,500",
+      "source": {
+        "atom": "p9.T2.r40c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "70,500",
+        "bbox": [
+          491.4,
+          419.0,
+          511.1,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "70,500"
+    },
+    {
+      "kind": "quote",
+      "quote": "LN62",
+      "source": {
+        "atom": "p9.T2.r40c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "HBQA7 → LN62",
+        "bbox": [
+          114.6,
+          417.8,
+          160.7,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "LN62"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(replace(c.text,',','') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r35c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 22.8,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "p9.T2.r35c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "22,800",
+          "bbox": [
+            491.4,
+            376.2,
+            511.1,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 18,
+      "rendered": "22.80"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(replace(c.text,',','') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r40c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 70.5,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "p9.T2.r40c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "70,500",
+          "bbox": [
+            491.4,
+            419.0,
+            511.1,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 19,
+      "rendered": "70.50"
+    },
+    {
+      "kind": "support",
+      "quote": "To address precursor and accumulation limits, subsequent strategies",
+      "source": {
+        "atom": "p11.L3",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "To address precursor and accumulation limits, subsequent strategies",
+        "bbox": [
+          49.6,
+          701.6,
+          288.7,
+          709.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 20,
+      "rendered": "To address precursor and accumulation limits, subsequent strategies"
+    },
+    {
+      "kind": "quote",
+      "quote": "100",
+      "source": {
+        "atom": "p9.T2.r35c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "100",
+        "bbox": [
+          462.2,
+          376.2,
+          473.0,
+          382.5
+        ],
+        "table": "Table 2",
+        "row": 35,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 21,
+      "rendered": "100"
+    },
+    {
+      "kind": "quote",
+      "quote": "96",
+      "source": {
+        "atom": "p9.T2.r40c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "96",
+        "bbox": [
+          465.8,
+          419.0,
+          473.0,
+          425.4
+        ],
+        "table": "Table 2",
+        "row": 40,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 22,
+      "rendered": "96"
+    },
+    {
+      "kind": "support",
+      "quote": "mosomal integration of the pathway enabled an antibiotic-free strain",
+      "source": {
+        "atom": "p11.L25",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "mosomal integration of the pathway enabled an antibiotic-free strain",
+        "bbox": [
+          306.6,
+          244.6,
+          557.7,
+          252.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 23,
+      "rendered": "mosomal integration of the pathway enabled an antibiotic-free strain"
+    },
+    {
+      "kind": "support",
+      "quote": "achieving a record 102.3 g L",
+      "source": {
+        "atom": "p11.L26",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "achieving a record 102.3 g L^(cid:0) 1 in a 50-L bioreactor [22].",
+        "bbox": [
+          306.6,
+          251.1,
+          508.6,
+          263.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 24,
+      "rendered": "achieving a record 102.3 g L"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:45:28+00:00",
+  "paper": "p3",
+  "probe": "X2",
+  "cat": "cross-source",
+  "expect": "two different studies: the multicopy-integration platform gave limonene 14.12 g/L and nerolidol 32.33 g/L in 5-L bioreactors (p11.L1-2, ref [16]); later optimisations gave (S)-limonene 22.8 g/L (p11.L15, ref [21], Table 2 22,800) and (E)-nerolidol 70.50 g/L (p11.L20, ref [24], Table 2 70,500). Not a contradiction, different strains and studies.",
+  "trap": "reporting one pair as the only values, or calling the pairs inconsistent"
+}

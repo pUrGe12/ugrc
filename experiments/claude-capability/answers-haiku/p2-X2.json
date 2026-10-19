@@ -1,0 +1,403 @@
+{
+  "question": "Which strains were fully discriminated across concentrations and which only partially?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'concentration|fully|partial|completely|complete discrimination|overlap|distinguish') ORDER BY page, id LIMIT 150",
+      "rows": 56
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, statement, basis, condition, strength FROM figure_facts WHERE figure_id='p6.F3' ORDER BY fact_no",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=6 AND line_no BETWEEN 1 AND 90 ORDER BY line_no",
+      "rows": 82
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, statement FROM figure_facts WHERE figure_id='p6.F3' ORDER BY fact_no",
+      "rows": 37
+    },
+    {
+      "turn": 3,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p6.F3"
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE region='p6.F3' OR (page=6 AND text ILIKE '%faecium%') OR (page=7 AND text ILIKE '%typhimurium%') ORDER BY page, line_no",
+      "rows": 2
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 17
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['3', 'four'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['3', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['3'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['3'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 5942,
+    "cache_read_input_tokens": 67004,
+    "cache_creation_input_tokens": 23763
+  },
+  "runs": [
+    {
+      "text": "The text sorts the strains into separate groups. Fully discriminated across concentrations (no cluster overlap): "
+    },
+    {
+      "quote": "including P. aeruginosa, E. coli,",
+      "atom": "p6.L67"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "E. sakazakii, L. monocytogenes, and E. faecium, were fully distinguishable",
+      "atom": "p6.L68"
+    },
+    {
+      "text": ". Only partial discrimination (partial cluster overlap): "
+    },
+    {
+      "quote": "S. typhimurium and S. aureus",
+      "atom": "p6.L70"
+    },
+    {
+      "text": ". Caveat: the caption of "
+    },
+    {
+      "figure": "p6.F3"
+    },
+    {
+      "text": " names only the strains listed here, not E. faecium: "
+    },
+    {
+      "quote": "the differentiation of P. aeruginosa,",
+      "atom": "p6.L78"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "E. coli, E. sakazakii and L. monocytogenes",
+      "atom": "p6.L79"
+    },
+    {
+      "text": ". The supporting panels for the fully and partially discriminated groups are cited in the text as supplementary material, which is not in this document. Within the figure itself, the only partial overlap is in panel g, where the highest concentration pair "
+    },
+    {
+      "quote": "partly overlap",
+      "atom": "p6.F3.k29"
+    },
+    {
+      "text": " (the figure's own pairing of panels to strains suggests E. sakazakii, which is an inference from the caption). Panels e, f and h show "
+    },
+    {
+      "quote": "all five OD clusters are enclosed in non-overlapping ellipses",
+      "atom": "p6.F3.k35"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The text sorts the strains into separate groups. Fully discriminated across concentrations (no cluster overlap): including P. aeruginosa, E. coli,[1] E. sakazakii, L. monocytogenes, and E. faecium, were fully distinguishable[2]. Only partial discrimination (partial cluster overlap): S. typhimurium and S. aureus[3]. Caveat: the caption of Fig. 3[4] names only the strains listed here, not E. faecium: the differentiation of P. aeruginosa,[5] E. coli, E. sakazakii and L. monocytogenes[6]. The supporting panels for the fully and partially discriminated groups are cited in the text as supplementary material, which is not in this document. Within the figure itself, the only partial overlap is in panel g, where the highest concentration pair partly overlap[7] (the figure's own pairing of panels to strains suggests E. sakazakii, which is an inference from the caption). Panels e, f and h show all five OD clusters are enclosed in non-overlapping ellipses[8].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "including P. aeruginosa, E. coli,",
+      "source": {
+        "atom": "p6.L67",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "with partial overlap. Five strains, including P. aeruginosa, E. coli,",
+        "bbox": [
+          306.6,
+          350.0,
+          557.6,
+          357.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "including P. aeruginosa, E. coli,"
+    },
+    {
+      "kind": "quote",
+      "quote": "E. sakazakii, L. monocytogenes, and E. faecium, were fully distinguishable",
+      "source": {
+        "atom": "p6.L68",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "E. sakazakii, L. monocytogenes, and E. faecium, were fully distinguishable",
+        "bbox": [
+          306.6,
+          360.5,
+          557.6,
+          368.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "E. sakazakii, L. monocytogenes, and E. faecium, were fully distinguishable"
+    },
+    {
+      "kind": "quote",
+      "quote": "S. typhimurium and S. aureus",
+      "source": {
+        "atom": "p6.L70",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "was achieved for S. typhimurium and S. aureus (Fig. S18b-c). Blind tests",
+        "bbox": [
+          306.6,
+          381.4,
+          557.7,
+          389.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "S. typhimurium and S. aureus"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p6.F3",
+        "kind": "figure",
+        "label": "Fig. 3",
+        "page": 6,
+        "caption": "Fig. 3. Bacterial discrimination under variable concentrations. (a-d) Clustering heat map of the CD/RGB signal and (e-h) LDA for the differentiation of P. aeruginosa, E. coli, E. sakazakii and L. monocytogenes at five different concentrations (OD600 =0.02–0.2).",
+        "png": "figures/p6.F3.png",
+        "png_pixels_sha256": "8137e426425ea7849d912994e94822adc6694bd9b53dc3a7d31626ffdb2bbe73",
+        "bbox": [
+          41.6,
+          498.3,
+          552.7,
+          716.6
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 3"
+    },
+    {
+      "kind": "quote",
+      "quote": "the differentiation of P. aeruginosa,",
+      "source": {
+        "atom": "p6.L78",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Fig. 3. Bacterial discrimination under variable concentrations. (a-d) Clustering heat map of the CD/RGB signal and (e-h) LDA for the differentiation of P. aeruginosa,",
+        "bbox": [
+          37.6,
+          727.8,
+          557.6,
+          735.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "the differentiation of P. aeruginosa,"
+    },
+    {
+      "kind": "quote",
+      "quote": "E. coli, E. sakazakii and L. monocytogenes",
+      "source": {
+        "atom": "p6.L79",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "E. coli, E. sakazakii and L. monocytogenes at five different concentrations (OD600 =0.02–0.2).",
+        "bbox": [
+          37.6,
+          735.5,
+          335.7,
+          744.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "E. coli, E. sakazakii and L. monocytogenes"
+    },
+    {
+      "kind": "quote",
+      "quote": "partly overlap",
+      "source": {
+        "atom": "p6.F3.k29",
+        "kind": "figure_fact",
+        "page": 6,
+        "strength": "model-read",
+        "text": "In panel g, the OD=0.2 and OD=0.1 ellipses lie close together near Factor 1 ≈ −65 to −50 and partly overlap.",
+        "bbox": [
+          41.6,
+          498.3,
+          552.7,
+          716.6
+        ],
+        "figure": "Fig. 3",
+        "figure_png": "figures/p6.F3.png",
+        "reader": "claude-opus-5-5",
+        "basis": "visual",
+        "printed_text": [],
+        "ocr_confirmed": false,
+        "check_note": "visual reading: nothing printed to check against"
+      },
+      "strength": "model-read",
+      "n": 7,
+      "rendered": "partly overlap"
+    },
+    {
+      "kind": "quote",
+      "quote": "all five OD clusters are enclosed in non-overlapping ellipses",
+      "source": {
+        "atom": "p6.F3.k35",
+        "kind": "figure_fact",
+        "page": 6,
+        "strength": "model-read",
+        "text": "In panels e, f and h, all five OD clusters are enclosed in non-overlapping ellipses, indicating full separation of the five concentrations.",
+        "bbox": [
+          41.6,
+          498.3,
+          552.7,
+          716.6
+        ],
+        "figure": "Fig. 3",
+        "figure_png": "figures/p6.F3.png",
+        "reader": "claude-opus-5-5",
+        "basis": "visual",
+        "printed_text": [],
+        "ocr_confirmed": false,
+        "check_note": "visual reading: nothing printed to check against"
+      },
+      "strength": "model-read",
+      "n": 8,
+      "rendered": "all five OD clusters are enclosed in non-overlapping ellipses"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T08:54:20+00:00",
+  "paper": "p2",
+  "probe": "X2",
+  "cat": "comparison",
+  "expect": "fully: P. aeruginosa, E. coli, E. sakazakii, L. monocytogenes, E. faecium; partially: S. typhimurium, S. aureus",
+  "trap": "moving a strain between groups"
+}

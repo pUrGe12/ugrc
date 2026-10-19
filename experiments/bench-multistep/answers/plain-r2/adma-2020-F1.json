@@ -1,0 +1,357 @@
+{
+  "question": "Since NFA-A retained less capacity than the NCA reference after 100 cycles, by how many percentage points did it fall behind?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%retention%' OR text ILIKE '%NFA-A%' OR text ILIKE '%NCA%' ORDER BY page, line_no",
+      "rows": 44
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p11.F8"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE id IN ('p11.L21','p11.L22','p11.L59','p11.L60')",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract((SELECT text FROM lines WHERE id='p11.L21'), '≈([0-9]+)%', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p11.L22'), '≈([0-9]+)%', 1) AS INTEGER) AS gap",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 13,
+      "pairings": [
+        {
+          "run": 5,
+          "of": "NFA-A variant",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['100'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p1.L70): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p1.L70\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['100'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p1.L70): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p1.L70\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[9]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['8', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p8.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p8.L2\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['8', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p8.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p8.L2\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "(≈80%)",
+      "atom": "p11.L21",
+      "of": "NFA-A variant",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3198,
+    "cache_read_input_tokens": 38799,
+    "cache_creation_input_tokens": 5834
+  },
+  "runs": [
+    {
+      "text": "The premise is reversed. The document reports that NFA-A did not fall behind the NCA reference; it had higher capacity retention. In the text, "
+    },
+    {
+      "quote": "superior capacity retention",
+      "atom": "p11.L21"
+    },
+    {
+      "text": " is reported for the "
+    },
+    {
+      "quote": "NFA-A variant",
+      "atom": "p11.L21"
+    },
+    {
+      "text": ", at "
+    },
+    {
+      "quote": "(≈80%)",
+      "atom": "p11.L21",
+      "of": "NFA-A variant"
+    },
+    {
+      "text": ", compared with "
+    },
+    {
+      "quote": "NCA cathode (≈68%)",
+      "atom": "p11.L22"
+    },
+    {
+      "text": " after "
+    },
+    {
+      "quote": "after 100 charge/",
+      "atom": "p11.L22"
+    },
+    {
+      "text": ". The gap in NFA-A's favour is "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text, '≈([0-9]+)%', 1) AS INTEGER) - CAST(regexp_extract(b.text, '≈([0-9]+)%', 1) AS INTEGER) AS gap FROM lines a, lines b WHERE a.id='p11.L21' AND b.id='p11.L22'",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " percentage points, computed from the values quoted above. The capacity-retention curves in the figure show the same ordering."
+    }
+  ],
+  "rendered": "The premise is reversed. The document reports that NFA-A did not fall behind the NCA reference; it had higher capacity retention. In the text, superior capacity retention[1] is reported for the NFA-A variant[2], at (≈80%)[3], compared with NCA cathode (≈68%)[4] after after 100 charge/[5]. The gap in NFA-A's favour is 12[6] percentage points, computed from the values quoted above. The capacity-retention curves in the figure show the same ordering.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "superior capacity retention",
+      "source": {
+        "atom": "p11.L21",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+        "bbox": [
+          51.0,
+          246.9,
+          292.0,
+          256.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "superior capacity retention"
+    },
+    {
+      "kind": "quote",
+      "quote": "NFA-A variant",
+      "source": {
+        "atom": "p11.L21",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+        "bbox": [
+          51.0,
+          246.9,
+          292.0,
+          256.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "NFA-A variant"
+    },
+    {
+      "kind": "quote",
+      "quote": "(≈80%)",
+      "source": {
+        "atom": "p11.L21",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+        "bbox": [
+          51.0,
+          246.9,
+          292.0,
+          256.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A variant",
+      "n": 3,
+      "rendered": "(≈80%)"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCA cathode (≈68%)",
+      "source": {
+        "atom": "p11.L22",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "compared with that of NCA cathode (≈68%) after 100 charge/",
+        "bbox": [
+          51.0,
+          257.9,
+          292.0,
+          267.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "NCA cathode (≈68%)"
+    },
+    {
+      "kind": "quote",
+      "quote": "after 100 charge/",
+      "source": {
+        "atom": "p11.L22",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "compared with that of NCA cathode (≈68%) after 100 charge/",
+        "bbox": [
+          51.0,
+          257.9,
+          292.0,
+          267.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "after 100 charge/"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text, '≈([0-9]+)%', 1) AS INTEGER) - CAST(regexp_extract(b.text, '≈([0-9]+)%', 1) AS INTEGER) AS gap FROM lines a, lines b WHERE a.id='p11.L21' AND b.id='p11.L22'",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int",
+      "value": 12,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p11.L21",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+          "bbox": [
+            51.0,
+            246.9,
+            292.0,
+            256.2
+          ]
+        },
+        {
+          "atom": "p11.L22",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "compared with that of NCA cathode (≈68%) after 100 charge/",
+          "bbox": [
+            51.0,
+            257.9,
+            292.0,
+            267.2
+          ]
+        }
+      ],
+      "n": 6,
+      "rendered": "12"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T08:50:32+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "adma-2020",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "False premise: NFA-A ~80% vs NCA ~68% after 100 cycles (p11.L20-23): NFA-A is 12 points ahead",
+  "trap": ""
+}

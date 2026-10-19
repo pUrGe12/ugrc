@@ -1,0 +1,371 @@
+{
+  "question": "In Table 1, what carrier does NCP-CD47 siRNA use, which institution runs its trial, and what is the trial's status?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text ILIKE '%CD47%') ORDER BY row_no, col_no",
+      "rows": 8
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%NCP-CD47%' OR text ILIKE '%CD47%'",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 19 AND 23 ORDER BY row_no, col_no",
+      "rows": 24
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE id IN ('p2.T1.r20c5','p2.T1.r21c5','p2.T1.r22c5','p2.T1.r20c7','p2.T1.r20c6','p2.T1.r20c2') OR (page=2 AND text ILIKE '%West China%') OR (page=2 AND text ILIKE '%cationic%')",
+      "rows": 6
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in",
+        "text:lead-in",
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'e: the carrier cell reads' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'e: the carrier cell reads[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[2]",
+        "why": "the words before citation [2] end in 'e: the carrier cell reads' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'e: the carrier cell reads[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[3]",
+        "why": "the words before citation [3] end in 'e: the carrier cell reads' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'e: the carrier cell reads[3]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[5]",
+        "why": "the words before citation [4] end in '2][3] The trial is run by' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads '2][3] The trial is run by[4]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[7]",
+        "why": "the words before citation [5] end in 'd its status is listed as' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'd its status is listed as[5]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[9]",
+        "why": "'Phase 1' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r21c6 'Not yet recruiting' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Not yet recruiting\", \"atom\": \"p2.T1.r20c6\"}",
+          "or show p2.T1.r21c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p3.L7:63",
+      "p1.L20:92",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p3.L16:61",
+      "p5.L53:56",
+      "p19.L31:0",
+      "p3.L12:17",
+      "p1.L35:56",
+      "p3.L32:16",
+      "p13.L58:44",
+      "p15.L69:10"
+    ],
+    "measures": [
+      "p3.L16:61#154",
+      "p19.L31:0#64",
+      "p3.L12:17#146",
+      "p3.L12:17#172",
+      "p1.L35:56#13",
+      "p1.L35:56#58",
+      "p1.L35:56#118",
+      "p1.L35:56#134",
+      "p1.L35:56#148",
+      "p3.L32:16#30",
+      "p3.L32:16#44",
+      "p3.L32:16#130",
+      "p3.L32:16#215",
+      "p3.L32:16#248",
+      "p3.L32:16#259",
+      "p15.L69:10#216"
+    ],
+    "matched": 215
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 3365,
+    "cache_read_input_tokens": 50198,
+    "cache_creation_input_tokens": 11559
+  },
+  "runs": [
+    {
+      "text": "In the clinical trial table, the NCP-CD47 siRNA row (Ligand-siRNA conjugate, solid tumor cancer, target CD47-SIRPα) gives its carrier as "
+    },
+    {
+      "quote": "non-",
+      "atom": "p2.T1.r20c5"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "cationic",
+      "atom": "p2.T1.r21c5"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "peptide",
+      "atom": "p2.T1.r22c5"
+    },
+    {
+      "text": ", i.e. a non-cationic peptide carrier. The trial is run by "
+    },
+    {
+      "quote": "West China Hospital",
+      "atom": "p2.T1.r20c7"
+    },
+    {
+      "text": ", and its status is given as "
+    },
+    {
+      "quote": "Phase 1 Not yet recruiting",
+      "atom": "p2.T1.r20c6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In the clinical trial table, the NCP-CD47 siRNA row (Ligand-siRNA conjugate, solid tumor cancer, target CD47-SIRPα) gives its carrier as non-[1] cationic[2] peptide[3], i.e. a non-cationic peptide carrier. The trial is run by West China Hospital[4], and its status is given as Phase 1 Not yet recruiting[5].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "non-",
+      "source": {
+        "atom": "p2.T1.r20c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "non-",
+        "bbox": [
+          312.1,
+          527.6,
+          324.8,
+          534.0
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "non-"
+    },
+    {
+      "kind": "quote",
+      "quote": "cationic",
+      "source": {
+        "atom": "p2.T1.r21c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cationic",
+        "bbox": [
+          312.1,
+          536.2,
+          334.4,
+          542.6
+        ],
+        "table": "Table 1",
+        "row": 21,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "cationic"
+    },
+    {
+      "kind": "quote",
+      "quote": "peptide",
+      "source": {
+        "atom": "p2.T1.r22c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "peptide",
+        "bbox": [
+          312.1,
+          544.8,
+          333.2,
+          551.1
+        ],
+        "table": "Table 1",
+        "row": 22,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "peptide"
+    },
+    {
+      "kind": "quote",
+      "quote": "West China Hospital",
+      "source": {
+        "atom": "p2.T1.r20c7",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "West China Hospital",
+        "bbox": [
+          418.7,
+          527.6,
+          476.3,
+          534.0
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 7,
+        "column_header": "Company"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "West China Hospital"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Not yet recruiting",
+      "source": {
+        "atom": "p2.T1.r20c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Not yet recruiting",
+        "bbox": [
+          357.7,
+          527.6,
+          407.4,
+          542.6
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r20c6",
+          "p2.T1.r21c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Phase 1 Not yet recruiting"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:49:17+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "cai2026",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "non-cationic peptide (a cell wrapped over three printed rows: 'non-' / 'cationic' / 'peptide'); West China Hospital; Phase 1, Not yet recruiting (NCT07583914)",
+  "trap": ""
+}

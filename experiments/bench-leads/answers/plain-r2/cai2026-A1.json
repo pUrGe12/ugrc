@@ -1,0 +1,302 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%Gao%' ORDER BY page, top",
+      "rows": 13
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%mg/kg%' OR text ILIKE '%dose%' OR text ILIKE '%μg%' OR text ILIKE '%nmol%' ORDER BY page, top",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (6,7) ORDER BY page, line_no LIMIT 40",
+      "rows": 40
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE text ILIKE '%55%' OR text ILIKE '%Gao%' ORDER BY table_id, row_no",
+      "rows": 5
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 1 AND 12 ORDER BY row_no, col_no",
+      "rows": 58
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%FOXM1%' OR text ILIKE '%CL4H6%' OR text ILIKE '%BT549%' OR text ILIKE '%tert-butanol%' ORDER BY page, top",
+      "rows": 6
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE (text ILIKE '%mg%' OR text ILIKE '%nM%' OR text ILIKE '%pmol%' OR text ILIKE '%µg%' OR text ILIKE '%μg%' OR text ILIKE '%kg%') AND page IN (5,6,7,20,21) ORDER BY page, top",
+      "rows": 43
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "quote:absent",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['[55]used'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'55]used' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55]used\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['60:40:1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'60:40:1' is written exactly so in the document (e.g. p6.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"60:40:1\", \"atom\": \"p6.L5\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[3]",
+        "why": "'2000' occurs in p6.L5 only as part of a longer word or number (its text: 'and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs')",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 3138,
+    "cache_read_input_tokens": 59912,
+    "cache_creation_input_tokens": 8916
+  },
+  "runs": [
+    {
+      "text": "The document does not state a siRNA dose for Gao et al. The only passage about their work says that "
+    },
+    {
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid",
+      "atom": "p6.L4"
+    },
+    {
+      "text": ", with cholesterol and "
+    },
+    {
+      "quote": "DMG-PEG2000",
+      "atom": "p6.L5"
+    },
+    {
+      "text": " in a "
+    },
+    {
+      "quote": "molar ratio of 60:40:1",
+      "atom": "p6.L5"
+    },
+    {
+      "text": ", used to build LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, and then tested in a BT549 lung metastasis model. "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " lists the same study as si-FOXM1 (target FOXM1), but it gives no dose either. No dose unit (mg/kg, nmol) appears anywhere in the document.",
+      "absent": [
+        "mg/kg",
+        "nmol"
+      ]
+    }
+  ],
+  "rendered": "The document does not state a siRNA dose for Gao et al. The only passage about their work says that Gao et al. [55]used a novel CL4H6-ionizable lipid[1], with cholesterol and DMG-PEG2000[2] in a molar ratio of 60:40:1[3], used to build LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, and then tested in a BT549 lung metastasis model. Table 2[4] lists the same study as si-FOXM1 (target FOXM1), but it gives no dose either. No dose unit (mg/kg, nmol) appears anywhere in the document.[5]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid"
+    },
+    {
+      "kind": "quote",
+      "quote": "DMG-PEG2000",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "DMG-PEG2000"
+    },
+    {
+      "kind": "quote",
+      "quote": "molar ratio of 60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "molar ratio of 60:40:1"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg",
+        "nmol"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 5,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:09:30+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose"
+}

@@ -1,0 +1,406 @@
+{
+  "question": "Within what pH window must NFA hydroxide precursors be coprecipitated and why, and how are the precursors then turned into cathode powder?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE kind IN ('line','cell') AND (lower(text) LIKE '%ph%' OR lower(text) LIKE '%coprecipit%' OR lower(text) LIKE '%precursor%' OR lower(text) LIKE '%hydroxide%' OR lower(text) LIKE '%calcin%' OR lower(text) LIKE '%lithiat%' OR lower(text) LIKE '%sinter%') ORDER BY page, id",
+      "rows": 59
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=7 AND line_no BETWEEN 1 AND 22) OR (page=6 AND line_no BETWEEN 1 AND 20) OR (page=11 AND line_no BETWEEN 5 AND 22) ORDER BY page, line_no",
+      "rows": 60
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 10
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['6.', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'6' is written exactly so in the document (e.g. p6.L3): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6\", \"atom\": \"p6.L3\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['10,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'10' is written exactly so in the document (e.g. p3.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p3.L5\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['600'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'600' is written exactly so in the document (e.g. p4.F3.o33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"600\", \"atom\": \"p4.F3.o33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 4506,
+    "cache_read_input_tokens": 26193,
+    "cache_creation_input_tokens": 7800
+  },
+  "runs": [
+    {
+      "text": "The NFA hydroxide precursors must be coprecipitated within a narrow pH window of ",
+      "support": [
+        {
+          "atom": "p7.L13",
+          "quote": "coprecipitation window between 10 and 12"
+        }
+      ]
+    },
+    {
+      "quote": "10 and 12",
+      "atom": "p7.L13"
+    },
+    {
+      "text": ". The reason is that aluminum hydroxide starts precipitating at a lower pH than nickel and iron hydroxides, which precipitate only beyond pH ",
+      "support": [
+        {
+          "atom": "p7.L10",
+          "quote": "hydroxides of aluminum start precipitating"
+        }
+      ]
+    },
+    {
+      "quote": "6",
+      "atom": "p7.L12"
+    },
+    {
+      "text": ". Because the solubility product (Ksp) of the resulting hydroxide precipitates differs among these metals, simultaneous coprecipitation of Ni, Fe and Al is challenging, which narrows the usable window.",
+      "support": [
+        {
+          "atom": "p7.L9",
+          "quote": "product Ksp of the resulting hydroxide precipitates"
+        }
+      ]
+    },
+    {
+      "text": " In practice, a continuous stirred tank reactor is fed with metal sulfates, carbonates or chlorides plus a chelating agent, and NaOH is pumped in to keep the pH above ",
+      "support": [
+        {
+          "atom": "p6.L14",
+          "quote": "(e.g., NH4OH) to the CSTR while controlling pH, temperature,"
+        }
+      ]
+    },
+    {
+      "quote": "10",
+      "atom": "p6.L16"
+    },
+    {
+      "text": ", especially for nickel-rich materials. To turn the precursors into cathode powder, the reactor outflow is filtered, washed and dried to obtain the hydroxide precursors, which are mixed with a lithium source (Li2CO3, LiOH, LiNO3, etc.) and calcined in an O2-rich environment at temperatures above ",
+      "support": [
+        {
+          "atom": "p7.L16",
+          "quote": "The outflow from the reactor is filtered, washed, and dried"
+        },
+        {
+          "atom": "p7.L18",
+          "quote": "a lithium source (Li2CO3, LiOH, LiNO3, etc.) before calcinating"
+        }
+      ]
+    },
+    {
+      "quote": "600",
+      "atom": "p7.L19"
+    },
+    {
+      "text": " °C. The resulting NFA cathode powders are then cast into electrodes by roll-to-roll slot-die coating and assembled into pouch cells.",
+      "support": [
+        {
+          "atom": "p7.L20",
+          "quote": "the NFA cathode powders were cast into"
+        }
+      ]
+    }
+  ],
+  "rendered": "The NFA hydroxide precursors must be coprecipitated within a narrow pH window of[1] 10 and 12[2]. The reason is that aluminum hydroxide starts precipitating at a lower pH than nickel and iron hydroxides, which precipitate only beyond pH[3] 6[4]. Because the solubility product (Ksp) of the resulting hydroxide precipitates differs among these metals, simultaneous coprecipitation of Ni, Fe and Al is challenging, which narrows the usable window.[5] In practice, a continuous stirred tank reactor is fed with metal sulfates, carbonates or chlorides plus a chelating agent, and NaOH is pumped in to keep the pH above[6] 10[7], especially for nickel-rich materials. To turn the precursors into cathode powder, the reactor outflow is filtered, washed and dried to obtain the hydroxide precursors, which are mixed with a lithium source (Li2CO3, LiOH, LiNO3, etc.) and calcined in an O2-rich environment at temperatures above[8][9] 600[10] °C. The resulting NFA cathode powders are then cast into electrodes by roll-to-roll slot-die coating and assembled into pouch cells.[11]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "coprecipitation window between 10 and 12",
+      "source": {
+        "atom": "p7.L13",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "rows the coprecipitation window between 10 and 12 for the",
+        "bbox": [
+          51.0,
+          708.9,
+          292.0,
+          717.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "coprecipitation window between 10 and 12"
+    },
+    {
+      "kind": "quote",
+      "quote": "10 and 12",
+      "source": {
+        "atom": "p7.L13",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "rows the coprecipitation window between 10 and 12 for the",
+        "bbox": [
+          51.0,
+          708.9,
+          292.0,
+          717.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "10 and 12"
+    },
+    {
+      "kind": "support",
+      "quote": "hydroxides of aluminum start precipitating",
+      "source": {
+        "atom": "p7.L10",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "was observed that hydroxides of aluminum start precipitating",
+        "bbox": [
+          51.0,
+          675.9,
+          292.0,
+          684.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "hydroxides of aluminum start precipitating"
+    },
+    {
+      "kind": "quote",
+      "quote": "6",
+      "source": {
+        "atom": "p7.L12",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "and iron which precipitate beyond pH 6. This effectively nar-",
+        "bbox": [
+          51.0,
+          697.9,
+          292.0,
+          706.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "6"
+    },
+    {
+      "kind": "support",
+      "quote": "product Ksp of the resulting hydroxide precipitates",
+      "source": {
+        "atom": "p7.L9",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "bility product Ksp of the resulting hydroxide precipitates. It",
+        "bbox": [
+          51.0,
+          664.9,
+          292.0,
+          675.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "product Ksp of the resulting hydroxide precipitates"
+    },
+    {
+      "kind": "support",
+      "quote": "(e.g., NH4OH) to the CSTR while controlling pH, temperature,",
+      "source": {
+        "atom": "p6.L14",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "(e.g., NH4OH) to the CSTR while controlling pH, temperature,",
+        "bbox": [
+          303.3,
+          664.9,
+          544.3,
+          675.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "(e.g., NH4OH) to the CSTR while controlling pH, temperature,"
+    },
+    {
+      "kind": "quote",
+      "quote": "10",
+      "source": {
+        "atom": "p6.L16",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "reactor to maintain the pH to above 10 especially for nickel-",
+        "bbox": [
+          303.3,
+          686.9,
+          544.3,
+          695.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "10"
+    },
+    {
+      "kind": "support",
+      "quote": "The outflow from the reactor is filtered, washed, and dried",
+      "source": {
+        "atom": "p7.L16",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "The outflow from the reactor is filtered, washed, and dried",
+        "bbox": [
+          316.1,
+          642.9,
+          547.1,
+          651.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "The outflow from the reactor is filtered, washed, and dried"
+    },
+    {
+      "kind": "support",
+      "quote": "a lithium source (Li2CO3, LiOH, LiNO3, etc.) before calcinating",
+      "source": {
+        "atom": "p7.L18",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "a lithium source (Li2CO3, LiOH, LiNO3, etc.) before calcinating",
+        "bbox": [
+          306.2,
+          664.9,
+          547.1,
+          675.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "a lithium source (Li2CO3, LiOH, LiNO3, etc.) before calcinating"
+    },
+    {
+      "kind": "quote",
+      "quote": "600",
+      "source": {
+        "atom": "p4.F3.o33",
+        "kind": "ocr",
+        "page": 4,
+        "strength": "ocr",
+        "text": "“ie 600",
+        "bbox": [
+          247.3,
+          323.3,
+          425.6,
+          367.5
+        ],
+        "figure": "Fig. 3",
+        "figure_png": "figures/p4.F3.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi",
+        "relocated_from": "p7.L19"
+      },
+      "strength": "ocr",
+      "n": 10,
+      "rendered": "600"
+    },
+    {
+      "kind": "support",
+      "quote": "the NFA cathode powders were cast into",
+      "source": {
+        "atom": "p7.L20",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "calcination, the NFA cathode powders were cast into elec-",
+        "bbox": [
+          306.1,
+          686.9,
+          547.1,
+          695.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "the NFA cathode powders were cast into"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-18T08:56:29+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "aenm-2022",
+  "probe": "H2",
+  "cat": "H",
+  "expect": "pH 10 to 12 (p7.L13): aluminum hydroxides precipitate at lower pH than nickel and iron hydroxides (beyond pH 6), from their different Ksp; then mixed with a lithium source and calcined in O2-rich environments above 600 °C (p7.L17-19)",
+  "trap": ""
+}

@@ -1,0 +1,287 @@
+{
+  "question": "What classification accuracy did the blind tests achieve on the ternary bacterial mixtures?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%blind%' OR text ILIKE '%ternary%' OR text ILIKE '%accuracy%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, kind, text FROM atoms WHERE text ILIKE '%blind%' OR text ILIKE '%ternary%' OR text ILIKE '%accuracy%' ORDER BY page",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page = 6 AND line_no BETWEEN 60 AND 75) OR (page = 7 AND line_no BETWEEN 1 AND 20) ORDER BY page, line_no",
+      "rows": 36
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, statement FROM figure_facts WHERE figure_id='p7.F4' OR statement ILIKE '%accura%' OR statement ILIKE '%blind%' OR statement ILIKE '%ternary%' ORDER BY page, fact_no",
+      "rows": 41
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%100%' OR text ILIKE '%identif%' OR text ILIKE '%classif%' OR text ILIKE '%mixture%' ORDER BY page, line_no",
+      "rows": 41
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "blind tests",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.92
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1:1:1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1:1:1' is written exactly so in the document (e.g. p7.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1:1:1\", \"atom\": \"p7.L7\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [
+    {
+      "quote": "100% classification accuracy",
+      "atom": "p6.L72",
+      "of": "blind tests",
+      "sentence": "p6.L70:61",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.92,
+      "clause_about": [
+        "strains"
+      ],
+      "request": {
+        "state": "Blind tests were performed on four strains at unknown concentrations, which delivered [[100% classification accuracy]] (Tables S9-S12).",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[100% classification accuracy]] a value of “blind tests”?",
+            "criteria": {
+              "true": "the passage gives [[100% classification accuracy]] for “blind tests”, or for something “blind tests” has, makes or contains",
+              "false": "[[100% classification accuracy]] is given for something else, or the passage does not connect it to “blind tests”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.92
+          }
+        },
+        "usage": {
+          "input_tokens": 382,
+          "output_tokens": 21
+        }
+      },
+      "run": 1
+    }
+  ],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2642,
+    "cache_read_input_tokens": 28317,
+    "cache_creation_input_tokens": 13536
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The document does not report a blind-test classification accuracy for the ternary bacterial mixtures. The only blind tests it describes were run on single strains at unknown concentrations, and they reached "
+    },
+    {
+      "quote": "100% classification accuracy",
+      "atom": "p6.L72",
+      "of": "blind tests"
+    },
+    {
+      "text": ". For the ternary mixtures (A+B+C at a "
+    },
+    {
+      "quote": "1:1:1",
+      "atom": "p7.L7"
+    },
+    {
+      "text": " ratio), the text reports only LDA score plots, stating that the mixtures "
+    },
+    {
+      "quote": "could also be effectively classified",
+      "atom": "p7.L9"
+    },
+    {
+      "text": ". Their supporting data are in "
+    },
+    {
+      "quote": "Tables S16-S18",
+      "atom": "p7.L7"
+    },
+    {
+      "text": ", which are not part of this document. The LDA plots are shown in "
+    },
+    {
+      "figure": "p7.F4"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The document does not report a blind-test classification accuracy for the ternary bacterial mixtures. The only blind tests it describes were run on single strains at unknown concentrations, and they reached 100% classification accuracy[1]. For the ternary mixtures (A+B+C at a 1:1:1[2] ratio), the text reports only LDA score plots, stating that the mixtures could also be effectively classified[3]. Their supporting data are in Tables S16-S18[4], which are not part of this document. The LDA plots are shown in Fig. 4[5].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "100% classification accuracy",
+      "source": {
+        "atom": "p6.L72",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "delivered 100% classification accuracy (Tables S9-S12).",
+        "bbox": [
+          306.6,
+          402.3,
+          503.7,
+          410.3
+        ]
+      },
+      "strength": "verbatim",
+      "of": "blind tests",
+      "n": 1,
+      "rendered": "100% classification accuracy"
+    },
+    {
+      "kind": "quote",
+      "quote": "1:1:1",
+      "source": {
+        "atom": "p7.L7",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "with a compositional ratio of 1:1:1 were investigated (Tables S16-S18).",
+        "bbox": [
+          37.6,
+          119.1,
+          288.7,
+          127.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "1:1:1"
+    },
+    {
+      "kind": "quote",
+      "quote": "could also be effectively classified",
+      "source": {
+        "atom": "p7.L9",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "bacterial mixtures could also be effectively classified (Fig. 4d-f and",
+        "bbox": [
+          37.6,
+          140.0,
+          288.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "could also be effectively classified"
+    },
+    {
+      "kind": "quote",
+      "quote": "Tables S16-S18",
+      "source": {
+        "atom": "p7.L7",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "with a compositional ratio of 1:1:1 were investigated (Tables S16-S18).",
+        "bbox": [
+          37.6,
+          119.1,
+          288.7,
+          127.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Tables S16-S18"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p7.F4",
+        "kind": "figure",
+        "label": "Fig. 4",
+        "page": 7,
+        "caption": "Fig. 4. Identification of the bacterial mixtures. (a-c) LDA for the binary and (d-f) ternary bacterial mixtures of P. aeruginosa, E. coli, E. sakazakii, S. typhimurium, L. monocytogenes and S. aureus.",
+        "png": "figures/p7.F4.png",
+        "png_pixels_sha256": "8af8ce2b02a21b40740525305aa30edc9bda12d2fbc2c6b1e0b3f9e10b4d5b03",
+        "bbox": [
+          41.6,
+          435.5,
+          552.7,
+          716.6
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Fig. 4"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:20+00:00",
+  "paper": "p2",
+  "probe": "F4",
+  "cat": "false-premise",
+  "expect": "premise false: blind tests were on four strains at unknown concentrations (100%), not on mixtures",
+  "trap": "reporting 100% for mixtures"
+}

@@ -1,0 +1,203 @@
+{
+  "question": "By how much did the recovered NMC622's first charge capacity fall short of the baseline's?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE lower(text) LIKE '%mah%' OR lower(text) LIKE '%first charge%' OR lower(text) LIKE '%initial%capacity%' OR lower(text) LIKE '%charge capacity%' ORDER BY page, id",
+      "rows": 6
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, fact_no, statement, printed_text, quantity, value, unit, condition, panel, check_note, reader FROM figure_facts WHERE figure_id='p5.F5' ORDER BY fact_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p6.L19','p6.L20','p6.L21','p6.L22') ORDER BY id",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT round(205.6 - 194.0, 1) AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT round(CAST(regexp_extract(text,'were ([0-9.]+) and',1) AS DOUBLE) - CAST(regexp_extract(text,'and ([0-9.]+) mAh',1) AS DOUBLE), 1) AS diff FROM lines WHERE id='p6.L21'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1451,
+    "cache_read_input_tokens": 21398,
+    "cache_creation_input_tokens": 1635
+  },
+  "runs": [
+    {
+      "text": "The recovered NMC622's first charge capacity fell short of the baseline's by "
+    },
+    {
+      "sql": "SELECT round(CAST(regexp_extract(text,'were ([0-9.]+) and',1) AS DOUBLE) - CAST(regexp_extract(text,'and ([0-9.]+) mAh',1) AS DOUBLE), 1) AS diff FROM lines WHERE id='p6.L21'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " mAh/g. At C/10, the text gives the first charge capacities as "
+    },
+    {
+      "quote": "205.6",
+      "atom": "p6.L21"
+    },
+    {
+      "text": " mAh/g for the baseline and "
+    },
+    {
+      "quote": "194.0",
+      "atom": "p6.L21"
+    },
+    {
+      "text": " mAh/g for the recovered NMC622 (shown in "
+    },
+    {
+      "figure": "p5.F5"
+    },
+    {
+      "text": ")."
+    }
+  ],
+  "rendered": "The recovered NMC622's first charge capacity fell short of the baseline's by 11.6[1] mAh/g. At C/10, the text gives the first charge capacities as 205.6[2] mAh/g for the baseline and 194.0[3] mAh/g for the recovered NMC622 (shown in Fig. 5[4]).",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT round(CAST(regexp_extract(text,'were ([0-9.]+) and',1) AS DOUBLE) - CAST(regexp_extract(text,'and ([0-9.]+) mAh',1) AS DOUBLE), 1) AS diff FROM lines WHERE id='p6.L21'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 11.6,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p6.L21",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+          "bbox": [
+            33.7,
+            266.6,
+            284.8,
+            274.5
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "11.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "205.6",
+      "source": {
+        "atom": "p6.L21",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+        "bbox": [
+          33.7,
+          266.6,
+          284.8,
+          274.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "205.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "194.0",
+      "source": {
+        "atom": "p6.L21",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+        "bbox": [
+          33.7,
+          266.6,
+          284.8,
+          274.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "194.0"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p5.F5",
+        "kind": "figure",
+        "label": "Fig. 5",
+        "page": 5,
+        "caption": "Fig. 5. (a) Charge/discharge profiles for the baseline and recovered NMC622 at a charge/ discharge rate of C/10; and (b) cycle performance of the baseline and recovered NMC622 at a charge/discharge rate of C/3.",
+        "png": "figures/p5.F5.png",
+        "png_pixels_sha256": "73193af6445551b038a9594e6e75d9d676fbbe90cb0f10c08bd3bf50c6d76e27",
+        "bbox": [
+          61.7,
+          53.2,
+          274.4,
+          329.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 5"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-18T07:11:28+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "susmat-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "205.6 - 194.0 = 11.6 mAh/g",
+  "trap": "a wrong difference"
+}

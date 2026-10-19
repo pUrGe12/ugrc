@@ -1,0 +1,679 @@
+{
+  "question": "In Table 2, which product and strain reached the highest titer, and under what conditions?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 9,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, id FROM cells WHERE table_id='p9.T2' ORDER BY row_no, col_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, text, id, TRY_CAST(replace(text, ',', '') AS DOUBLE) v FROM cells WHERE table_id='p9.T2' AND col_no=6 ORDER BY v DESC NULLS LAST LIMIT 5",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, id FROM cells WHERE table_id='p9.T2' AND row_no>=19 AND row_no<=20 ORDER BY row_no, col_no",
+      "rows": 9
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, id FROM cells WHERE table_id='p9.T2' AND row_no>=44 AND row_no<=49 ORDER BY row_no, col_no",
+      "rows": 24
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=9 AND text ILIKE '%bisabolol%'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 37,
+      "rules": [
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT * FROM consts",
+      "rows": 11
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(replace(c.text, ',', '') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r46c6' AND k.id='K.per_kilo'",
+      "rows": 1
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 37
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[9]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 3144,
+    "cache_read_input_tokens": 63471,
+    "cache_creation_input_tokens": 11869
+  },
+  "runs": [
+    {
+      "text": "In "
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ", the highest titer listed is for the sesquiterpene alcohol "
+    },
+    {
+      "quote": "((cid:0) )-α-bisabolol",
+      "atom": "p9.T2.r46c1"
+    },
+    {
+      "text": " (printed with a garbled minus sign for the stereodescriptor), reaching "
+    },
+    {
+      "quote": "102,300",
+      "atom": "p9.T2.r46c6"
+    },
+    {
+      "text": " in the units given in the column header "
+    },
+    {
+      "quote": "(mg L^(cid:0) 1)",
+      "atom": "p9.T2.r2c6"
+    },
+    {
+      "text": ", i.e. about"
+    },
+    {
+      "sql": "SELECT CAST(replace(c.text, ',', '') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r46c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " g per litre."
+    },
+    {
+      "text": " The producing strain is the engineered derivative "
+    },
+    {
+      "quote": "HBQA7 → SMB19",
+      "atom": "p9.T2.r46c2"
+    },
+    {
+      "text": ", obtained by "
+    },
+    {
+      "quote": "Genome integration of the biosynthetic pathway and optimization of",
+      "atom": "p9.T2.r46c3"
+    },
+    {
+      "quote": "precursor supply",
+      "atom": "p9.T2.r47c3"
+    },
+    {
+      "text": ". The conditions were a "
+    },
+    {
+      "quote": "fed-batch",
+      "atom": "p9.T2.r46c4"
+    },
+    {
+      "text": " cultivation of "
+    },
+    {
+      "quote": "110",
+      "atom": "p9.T2.r46c5"
+    },
+    {
+      "text": " h, as reported in reference "
+    },
+    {
+      "quote": "[22]",
+      "atom": "p9.T2.r46c7"
+    },
+    {
+      "text": "."
+    },
+    {
+      "text": " For comparison, the next-highest entries in the table are "
+    },
+    {
+      "quote": "(2R,3R)-2,3-",
+      "atom": "p9.T2.r19c1"
+    },
+    {
+      "quote": "butanediol",
+      "atom": "p9.T2.r20c1"
+    },
+    {
+      "text": " from strain "
+    },
+    {
+      "quote": "MG1 → ΔslaC-bdhA",
+      "atom": "p9.T2.r19c2"
+    },
+    {
+      "text": " at "
+    },
+    {
+      "quote": "89,810",
+      "atom": "p9.T2.r19c6"
+    },
+    {
+      "text": ", and "
+    },
+    {
+      "quote": "acetoin",
+      "atom": "p9.T2.r10c1"
+    },
+    {
+      "text": " from "
+    },
+    {
+      "quote": "H32 → H32-nox",
+      "atom": "p9.T2.r10c2"
+    },
+    {
+      "text": " at "
+    },
+    {
+      "quote": "75,200",
+      "atom": "p9.T2.r10c6"
+    },
+    {
+      "text": ", both also in fed-batch mode."
+    }
+  ],
+  "rendered": "In Table 2[1], the highest titer listed is for the sesquiterpene alcohol ((cid:0) )-α-bisabolol[2] (printed with a garbled minus sign for the stereodescriptor), reaching 102,300[3] in the units given in the column header (mg L^(cid:0) 1)[4], i.e. about102.3[5] g per litre. The producing strain is the engineered derivative HBQA7 → SMB19[6], obtained by Genome integration of the biosynthetic pathway and optimization of[7]precursor supply[8]. The conditions were a fed-batch[9] cultivation of 110[10] h, as reported in reference [22][11]. For comparison, the next-highest entries in the table are (2R,3R)-2,3-[12]butanediol[13] from strain MG1 → ΔslaC-bdhA[14] at 89,810[15], and acetoin[16] from H32 → H32-nox[17] at 75,200[18], both also in fed-batch mode.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "((cid:0) )-α-bisabolol",
+      "source": {
+        "atom": "p9.T2.r46c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "((cid:0) )-α-bisabolol",
+        "bbox": [
+          43.6,
+          468.7,
+          86.3,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "((cid:0) )-α-bisabolol"
+    },
+    {
+      "kind": "quote",
+      "quote": "102,300",
+      "source": {
+        "atom": "p9.T2.r46c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "102,300",
+        "bbox": [
+          487.8,
+          470.4,
+          511.2,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "102,300"
+    },
+    {
+      "kind": "quote",
+      "quote": "(mg L^(cid:0) 1)",
+      "source": {
+        "atom": "p9.T2.r2c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "(mg L^(cid:0) 1)",
+        "bbox": [
+          487.8,
+          85.9,
+          512.5,
+          95.2
+        ],
+        "table": "Table 2",
+        "row": 2,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "(mg L^(cid:0) 1)"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(replace(c.text, ',', '') AS DOUBLE)/k.value AS g_per_L FROM cells c, consts k WHERE c.id='p9.T2.r46c6' AND k.id='K.per_kilo'",
+      "column": "g_per_L",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 102.3,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "p9.T2.r46c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "102,300",
+          "bbox": [
+            487.8,
+            470.4,
+            511.2,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 5,
+      "rendered": "102.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "HBQA7 → SMB19",
+      "source": {
+        "atom": "p9.T2.r46c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "HBQA7 → SMB19",
+        "bbox": [
+          114.6,
+          469.2,
+          165.5,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "HBQA7 → SMB19"
+    },
+    {
+      "kind": "quote",
+      "quote": "Genome integration of the biosynthetic pathway and optimization of",
+      "source": {
+        "atom": "p9.T2.r46c3",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "Genome integration of the biosynthetic pathway and optimization of",
+        "bbox": [
+          195.4,
+          470.4,
+          385.6,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 3,
+        "column_header": "Strategy"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "Genome integration of the biosynthetic pathway and optimization of"
+    },
+    {
+      "kind": "quote",
+      "quote": "precursor supply",
+      "source": {
+        "atom": "p9.T2.r47c3",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "precursor supply",
+        "bbox": [
+          195.4,
+          479.0,
+          242.7,
+          485.4
+        ],
+        "table": "Table 2",
+        "row": 47,
+        "col": 3,
+        "column_header": "Strategy"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "precursor supply"
+    },
+    {
+      "kind": "quote",
+      "quote": "fed-batch",
+      "source": {
+        "atom": "p9.T2.r46c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "fed-batch",
+        "bbox": [
+          397.0,
+          470.4,
+          423.4,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "fed-batch"
+    },
+    {
+      "kind": "quote",
+      "quote": "110",
+      "source": {
+        "atom": "p9.T2.r46c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "110",
+        "bbox": [
+          462.2,
+          470.4,
+          473.0,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "110"
+    },
+    {
+      "kind": "quote",
+      "quote": "[22]",
+      "source": {
+        "atom": "p9.T2.r46c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[22]",
+        "bbox": [
+          523.9,
+          470.4,
+          536.5,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "[22]"
+    },
+    {
+      "kind": "quote",
+      "quote": "(2R,3R)-2,3-",
+      "source": {
+        "atom": "p9.T2.r19c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "(2R,3R)-2,3-",
+        "bbox": [
+          43.6,
+          239.1,
+          78.6,
+          245.4
+        ],
+        "table": "Table 2",
+        "row": 19,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "(2R,3R)-2,3-"
+    },
+    {
+      "kind": "quote",
+      "quote": "butanediol",
+      "source": {
+        "atom": "p9.T2.r20c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "butanediol",
+        "bbox": [
+          49.6,
+          247.6,
+          79.8,
+          254.0
+        ],
+        "table": "Table 2",
+        "row": 20,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "butanediol"
+    },
+    {
+      "kind": "quote",
+      "quote": "MG1 → ΔslaC-bdhA",
+      "source": {
+        "atom": "p9.T2.r19c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "MG1 → ΔslaC-bdhA",
+        "bbox": [
+          114.6,
+          237.9,
+          171.4,
+          245.4
+        ],
+        "table": "Table 2",
+        "row": 19,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "MG1 → ΔslaC-bdhA"
+    },
+    {
+      "kind": "quote",
+      "quote": "89,810",
+      "source": {
+        "atom": "p9.T2.r19c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "89,810",
+        "bbox": [
+          491.4,
+          239.1,
+          511.1,
+          245.4
+        ],
+        "table": "Table 2",
+        "row": 19,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "89,810"
+    },
+    {
+      "kind": "quote",
+      "quote": "acetoin",
+      "source": {
+        "atom": "p9.T2.r10c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "acetoin",
+        "bbox": [
+          43.6,
+          162.0,
+          64.1,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "acetoin"
+    },
+    {
+      "kind": "quote",
+      "quote": "H32 → H32-nox",
+      "source": {
+        "atom": "p9.T2.r10c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "H32 → H32-nox",
+        "bbox": [
+          114.6,
+          160.8,
+          160.6,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "H32 → H32-nox"
+    },
+    {
+      "kind": "quote",
+      "quote": "75,200",
+      "source": {
+        "atom": "p9.T2.r10c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "75,200",
+        "bbox": [
+          491.4,
+          162.0,
+          511.1,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 18,
+      "rendered": "75,200"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:43:13+00:00",
+  "paper": "p3",
+  "probe": "T1",
+  "cat": "table",
+  "expect": "(-)-alpha-bisabolol, HBQA7 -> SMB19, 102,300 mg/L, fed-batch, 110 h, ref [22]. Text: record 102.3 g/L in a 50-L bioreactor with full chromosomal integration (p11.L26).",
+  "trap": "picking 89,810 (2,3-BD) or a text number instead"
+}

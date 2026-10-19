@@ -1,0 +1,353 @@
+{
+  "question": "What share of a lead-acid cell's mass is lead or lead oxide, what share of a Li-ion cell's weight is active cathode material, and how many times larger is the first?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'lead|active material|cathode|weight|mass') ORDER BY page, id",
+      "rows": 113
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=3 AND line_no BETWEEN 19 AND 52 ORDER BY line_no",
+      "rows": 34
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, strength FROM atoms WHERE id IN ('p3.F2.o11') OR (page=3 AND kind IN ('figure_ocr') ) OR id LIKE 'p3.F2.o%' ORDER BY id",
+      "rows": 16
+    },
+    {
+      "turn": 3,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F2"
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract(a.text, '(\\d+)%', 1) AS DOUBLE) AS lead_pct, CAST(regexp_extract(b.text, '^(\\d+)%', 1) AS DOUBLE) AS cathode_pct, CAST(regexp_extract(a.text, '(\\d+)%', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '^(\\d+)%', 1) AS DOUBLE) AS ratio FROM atoms a, atoms b WHERE a.id='p3.L22' AND b.id='p3.L49'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 16
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['70%', '30%).', '2', '69%', '31.8%.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'70%' is written exactly so in the document (e.g. p3.L22): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"70%\", \"atom\": \"p3.L22\"} — never shorten it",
+          "'30%' is written exactly so in the document (e.g. p3.L49): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"30%\", \"atom\": \"p3.L49\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p1.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L4\"} — never shorten it",
+          "'69%' is written exactly so in the document (e.g. p3.F2.o11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"69%\", \"atom\": \"p3.F2.o11\"} — never shorten it",
+          "'31.8%' is written exactly so in the document (e.g. p3.F2.o6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"31.8%\", \"atom\": \"p3.F2.o6\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2876,
+    "cache_read_input_tokens": 41742,
+    "cache_creation_input_tokens": 12371
+  },
+  "runs": [
+    {
+      "text": "Lead or lead oxide makes up "
+    },
+    {
+      "quote": "almost 70%",
+      "atom": "p3.L22"
+    },
+    {
+      "text": " of a lead-acid cell's mass (the text: \""
+    },
+    {
+      "quote": "of the mass of a lead-acid cell is lead or lead oxide",
+      "atom": "p3.L23"
+    },
+    {
+      "text": "\"). The active cathode material (NMC622) is "
+    },
+    {
+      "quote": "30%",
+      "atom": "p3.L49"
+    },
+    {
+      "text": " of a Li-ion cell's weight (\""
+    },
+    {
+      "quote": "30% of the cell weight",
+      "atom": "p3.L49"
+    },
+    {
+      "text": "\"). The lead-acid share is therefore roughly "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text, '(\\d+)%', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '^(\\d+)%', 1) AS DOUBLE) AS ratio FROM atoms a, atoms b WHERE a.id='p3.L22' AND b.id='p3.L49'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " times the Li-ion cathode share. The chart in the figure gives the same picture, with lead at "
+    },
+    {
+      "quote": "69%",
+      "atom": "p3.F2.o11"
+    },
+    {
+      "text": " and NMC622 at "
+    },
+    {
+      "quote": "31.8%",
+      "atom": "p3.F2.o6"
+    },
+    {
+      "text": ". "
+    },
+    {
+      "figure": "p3.F2"
+    }
+  ],
+  "rendered": "Lead or lead oxide makes up almost 70%[1] of a lead-acid cell's mass (the text: \"of the mass of a lead-acid cell is lead or lead oxide[2]\"). The active cathode material (NMC622) is 30%[3] of a Li-ion cell's weight (\"30% of the cell weight[4]\"). The lead-acid share is therefore roughly 2.3[5] times the Li-ion cathode share. The chart in the figure gives the same picture, with lead at 69%[6] and NMC622 at 31.8%[7]. Fig. 2[8]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "almost 70%",
+      "source": {
+        "atom": "p3.L22",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "nents, making them easy to recycle. Additionally, almost 70%",
+        "bbox": [
+          36.9,
+          337.5,
+          294.8,
+          346.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "almost 70%"
+    },
+    {
+      "kind": "quote",
+      "quote": "of the mass of a lead-acid cell is lead or lead oxide",
+      "source": {
+        "atom": "p3.L23",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "of the mass of a lead-acid cell is lead or lead oxide, which is easily",
+        "bbox": [
+          36.9,
+          349.4,
+          294.8,
+          357.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "of the mass of a lead-acid cell is lead or lead oxide"
+    },
+    {
+      "kind": "quote",
+      "quote": "30%",
+      "source": {
+        "atom": "p3.L49",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "30% of the cell weight and are a substantial contributor to the",
+        "bbox": [
+          311.8,
+          262.7,
+          569.7,
+          271.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "30%"
+    },
+    {
+      "kind": "quote",
+      "quote": "30% of the cell weight",
+      "source": {
+        "atom": "p3.L49",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "30% of the cell weight and are a substantial contributor to the",
+        "bbox": [
+          311.8,
+          262.7,
+          569.7,
+          271.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "30% of the cell weight"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text, '(\\d+)%', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '^(\\d+)%', 1) AS DOUBLE) AS ratio FROM atoms a, atoms b WHERE a.id='p3.L22' AND b.id='p3.L49'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 2.3333333333333335,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p3.L22",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "nents, making them easy to recycle. Additionally, almost 70%",
+          "bbox": [
+            36.9,
+            337.5,
+            294.8,
+            346.0
+          ]
+        },
+        {
+          "atom": "p3.L49",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "30% of the cell weight and are a substantial contributor to the",
+          "bbox": [
+            311.8,
+            262.7,
+            569.7,
+            271.1
+          ]
+        }
+      ],
+      "n": 5,
+      "rendered": "2.3"
+    },
+    {
+      "kind": "quote",
+      "quote": "69%",
+      "source": {
+        "atom": "p3.F2.o11",
+        "kind": "ocr",
+        "page": 3,
+        "strength": "ocr",
+        "text": "8% Lead, 69%",
+        "bbox": [
+          126.4,
+          620.4,
+          200.6,
+          629.0
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p3.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 6,
+      "rendered": "69%"
+    },
+    {
+      "kind": "quote",
+      "quote": "31.8%",
+      "source": {
+        "atom": "p3.F2.o6",
+        "kind": "ocr",
+        "page": 3,
+        "strength": "ocr",
+        "text": "NMC622, 31.8%",
+        "bbox": [
+          243.3,
+          563.5,
+          286.3,
+          568.8
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p3.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 7,
+      "rendered": "31.8%"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p3.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 3,
+        "caption": "FIGURE 2",
+        "png": "figures/p3.F2.png",
+        "png_pixels_sha256": "6a22fe4b71ffbf23028b44304ee245d8866b377e75c4d1a48c3a5059c5b54ba8",
+        "bbox": [
+          45.3,
+          512.2,
+          286.4,
+          713.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Fig. 2"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-18T08:46:18+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "mattod-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "almost 70% (p3.L22-23) vs around 30% (p3.L48-49): 2.3 times",
+  "trap": ""
+}

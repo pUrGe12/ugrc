@@ -1,0 +1,972 @@
+{
+  "question": "Do the pan-genome gene counts in Fig. 2E agree with the total stated in the text?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 18,
+  "turns": 13,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%pan%genome%' OR text ILIKE '%pangenome%' OR text ILIKE '%core gene%' OR text ILIKE '%accessory%' OR text ILIKE '%unique gene%' OR text ILIKE '%shell%' OR text ILIKE '%cloud%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (2,3) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE text ILIKE '%Eduardo%' OR text ILIKE '%Danesh%' OR text ILIKE '%Filipe%' OR text ILIKE '%Abreo%' OR text ILIKE '%19,469%' OR text ILIKE '%3155%' OR text ILIKE '%16.2%' ORDER BY page, line_no",
+      "rows": 2
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (3155+7847+8467) AS eduardo_total, (3155*100.0/19469) AS core_pct, (3372+342+1526+8347) AS danesh_total, (2107+7656+6693) AS filipe_total",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text FROM lines WHERE page=14 AND line_no BETWEEN 155 AND 159 OR (page=14 AND text ILIKE '[44]%') ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, line_no, text, conf FROM atoms WHERE page=4 AND kind LIKE '%ocr%' AND (text LIKE '%3155%' OR text LIKE '%7847%' OR text LIKE '%8467%' OR text LIKE '%19%') ORDER BY id",
+      "rows": null
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, text, strength FROM atoms WHERE page=4 AND (text LIKE '%3155%' OR text LIKE '%7847%' OR text LIKE '%8467%' OR text LIKE '%6693%' OR text LIKE '%19,469%') ORDER BY id",
+      "rows": 8
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS eduardo_sum, pct0 FROM (SELECT text, 0 AS pct0 FROM atoms WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')) t",
+      "rows": null
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT 100.0 * (SELECT CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER) FROM atoms WHERE id='p4.F2.k41') / (SELECT CAST(regexp_extract(text, '([0-9,]+) total genes', 1) AS INTEGER) FROM lines WHERE id='p2.L107') AS core_pct",
+      "rows": null
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS eduardo_sum FROM atoms WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "rows": 1
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 100.0 * CAST(regexp_extract(a.text, 'contains (\\d+) genes', 1) AS INTEGER) / CAST(replace(regexp_extract(l.text, '([0-9,]+) total genes', 1), ',', '') AS INTEGER) AS core_pct FROM atoms a, lines l WHERE a.id='p4.F2.k41' AND l.id='p2.L107'",
+      "rows": 1
+    },
+    {
+      "turn": 9,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS danesh_sum FROM atoms WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')",
+      "rows": 1
+    },
+    {
+      "turn": 9,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS filipe_sum FROM atoms WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "rows": 1
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 23,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 11,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, text FROM atoms WHERE text LIKE '%Eduardo%' OR text LIKE '%Danesh%' OR text LIKE '%Filipe%' ORDER BY id",
+      "rows": 14
+    },
+    {
+      "turn": 12,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 31,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 13,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 31
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2019.', 'three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2019' is written exactly so in the document (e.g. p14.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2019\", \"atom\": \"p14.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['2E,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2E' is written exactly so in the document (e.g. p2.L110): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2E\", \"atom\": \"p2.L110\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[16]",
+        "why": "your own words contain number(s) ['[44]'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'44' is written exactly so in the document (e.g. p2.L109): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"44\", \"atom\": \"p2.L109\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[18]",
+        "why": "your own words contain number(s) ['2019', '2E', '2016', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2019' is written exactly so in the document (e.g. p14.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2019\", \"atom\": \"p14.L21\"} — never shorten it",
+          "'2E' is written exactly so in the document (e.g. p2.L110): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2E\", \"atom\": \"p2.L110\"} — never shorten it",
+          "'2016' is written exactly so in the document (e.g. p14.L14): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2016\", \"atom\": \"p14.L14\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[20]",
+        "why": "your own words contain number(s) ['2018'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2018' is written exactly so in the document (e.g. p14.L43): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2018\", \"atom\": \"p14.L43\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[22]",
+        "why": "your own words contain number(s) ['19,469', '2019'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'19,469' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"19,469\", \"atom\": \"p2.L107\"} — never shorten it",
+          "'2019' is written exactly so in the document (e.g. p14.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2019\", \"atom\": \"p14.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[22]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 28,
+    "output_tokens": 10114,
+    "cache_read_input_tokens": 235900,
+    "cache_creation_input_tokens": 30354
+  },
+  "runs": [
+    {
+      "text": "Yes, for the first of the panel E sets, labelled "
+    },
+    {
+      "quote": "Eduardo et al. 2019",
+      "atom": "p4.F2.k40"
+    },
+    {
+      "text": ". The text says the pan-genome analysis "
+    },
+    {
+      "quote": "revealed 19,469 total genes",
+      "atom": "p2.L107"
+    },
+    {
+      "text": ", of which only "
+    },
+    {
+      "quote": "3155",
+      "atom": "p2.L107"
+    },
+    {
+      "text": " are core genes ("
+    },
+    {
+      "quote": "~16.2%",
+      "atom": "p2.L107"
+    },
+    {
+      "text": "). In the pan-genome panel of the figure, the core bar reads "
+    },
+    {
+      "quote": "contains 3155 genes",
+      "atom": "p4.F2.k41"
+    },
+    {
+      "text": ", the dispensable bar "
+    },
+    {
+      "quote": "contains 7847 genes",
+      "atom": "p4.F2.k42"
+    },
+    {
+      "text": ", and the unique bar "
+    },
+    {
+      "quote": "contains 8467 genes",
+      "atom": "p4.F2.k43"
+    },
+    {
+      "text": ". Their sum is "
+    },
+    {
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS eduardo_sum FROM atoms WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "eduardo_sum",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " genes, which matches the stated total. The core share works out to "
+    },
+    {
+      "sql": "SELECT 100.0 * CAST(regexp_extract(a.text, 'contains (\\d+) genes', 1) AS INTEGER) / CAST(replace(regexp_extract(l.text, '([0-9,]+) total genes', 1), ',', '') AS INTEGER) AS core_pct FROM atoms a, lines l WHERE a.id='p4.F2.k41' AND l.id='p2.L107'",
+      "column": "core_pct",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " percent, consistent with the text. The text's citation "
+    },
+    {
+      "quote": "[44]",
+      "atom": "p2.L109"
+    },
+    {
+      "text": " is "
+    },
+    {
+      "quote": "E. Abreo, N. Altier",
+      "atom": "p14.L157"
+    },
+    {
+      "text": ", which appears to be the study behind the first set (an inference from the author name, not stated in the figure).\n\nThe other sets in the pan-genome panel do not sum to the text's total, but they come from different studies, so they are not the source of that figure. The "
+    },
+    {
+      "quote": "Danesh et al. 2016",
+      "atom": "p4.F2.k40"
+    },
+    {
+      "text": " bars sum to "
+    },
+    {
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS danesh_sum FROM atoms WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')",
+      "column": "danesh_sum",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " genes, and the "
+    },
+    {
+      "quote": "Filipe et al. 2018",
+      "atom": "p4.F2.k40"
+    },
+    {
+      "text": " bars sum to "
+    },
+    {
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS filipe_sum FROM atoms WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "column": "filipe_sum",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " genes. Neither matches the total, so the text's total corresponds only to the first set."
+    }
+  ],
+  "rendered": "Yes, for the first of the panel E sets, labelled Eduardo et al. 2019[1]. The text says the pan-genome analysis revealed 19,469 total genes[2], of which only 3155[3] are core genes (~16.2%[4]). In the pan-genome panel of the figure, the core bar reads contains 3155 genes[5], the dispensable bar contains 7847 genes[6], and the unique bar contains 8467 genes[7]. Their sum is 19,469[8] genes, which matches the stated total. The core share works out to 16.2[9] percent, consistent with the text. The text's citation [44][10] is E. Abreo, N. Altier[11], which appears to be the study behind the first set (an inference from the author name, not stated in the figure).\n\nThe other sets in the pan-genome panel do not sum to the text's total, but they come from different studies, so they are not the source of that figure. The Danesh et al. 2016[12] bars sum to 13,587[13] genes, and the Filipe et al. 2018[14] bars sum to 16,456[15] genes. Neither matches the total, so the text's total corresponds only to the first set.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Eduardo et al. 2019",
+      "source": {
+        "atom": "p4.F2.k40",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, the y-axis is labelled 'Gene number' and bars are grouped under three study headings: (Eduardo et al. 2019), (Danesh et al. 2016) and (Filipe et al. 2018).",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "Gene number",
+          "(Eduardo et al. 2019)",
+          "(Danesh et al. 2016)",
+          "(Filipe et al. 2018)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Gene number'"
+      },
+      "strength": "model-read",
+      "n": 1,
+      "rendered": "Eduardo et al. 2019"
+    },
+    {
+      "kind": "quote",
+      "quote": "revealed 19,469 total genes",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "revealed 19,469 total genes"
+    },
+    {
+      "kind": "quote",
+      "quote": "3155",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "3155"
+    },
+    {
+      "kind": "quote",
+      "quote": "~16.2%",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "~16.2%"
+    },
+    {
+      "kind": "quote",
+      "quote": "contains 3155 genes",
+      "source": {
+        "atom": "p4.F2.k41",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "3155",
+          "Core (>95%)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Core (>95%)'"
+      },
+      "strength": "model-read",
+      "n": 5,
+      "rendered": "contains 3155 genes"
+    },
+    {
+      "kind": "quote",
+      "quote": "contains 7847 genes",
+      "source": {
+        "atom": "p4.F2.k42",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "7847",
+          "Dispensable"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find '7847'; 'Dispensable'"
+      },
+      "strength": "model-read",
+      "n": 6,
+      "rendered": "contains 7847 genes"
+    },
+    {
+      "kind": "quote",
+      "quote": "contains 8467 genes",
+      "source": {
+        "atom": "p4.F2.k43",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "8467",
+          "Unique"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Unique'"
+      },
+      "strength": "model-read",
+      "n": 7,
+      "rendered": "contains 8467 genes"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS eduardo_sum FROM atoms WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "eduardo_sum",
+      "row": 0,
+      "fmt": "int",
+      "value": 19469,
+      "strength": "computed from model-read",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p4.F2.k41",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3155",
+            "Core (>95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>95%)'"
+        },
+        {
+          "atom": "p4.F2.k42",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "7847",
+            "Dispensable"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '7847'; 'Dispensable'"
+        },
+        {
+          "atom": "p4.F2.k43",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "8467",
+            "Unique"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Unique'"
+        }
+      ],
+      "n": 8,
+      "rendered": "19,469"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT 100.0 * CAST(regexp_extract(a.text, 'contains (\\d+) genes', 1) AS INTEGER) / CAST(replace(regexp_extract(l.text, '([0-9,]+) total genes', 1), ',', '') AS INTEGER) AS core_pct FROM atoms a, lines l WHERE a.id='p4.F2.k41' AND l.id='p2.L107'",
+      "column": "core_pct",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 16.205249370794597,
+      "strength": "computed from model-read",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p2.L107",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+          "bbox": [
+            306.6,
+            527.5,
+            557.7,
+            535.4
+          ]
+        },
+        {
+          "atom": "p4.F2.k41",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3155",
+            "Core (>95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>95%)'"
+        }
+      ],
+      "n": 9,
+      "rendered": "16.2"
+    },
+    {
+      "kind": "quote",
+      "quote": "[44]",
+      "source": {
+        "atom": "p2.L109",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "[44]. Additional studies have similarly reported extensive genomic di-",
+        "bbox": [
+          306.6,
+          548.4,
+          557.7,
+          556.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "[44]"
+    },
+    {
+      "kind": "quote",
+      "quote": "E. Abreo, N. Altier",
+      "source": {
+        "atom": "p14.L157",
+        "kind": "line",
+        "page": 14,
+        "strength": "verbatim",
+        "text": "[44] E. Abreo, N. Altier, Pangenome of Serratia marcescens strains from nosocomial and",
+        "bbox": [
+          310.6,
+          709.7,
+          555.7,
+          716.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "E. Abreo, N. Altier"
+    },
+    {
+      "kind": "quote",
+      "quote": "Danesh et al. 2016",
+      "source": {
+        "atom": "p4.F2.k40",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, the y-axis is labelled 'Gene number' and bars are grouped under three study headings: (Eduardo et al. 2019), (Danesh et al. 2016) and (Filipe et al. 2018).",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "Gene number",
+          "(Eduardo et al. 2019)",
+          "(Danesh et al. 2016)",
+          "(Filipe et al. 2018)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Gene number'"
+      },
+      "strength": "model-read",
+      "n": 12,
+      "rendered": "Danesh et al. 2016"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS danesh_sum FROM atoms WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')",
+      "column": "danesh_sum",
+      "row": 0,
+      "fmt": "int",
+      "value": 13587,
+      "strength": "computed from model-read",
+      "n_sources": 4,
+      "sources": [
+        {
+          "atom": "p4.F2.k44",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the core genome (>99%) contains 3372 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3372",
+            "Core (>99%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>99%)'"
+        },
+        {
+          "atom": "p4.F2.k45",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the soft core (95–99%) contains 342 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "342",
+            "Soft core (95–99%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '342'; 'Soft core (95–99%)'"
+        },
+        {
+          "atom": "p4.F2.k46",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the shell (15–95%) contains 1526 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "1526",
+            "Shell (15–95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Shell (15–95%)'"
+        },
+        {
+          "atom": "p4.F2.k47",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the cloud (<15%) contains 8347 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "8347",
+            "Cloud (<15%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Cloud (<15%)'"
+        }
+      ],
+      "n": 13,
+      "rendered": "13,587"
+    },
+    {
+      "kind": "quote",
+      "quote": "Filipe et al. 2018",
+      "source": {
+        "atom": "p4.F2.k40",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, the y-axis is labelled 'Gene number' and bars are grouped under three study headings: (Eduardo et al. 2019), (Danesh et al. 2016) and (Filipe et al. 2018).",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "Gene number",
+          "(Eduardo et al. 2019)",
+          "(Danesh et al. 2016)",
+          "(Filipe et al. 2018)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Gene number'"
+      },
+      "strength": "model-read",
+      "n": 14,
+      "rendered": "Filipe et al. 2018"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT sum(CAST(regexp_extract(text, 'contains (\\d+) genes', 1) AS INTEGER)) AS filipe_sum FROM atoms WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "column": "filipe_sum",
+      "row": 0,
+      "fmt": "int",
+      "value": 16456,
+      "strength": "computed from model-read",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p4.F2.k48",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the core genome (100%) contains 2107 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "2107",
+            "Core (100%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '2107'; 'Core (100%)'"
+        },
+        {
+          "atom": "p4.F2.k49",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the accessory genome contains 7656 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "7656",
+            "Accessory"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '7656'; 'Accessory'"
+        },
+        {
+          "atom": "p4.F2.k50",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the unique genome contains 6693 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "6693",
+            "Unique"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '6693'; 'Unique'"
+        }
+      ],
+      "n": 15,
+      "rendered": "16,456"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T08:55:55+00:00",
+  "paper": "p3",
+  "probe": "X1",
+  "cat": "cross-source",
+  "expect": "yes for the Eduardo et al. 2019 definition: core 3155 + dispensable 7847 + unique 8467 = 19,469, which is the text's total (p2.L107). The other two definitions in Fig. 2E (Danesh 2016, Filipe 2018) give different splits.",
+  "trap": "asserting agreement without the arithmetic, or comparing the wrong definition"
+}

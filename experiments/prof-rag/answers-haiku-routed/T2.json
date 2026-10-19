@@ -1,0 +1,1053 @@
+{
+  "question": "how many references on drx cathodes do the review papers report",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 15,
+  "turns": 10,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT doc, id, page, text FROM atoms WHERE text ILIKE '%DRX%' OR text ILIKE '%disordered rock%' ORDER BY doc, page, id LIMIT 150",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT doc, id, text, value, unit, role FROM measures WHERE (array_to_string(about, ' ') ILIKE '%DRX%' OR sentence ILIKE '%DRX%' OR sentence ILIKE '%disordered rock%') AND (sentence ILIKE '%reference%' OR text ILIKE '%ref%' OR unit ILIKE '%ref%') LIMIT 100",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%DRX%' OR text ILIKE '%disordered rock%' OR text ILIKE '%disordered-rock%' ORDER BY id LIMIT 150",
+      "rows": 37
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, sentence FROM measures WHERE sentence ILIKE '%DRX%' OR sentence ILIKE '%disordered%' OR array_to_string(about, ' ') ILIKE '%DRX%' LIMIT 100",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE (text ILIKE '%refer%' OR text ILIKE '%citation%' OR text ILIKE '%cited%' OR text ILIKE '%literature%' OR text ILIKE '%publications%' OR text ILIKE '%papers%') AND id LIKE 'aenm%' ORDER BY id LIMIT 150",
+      "rows": 2
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id LIKE 'aenm-2022:p9.%' OR id LIKE 'aenm-2022:p10.%' ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE (text ILIKE '%reference%' OR text ILIKE '%rocksalt%' OR text ILIKE '%rock-salt%' OR text ILIKE '%rock salt%' OR text ILIKE '%DRX%') AND id NOT LIKE 'aenm%' ORDER BY id LIMIT 150",
+      "rows": 10
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id LIKE 'ensm-2021:p15.%' ORDER BY page, line_no LIMIT 80",
+      "rows": 43
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id LIKE 'aenm-2022:p10.L2%' OR id LIKE 'aenm-2022:p11.L4%' OR id IN ('aenm-2022:p2.L12','aenm-2022:p3.L27','aenm-2022:p1.L66') ORDER BY id",
+      "rows": 21
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id LIKE 'aenm-2022:p9.L%' AND text ~ '\\[[0-9]' ORDER BY id",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT num, COUNT(*) AS hits, string_agg(DISTINCT id, ' ') AS where_ FROM n GROUP BY num ORDER BY CAST(num AS INTEGER)",
+      "rows": 12
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT COUNT(DISTINCT num) AS all_refs, (SELECT COUNT(DISTINCT num) FROM n WHERE id <> 'aenm-2022:p9.L52') AS drx_refs_excl_ordering FROM n",
+      "rows": 1
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 35,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 35,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 35
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 11861,
+    "cache_read_input_tokens": 215229,
+    "cache_creation_input_tokens": 35783
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The review papers do not state a count of DRX references anywhere. The only review that discusses DRX cathodes at length is the cobalt-free review (aenm-2022), in its section headed "
+    },
+    {
+      "quote": "5. DRX Cathodes",
+      "atom": "aenm-2022:p9.L45"
+    },
+    {
+      "text": ", together with the captions of its DRX figures (see "
+    },
+    {
+      "figure": "aenm-2022:p11.F9"
+    },
+    {
+      "text": "). That passage cites numbered references, and counting the distinct reference numbers in it gives "
+    },
+    {
+      "sql": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT COUNT(DISTINCT num) AS all_refs FROM n",
+      "column": "all_refs",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " distinct reference numbers in all, or "
+    },
+    {
+      "sql": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT COUNT(DISTINCT num) AS drx_refs FROM n WHERE id <> 'aenm-2022:p9.L52'",
+      "column": "drx_refs",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " distinct reference numbers if the general citation on Li/TM ordering is left out (the citation at "
+    },
+    {
+      "quote": "[27]",
+      "atom": "aenm-2022:p9.L52"
+    },
+    {
+      "text": "). The DRX-specific citations are "
+    },
+    {
+      "quote": "[34]",
+      "atom": "aenm-2022:p9.L50"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[35]",
+      "atom": "aenm-2022:p9.L67"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[36]",
+      "atom": "aenm-2022:p11.L42"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[37]",
+      "atom": "aenm-2022:p11.L43"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[38]",
+      "atom": "aenm-2022:p11.L44"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[39]",
+      "atom": "aenm-2022:p11.L44"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[40]",
+      "atom": "aenm-2022:p9.L82"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[41]",
+      "atom": "aenm-2022:p9.L99"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[34,42]",
+      "atom": "aenm-2022:p9.L107"
+    },
+    {
+      "text": ", "
+    },
+    {
+      "quote": "[43]",
+      "atom": "aenm-2022:p9.L116"
+    },
+    {
+      "text": " and "
+    },
+    {
+      "quote": "[44]",
+      "atom": "aenm-2022:p9.L120"
+    },
+    {
+      "text": ". The other reviews touch DRX only in passing: the coatings review mentions "
+    },
+    {
+      "quote": "disordered rock",
+      "atom": "ensm-2021:p15.L39"
+    },
+    {
+      "text": " cathodes in its conclusions without any reference count."
+    }
+  ],
+  "rendered": "The review papers do not state a count of DRX references anywhere. The only review that discusses DRX cathodes at length is the cobalt-free review (aenm-2022), in its section headed 5. DRX Cathodes[1], together with the captions of its DRX figures (see Fig. 9[2]). That passage cites numbered references, and counting the distinct reference numbers in it gives 12[3] distinct reference numbers in all, or 11[4] distinct reference numbers if the general citation on Li/TM ordering is left out (the citation at [27][5]). The DRX-specific citations are [34][6], [35][7], [36][8], [37][9], [38][10], [39][11], [40][12], [41][13], [34,42][14], [43][15] and [44][16]. The other reviews touch DRX only in passing: the coatings review mentions disordered rock[17] cathodes in its conclusions without any reference count.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "5. DRX Cathodes",
+      "source": {
+        "atom": "aenm-2022:p9.L45",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "5. DRX Cathodes",
+        "bbox": [
+          51.0,
+          535.2,
+          131.9,
+          546.7
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "5. DRX Cathodes"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "aenm-2022:p11.F9",
+        "kind": "figure",
+        "label": "Fig. 9",
+        "page": 11,
+        "caption": "Figure 9. Charge/discharge profiles of various DRX cathodes including a) Li2Mn2/3Nb1/3O2F; Adapted with permission.^[36] Copyright 2018, Nature",
+        "png": "figures/aenm-2022/p11.F9.png",
+        "png_pixels_sha256": "278e36bb686ea93bd312ed07d8f4c9af600f042dcf20289a9072600697ae9695",
+        "bbox": [
+          63.8,
+          70.9,
+          534.3,
+          452.4
+        ],
+        "strength": "verbatim",
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Fig. 9"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT COUNT(DISTINCT num) AS all_refs FROM n",
+      "column": "all_refs",
+      "row": 0,
+      "fmt": "int",
+      "value": 12,
+      "strength": "computed from verbatim",
+      "n_sources": 14,
+      "sources": [
+        {
+          "atom": "aenm-2022:p11.L42",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Figure 9. Charge/discharge profiles of various DRX cathodes including a) Li2Mn2/3Nb1/3O2F; Adapted with permission.^[36] Copyright 2018, Nature",
+          "bbox": [
+            51.0,
+            459.9,
+            547.1,
+            469.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p11.L43",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Publishing Group. b) Li1.3Nb0.3Mn0.4O2; Adapted with permission.^[37] Copyright 2015, United States National Academy of Sciences. c) Li1.25Nb0.25V0.5O2;",
+          "bbox": [
+            51.0,
+            469.4,
+            547.1,
+            479.4
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p11.L44",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Adapted with permission.^[38] Copyright 2017, American Chemical Society; and d) Li1.2Ni1/3Ti1/3Mo2/15O2; Adapted with permission.^[39] Copyright 2015,",
+          "bbox": [
+            51.0,
+            478.9,
+            547.1,
+            488.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L107",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "of DRX cathodes.^[34,42] In addition to stabilizing anionic redox",
+          "bbox": [
+            306.1,
+            564.8,
+            547.1,
+            574.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L112",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "resulting in specific energies up to 1000 Wh kg^− 1.^[36] Other tech-",
+          "bbox": [
+            306.1,
+            619.8,
+            547.1,
+            629.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L116",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "impurities,^[43] ii) the inherently low electronic conductivity of",
+          "bbox": [
+            306.1,
+            663.8,
+            547.1,
+            673.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L120",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "from the extent of TM cation disorder,^[44] and iv) unstable",
+          "bbox": [
+            306.1,
+            707.8,
+            547.1,
+            717.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L50",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "gas evolution.^[34] A widely held belief in the battery research",
+          "bbox": [
+            51.0,
+            597.8,
+            292.0,
+            607.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L52",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "to enable high specific energies and good cycle life.^[27] Recently,",
+          "bbox": [
+            51.0,
+            619.8,
+            292.0,
+            629.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L67",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "compositions (i.e., Li1 + xTM1 − xO2).^[35] The electrochemical per-",
+          "bbox": [
+            306.1,
+            124.8,
+            547.1,
+            136.3
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L80",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "V) for charge compensation.^[34] There have also been reports",
+          "bbox": [
+            306.1,
+            267.8,
+            547.1,
+            277.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L82",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "ball-milled LiFeO2 and LiTiO2).^[40] Owing to their broad com-",
+          "bbox": [
+            306.1,
+            289.8,
+            547.1,
+            301.0
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L89",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "during extended cycling.^[34]",
+          "bbox": [
+            306.1,
+            366.8,
+            408.4,
+            376.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L99",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "cation ordering which greatly influences performance.^[41] Fur-",
+          "bbox": [
+            306.1,
+            476.8,
+            547.5,
+            486.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        }
+      ],
+      "n": 3,
+      "rendered": "12"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH l AS (SELECT id, text FROM lines WHERE id ~ '^aenm-2022:p(9\\.L(4[5-9]|[5-9][0-9]|1[01][0-9]|12[0-2])|11\\.L4[2-5])$'), m AS (SELECT id, unnest(regexp_extract_all(text, '\\[[0-9,]+\\]')) AS b FROM l), n AS (SELECT id, unnest(regexp_split_to_array(regexp_replace(b, '[\\[\\]]', '', 'g'), ',')) AS num FROM m) SELECT COUNT(DISTINCT num) AS drx_refs FROM n WHERE id <> 'aenm-2022:p9.L52'",
+      "column": "drx_refs",
+      "row": 0,
+      "fmt": "int",
+      "value": 11,
+      "strength": "computed from verbatim",
+      "n_sources": 13,
+      "sources": [
+        {
+          "atom": "aenm-2022:p11.L42",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Figure 9. Charge/discharge profiles of various DRX cathodes including a) Li2Mn2/3Nb1/3O2F; Adapted with permission.^[36] Copyright 2018, Nature",
+          "bbox": [
+            51.0,
+            459.9,
+            547.1,
+            469.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p11.L43",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Publishing Group. b) Li1.3Nb0.3Mn0.4O2; Adapted with permission.^[37] Copyright 2015, United States National Academy of Sciences. c) Li1.25Nb0.25V0.5O2;",
+          "bbox": [
+            51.0,
+            469.4,
+            547.1,
+            479.4
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p11.L44",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "Adapted with permission.^[38] Copyright 2017, American Chemical Society; and d) Li1.2Ni1/3Ti1/3Mo2/15O2; Adapted with permission.^[39] Copyright 2015,",
+          "bbox": [
+            51.0,
+            478.9,
+            547.1,
+            488.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L107",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "of DRX cathodes.^[34,42] In addition to stabilizing anionic redox",
+          "bbox": [
+            306.1,
+            564.8,
+            547.1,
+            574.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L112",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "resulting in specific energies up to 1000 Wh kg^− 1.^[36] Other tech-",
+          "bbox": [
+            306.1,
+            619.8,
+            547.1,
+            629.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L116",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "impurities,^[43] ii) the inherently low electronic conductivity of",
+          "bbox": [
+            306.1,
+            663.8,
+            547.1,
+            673.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L120",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "from the extent of TM cation disorder,^[44] and iv) unstable",
+          "bbox": [
+            306.1,
+            707.8,
+            547.1,
+            717.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L50",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "gas evolution.^[34] A widely held belief in the battery research",
+          "bbox": [
+            51.0,
+            597.8,
+            292.0,
+            607.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L67",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "compositions (i.e., Li1 + xTM1 − xO2).^[35] The electrochemical per-",
+          "bbox": [
+            306.1,
+            124.8,
+            547.1,
+            136.3
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L80",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "V) for charge compensation.^[34] There have also been reports",
+          "bbox": [
+            306.1,
+            267.8,
+            547.1,
+            277.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L82",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "ball-milled LiFeO2 and LiTiO2).^[40] Owing to their broad com-",
+          "bbox": [
+            306.1,
+            289.8,
+            547.1,
+            301.0
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L89",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "during extended cycling.^[34]",
+          "bbox": [
+            306.1,
+            366.8,
+            408.4,
+            376.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        },
+        {
+          "atom": "aenm-2022:p9.L99",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "cation ordering which greatly influences performance.^[41] Fur-",
+          "bbox": [
+            306.1,
+            476.8,
+            547.5,
+            486.9
+          ],
+          "doc": "aenm-2022",
+          "doi": "10.1002/aenm.202103050"
+        }
+      ],
+      "n": 4,
+      "rendered": "11"
+    },
+    {
+      "kind": "quote",
+      "quote": "[27]",
+      "source": {
+        "atom": "aenm-2022:p9.L52",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "to enable high specific energies and good cycle life.^[27] Recently,",
+        "bbox": [
+          51.0,
+          619.8,
+          292.0,
+          629.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "[27]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[34]",
+      "source": {
+        "atom": "aenm-2022:p9.L50",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "gas evolution.^[34] A widely held belief in the battery research",
+        "bbox": [
+          51.0,
+          597.8,
+          292.0,
+          607.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "[34]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[35]",
+      "source": {
+        "atom": "aenm-2022:p9.L67",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "compositions (i.e., Li1 + xTM1 − xO2).^[35] The electrochemical per-",
+        "bbox": [
+          306.1,
+          124.8,
+          547.1,
+          136.3
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "[35]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[36]",
+      "source": {
+        "atom": "aenm-2022:p11.L42",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "Figure 9. Charge/discharge profiles of various DRX cathodes including a) Li2Mn2/3Nb1/3O2F; Adapted with permission.^[36] Copyright 2018, Nature",
+        "bbox": [
+          51.0,
+          459.9,
+          547.1,
+          469.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "[36]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[37]",
+      "source": {
+        "atom": "aenm-2022:p11.L43",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "Publishing Group. b) Li1.3Nb0.3Mn0.4O2; Adapted with permission.^[37] Copyright 2015, United States National Academy of Sciences. c) Li1.25Nb0.25V0.5O2;",
+        "bbox": [
+          51.0,
+          469.4,
+          547.1,
+          479.4
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "[37]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[38]",
+      "source": {
+        "atom": "aenm-2022:p11.L44",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "Adapted with permission.^[38] Copyright 2017, American Chemical Society; and d) Li1.2Ni1/3Ti1/3Mo2/15O2; Adapted with permission.^[39] Copyright 2015,",
+        "bbox": [
+          51.0,
+          478.9,
+          547.1,
+          488.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "[38]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[39]",
+      "source": {
+        "atom": "aenm-2022:p11.L44",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "Adapted with permission.^[38] Copyright 2017, American Chemical Society; and d) Li1.2Ni1/3Ti1/3Mo2/15O2; Adapted with permission.^[39] Copyright 2015,",
+        "bbox": [
+          51.0,
+          478.9,
+          547.1,
+          488.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "[39]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[40]",
+      "source": {
+        "atom": "aenm-2022:p9.L82",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "ball-milled LiFeO2 and LiTiO2).^[40] Owing to their broad com-",
+        "bbox": [
+          306.1,
+          289.8,
+          547.1,
+          301.0
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "[40]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[41]",
+      "source": {
+        "atom": "aenm-2022:p9.L99",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "cation ordering which greatly influences performance.^[41] Fur-",
+        "bbox": [
+          306.1,
+          476.8,
+          547.5,
+          486.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "[41]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[34,42]",
+      "source": {
+        "atom": "aenm-2022:p9.L107",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "of DRX cathodes.^[34,42] In addition to stabilizing anionic redox",
+        "bbox": [
+          306.1,
+          564.8,
+          547.1,
+          574.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "[34,42]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[43]",
+      "source": {
+        "atom": "aenm-2022:p9.L116",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "impurities,^[43] ii) the inherently low electronic conductivity of",
+        "bbox": [
+          306.1,
+          663.8,
+          547.1,
+          673.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "[43]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[44]",
+      "source": {
+        "atom": "aenm-2022:p9.L120",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "from the extent of TM cation disorder,^[44] and iv) unstable",
+        "bbox": [
+          306.1,
+          707.8,
+          547.1,
+          717.9
+        ],
+        "doc": "aenm-2022",
+        "doi": "10.1002/aenm.202103050"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "[44]"
+    },
+    {
+      "kind": "quote",
+      "quote": "disordered rock",
+      "source": {
+        "atom": "ensm-2021:p15.L39",
+        "kind": "line",
+        "page": 15,
+        "strength": "verbatim",
+        "text": "free, Li-Mn-rich, 5V spinel, high voltage phosphates, disordered rock",
+        "bbox": [
+          319.4,
+          706.9,
+          558.2,
+          714.9
+        ],
+        "doc": "ensm-2021",
+        "doi": "10.1016/j.ensm.2021.03.015"
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "disordered rock"
+    }
+  ],
+  "seals": {
+    "extraction": "2cfc43ae5a6f18244636caded1b1855f4127785cc92a3d819ea30543b448d660",
+    "readings": "439ed13c9060c72e79e20b4f73e9cef81a82323c9972c22c1218b96f300aca21"
+  },
+  "created_at": "2026-10-13T11:58:23+00:00",
+  "probe": "T2",
+  "kind": "table"
+}

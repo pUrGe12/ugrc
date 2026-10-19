@@ -1,0 +1,318 @@
+{
+  "question": "In Table 2, which passive-targeting delivery systems have a particle size of 150 nm or more, and which of them is the largest?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND col_no IN (1,2,4,5,6) ORDER BY row_no, col_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 3 AND 20 ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id='p6.T2' AND (row_no, col_no) IN ((7,6),(9,6),(13,6),(18,6),(9,5),(13,5),(18,5),(7,5),(18,4),(9,4),(13,4),(7,4)) ORDER BY row_no, col_no",
+      "rows": 12
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number",
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE id IN ('p11.L127','p24.L123')",
+      "rows": 2
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,', '150', 'four'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'150' is written exactly so in the document (e.g. p11.L127): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"150\", \"atom\": \"p11.L127\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['485'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[1]",
+        "why": "'150' occurs in p6.T2.r9c6 only as part of a longer word or number (its text: '~150 nm')",
+        "moves": [
+          "the quote is verbatim in 2 places (p11.L127, p24.L123): set \"atom\" to the one you mean"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[1]",
+        "why": "p6.T2.r9c6 does not contain '2'; its text is '~150 nm'",
+        "moves": [
+          "the quote is verbatim in 22 places (p1.L37, p1.L68, p2.L38, p2.L53, p3.L12, p3.L14, p3.L36, p3.L39, …): set \"atom\" to the one you mean"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 3997,
+    "cache_read_input_tokens": 64408,
+    "cache_creation_input_tokens": 8183
+  },
+  "runs": [
+    {
+      "text": "In the passive-targeting rows of the table, the systems at or above the threshold named in the question are: the KRAS siRNA TGF-β system (particle size "
+    },
+    {
+      "quote": "~180 nm",
+      "atom": "p6.T2.r7c6"
+    },
+    {
+      "text": "); the VEGFR2 siRNA mTOR sEVs system (particle size "
+    },
+    {
+      "quote": "~150 nm",
+      "atom": "p6.T2.r9c6"
+    },
+    {
+      "text": "); the siTEAD4 MOF@EVs system (particle size "
+    },
+    {
+      "quote": "~168 nm",
+      "atom": "p6.T2.r13c6"
+    },
+    {
+      "text": "); and the DDP MOF system targeting VEGF (particle size "
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6"
+    },
+    {
+      "text": "). The largest of these is the DDP MOF system targeting VEGF, at "
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In the passive-targeting rows of the table, the systems at or above the threshold named in the question are: the KRAS siRNA TGF-β system (particle size ~180 nm[1]); the VEGFR2 siRNA mTOR sEVs system (particle size ~150 nm[2]); the siTEAD4 MOF@EVs system (particle size ~168 nm[3]); and the DDP MOF system targeting VEGF (particle size ~485 nm[4]). The largest of these is the DDP MOF system targeting VEGF, at ~485 nm[5].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "~180 nm",
+      "source": {
+        "atom": "p6.T2.r7c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~180 nm",
+        "bbox": [
+          357.9,
+          136.2,
+          384.9,
+          142.6
+        ],
+        "table": "Table 2",
+        "row": 7,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "~180 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~150 nm",
+      "source": {
+        "atom": "p6.T2.r9c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~150 nm",
+        "bbox": [
+          357.9,
+          153.4,
+          384.9,
+          159.8
+        ],
+        "table": "Table 2",
+        "row": 9,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "~150 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~168 nm",
+      "source": {
+        "atom": "p6.T2.r13c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~168 nm",
+        "bbox": [
+          357.9,
+          187.6,
+          384.9,
+          194.0
+        ],
+        "table": "Table 2",
+        "row": 13,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "~168 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~485 nm",
+      "source": {
+        "atom": "p6.T2.r18c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~485 nm",
+        "bbox": [
+          357.9,
+          230.5,
+          384.9,
+          236.9
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "~485 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~485 nm",
+      "source": {
+        "atom": "p6.T2.r18c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~485 nm",
+        "bbox": [
+          357.9,
+          230.5,
+          384.9,
+          236.9
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "~485 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:51:51+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "the PLGA/PLA/PCL polymer system (~180 nm), sEVs (~150 nm), MOF@EVs (~168 nm) and MOF (~485 nm, the largest); passive targeting covers the rows down to GO (active targeting)",
+  "trap": "LF-RES nanoparticles, 625 ±58 nm (active targeting)"
+}

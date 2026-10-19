@@ -1,0 +1,620 @@
+{
+  "question": "Which NADH oxidase was expressed in strain H32, where was it from, and what was the effect on the NAD+/NADH ratio and on acetoin?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%nadh oxidase%' OR lower(text) LIKE '%h32%' OR lower(text) LIKE '%noxe%' LIMIT 50",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%acetoin%' LIMIT 50",
+      "rows": 25
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=10 AND line_no BETWEEN 1 AND 8",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND row_no BETWEEN 9 AND 12 ORDER BY row_no, col_no",
+      "rows": 22
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 18,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 19
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2,3-butanediol', '2,3-BD,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2,3-butanediol' is written exactly so in the document (e.g. p1.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2,3-butanediol\", \"atom\": \"p1.L23\"} — never shorten it",
+          "'2,3-BD' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2,3-BD\", \"atom\": \"p9.L25\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 2564,
+    "cache_read_input_tokens": 16852,
+    "cache_creation_input_tokens": 8379
+  },
+  "runs": [
+    {
+      "text": "In S. marcescens H32, Sun et al. introduced a water-forming NADH oxidase, encoded by",
+      "support": [
+        {
+          "atom": "p10.L1",
+          "quote": "Sun et al. expressed a water-"
+        }
+      ]
+    },
+    {
+      "quote": "nox from Lactobacillus brevis",
+      "atom": "p10.L2"
+    },
+    {
+      "text": ", i.e. the enzyme was taken from a lactic acid bacterium rather than from S. marcescens itself. Oxidizing NADH to water shifted the cell's redox balance:",
+      "support": [
+        {
+          "atom": "p10.L1",
+          "quote": "expressed a water-"
+        },
+        {
+          "atom": "p10.L2",
+          "quote": "forming NADH oxidase (nox from Lactobacillus brevis) in S. marcescens"
+        }
+      ]
+    },
+    {
+      "quote": "increasing the NAD^+/NADH ratio by 2.9-fold and redirecting flux",
+      "atom": "p10.L3"
+    },
+    {
+      "text": " toward acetoin. This works because NADH is needed for the dehydrogenase step that reduces acetoin to the diol, as the review notes:",
+      "support": [
+        {
+          "atom": "p9.L36",
+          "quote": "in an NADH/NAD^+-dependent reaction"
+        }
+      ]
+    },
+    {
+      "quote": "acetoin, and reduced to 2,3-BD by 2,3-butanediol dehydrogenase (BDH)",
+      "atom": "p9.L35"
+    },
+    {
+      "text": ", so draining NADH favors accumulation of the oxidized product. In fed-batch fermentation the engineered strain produced",
+      "support": [
+        {
+          "atom": "p10.L4",
+          "quote": "Fed-batch fermentation yielded"
+        }
+      ]
+    },
+    {
+      "quote": "75.2 g L",
+      "atom": "p10.L4"
+    },
+    {
+      "text": "^-1 acetoin, while the by-product fell:",
+      "support": [
+        {
+          "atom": "p10.L4",
+          "quote": "acetoin, with"
+        }
+      ]
+    },
+    {
+      "quote": "2,3-BD decreasing by ~52%",
+      "atom": "p10.L5"
+    },
+    {
+      "text": ". The same case is listed in the strain table as the cofactor-engineering entry",
+      "support": [
+        {
+          "atom": "p9.T2.r10c3",
+          "quote": "Cofactor engineering through heterologous expression of NADH"
+        }
+      ]
+    },
+    {
+      "quote": "H32 → H32-nox",
+      "atom": "p9.T2.r10c2"
+    },
+    {
+      "text": ", with a fermentation time in hours of",
+      "support": [
+        {
+          "atom": "p9.T2.r10c4",
+          "quote": "fed-batch"
+        }
+      ]
+    },
+    {
+      "quote": "40",
+      "atom": "p9.T2.r10c5"
+    },
+    {
+      "text": " and a titer in mg per liter of",
+      "support": [
+        {
+          "atom": "p9.T2.r10c6",
+          "quote": "75,200"
+        }
+      ]
+    },
+    {
+      "quote": "75,200",
+      "atom": "p9.T2.r10c6"
+    },
+    {
+      "text": "; see ",
+      "support": [
+        {
+          "atom": "p9.T2.r10c7",
+          "quote": "[17]"
+        }
+      ]
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In S. marcescens H32, Sun et al. introduced a water-forming NADH oxidase, encoded by[1]nox from Lactobacillus brevis[2], i.e. the enzyme was taken from a lactic acid bacterium rather than from S. marcescens itself. Oxidizing NADH to water shifted the cell's redox balance:[3][4]increasing the NAD^+/NADH ratio by 2.9-fold and redirecting flux[5] toward acetoin. This works because NADH is needed for the dehydrogenase step that reduces acetoin to the diol, as the review notes:[6]acetoin, and reduced to 2,3-BD by 2,3-butanediol dehydrogenase (BDH)[7], so draining NADH favors accumulation of the oxidized product. In fed-batch fermentation the engineered strain produced[8]75.2 g L[9]^-1 acetoin, while the by-product fell:[10]2,3-BD decreasing by ~52%[11]. The same case is listed in the strain table as the cofactor-engineering entry[12]H32 → H32-nox[13], with a fermentation time in hours of[14]40[15] and a titer in mg per liter of[16]75,200[17]; see[18] Table 2[19].",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Sun et al. expressed a water-",
+      "source": {
+        "atom": "p10.L1",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "distribution between the two compounds. Sun et al. expressed a water-",
+        "bbox": [
+          37.6,
+          480.5,
+          288.7,
+          488.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Sun et al. expressed a water-"
+    },
+    {
+      "kind": "quote",
+      "quote": "nox from Lactobacillus brevis",
+      "source": {
+        "atom": "p10.L2",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "forming NADH oxidase (nox from Lactobacillus brevis) in S. marcescens",
+        "bbox": [
+          37.6,
+          491.0,
+          288.7,
+          499.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "nox from Lactobacillus brevis"
+    },
+    {
+      "kind": "support",
+      "quote": "expressed a water-",
+      "source": {
+        "atom": "p10.L1",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "distribution between the two compounds. Sun et al. expressed a water-",
+        "bbox": [
+          37.6,
+          480.5,
+          288.7,
+          488.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "expressed a water-"
+    },
+    {
+      "kind": "support",
+      "quote": "forming NADH oxidase (nox from Lactobacillus brevis) in S. marcescens",
+      "source": {
+        "atom": "p10.L2",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "forming NADH oxidase (nox from Lactobacillus brevis) in S. marcescens",
+        "bbox": [
+          37.6,
+          491.0,
+          288.7,
+          499.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "forming NADH oxidase (nox from Lactobacillus brevis) in S. marcescens"
+    },
+    {
+      "kind": "quote",
+      "quote": "increasing the NAD^+/NADH ratio by 2.9-fold and redirecting flux",
+      "source": {
+        "atom": "p10.L3",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "H32, increasing the NAD^+/NADH ratio by 2.9-fold and redirecting flux",
+        "bbox": [
+          37.6,
+          497.5,
+          288.7,
+          509.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "increasing the NAD^+/NADH ratio by 2.9-fold and redirecting flux"
+    },
+    {
+      "kind": "support",
+      "quote": "in an NADH/NAD^+-dependent reaction",
+      "source": {
+        "atom": "p9.L36",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "in an NADH/NAD^+-dependent reaction. Thus, acetoin is both the direct",
+        "bbox": [
+          306.6,
+          691.1,
+          557.6,
+          703.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "in an NADH/NAD^+-dependent reaction"
+    },
+    {
+      "kind": "quote",
+      "quote": "acetoin, and reduced to 2,3-BD by 2,3-butanediol dehydrogenase (BDH)",
+      "source": {
+        "atom": "p9.L35",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "acetoin, and reduced to 2,3-BD by 2,3-butanediol dehydrogenase (BDH)",
+        "bbox": [
+          306.6,
+          684.6,
+          557.6,
+          692.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "acetoin, and reduced to 2,3-BD by 2,3-butanediol dehydrogenase (BDH)"
+    },
+    {
+      "kind": "support",
+      "quote": "Fed-batch fermentation yielded",
+      "source": {
+        "atom": "p10.L4",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "toward acetoin. Fed-batch fermentation yielded 75.2 g L^(cid:0) 1 acetoin, with",
+        "bbox": [
+          37.6,
+          507.9,
+          288.7,
+          519.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Fed-batch fermentation yielded"
+    },
+    {
+      "kind": "quote",
+      "quote": "75.2 g L",
+      "source": {
+        "atom": "p10.L4",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "toward acetoin. Fed-batch fermentation yielded 75.2 g L^(cid:0) 1 acetoin, with",
+        "bbox": [
+          37.6,
+          507.9,
+          288.7,
+          519.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "75.2 g L"
+    },
+    {
+      "kind": "support",
+      "quote": "acetoin, with",
+      "source": {
+        "atom": "p10.L4",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "toward acetoin. Fed-batch fermentation yielded 75.2 g L^(cid:0) 1 acetoin, with",
+        "bbox": [
+          37.6,
+          507.9,
+          288.7,
+          519.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "acetoin, with"
+    },
+    {
+      "kind": "quote",
+      "quote": "2,3-BD decreasing by ~52%",
+      "source": {
+        "atom": "p10.L5",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "2,3-BD decreasing by ~52% [17]. Wang et al. co-expressed formate",
+        "bbox": [
+          37.6,
+          522.4,
+          288.7,
+          530.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "2,3-BD decreasing by ~52%"
+    },
+    {
+      "kind": "support",
+      "quote": "Cofactor engineering through heterologous expression of NADH",
+      "source": {
+        "atom": "p9.T2.r10c3",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "Cofactor engineering through heterologous expression of NADH",
+        "bbox": [
+          195.4,
+          162.0,
+          376.1,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 3,
+        "column_header": "Strategy"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "Cofactor engineering through heterologous expression of NADH"
+    },
+    {
+      "kind": "quote",
+      "quote": "H32 → H32-nox",
+      "source": {
+        "atom": "p9.T2.r10c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "H32 → H32-nox",
+        "bbox": [
+          114.6,
+          160.8,
+          160.6,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "H32 → H32-nox"
+    },
+    {
+      "kind": "support",
+      "quote": "fed-batch",
+      "source": {
+        "atom": "p9.T2.r10c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "fed-batch",
+        "bbox": [
+          397.0,
+          162.0,
+          423.4,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "fed-batch"
+    },
+    {
+      "kind": "quote",
+      "quote": "40",
+      "source": {
+        "atom": "p9.T2.r10c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "40",
+        "bbox": [
+          465.8,
+          162.0,
+          473.0,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "40"
+    },
+    {
+      "kind": "support",
+      "quote": "75,200",
+      "source": {
+        "atom": "p9.T2.r10c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "75,200",
+        "bbox": [
+          491.4,
+          162.0,
+          511.1,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "75,200"
+    },
+    {
+      "kind": "quote",
+      "quote": "75,200",
+      "source": {
+        "atom": "p9.T2.r10c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "75,200",
+        "bbox": [
+          491.4,
+          162.0,
+          511.1,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "75,200"
+    },
+    {
+      "kind": "support",
+      "quote": "[17]",
+      "source": {
+        "atom": "p9.T2.r10c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[17]",
+        "bbox": [
+          523.9,
+          162.0,
+          536.5,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 18,
+      "rendered": "[17]"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 19,
+      "rendered": "Table 2"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:42:45+00:00",
+  "paper": "p3",
+  "probe": "B4",
+  "cat": "binding",
+  "expect": "water-forming NADH oxidase (nox) from Lactobacillus brevis; NAD+/NADH ratio up 2.9-fold; fed-batch gave 75.2 g/L acetoin with 2,3-BD down ~52% (p10.L1-5)",
+  "trap": "confusing with the Bacillus subtilis NADH oxidase used in MG1"
+}

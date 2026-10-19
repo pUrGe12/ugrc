@@ -1,0 +1,679 @@
+{
+  "question": "How many entries in Table 1 have a status that includes 'Completed'?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND col_no=6 ORDER BY row_no",
+      "rows": 34
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, string_agg(col_no || ':' || coalesce(text,''), ' | ' ORDER BY col_no) AS r FROM cells WHERE table_id='p2.T1' GROUP BY row_no ORDER BY row_no",
+      "rows": 44
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id='p2.T1' AND col_no=6 AND text ILIKE '%completed%' ORDER BY row_no",
+      "rows": 8
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 17,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 19,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 19,
+      "rules": [
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 19
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1', 'Eight'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[3]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r3c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r4c6\"}",
+          "or show p2.T1.r3c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[5]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r5c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r6c6\"}",
+          "or show p2.T1.r5c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[7]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r12c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r13c6\"}",
+          "or show p2.T1.r12c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[9]",
+        "why": "'Completed, Phase' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r19c6 '2 Unknown status' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Completed, Phase 2 Unknown status\", \"atom\": \"p2.T1.r18c6\"}",
+          "or show p2.T1.r19c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[11]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r29c6 'Early Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Early Phase 1 Completed\", \"atom\": \"p2.T1.r30c6\"}",
+          "or show p2.T1.r29c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[13]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r34c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r35c6\"}",
+          "or show p2.T1.r34c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[15]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r38c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r39c6\"}",
+          "or show p2.T1.r38c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[17]",
+        "why": "'Completed' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r43c6 'Phase 2' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 2 Completed\", \"atom\": \"p2.T1.r44c6\"}",
+          "or show p2.T1.r43c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L35:56",
+      "p5.L53:56",
+      "p3.L5:29",
+      "p13.L102:53",
+      "p13.L11:61",
+      "p15.L69:10",
+      "p16.L1:0",
+      "p17.L21:0",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p6.L25:0",
+      "p3.L39:20"
+    ],
+    "measures": [
+      "p1.L35:56#13",
+      "p1.L35:56#58",
+      "p1.L35:56#118",
+      "p1.L35:56#134",
+      "p1.L35:56#148",
+      "p3.L5:29#136",
+      "p15.L69:10#216",
+      "p3.L39:20#10",
+      "p3.L39:20#114",
+      "p3.L39:20#133",
+      "p3.L39:20#139",
+      "p3.L39:20#161"
+    ],
+    "matched": 71
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 4661,
+    "cache_read_input_tokens": 63806,
+    "cache_creation_input_tokens": 8770
+  },
+  "runs": [
+    {
+      "text": "The number of entries in the clinical trials table whose status includes Completed is "
+    },
+    {
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p2.T1' AND col_no=6 AND text ILIKE '%completed%'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": ". They are the entries for Atu027, TKM-080301, NBF-006, siG12D, NU-0129, the tumor antigen RNA entry, APN401 and STP705. Their status cells read: "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r4c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r6c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r13c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Completed, Phase 2 Unknown status",
+      "atom": "p2.T1.r18c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Early Phase 1 Completed",
+      "atom": "p2.T1.r30c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r35c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r39c6"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "Phase 2 Completed",
+      "atom": "p2.T1.r44c6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The number of entries in the clinical trials table whose status includes Completed is 8[1]. They are the entries for Atu027, TKM-080301, NBF-006, siG12D, NU-0129, the tumor antigen RNA entry, APN401 and STP705. Their status cells read: Phase 1 Completed[2]; Phase 1 Completed[3]; Phase 1 Completed[4]; Completed, Phase 2 Unknown status[5]; Early Phase 1 Completed[6]; Phase 1 Completed[7]; Phase 1 Completed[8]; Phase 2 Completed[9].",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p2.T1' AND col_no=6 AND text ILIKE '%completed%'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 8,
+      "strength": "computed from verbatim",
+      "n_sources": 8,
+      "sources": [
+        {
+          "atom": "p2.T1.r13c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            467.7,
+            388.1,
+            474.0
+          ],
+          "table": "Table 1",
+          "row": 13,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r18c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed, Phase",
+          "bbox": [
+            357.7,
+            510.5,
+            407.4,
+            516.8
+          ],
+          "table": "Table 1",
+          "row": 18,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r30c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            613.3,
+            388.1,
+            619.7
+          ],
+          "table": "Table 1",
+          "row": 30,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r35c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            656.1,
+            388.1,
+            662.5
+          ],
+          "table": "Table 1",
+          "row": 35,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r39c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            690.4,
+            388.1,
+            696.8
+          ],
+          "table": "Table 1",
+          "row": 39,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r44c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            733.3,
+            388.1,
+            739.6
+          ],
+          "table": "Table 1",
+          "row": 44,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r4c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            390.5,
+            388.1,
+            396.9
+          ],
+          "table": "Table 1",
+          "row": 4,
+          "col": 6,
+          "column_header": "Status"
+        },
+        {
+          "atom": "p2.T1.r6c6",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Completed",
+          "bbox": [
+            357.7,
+            407.7,
+            388.1,
+            414.0
+          ],
+          "table": "Table 1",
+          "row": 6,
+          "col": 6,
+          "column_header": "Status"
+        }
+      ],
+      "n": 1,
+      "rendered": "8"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r3c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          381.9,
+          388.1,
+          396.9
+        ],
+        "table": "Table 1",
+        "row": 3,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r3c6",
+          "p2.T1.r4c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r5c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          399.1,
+          388.1,
+          414.0
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r5c6",
+          "p2.T1.r6c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r12c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          459.0,
+          388.1,
+          474.0
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r12c6",
+          "p2.T1.r13c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Completed, Phase 2 Unknown status",
+      "source": {
+        "atom": "p2.T1.r18c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Completed, Phase 2 Unknown status",
+        "bbox": [
+          357.7,
+          510.5,
+          407.4,
+          525.4
+        ],
+        "table": "Table 1",
+        "row": 18,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r18c6",
+          "p2.T1.r19c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Completed, Phase 2 Unknown status"
+    },
+    {
+      "kind": "quote",
+      "quote": "Early Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r29c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Early Phase 1 Completed",
+        "bbox": [
+          357.7,
+          604.7,
+          396.1,
+          619.7
+        ],
+        "table": "Table 1",
+        "row": 29,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r29c6",
+          "p2.T1.r30c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Early Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r34c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          647.5,
+          388.1,
+          662.5
+        ],
+        "table": "Table 1",
+        "row": 34,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r34c6",
+          "p2.T1.r35c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r38c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          681.8,
+          388.1,
+          696.8
+        ],
+        "table": "Table 1",
+        "row": 38,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r38c6",
+          "p2.T1.r39c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 2 Completed",
+      "source": {
+        "atom": "p2.T1.r43c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 2 Completed",
+        "bbox": [
+          357.7,
+          724.6,
+          388.1,
+          739.6
+        ],
+        "table": "Table 1",
+        "row": 43,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r43c6",
+          "p2.T1.r44c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "Phase 2 Completed"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:59:26+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "K1",
+  "cat": "K",
+  "expect": "8: Atu027, TKM-080301, NBF-006, siG12D (Completed, Phase 2 Unknown status), NU-0129, Tumor Antigen RNA and Proteasome siRNA, APN401, STP705 (p2.T1 column 6)",
+  "trap": ""
+}

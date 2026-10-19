@@ -1,0 +1,154 @@
+{
+  "question": "At what wavenumbers does the paper place the G and D peaks of the microporous carbon, and what ID/IG ratio does it give?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(text, '(?i)(\\bG\\b|\\bD\\b|I ?D ?/ ?I ?G|ID/IG|Raman|cm-1|cm−1|cm\\^-1|wavenumber|band)') ORDER BY page, id",
+      "rows": 36
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text, region FROM lines WHERE page=5 AND line_no BETWEEN 10 AND 30 OR (page=4 AND line_no BETWEEN 30 AND 40) ORDER BY page, line_no",
+      "rows": 32
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['532'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'532' is written exactly so in the document (e.g. p5.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"532\", \"atom\": \"p5.L15\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1360', '1592'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1360' is written exactly so in the document (e.g. p5.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1360\", \"atom\": \"p5.L18\"} — never shorten it",
+          "'1592' is written exactly so in the document (e.g. p5.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1592\", \"atom\": \"p5.L18\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1372,
+    "cache_read_input_tokens": 18378,
+    "cache_creation_input_tokens": 4882
+  },
+  "runs": [
+    {
+      "text": "The paper, using laser excitation on the microporous carbon powder, reports its characteristic G (sp2 hybridized) and D (sp3 hybridized) peaks "
+    },
+    {
+      "quote": "peaks at 1360 and 1592 cm^−1, respectively",
+      "atom": "p5.L18"
+    },
+    {
+      "text": ", so the G peak is at the first wavenumber and the D peak at the second, as the sentence is worded. The paper gives an "
+    },
+    {
+      "quote": "ID/IG ratio of 0.91",
+      "atom": "p5.L19"
+    },
+    {
+      "text": " for the microporous carbon."
+    }
+  ],
+  "rendered": "The paper, using laser excitation on the microporous carbon powder, reports its characteristic G (sp2 hybridized) and D (sp3 hybridized) peaks peaks at 1360 and 1592 cm^−1, respectively[1], so the G peak is at the first wavenumber and the D peak at the second, as the sentence is worded. The paper gives an ID/IG ratio of 0.91[2] for the microporous carbon.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "peaks at 1360 and 1592 cm^−1, respectively",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "hybridized) peaks at 1360 and 1592 cm^−1, respectively, and an",
+        "bbox": [
+          60.5,
+          252.9,
+          300.5,
+          266.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "peaks at 1360 and 1592 cm^−1, respectively"
+    },
+    {
+      "kind": "quote",
+      "quote": "ID/IG ratio of 0.91",
+      "source": {
+        "atom": "p5.L19",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "ID/IG ratio of 0.91. This response along with the TEM image of",
+        "bbox": [
+          60.5,
+          267.2,
+          300.5,
+          278.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "ID/IG ratio of 0.91"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-18T07:07:44+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "nanolett-6b05172",
+  "probe": "B2",
+  "cat": "B",
+  "expect": "as printed: 'G (sp2), and D (sp3) peaks at 1360 and 1592 cm-1, respectively' (i.e. G 1360, D 1592, the reverse of the usual assignment); ID/IG 0.91 (p5.L16-19)",
+  "trap": "silently swapping to the textbook assignment"
+}

@@ -1,0 +1,443 @@
+{
+  "question": "In Table 1, which technologies have the highest and the lowest upper bound of estimated energy density improvement, and how far apart are those bounds?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p10.T1' ORDER BY row_no, col_no",
+      "rows": 53
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH u AS (SELECT id, row_no, text, CAST(regexp_extract(text, '[–-]\\s*(\\d+)', 1) AS INT) AS upper_bound FROM cells WHERE table_id='p10.T1' AND col_no=5 AND regexp_matches(text, '\\d')) SELECT (SELECT MAX(upper_bound) FROM u) - (SELECT MIN(upper_bound) FROM u) AS gap FROM u LIMIT 1",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, text FROM cells WHERE id IN ('p10.T1.r3c5','p10.T1.r10c5','p10.T1.r12c5','p10.T1.r15c5','p10.T1.r7c5','p10.T1.r5c5','p10.T1.r9c5')",
+      "rows": 7
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "Section 9 Ultra-High-Speed (Thick) Electrode Processing",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "Section 8 Coating Parameter and Drying Protocols",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['9,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['8,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p2.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p2.L7\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['9', '8'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "'8' is written exactly so in the document (e.g. p2.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p2.L7\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[5]",
+        "why": "'Section 8 – Coating Parameter and Drying' stops where its table cell goes on to the printed row below it: the cell continues with p10.T1.r11c1 'Protocols' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Section 8 – Coating Parameter and Drying Protocols\", \"atom\": \"p10.T1.r10c1\"}",
+          "or show p10.T1.r11c1 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "325-350",
+      "atom": "p10.T1.r12c5",
+      "of": "Section 9 Ultra-High-Speed (Thick) Electrode Processing",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "220-240",
+      "atom": "p10.T1.r10c5",
+      "of": "Section 8 Coating Parameter and Drying Protocols",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3228,
+    "cache_read_input_tokens": 36510,
+    "cache_creation_input_tokens": 3688
+  },
+  "runs": [
+    {
+      "text": "Highest upper bound: the technology is "
+    },
+    {
+      "quote": "Section 9 – Ultra-High-Speed (Thick)",
+      "atom": "p10.T1.r12c1"
+    },
+    {
+      "text": " (Electrode Processing), with an upper bound of "
+    },
+    {
+      "quote": "325-350",
+      "atom": "p10.T1.r12c5",
+      "of": "Section 9 Ultra-High-Speed (Thick) Electrode Processing"
+    },
+    {
+      "text": " Wh/kg.\nLowest upper bound: the technology is "
+    },
+    {
+      "quote": "Section 8 – Coating Parameter and Drying Protocols",
+      "atom": "p10.T1.r10c1"
+    },
+    {
+      "text": ", with an upper bound of "
+    },
+    {
+      "quote": "220-240",
+      "atom": "p10.T1.r10c5",
+      "of": "Section 8 Coating Parameter and Drying Protocols"
+    },
+    {
+      "text": " Wh/kg.\nGap between those upper bounds: "
+    },
+    {
+      "sql": "WITH u AS (SELECT id, row_no, text, CAST(regexp_extract(text, '[–-]\\s*(\\d+)', 1) AS INT) AS upper_bound FROM cells WHERE table_id='p10.T1' AND col_no=5 AND regexp_matches(text, '\\d')) SELECT (SELECT MAX(upper_bound) FROM u) - (SELECT MIN(upper_bound) FROM u) AS gap FROM u LIMIT 1",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " Wh/kg apart."
+    }
+  ],
+  "rendered": "Highest upper bound: the technology is Section 9 – Ultra-High-Speed (Thick)[1] (Electrode Processing), with an upper bound of 325-350[2] Wh/kg.\nLowest upper bound: the technology is Section 8 – Coating Parameter and Drying Protocols[3], with an upper bound of 220-240[4] Wh/kg.\nGap between those upper bounds: 110[5] Wh/kg apart.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Section 9 – Ultra-High-Speed (Thick)",
+      "source": {
+        "atom": "p10.T1.r12c1",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "Section 9 – Ultra-High-Speed (Thick)",
+        "bbox": [
+          43.6,
+          176.3,
+          147.4,
+          184.1
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 1,
+        "column_header": "Process Technology or Cell Chemistry Modification"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Section 9 – Ultra-High-Speed (Thick)"
+    },
+    {
+      "kind": "quote",
+      "quote": "325-350",
+      "source": {
+        "atom": "p10.T1.r12c5",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "325-350^b",
+        "bbox": [
+          454.6,
+          176.4,
+          480.8,
+          184.1
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 5,
+        "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+      },
+      "strength": "verbatim",
+      "of": "Section 9 Ultra-High-Speed (Thick) Electrode Processing",
+      "n": 2,
+      "rendered": "325-350"
+    },
+    {
+      "kind": "quote",
+      "quote": "Section 8 – Coating Parameter and Drying Protocols",
+      "source": {
+        "atom": "p10.T1.r10c1",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "Section 8 – Coating Parameter and Drying Protocols",
+        "bbox": [
+          43.6,
+          159.2,
+          162.0,
+          175.6
+        ],
+        "table": "Table 1",
+        "row": 10,
+        "col": 1,
+        "column_header": "Process Technology or Cell Chemistry Modification",
+        "atoms": [
+          "p10.T1.r10c1",
+          "p10.T1.r11c1"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Section 8 – Coating Parameter and Drying Protocols"
+    },
+    {
+      "kind": "quote",
+      "quote": "220-240",
+      "source": {
+        "atom": "p10.T1.r10c5",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "220-240^a",
+        "bbox": [
+          454.6,
+          159.3,
+          480.5,
+          167.0
+        ],
+        "table": "Table 1",
+        "row": 10,
+        "col": 5,
+        "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+      },
+      "strength": "verbatim",
+      "of": "Section 8 Coating Parameter and Drying Protocols",
+      "n": 4,
+      "rendered": "220-240"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH u AS (SELECT id, row_no, text, CAST(regexp_extract(text, '[–-]\\s*(\\d+)', 1) AS INT) AS upper_bound FROM cells WHERE table_id='p10.T1' AND col_no=5 AND regexp_matches(text, '\\d')) SELECT (SELECT MAX(upper_bound) FROM u) - (SELECT MIN(upper_bound) FROM u) AS gap FROM u LIMIT 1",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int",
+      "value": 110,
+      "strength": "computed from verbatim",
+      "n_sources": 7,
+      "sources": [
+        {
+          "atom": "p10.T1.r10c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "220-240^a",
+          "bbox": [
+            454.6,
+            159.3,
+            480.5,
+            167.0
+          ],
+          "table": "Table 1",
+          "row": 10,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r12c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "325-350^b",
+          "bbox": [
+            454.6,
+            176.4,
+            480.8,
+            184.1
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r15c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "260-280^a,b",
+          "bbox": [
+            454.6,
+            202.1,
+            484.5,
+            209.8
+          ],
+          "table": "Table 1",
+          "row": 15,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r3c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "225–250",
+          "bbox": [
+            454.6,
+            99.2,
+            479.3,
+            107.0
+          ],
+          "table": "Table 1",
+          "row": 3,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r5c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "250–275",
+          "bbox": [
+            454.6,
+            116.3,
+            479.3,
+            124.1
+          ],
+          "table": "Table 1",
+          "row": 5,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r7c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "275–300",
+          "bbox": [
+            454.6,
+            133.4,
+            479.3,
+            141.3
+          ],
+          "table": "Table 1",
+          "row": 7,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r9c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "250–275",
+          "bbox": [
+            454.6,
+            150.6,
+            479.3,
+            158.4
+          ],
+          "table": "Table 1",
+          "row": 9,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        }
+      ],
+      "n": 5,
+      "rendered": "110"
+    }
+  ],
+  "seals": {
+    "extraction": "798c9152e3015554d859f821680ae76eaea235c416203732eb68bf19e18beb03",
+    "readings": "bfc1129563d595d4ee1be5d3b0b21fc2dc56f77cece2a024ce81d2f8a8a84892"
+  },
+  "created_at": "2026-10-18T08:55:58+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "ensm-2020",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "highest: Section 9 ultra-high-speed (thick) electrode processing, 325-350 Wh/kg; lowest: Section 8 coating parameter and drying protocols, 220-240; 350 - 240 = 110 Wh/kg",
+  "trap": ""
+}

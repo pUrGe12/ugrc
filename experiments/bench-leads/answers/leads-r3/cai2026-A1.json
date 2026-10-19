@@ -1,0 +1,228 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%Gao%' OR text ILIKE '%FOXM1%' ORDER BY page, line_no",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE (text ILIKE '%Gao et al%' OR text ILIKE '%Gao%') AND kind IN ('line','cell') ORDER BY page",
+      "rows": 13
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (6,7) AND line_no BETWEEN 1 AND 12 OR (page=6 AND text ILIKE '%dose%') OR (page=6 AND text ILIKE '%mg%') ORDER BY page, line_no",
+      "rows": 24
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%siFOXM1%' OR text ILIKE '%si-FOXM1%' OR text ILIKE '%FOXM1%' OR text ILIKE '%CL4H6%' OR text ILIKE '%BT549%' ORDER BY page",
+      "rows": 6
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 1 AND 8 ORDER BY row_no, col_no",
+      "rows": 41
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%nmol%' OR text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%µg%' OR text ILIKE '%ug/kg%' OR text ILIKE '%dose%' ORDER BY page, line_no",
+      "rows": 6
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "LNPs encapsulating si-FOXM1",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.66
+        }
+      ]
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "60:40:1",
+      "atom": "p6.L5",
+      "of": "LNPs encapsulating si-FOXM1",
+      "sentence": "p6.L3:61",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.66,
+      "clause_about": [],
+      "request": {
+        "state": "For instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol, and DMG-PEG2000 (in a molar ratio of [[60:40:1]]) to construct LNPs encapsulating si-FOXM1 via the tert-butanol dilution method.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[60:40:1]] a value of “LNPs encapsulating si-FOXM1”?",
+            "criteria": {
+              "true": "the passage gives [[60:40:1]] for “LNPs encapsulating si-FOXM1”, or for something “LNPs encapsulating si-FOXM1” has, makes or contains",
+              "false": "[[60:40:1]] is given for something else, or the passage does not connect it to “LNPs encapsulating si-FOXM1”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.66
+          }
+        },
+        "usage": {
+          "input_tokens": 469,
+          "output_tokens": 21
+        }
+      },
+      "run": 3
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L20:92",
+      "p6.L3:61",
+      "p13.L121:18",
+      "p15.L28:38",
+      "p19.L35:0",
+      "p5.L76:57",
+      "p7.L93:33",
+      "p10.L5:32",
+      "p11.L8:67",
+      "p12.L106:28",
+      "p13.L35:46",
+      "p13.L41:43"
+    ],
+    "measures": [
+      "p6.L3:61#115",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p19.L35:0#115",
+      "p5.L76:57#142",
+      "p7.L93:33#261"
+    ],
+    "matched": 213
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2046,
+    "cache_read_input_tokens": 31651,
+    "cache_creation_input_tokens": 5091
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for Gao et al.'s study. Its only passage on that work describes the carrier and model: "
+    },
+    {
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid",
+      "atom": "p6.L4"
+    },
+    {
+      "text": ", with cholesterol and DMG-PEG2000 in a molar ratio of "
+    },
+    {
+      "measure": "p6.L3:61#115",
+      "of": "LNPs encapsulating si-FOXM1"
+    },
+    {
+      "text": ", made by tert-butanol dilution to encapsulate si-FOXM1, tested in a BT549 lung metastasis model. No dose, concentration or amount of siRNA is given for that study in the text, the table, or the figures I checked."
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for Gao et al.'s study. Its only passage on that work describes the carrier and model: Gao et al. [55]used a novel CL4H6-ionizable lipid[1], with cholesterol and DMG-PEG2000 in a molar ratio of 60:40:1[2], made by tert-butanol dilution to encapsulate si-FOXM1, tested in a BT549 lung metastasis model. No dose, concentration or amount of siRNA is given for that study in the text, the table, or the figures I checked.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid"
+    },
+    {
+      "kind": "quote",
+      "quote": "60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p6.L3:61#115",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.8,
+        "property": "ratio",
+        "property_p": null,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "molar ratio"
+        ],
+        "sentence": "p6.L3:61",
+        "read_by": "judge"
+      },
+      "of": "LNPs encapsulating si-FOXM1",
+      "n": 2,
+      "rendered": "60:40:1"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:15:28+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose"
+}

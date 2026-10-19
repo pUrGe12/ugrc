@@ -1,0 +1,484 @@
+{
+  "question": "In Table 2, which passive-targeting delivery systems have a particle size of 150 nm or more, and which of them is the largest?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND col_no IN (1,4,6) ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 2 AND 20 ORDER BY row_no, col_no",
+      "rows": 89
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE id IN ('p6.T2.r7c6','p6.T2.r9c6','p6.T2.r13c6','p6.T2.r18c6','p6.T2.r7c4','p6.T2.r9c4','p6.T2.r13c4','p6.T2.r18c4')",
+      "rows": 8
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 19,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 19,
+      "rules": [
+        "quote:wrapped",
+        "quote:wrapped",
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 19
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,', '150', 'four'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'150' is written exactly so in the document (e.g. p11.L127): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"150\", \"atom\": \"p11.L127\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['485'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[1]",
+        "why": "'KRAS siRNA TGF-β' stops where its table cell goes on to the printed row below it: the cell continues with p6.T2.r8c4 'siRNA' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"KRAS siRNA TGF-β siRNA\", \"atom\": \"p6.T2.r7c4\"}",
+          "or show p6.T2.r8c4 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[5]",
+        "why": "'VEGFR2 siRNA mTOR' stops where its table cell goes on to the printed row below it: the cell continues with p6.T2.r10c4 'siRNA' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"VEGFR2 siRNA mTOR siRNA\", \"atom\": \"p6.T2.r9c4\"}",
+          "or show p6.T2.r10c4 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[13]",
+        "why": "'DDP' stops where its table cell goes on to the printed row below it: the cell continues with p6.T2.r19c4 'siVEGF' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"DDP siVEGF\", \"atom\": \"p6.T2.r18c4\"}",
+          "or show p6.T2.r19c4 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 4764,
+    "cache_read_input_tokens": 59374,
+    "cache_creation_input_tokens": 8350
+  },
+  "runs": [
+    {
+      "text": "In the passive-targeting section of the nanocarrier table, the systems with a particle size at or above the threshold are: the "
+    },
+    {
+      "quote": "KRAS siRNA TGF-β siRNA",
+      "atom": "p6.T2.r7c4"
+    },
+    {
+      "text": " system (PLGA/PLA carrier) at "
+    },
+    {
+      "quote": "~180 nm",
+      "atom": "p6.T2.r7c6"
+    },
+    {
+      "text": "; the "
+    },
+    {
+      "quote": "VEGFR2 siRNA mTOR siRNA",
+      "atom": "p6.T2.r9c4"
+    },
+    {
+      "text": " system (sEVs) at "
+    },
+    {
+      "quote": "~150 nm",
+      "atom": "p6.T2.r9c6"
+    },
+    {
+      "text": "; the "
+    },
+    {
+      "quote": "siTEAD4",
+      "atom": "p6.T2.r13c4"
+    },
+    {
+      "text": " system (MOF@EVs) at "
+    },
+    {
+      "quote": "~168 nm",
+      "atom": "p6.T2.r13c6"
+    },
+    {
+      "text": "; and the "
+    },
+    {
+      "quote": "DDP siVEGF",
+      "atom": "p6.T2.r18c4"
+    },
+    {
+      "text": " system (MOF carrier, VEGF target) at "
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6"
+    },
+    {
+      "text": ". The largest is therefore the DDP system, at about "
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In the passive-targeting section of the nanocarrier table, the systems with a particle size at or above the threshold are: the KRAS siRNA TGF-β siRNA[1] system (PLGA/PLA carrier) at ~180 nm[2]; the VEGFR2 siRNA mTOR siRNA[3] system (sEVs) at ~150 nm[4]; the siTEAD4[5] system (MOF@EVs) at ~168 nm[6]; and the DDP siVEGF[7] system (MOF carrier, VEGF target) at ~485 nm[8]. The largest is therefore the DDP system, at about ~485 nm[9].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "KRAS siRNA TGF-β siRNA",
+      "source": {
+        "atom": "p6.T2.r7c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "KRAS siRNA TGF-β siRNA",
+        "bbox": [
+          232.8,
+          135.0,
+          286.9,
+          151.2
+        ],
+        "table": "Table 2",
+        "row": 7,
+        "col": 4,
+        "column_header": "Drug delivery",
+        "atoms": [
+          "p6.T2.r7c4",
+          "p6.T2.r8c4"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "KRAS siRNA TGF-β siRNA"
+    },
+    {
+      "kind": "quote",
+      "quote": "~180 nm",
+      "source": {
+        "atom": "p6.T2.r7c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~180 nm",
+        "bbox": [
+          357.9,
+          136.2,
+          384.9,
+          142.6
+        ],
+        "table": "Table 2",
+        "row": 7,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "~180 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "VEGFR2 siRNA mTOR siRNA",
+      "source": {
+        "atom": "p6.T2.r9c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "VEGFR2 siRNA mTOR siRNA",
+        "bbox": [
+          232.8,
+          153.4,
+          295.8,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 9,
+        "col": 4,
+        "column_header": "Drug delivery",
+        "atoms": [
+          "p6.T2.r9c4",
+          "p6.T2.r10c4"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "VEGFR2 siRNA mTOR siRNA"
+    },
+    {
+      "kind": "quote",
+      "quote": "~150 nm",
+      "source": {
+        "atom": "p6.T2.r9c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~150 nm",
+        "bbox": [
+          357.9,
+          153.4,
+          384.9,
+          159.8
+        ],
+        "table": "Table 2",
+        "row": 9,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "~150 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "siTEAD4",
+      "source": {
+        "atom": "p6.T2.r13c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "siTEAD4",
+        "bbox": [
+          232.8,
+          187.6,
+          257.2,
+          194.0
+        ],
+        "table": "Table 2",
+        "row": 13,
+        "col": 4,
+        "column_header": "Drug delivery"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "siTEAD4"
+    },
+    {
+      "kind": "quote",
+      "quote": "~168 nm",
+      "source": {
+        "atom": "p6.T2.r13c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~168 nm",
+        "bbox": [
+          357.9,
+          187.6,
+          384.9,
+          194.0
+        ],
+        "table": "Table 2",
+        "row": 13,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "~168 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "DDP siVEGF",
+      "source": {
+        "atom": "p6.T2.r18c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "DDP siVEGF",
+        "bbox": [
+          232.8,
+          230.5,
+          253.2,
+          245.4
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 4,
+        "column_header": "Drug delivery",
+        "atoms": [
+          "p6.T2.r18c4",
+          "p6.T2.r19c4"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "DDP siVEGF"
+    },
+    {
+      "kind": "quote",
+      "quote": "~485 nm",
+      "source": {
+        "atom": "p6.T2.r18c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~485 nm",
+        "bbox": [
+          357.9,
+          230.5,
+          384.9,
+          236.9
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "~485 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~485 nm",
+      "source": {
+        "atom": "p6.T2.r18c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~485 nm",
+        "bbox": [
+          357.9,
+          230.5,
+          384.9,
+          236.9
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "~485 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:56:59+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "the PLGA/PLA/PCL polymer system (~180 nm), sEVs (~150 nm), MOF@EVs (~168 nm) and MOF (~485 nm, the largest); passive targeting covers the rows down to GO (active targeting)",
+  "trap": "LF-RES nanoparticles, 625 ±58 nm (active targeting)"
+}

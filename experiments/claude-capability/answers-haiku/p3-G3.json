@@ -1,0 +1,198 @@
+{
+  "question": "How many isolates were in each habitat group in Fig. 2B?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, fact_no, statement, panel, value, quantity, unit, ocr_confirmed, check_note FROM figure_facts WHERE figure_id='p4.F2' ORDER BY fact_no",
+      "rows": 64
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, text FROM atoms WHERE text ILIKE '%isolates)%' OR text ILIKE '%107 isolates%' OR text ILIKE '%1066%' OR text ILIKE '%(37 isolates%' OR text ILIKE '%37 isolates%' ORDER BY id",
+      "rows": 5
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2B', 'one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2B' is written exactly so in the document (e.g. p2.L103): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2B\", \"atom\": \"p2.L103\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1618,
+    "cache_read_input_tokens": 57374,
+    "cache_creation_input_tokens": 18888
+  },
+  "runs": [
+    {
+      "text": "Panel B does not give separate isolate counts for each biotype. It gives a single isolate total per habitat, shown in the column headers: Water (",
+      "support": []
+    },
+    {
+      "quote": "107 isolates",
+      "atom": "p4.F2.o5"
+    },
+    {
+      "text": "), Plants and rodents (",
+      "support": []
+    },
+    {
+      "quote": "37 isolates",
+      "atom": "p4.F2.o5"
+    },
+    {
+      "text": "), and Hospital patients (",
+      "support": []
+    },
+    {
+      "quote": "1066 isolates",
+      "atom": "p4.F2.o5"
+    },
+    {
+      "text": "). The cells beneath these headers are the percentage of each habitat's isolates that fall in each biotype, not counts.",
+      "support": []
+    }
+  ],
+  "rendered": "Panel B does not give separate isolate counts for each biotype. It gives a single isolate total per habitat, shown in the column headers: Water (107 isolates[1]), Plants and rodents (37 isolates[2]), and Hospital patients (1066 isolates[3]). The cells beneath these headers are the percentage of each habitat's isolates that fall in each biotype, not counts.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "107 isolates",
+      "source": {
+        "atom": "p4.F2.o5",
+        "kind": "ocr",
+        "page": 4,
+        "strength": "ocr",
+        "text": "(107 isolates) (37 isolates) (1066 isolates)",
+        "bbox": [
+          359.9,
+          109.4,
+          516.1,
+          115.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 1,
+      "rendered": "107 isolates"
+    },
+    {
+      "kind": "quote",
+      "quote": "37 isolates",
+      "source": {
+        "atom": "p4.F2.o5",
+        "kind": "ocr",
+        "page": 4,
+        "strength": "ocr",
+        "text": "(107 isolates) (37 isolates) (1066 isolates)",
+        "bbox": [
+          359.9,
+          109.4,
+          516.1,
+          115.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 2,
+      "rendered": "37 isolates"
+    },
+    {
+      "kind": "quote",
+      "quote": "1066 isolates",
+      "source": {
+        "atom": "p4.F2.o5",
+        "kind": "ocr",
+        "page": 4,
+        "strength": "ocr",
+        "text": "(107 isolates) (37 isolates) (1066 isolates)",
+        "bbox": [
+          359.9,
+          109.4,
+          516.1,
+          115.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 3,
+      "rendered": "1066 isolates"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T08:55:05+00:00",
+  "paper": "p3",
+  "probe": "G3",
+  "cat": "figure",
+  "expect": "water 107, plants and rodents 37, hospital patients 1066 (Fig. 2B)",
+  "trap": "inventing counts; these appear only in the figure"
+}

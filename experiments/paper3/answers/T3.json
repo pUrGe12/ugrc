@@ -1,0 +1,3841 @@
+{
+  "question": "How many Table 2 entries use fed-batch cultivation, and how does that compare with shake flask?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 7,
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[8]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[10]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[29]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 5214,
+    "cache_read_input_tokens": 27563,
+    "cache_creation_input_tokens": 11143
+  },
+  "runs": [
+    {
+      "text": "In ",
+      "support": []
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ", fed-batch is the most common cultivation mode, appearing in",
+      "support": [
+        {
+          "atom": "p9.T2.r10c4",
+          "quote": "fed-batch"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p9.T2' AND col_no=4 AND text='fed-batch'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": "entries, versus",
+      "support": [
+        {
+          "atom": "p9.T2.r3c4",
+          "quote": "shake flask"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p9.T2' AND col_no=4 AND text='shake flask'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": "shake-flask entries; the remaining entries are listed as a whole-cell biocatalyst mode.",
+      "support": [
+        {
+          "atom": "p9.T2.r15c4",
+          "quote": "whole-cell"
+        },
+        {
+          "atom": "p9.T2.r16c4",
+          "quote": "biocatalyst"
+        }
+      ]
+    },
+    {
+      "text": "So fed-batch exceeds shake flask by",
+      "support": []
+    },
+    {
+      "sql": "SELECT sum(CASE WHEN text='fed-batch' THEN 1 WHEN text='shake flask' THEN -1 ELSE 0 END) AS d FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1",
+      "column": "d",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": "entries, i.e. fed-batch accounts for this share of all listed cultivation modes:",
+      "support": []
+    },
+    {
+      "sql": "SELECT count(*) FILTER (WHERE text='fed-batch')*1.0/count(*) AS f FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1",
+      "column": "f",
+      "row": 0,
+      "fmt": "pct0"
+    },
+    {
+      "text": ".",
+      "support": []
+    },
+    {
+      "text": " Both modes also differ in reported performance. Fed-batch titers span from the geraniol value of",
+      "support": [
+        {
+          "atom": "p9.T2.r27c1",
+          "quote": "geraniol"
+        }
+      ]
+    },
+    {
+      "quote": "2976",
+      "atom": "p9.T2.r27c6"
+    },
+    {
+      "text": "up to",
+      "support": []
+    },
+    {
+      "quote": "102,300",
+      "atom": "p9.T2.r46c6"
+    },
+    {
+      "text": "for the strain",
+      "support": []
+    },
+    {
+      "quote": "HBQA7 → SMB19",
+      "atom": "p9.T2.r46c2"
+    },
+    {
+      "text": ", whereas shake-flask titers run from",
+      "support": []
+    },
+    {
+      "quote": "574",
+      "atom": "p9.T2.r31c6"
+    },
+    {
+      "text": "to",
+      "support": []
+    },
+    {
+      "quote": "39,910",
+      "atom": "p9.T2.r13c6"
+    },
+    {
+      "text": "(all in the table's units of",
+      "support": []
+    },
+    {
+      "quote": "(mg L",
+      "atom": "p9.T2.r2c6"
+    },
+    {
+      "text": "). The median titer is correspondingly higher under fed-batch,",
+      "support": []
+    },
+    {
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) AS med FROM m JOIN t USING(row_no) WHERE mode='fed-batch'",
+      "column": "med",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": "against",
+      "support": []
+    },
+    {
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) AS med FROM m JOIN t USING(row_no) WHERE mode='shake flask'",
+      "column": "med",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": "for shake flask, roughly a factor of",
+      "support": []
+    },
+    {
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) FILTER (WHERE mode='fed-batch')/median(titer) FILTER (WHERE mode='shake flask') AS r FROM m JOIN t USING(row_no)",
+      "column": "r",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": "difference. Shake-flask entries dominate the prodigiosin lines of the table, while the terpenoid products are mostly produced in fed-batch mode.",
+      "support": [
+        {
+          "atom": "p9.T2.r3c1",
+          "quote": "prodigiosin"
+        },
+        {
+          "atom": "p9.T2.r42c1",
+          "quote": "β-caryophyllene"
+        }
+      ]
+    }
+  ],
+  "rendered": "In Table 2[1], fed-batch is the most common cultivation mode, appearing in[2]15[3]entries, versus[4]10[5]shake-flask entries; the remaining entries are listed as a whole-cell biocatalyst mode.[6][7]So fed-batch exceeds shake flask by5[8]entries, i.e. fed-batch accounts for this share of all listed cultivation modes:52%[9]. Both modes also differ in reported performance. Fed-batch titers span from the geraniol value of[10]2976[11]up to102,300[12]for the strainHBQA7 → SMB19[13], whereas shake-flask titers run from574[14]to39,910[15](all in the table's units of(mg L[16]). The median titer is correspondingly higher under fed-batch,32,500[17]against7,240[18]for shake flask, roughly a factor of4.5[19]difference. Shake-flask entries dominate the prodigiosin lines of the table, while the terpenoid products are mostly produced in fed-batch mode.[20][21]",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "support",
+      "quote": "fed-batch",
+      "source": {
+        "atom": "p9.T2.r10c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "fed-batch",
+        "bbox": [
+          397.0,
+          162.0,
+          423.4,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "fed-batch"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p9.T2' AND col_no=4 AND text='fed-batch'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 15,
+      "strength": "computed from verbatim",
+      "n_sources": 15,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        }
+      ],
+      "n": 3,
+      "rendered": "15"
+    },
+    {
+      "kind": "support",
+      "quote": "shake flask",
+      "source": {
+        "atom": "p9.T2.r3c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "shake flask",
+        "bbox": [
+          397.0,
+          102.0,
+          428.0,
+          108.4
+        ],
+        "table": "Table 2",
+        "row": 3,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "shake flask"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n FROM cells WHERE table_id='p9.T2' AND col_no=4 AND text='shake flask'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 10,
+      "strength": "computed from verbatim",
+      "n_sources": 10,
+      "sources": [
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        }
+      ],
+      "n": 5,
+      "rendered": "10"
+    },
+    {
+      "kind": "support",
+      "quote": "whole-cell",
+      "source": {
+        "atom": "p9.T2.r15c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "whole-cell",
+        "bbox": [
+          397.0,
+          204.8,
+          426.0,
+          211.1
+        ],
+        "table": "Table 2",
+        "row": 15,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "whole-cell"
+    },
+    {
+      "kind": "support",
+      "quote": "biocatalyst",
+      "source": {
+        "atom": "p9.T2.r16c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "biocatalyst",
+        "bbox": [
+          397.0,
+          213.4,
+          427.5,
+          219.8
+        ],
+        "table": "Table 2",
+        "row": 16,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "biocatalyst"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT sum(CASE WHEN text='fed-batch' THEN 1 WHEN text='shake flask' THEN -1 ELSE 0 END) AS d FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1",
+      "column": "d",
+      "row": 0,
+      "fmt": "int",
+      "value": 5,
+      "strength": "computed from verbatim",
+      "n_sources": 29,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r15c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            204.8,
+            426.0,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r16c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "biocatalyst",
+          "bbox": [
+            397.0,
+            213.4,
+            427.5,
+            219.8
+          ],
+          "table": "Table 2",
+          "row": 16,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r17c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            221.9,
+            426.0,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r18c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "biocatalyst",
+          "bbox": [
+            397.0,
+            230.5,
+            427.5,
+            236.9
+          ],
+          "table": "Table 2",
+          "row": 18,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        }
+      ],
+      "n": 8,
+      "rendered": "5"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) FILTER (WHERE text='fed-batch')*1.0/count(*) AS f FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1",
+      "column": "f",
+      "row": 0,
+      "fmt": "pct0",
+      "value": 0.5172413793103449,
+      "strength": "computed from verbatim",
+      "n_sources": 29,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r15c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            204.8,
+            426.0,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r16c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "biocatalyst",
+          "bbox": [
+            397.0,
+            213.4,
+            427.5,
+            219.8
+          ],
+          "table": "Table 2",
+          "row": 16,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r17c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            221.9,
+            426.0,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r18c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "biocatalyst",
+          "bbox": [
+            397.0,
+            230.5,
+            427.5,
+            236.9
+          ],
+          "table": "Table 2",
+          "row": 18,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        }
+      ],
+      "n": 9,
+      "rendered": "52%"
+    },
+    {
+      "kind": "support",
+      "quote": "geraniol",
+      "source": {
+        "atom": "p9.T2.r27c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "geraniol",
+        "bbox": [
+          43.6,
+          307.6,
+          66.7,
+          314.0
+        ],
+        "table": "Table 2",
+        "row": 27,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "geraniol"
+    },
+    {
+      "kind": "quote",
+      "quote": "2976",
+      "source": {
+        "atom": "p9.T2.r27c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "2976",
+        "bbox": [
+          496.8,
+          307.6,
+          511.2,
+          314.0
+        ],
+        "table": "Table 2",
+        "row": 27,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "2976"
+    },
+    {
+      "kind": "quote",
+      "quote": "102,300",
+      "source": {
+        "atom": "p9.T2.r46c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "102,300",
+        "bbox": [
+          487.8,
+          470.4,
+          511.2,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "102,300"
+    },
+    {
+      "kind": "quote",
+      "quote": "HBQA7 → SMB19",
+      "source": {
+        "atom": "p9.T2.r46c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "HBQA7 → SMB19",
+        "bbox": [
+          114.6,
+          469.2,
+          165.5,
+          476.8
+        ],
+        "table": "Table 2",
+        "row": 46,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "HBQA7 → SMB19"
+    },
+    {
+      "kind": "quote",
+      "quote": "574",
+      "source": {
+        "atom": "p9.T2.r31c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "574",
+        "bbox": [
+          500.4,
+          341.9,
+          511.1,
+          348.2
+        ],
+        "table": "Table 2",
+        "row": 31,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "574"
+    },
+    {
+      "kind": "quote",
+      "quote": "39,910",
+      "source": {
+        "atom": "p9.T2.r13c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "39,910",
+        "bbox": [
+          491.4,
+          187.6,
+          511.1,
+          194.0
+        ],
+        "table": "Table 2",
+        "row": 13,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "39,910"
+    },
+    {
+      "kind": "quote",
+      "quote": "(mg L",
+      "source": {
+        "atom": "p9.T2.r2c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "(mg L^(cid:0) 1)",
+        "bbox": [
+          487.8,
+          85.9,
+          512.5,
+          95.2
+        ],
+        "table": "Table 2",
+        "row": 2,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "(mg L"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) AS med FROM m JOIN t USING(row_no) WHERE mode='fed-batch'",
+      "column": "med",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 32500.0,
+      "strength": "computed from verbatim",
+      "n_sources": 30,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r10c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "75,200",
+          "bbox": [
+            491.4,
+            162.0,
+            511.1,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "47,500",
+          "bbox": [
+            491.4,
+            179.1,
+            511.1,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "89,810",
+          "bbox": [
+            491.4,
+            239.1,
+            511.1,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "36,600",
+          "bbox": [
+            491.4,
+            256.2,
+            511.1,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "2976",
+          "bbox": [
+            496.8,
+            307.6,
+            511.2,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "25,120",
+          "bbox": [
+            491.4,
+            324.7,
+            511.1,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "32,500",
+          "bbox": [
+            491.4,
+            359.0,
+            511.1,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "22,800",
+          "bbox": [
+            491.4,
+            376.2,
+            511.1,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "27,200",
+          "bbox": [
+            491.4,
+            393.3,
+            511.1,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "10,200",
+          "bbox": [
+            491.4,
+            410.5,
+            511.1,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "70,500",
+          "bbox": [
+            491.4,
+            419.0,
+            511.1,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "60,320",
+          "bbox": [
+            491.4,
+            436.1,
+            511.1,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "30,200",
+          "bbox": [
+            491.4,
+            461.8,
+            511.1,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "102,300",
+          "bbox": [
+            487.8,
+            470.4,
+            511.2,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "5800",
+          "bbox": [
+            496.8,
+            487.6,
+            511.2,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 17,
+      "rendered": "32,500"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) AS med FROM m JOIN t USING(row_no) WHERE mode='shake flask'",
+      "column": "med",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 7240.0,
+      "strength": "computed from verbatim",
+      "n_sources": 20,
+      "sources": [
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "39,910",
+          "bbox": [
+            491.4,
+            187.6,
+            511.1,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "1410",
+          "bbox": [
+            496.8,
+            273.3,
+            511.2,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "780",
+          "bbox": [
+            500.4,
+            290.5,
+            511.1,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "574",
+          "bbox": [
+            500.4,
+            341.9,
+            511.1,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "15,630",
+          "bbox": [
+            491.4,
+            102.0,
+            511.1,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "1256",
+          "bbox": [
+            496.8,
+            444.7,
+            511.2,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "5830",
+          "bbox": [
+            496.8,
+            119.1,
+            511.2,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "8650",
+          "bbox": [
+            496.8,
+            127.7,
+            511.2,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "10,250",
+          "bbox": [
+            491.4,
+            144.8,
+            511.1,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "11,400",
+          "bbox": [
+            491.4,
+            153.4,
+            511.1,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 18,
+      "rendered": "7,240"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH m AS (SELECT row_no, text AS mode FROM cells WHERE table_id='p9.T2' AND col_no=4 AND row_no>1), t AS (SELECT row_no, CAST(replace(text,',','') AS DOUBLE) AS titer FROM cells WHERE table_id='p9.T2' AND col_no=6 AND row_no>2) SELECT median(titer) FILTER (WHERE mode='fed-batch')/median(titer) FILTER (WHERE mode='shake flask') AS r FROM m JOIN t USING(row_no)",
+      "column": "r",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 4.488950276243094,
+      "strength": "computed from verbatim",
+      "n_sources": 54,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r10c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "75,200",
+          "bbox": [
+            491.4,
+            162.0,
+            511.1,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "47,500",
+          "bbox": [
+            491.4,
+            179.1,
+            511.1,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "39,910",
+          "bbox": [
+            491.4,
+            187.6,
+            511.1,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r15c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            204.8,
+            426.0,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r15c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "44,900",
+          "bbox": [
+            491.4,
+            204.8,
+            511.1,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r17c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            221.9,
+            426.0,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r17c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "27,950",
+          "bbox": [
+            491.4,
+            221.9,
+            511.1,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "89,810",
+          "bbox": [
+            491.4,
+            239.1,
+            511.1,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "36,600",
+          "bbox": [
+            491.4,
+            256.2,
+            511.1,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "1410",
+          "bbox": [
+            496.8,
+            273.3,
+            511.2,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "780",
+          "bbox": [
+            500.4,
+            290.5,
+            511.1,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "2976",
+          "bbox": [
+            496.8,
+            307.6,
+            511.2,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "25,120",
+          "bbox": [
+            491.4,
+            324.7,
+            511.1,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "574",
+          "bbox": [
+            500.4,
+            341.9,
+            511.1,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "32,500",
+          "bbox": [
+            491.4,
+            359.0,
+            511.1,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "22,800",
+          "bbox": [
+            491.4,
+            376.2,
+            511.1,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "27,200",
+          "bbox": [
+            491.4,
+            393.3,
+            511.1,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "10,200",
+          "bbox": [
+            491.4,
+            410.5,
+            511.1,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "15,630",
+          "bbox": [
+            491.4,
+            102.0,
+            511.1,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "70,500",
+          "bbox": [
+            491.4,
+            419.0,
+            511.1,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "60,320",
+          "bbox": [
+            491.4,
+            436.1,
+            511.1,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "1256",
+          "bbox": [
+            496.8,
+            444.7,
+            511.2,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "30,200",
+          "bbox": [
+            491.4,
+            461.8,
+            511.1,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "102,300",
+          "bbox": [
+            487.8,
+            470.4,
+            511.2,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "5800",
+          "bbox": [
+            496.8,
+            487.6,
+            511.2,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "5830",
+          "bbox": [
+            496.8,
+            119.1,
+            511.2,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "8650",
+          "bbox": [
+            496.8,
+            127.7,
+            511.2,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "10,250",
+          "bbox": [
+            491.4,
+            144.8,
+            511.1,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c6",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "11,400",
+          "bbox": [
+            491.4,
+            153.4,
+            511.1,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 6,
+          "column_header": "Titer (mg L^(cid:0) 1)"
+        }
+      ],
+      "n": 19,
+      "rendered": "4.5"
+    },
+    {
+      "kind": "support",
+      "quote": "prodigiosin",
+      "source": {
+        "atom": "p9.T2.r3c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "prodigiosin",
+        "bbox": [
+          43.6,
+          102.0,
+          75.5,
+          108.4
+        ],
+        "table": "Table 2",
+        "row": 3,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 20,
+      "rendered": "prodigiosin"
+    },
+    {
+      "kind": "support",
+      "quote": "β-caryophyllene",
+      "source": {
+        "atom": "p9.T2.r42c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "β-caryophyllene",
+        "bbox": [
+          43.6,
+          434.9,
+          88.6,
+          442.5
+        ],
+        "table": "Table 2",
+        "row": 42,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 21,
+      "rendered": "β-caryophyllene"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-06T17:14:10+00:00",
+  "probe": "T3",
+  "cat": "table"
+}

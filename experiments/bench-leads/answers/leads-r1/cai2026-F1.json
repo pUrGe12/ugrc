@@ -1,0 +1,252 @@
+{
+  "question": "Why was the exosome-based siRNA trial SY in Table 1 withdrawn?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND (text ILIKE '%SY%' OR text ILIKE '%withdraw%' OR text ILIKE '%exosome%') ORDER BY row_no, col_no",
+      "rows": 3
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%withdraw%' OR text ILIKE '%terminat%' OR text ILIKE '%discontinu%' OR text ILIKE '%SY %' OR text ILIKE '%SY)%' OR text ILIKE '%(SY%'",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 25 AND 33 ORDER BY row_no, col_no",
+      "rows": 37
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=3 AND id BETWEEN 'p3.L10' AND 'p3.L20' OR (page=3 AND id IN ('p3.L45','p3.L46','p3.L47','p3.L48','p3.L49','p3.L50','p3.L51','p3.L52','p3.L53','p3.L54','p3.L55')) ORDER BY id",
+      "rows": 53
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 24 AND 34 AND col_no IN (1,2,3,4,6,8) ORDER BY row_no, col_no",
+      "rows": 35
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "run:kind",
+        "text:number",
+        "run:kind"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "run:kind",
+        "where": "runs[1]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "run:kind",
+        "where": "runs[3]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p2.L45:50",
+      "p2.L49:0",
+      "p1.L20:92",
+      "p7.L108:0",
+      "p3.L16:61",
+      "p3.L32:16",
+      "p7.L120:0",
+      "p16.L1:0",
+      "p5.L53:56",
+      "p6.L25:0",
+      "p1.L22:84",
+      "p3.L67:0"
+    ],
+    "measures": [
+      "p7.L108:0#101",
+      "p3.L16:61#154",
+      "p3.L32:16#30",
+      "p3.L32:16#44",
+      "p3.L32:16#130",
+      "p3.L32:16#215",
+      "p3.L32:16#248",
+      "p3.L32:16#259"
+    ],
+    "matched": 310
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3439,
+    "cache_read_input_tokens": 47026,
+    "cache_creation_input_tokens": 13534
+  },
+  "runs": [
+    {
+      "text": "The document does not say that the SY trial was withdrawn. The premise does not match the clinical trial table. In the row for SY (Biofilm carrier, metastatic pancreas cancer, KrasG12D, exosomes), the status is "
+    },
+    {
+      "quote": "Phase 1",
+      "atom": "p2.T1.r31c6"
+    },
+    {
+      "text": ", and the trial is registered as NCT03608631. The only Withdrawn status in that table belongs to a different row, the siRNA CAS3/SS3 trial. The prose agrees that SY is still active: it says the SY carrier is currently in the "
+    },
+    {
+      "quote": "Phase 1/2 patient recruitment stage",
+      "atom": "p3.L19"
+    },
+    {
+      "text": ". No reason for withdrawal is given for SY anywhere in the document."
+    }
+  ],
+  "rendered": "The document does not say that the SY trial was withdrawn. The premise does not match the clinical trial table. In the row for SY (Biofilm carrier, metastatic pancreas cancer, KrasG12D, exosomes), the status is Phase 1[1], and the trial is registered as NCT03608631. The only Withdrawn status in that table belongs to a different row, the siRNA CAS3/SS3 trial. The prose agrees that SY is still active: it says the SY carrier is currently in the Phase 1/2 patient recruitment stage[2]. No reason for withdrawal is given for SY anywhere in the document.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Phase 1",
+      "source": {
+        "atom": "p2.T1.r31c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1",
+        "bbox": [
+          357.7,
+          621.9,
+          379.5,
+          628.2
+        ],
+        "table": "Table 1",
+        "row": 31,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Phase 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1/2 patient recruitment stage",
+      "source": {
+        "atom": "p3.L19",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "Phase 1/2 patient recruitment stage. In addition, naked siRNA (STP705,",
+        "bbox": [
+          37.6,
+          244.6,
+          288.7,
+          252.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Phase 1/2 patient recruitment stage"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:07:21+00:00",
+  "arm": "leads",
+  "run": 1,
+  "paper": "cai2026",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "premise false: SY (KrasG12D, exosomes, M.D. Anderson) is Phase 1/Phase 2, Recruiting; the withdrawn trial is CpG-STAT3 siRNA CAS3/SS3 (p2.T1 r26-33)",
+  "trap": "explaining a withdrawal"
+}

@@ -1,0 +1,378 @@
+{
+  "question": "Do the pan-genome gene counts in Fig. 2E agree with the total stated in the text?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%pangenome%' OR text ILIKE '%pan-genome%' OR text ILIKE '%core genome%' OR text ILIKE '%accessory%' OR text ILIKE '%unique gene%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F2"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (2) AND line_no BETWEEN 95 AND 125 ORDER BY line_no",
+      "rows": 31
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%45 isolates%' OR text ILIKE '%genes%' AND page IN (2,4,14) ORDER BY page",
+      "rows": 18
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 13
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['45'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'45' is written exactly so in the document (e.g. p2.L106): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"45\", \"atom\": \"p2.L106\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2E,', '2019', '(>95%)'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2E' is written exactly so in the document (e.g. p2.L110): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2E\", \"atom\": \"p2.L110\"} — never shorten it",
+          "'2019' is written exactly so in the document (e.g. p14.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2019\", \"atom\": \"p14.L21\"} — never shorten it",
+          "'>95%' is written exactly so in the document (e.g. p4.F2.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \">95%\", \"atom\": \"p4.F2.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['2E,', '2016', '2018,', '2019', '2E', 'three', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2E' is written exactly so in the document (e.g. p2.L110): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2E\", \"atom\": \"p2.L110\"} — never shorten it",
+          "'2016' is written exactly so in the document (e.g. p14.L14): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2016\", \"atom\": \"p14.L14\"} — never shorten it",
+          "'2018' is written exactly so in the document (e.g. p14.L43): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2018\", \"atom\": \"p14.L43\"} — never shorten it",
+          "'2019' is written exactly so in the document (e.g. p14.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2019\", \"atom\": \"p14.L21\"} — never shorten it",
+          "'2E' is written exactly so in the document (e.g. p2.L110): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2E\", \"atom\": \"p2.L110\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['(>95%)'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'>95%' is written exactly so in the document (e.g. p4.F2.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \">95%\", \"atom\": \"p4.F2.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3925,
+    "cache_read_input_tokens": 48695,
+    "cache_creation_input_tokens": 18891
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "Yes, for the grouping the text relies on. The text states that a pan-genome analysis of isolates revealed "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p2.L107",
+          "quote": "19,469 total genes"
+        }
+      ]
+    },
+    {
+      "text": ", of which only "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p2.L107",
+          "quote": "3155"
+        }
+      ]
+    },
+    {
+      "text": " are core genes. In the pangenome panel, the bars under "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p4.F2.k40",
+          "quote": "Eduardo et al. 2019"
+        }
+      ]
+    },
+    {
+      "text": " give a core genome "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p4.F2.k41",
+          "quote": "3155 genes"
+        }
+      ]
+    },
+    {
+      "text": ", a dispensable genome of "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p4.F2.k42",
+          "quote": "dispensable genome contains 7847 genes"
+        }
+      ]
+    },
+    {
+      "text": ", and a unique genome of "
+    },
+    {
+      "text": "",
+      "support": [
+        {
+          "atom": "p4.F2.k43",
+          "quote": "unique genome contains 8467 genes"
+        }
+      ]
+    },
+    {
+      "text": ". Added together, these bars equal the total the text states, and the core bar matches the text's core count. The other groupings in the panel, labelled with other study names, do not add up to that total, so the text's total corresponds only to the Eduardo grouping. The text does not name the study behind its total, and the figure caption gives no total."
+    }
+  ],
+  "rendered": "Yes, for the grouping the text relies on. The text states that a pan-genome analysis of isolates revealed [1], of which only [2] are core genes. In the pangenome panel, the bars under [3] give a core genome [4], a dispensable genome of [5], and a unique genome of [6]. Added together, these bars equal the total the text states, and the core bar matches the text's core count. The other groupings in the panel, labelled with other study names, do not add up to that total, so the text's total corresponds only to the Eduardo grouping. The text does not name the study behind its total, and the figure caption gives no total.",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "19,469 total genes",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "19,469 total genes"
+    },
+    {
+      "kind": "support",
+      "quote": "3155",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "3155"
+    },
+    {
+      "kind": "support",
+      "quote": "Eduardo et al. 2019",
+      "source": {
+        "atom": "p4.F2.k40",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, the y-axis is labelled 'Gene number' and bars are grouped under three study headings: (Eduardo et al. 2019), (Danesh et al. 2016) and (Filipe et al. 2018).",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "Gene number",
+          "(Eduardo et al. 2019)",
+          "(Danesh et al. 2016)",
+          "(Filipe et al. 2018)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Gene number'"
+      },
+      "strength": "model-read",
+      "n": 3,
+      "rendered": "Eduardo et al. 2019"
+    },
+    {
+      "kind": "support",
+      "quote": "3155 genes",
+      "source": {
+        "atom": "p4.F2.k41",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "3155",
+          "Core (>95%)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Core (>95%)'"
+      },
+      "strength": "model-read",
+      "n": 4,
+      "rendered": "3155 genes"
+    },
+    {
+      "kind": "support",
+      "quote": "dispensable genome contains 7847 genes",
+      "source": {
+        "atom": "p4.F2.k42",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "7847",
+          "Dispensable"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find '7847'; 'Dispensable'"
+      },
+      "strength": "model-read",
+      "n": 5,
+      "rendered": "dispensable genome contains 7847 genes"
+    },
+    {
+      "kind": "support",
+      "quote": "unique genome contains 8467 genes",
+      "source": {
+        "atom": "p4.F2.k43",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "8467",
+          "Unique"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Unique'"
+      },
+      "strength": "model-read",
+      "n": 6,
+      "rendered": "unique genome contains 8467 genes"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:59:10+00:00",
+  "paper": "p3",
+  "probe": "X1",
+  "cat": "cross-source",
+  "expect": "yes for the Eduardo et al. 2019 definition: core 3155 + dispensable 7847 + unique 8467 = 19,469, which is the text's total (p2.L107). The other two definitions in Fig. 2E (Danesh 2016, Filipe 2018) give different splits.",
+  "trap": "asserting agreement without the arithmetic, or comparing the wrong definition"
+}

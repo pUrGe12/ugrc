@@ -1,0 +1,140 @@
+{
+  "question": "What electrolyte was used in the cells?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE lower(text) LIKE '%electrolyte%' OR lower(text) LIKE '%ether%' OR lower(text) LIKE '%carbonate%' OR lower(text) LIKE '%salt%' OR lower(text) LIKE '%nacf%' OR lower(text) LIKE '%napf%' OR lower(text) LIKE '%tfsi%' OR lower(text) LIKE '%glyme%' ORDER BY page, line_no",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=2 AND line_no BETWEEN 26 AND 36 ORDER BY line_no",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L76): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L76\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 789,
+    "cache_read_input_tokens": 11023,
+    "cache_creation_input_tokens": 4658
+  },
+  "runs": [
+    {
+      "text": "The cells used an electrolyte of "
+    },
+    {
+      "quote": "1 M NaPF6 in diethylene glycol dimethyl ether (diglyme)",
+      "atom": "p2.L32"
+    },
+    {
+      "text": ", chosen for its stability against sodium metal and its tendency to form stable SEI layers for sodium-based chemistries.",
+      "support": [
+        {
+          "atom": "p2.L33",
+          "quote": "used as the electrolyte due to its stability against sodium metal"
+        }
+      ]
+    }
+  ],
+  "rendered": "The cells used an electrolyte of 1 M NaPF6 in diethylene glycol dimethyl ether (diglyme)[1], chosen for its stability against sodium metal and its tendency to form stable SEI layers for sodium-based chemistries.[2]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1 M NaPF6 in diethylene glycol dimethyl ether (diglyme)",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "1 M NaPF6 in diethylene glycol dimethyl ether (diglyme) was",
+        "bbox": [
+          60.5,
+          654.1,
+          300.4,
+          665.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1 M NaPF6 in diethylene glycol dimethyl ether (diglyme)"
+    },
+    {
+      "kind": "support",
+      "quote": "used as the electrolyte due to its stability against sodium metal",
+      "source": {
+        "atom": "p2.L33",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "used as the electrolyte due to its stability against sodium metal",
+        "bbox": [
+          60.5,
+          665.2,
+          300.5,
+          675.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "used as the electrolyte due to its stability against sodium metal"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-18T07:03:31+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "nanolett-6b05174",
+  "probe": "C3",
+  "cat": "C",
+  "expect": "1 M NaPF6 in diglyme (diethylene glycol dimethyl ether) (p2.L31-33)",
+  "trap": "a carbonate electrolyte"
+}

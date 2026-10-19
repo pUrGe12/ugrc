@@ -1,0 +1,355 @@
+{
+  "question": "Which Table 2 entries took the longest and the shortest cultivation time?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, id FROM cells WHERE table_id='p9.T2' AND col_no IN (1,2,5) ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c.row_no, p.text AS product, s.text AS strain, c.text AS time_h, c.id FROM cells c JOIN cells p ON p.table_id=c.table_id AND p.row_no=c.row_no AND p.col_no=1 JOIN cells s ON s.table_id=c.table_id AND s.row_no=c.row_no AND s.col_no=2 WHERE c.table_id='p9.T2' AND c.col_no=5 AND c.text ~ '^[0-9]+$' ORDER BY CAST(c.text AS INTEGER), c.row_no",
+      "rows": 27
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 13,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "HBQA7 → LMB12",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "acetoin, MG1 → MG1ABC",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 9,
+          "of": "acetoin, MG1 → MG1ABC",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 11,
+          "of": "2,3-butanediol, MG1 → MG1ABC",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['2,3-butanediol'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2,3-butanediol' is written exactly so in the document (e.g. p1.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2,3-butanediol\", \"atom\": \"p1.L23\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [
+    {
+      "quote": "120",
+      "atom": "p9.T2.r45c5",
+      "of": "HBQA7 → LMB12",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 3
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r15c5",
+      "of": "acetoin, MG1 → MG1ABC",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 7
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r15c5",
+      "of": "acetoin, MG1 → MG1ABC",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 9
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r17c5",
+      "of": "2,3-butanediol, MG1 → MG1ABC",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 11
+    }
+  ],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2426,
+    "cache_read_input_tokens": 30382,
+    "cache_creation_input_tokens": 10631
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "Longest: in "
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ", the longest cultivation time is "
+    },
+    {
+      "quote": "120",
+      "atom": "p9.T2.r45c5",
+      "of": "HBQA7 → LMB12"
+    },
+    {
+      "text": " h, for the α-bisabolol entry in strain "
+    },
+    {
+      "quote": "LMB12",
+      "atom": "p9.T2.r45c2"
+    },
+    {
+      "text": ". Shortest: the shortest time is "
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r15c5",
+      "of": "acetoin, MG1 → MG1ABC"
+    },
+    {
+      "text": " h, shared by entries in strain MG1 → MG1ABC: acetoin ("
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r15c5",
+      "of": "acetoin, MG1 → MG1ABC"
+    },
+    {
+      "text": " h) and the butanediol entry ("
+    },
+    {
+      "quote": "6",
+      "atom": "p9.T2.r17c5",
+      "of": "2,3-butanediol, MG1 → MG1ABC"
+    },
+    {
+      "text": " h)."
+    }
+  ],
+  "rendered": "Longest: in Table 2[1], the longest cultivation time is 120[2] h, for the α-bisabolol entry in strain LMB12[3]. Shortest: the shortest time is 6[4] h, shared by entries in strain MG1 → MG1ABC: acetoin (6[5] h) and the butanediol entry (6[6] h).",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "120",
+      "source": {
+        "atom": "p9.T2.r45c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "120",
+        "bbox": [
+          462.2,
+          461.8,
+          473.0,
+          468.2
+        ],
+        "table": "Table 2",
+        "row": 45,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "of": "HBQA7 → LMB12",
+      "n": 2,
+      "rendered": "120"
+    },
+    {
+      "kind": "quote",
+      "quote": "LMB12",
+      "source": {
+        "atom": "p9.T2.r45c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "HBQA7 → LMB12",
+        "bbox": [
+          114.6,
+          460.6,
+          165.6,
+          468.2
+        ],
+        "table": "Table 2",
+        "row": 45,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "LMB12"
+    },
+    {
+      "kind": "quote",
+      "quote": "6",
+      "source": {
+        "atom": "p9.T2.r15c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "6",
+        "bbox": [
+          469.4,
+          204.8,
+          472.9,
+          211.1
+        ],
+        "table": "Table 2",
+        "row": 15,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "of": "acetoin, MG1 → MG1ABC",
+      "n": 4,
+      "rendered": "6"
+    },
+    {
+      "kind": "quote",
+      "quote": "6",
+      "source": {
+        "atom": "p9.T2.r15c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "6",
+        "bbox": [
+          469.4,
+          204.8,
+          472.9,
+          211.1
+        ],
+        "table": "Table 2",
+        "row": 15,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "of": "acetoin, MG1 → MG1ABC",
+      "n": 5,
+      "rendered": "6"
+    },
+    {
+      "kind": "quote",
+      "quote": "6",
+      "source": {
+        "atom": "p9.T2.r17c5",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "6",
+        "bbox": [
+          469.4,
+          221.9,
+          472.9,
+          228.3
+        ],
+        "table": "Table 2",
+        "row": 17,
+        "col": 5,
+        "column_header": "Time (h)"
+      },
+      "strength": "verbatim",
+      "of": "2,3-butanediol, MG1 → MG1ABC",
+      "n": 6,
+      "rendered": "6"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:58:31+00:00",
+  "paper": "p3",
+  "probe": "T4",
+  "cat": "table",
+  "expect": "longest 120 h, (-)-alpha-bisabolol HBQA7 -> LMB12 (30,200 mg/L); shortest 6 h, the two whole-cell biocatalyst rows MG1 -> MG1ABC (acetoin 44,900 and 2,3-butanediol 27,950)",
+  "trap": "picking 110 h (SMB19) or 108 h (SK4-72) as the longest"
+}

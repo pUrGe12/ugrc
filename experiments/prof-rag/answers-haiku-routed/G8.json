@@ -1,0 +1,1124 @@
+{
+  "question": "how many references are there in the materials today paper",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE doc = 'mattod-2020' AND (text ILIKE '%reference%' OR page >= 10) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE doc = 'mattod-2020' AND regexp_matches(text, '^\\[[0-9]+\\]') ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE doc = 'mattod-2020' AND page = 12 AND line_no >= 25 ORDER BY line_no",
+      "rows": 34
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT count(*) AS n_refs, max(CAST(regexp_extract(text, '^\\[([0-9]+)\\]', 1) AS INTEGER)) AS last_no FROM lines WHERE doc = 'mattod-2020' AND page >= 10 AND regexp_matches(text, '^\\[[0-9]+\\]')",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1', '156,', '156'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. acsnano-7b02404:p2.L63): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"acsnano-7b02404:p2.L63\"} — never shorten it",
+          "'156' is written exactly so in the document (e.g. acsnano-7b02404:p8.L121): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"156\", \"atom\": \"acsnano-7b02404:p8.L121\"} — never shorten it",
+          "'156' is written exactly so in the document (e.g. acsnano-7b02404:p8.L121): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"156\", \"atom\": \"acsnano-7b02404:p8.L121\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['156'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'156' is written exactly so in the document (e.g. acsnano-7b02404:p8.L121): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"156\", \"atom\": \"acsnano-7b02404:p8.L121\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2377,
+    "cache_read_input_tokens": 156212,
+    "cache_creation_input_tokens": 32758
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The Materials Today paper is the Battery Identity Global Passport article (mattod-2020). Its reference list has "
+    },
+    {
+      "sql": "SELECT count(*) AS n_refs FROM lines WHERE doc = 'mattod-2020' AND page >= 10 AND regexp_matches(text, '^\\[[0-9]+\\]')",
+      "column": "n_refs",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " numbered entries, running from "
+    },
+    {
+      "quote": "[1] A. Yoshino",
+      "atom": "mattod-2020:p10.L88"
+    },
+    {
+      "text": " to "
+    },
+    {
+      "quote": "[156] D.H.S. Tan et al.",
+      "atom": "mattod-2020:p12.L54"
+    },
+    {
+      "text": ". The numbering has no gaps, so the last reference is number "
+    },
+    {
+      "quote": "156",
+      "atom": "mattod-2020:p12.L54"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The Materials Today paper is the Battery Identity Global Passport article (mattod-2020). Its reference list has 156[1] numbered entries, running from [1] A. Yoshino[2] to [156] D.H.S. Tan et al.[3]. The numbering has no gaps, so the last reference is number 156[4].",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n_refs FROM lines WHERE doc = 'mattod-2020' AND page >= 10 AND regexp_matches(text, '^\\[[0-9]+\\]')",
+      "column": "n_refs",
+      "row": 0,
+      "fmt": "int",
+      "value": 156,
+      "strength": "computed from verbatim",
+      "n_sources": 156,
+      "sources": [
+        {
+          "atom": "mattod-2020:p10.L100",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[7] Global Electric Vehicles Battery Market: Focus on Battery Electric Vehicle, Plug-",
+          "bbox": [
+            324.0,
+            566.5,
+            575.4,
+            573.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L103",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[8] M. Jacoby, Chem. Eng. News 97 (2019).",
+          "bbox": [
+            324.0,
+            594.9,
+            458.6,
+            601.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L104",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[9] K. Richa et al., Resour. Conserv. Recycl. 83 (2014) 63–76, https://doi.org/",
+          "bbox": [
+            324.0,
+            602.7,
+            575.4,
+            610.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L106",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[10] Lithium-ion Battery Recycling Market by Battery Chemistry (Lithium-nickel",
+          "bbox": [
+            320.8,
+            623.3,
+            575.4,
+            629.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L110",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[11] Consortium, U. S. A. B. Electric vehicle battery test procedures manual. USABC,",
+          "bbox": [
+            320.8,
+            661.1,
+            575.4,
+            667.6
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L112",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[12] G. Harper et al., Nature 575 (2019) 75–86, https://doi.org/10.1038/s41586-019-",
+          "bbox": [
+            320.8,
+            678.4,
+            575.3,
+            686.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L114",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[13] L. Gaines, K. Richa, J. Spangenberger, Mrs Energy Sustain 5 (2018), https://doi.",
+          "bbox": [
+            320.8,
+            699.0,
+            575.4,
+            705.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L116",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[14] L. Gaines, Sustain. Mater. Technol. 17 (2018), https://doi.org/10.1016/",
+          "bbox": [
+            320.8,
+            717.9,
+            575.3,
+            724.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L118",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[15] L. Gaines, Sustain. Mater. Technol. 1–2 (2014) 2–7, https://doi.org/10.1016/",
+          "bbox": [
+            320.8,
+            735.2,
+            575.3,
+            743.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L88",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[1] A. Yoshino, Angew. Chem. Int. Ed. 51 (2012) 5798–5800, https://doi.org/",
+          "bbox": [
+            324.0,
+            451.3,
+            575.4,
+            459.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L90",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[2] M.S. Whittingham, Science 192 (1976) 1126, https://doi.org/",
+          "bbox": [
+            324.0,
+            471.9,
+            575.4,
+            478.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L92",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[3] M. Armand, J.M. Tarascon, Nature 451 (2008) 652–657, https://doi.org/",
+          "bbox": [
+            324.0,
+            489.1,
+            575.4,
+            497.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L94",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[4] M.S. Whittingham, Chem. Rev. 104 (2004) 4271–4302, https://doi.org/",
+          "bbox": [
+            324.0,
+            508.1,
+            575.4,
+            516.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L96",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[5] J.B. Goodenough, K.-S. Park, J. Am. Chem. Soc. 135 (2013) 1167–1176, https://",
+          "bbox": [
+            324.0,
+            527.0,
+            575.4,
+            535.1
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p10.L98",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "[6] A. Manthiram, Nat. Commun. 11 (2020) 1550, https://doi.org/10.1038/",
+          "bbox": [
+            324.0,
+            547.6,
+            575.3,
+            554.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L1",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[16] X. Zhang et al., Chem. Soc. Rev. 47 (2018) 7239–7302, https://doi.org/",
+          "bbox": [
+            40.1,
+            61.6,
+            294.8,
+            69.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L100",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[99] X. Chen et al., Sep. Purif. Technol. 141 (2015) 76–83.",
+          "bbox": [
+            315.1,
+            317.2,
+            495.8,
+            325.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L101",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[100] X. Chen et al., Sep. Purif. Technol. 144 (2015) 197–205.",
+          "bbox": [
+            311.9,
+            326.7,
+            504.0,
+            334.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L102",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[101] X. Chen et al., Waste Manag. 38 (2015) 349–356.",
+          "bbox": [
+            311.9,
+            336.1,
+            483.6,
+            344.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L103",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[102] S.-H. Joo et al., J. Power Sources 305 (2016) 175–181.",
+          "bbox": [
+            311.9,
+            345.6,
+            494.5,
+            353.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L104",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[103] S.-H. Joo et al., Hydrometallurgy 159 (2016) 65–74.",
+          "bbox": [
+            311.9,
+            355.1,
+            489.1,
+            363.1
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L105",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[104] Y. Pranolo, W. Zhang, C. Cheng, Hydrometallurgy 102 (2010) 37–42.",
+          "bbox": [
+            311.9,
+            364.5,
+            545.3,
+            372.6
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L106",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[105] L. Zhang et al., J. Hazard. Mater. 398 (2020), https://doi.org/10.1016/j.",
+          "bbox": [
+            311.9,
+            375.6,
+            569.7,
+            382.1
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L108",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[106] G. Cai et al., Ind. Eng. Chem. 53 (2014) 18245–18259.",
+          "bbox": [
+            311.9,
+            392.9,
+            499.8,
+            401.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L109",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[107] V.C.B. Pegoretti et al., Mater. Res. Bull. 86 (2017) 5–9.",
+          "bbox": [
+            311.9,
+            402.3,
+            497.5,
+            410.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L11",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[21] J.B. Dunn et al., Energy Environ. Sci. 8 (2015) 158–168, https://doi.org/",
+          "bbox": [
+            40.1,
+            156.3,
+            294.8,
+            164.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L110",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[108] C. Sandhya, B. John, C. Gouri, RSC Adv. 6 (2016) 114192–114197.",
+          "bbox": [
+            311.9,
+            411.8,
+            537.4,
+            419.9
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L111",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[109] L.-P. He, S.-Y. Sun, J.-G. Yu, Ceram. Int. 44 (2018) 351–357.",
+          "bbox": [
+            311.9,
+            421.3,
+            515.6,
+            429.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L112",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[110] E. Barbieri et al., J. Power Sources 269 (2014) 158–163.",
+          "bbox": [
+            311.9,
+            430.7,
+            499.2,
+            438.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L113",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[111] E.M. Garcia et al., J. Appl. Electrochem. 41 (2011) 1373.",
+          "bbox": [
+            311.9,
+            441.8,
+            503.7,
+            448.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L114",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[112] E.M. Garcia et al., J. Appl. Electrochem. 42 (2012) 361–366.",
+          "bbox": [
+            311.9,
+            449.7,
+            514.6,
+            457.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L115",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[113] J. Myoung et al., J. Power Sources 112 (2002) 639–642.",
+          "bbox": [
+            311.9,
+            459.1,
+            500.0,
+            467.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L116",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[114] M. Freitas, E. Garcia, J. Power Sources 171 (2007) 953–959.",
+          "bbox": [
+            311.9,
+            468.6,
+            512.2,
+            476.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L117",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[115] E. Garcia et al., J. Power Sources 185 (2008) 549–553.",
+          "bbox": [
+            311.9,
+            478.1,
+            495.3,
+            486.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L118",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[116] Y. Weng et al., J. Hazard. Mater. 246 (2013) 163–172.",
+          "bbox": [
+            311.9,
+            487.5,
+            495.8,
+            495.6
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L119",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[117] F. Tedjar. Challenges for recycling advanced Li-ion batteries. Proc.",
+          "bbox": [
+            311.9,
+            498.6,
+            569.7,
+            505.1
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L121",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[118] M. Grützke et al., RSC Adv. 5 (2015) 43209–43217, https://doi.org/10.1039/",
+          "bbox": [
+            311.9,
+            515.9,
+            569.7,
+            524.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L123",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[119] S. Nowak, M. Winter, Molecules 22 (2017) 403 .",
+          "bbox": [
+            311.9,
+            536.5,
+            477.4,
+            543.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L124",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[120] K. Liu et al., ACS Appl. Energy Mater. 3 (2020) 4767–4776, https://doi.org/",
+          "bbox": [
+            311.9,
+            544.4,
+            569.7,
+            552.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L126",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[121] Y. Bai, et al. ChemSusChem (2020), https://doi.org/10.1002/cssc.202001479.",
+          "bbox": [
+            311.9,
+            564.9,
+            567.7,
+            571.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L127",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[122] S.E. Sloop. System and method for removing an electrolyte from an energy",
+          "bbox": [
+            311.9,
+            574.3,
+            569.7,
+            580.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L129",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[123] Y. Liu et al., J. Phys. Chem. C 121 (2017) 4181–4187, https://doi.org/10.1021/",
+          "bbox": [
+            311.9,
+            591.6,
+            569.8,
+            599.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L13",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[22] J.B. Dunn et al., Environ. Sci. Technol. 46 (2012) 12704–12710, https://doi.",
+          "bbox": [
+            40.1,
+            175.2,
+            294.8,
+            183.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L131",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[124] S. Sloop et al., Sustain. Mater. Technol. 25 (2020), https://doi.org/10.1016/",
+          "bbox": [
+            311.9,
+            612.2,
+            569.8,
+            618.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L133",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[125] J. Kalhoff et al., ChemSusChem 8 (2015) 2154–2175, https://doi.org/10.1002/",
+          "bbox": [
+            311.9,
+            629.5,
+            569.8,
+            637.6
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L135",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[126] D. Song et al., J. Power Sources 249 (2014) 137–141, https://doi.org/10.1016/j.",
+          "bbox": [
+            311.9,
+            648.4,
+            569.7,
+            656.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L137",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[127] D. Song et al., J. Power Sources 232 (2013) 348–352, https://doi.org/10.1016/j.",
+          "bbox": [
+            311.9,
+            667.4,
+            569.7,
+            675.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L139",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[128] G. Zhang et al., Acs Sustain. Chem. Eng. 6 (2018) 10896–10904, https://doi.",
+          "bbox": [
+            311.9,
+            686.3,
+            569.7,
+            694.4
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L141",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[129] Y. Bai et al., Sustain. Mater. Technol. 25 (2020), https://doi.org/10.1016/",
+          "bbox": [
+            311.9,
+            706.9,
+            569.7,
+            713.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L143",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[130] M. Wang et al., Acs Sustain. Chem. Eng. 7 (2019) 12799–12806, https://doi.",
+          "bbox": [
+            311.9,
+            724.2,
+            569.7,
+            732.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L15",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[23] R.E. Ciez, J.F. Whitacre, Nat. Sustain. 2 (2019) 148–156, https://doi.org/",
+          "bbox": [
+            40.1,
+            194.2,
+            294.8,
+            202.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L17",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[24] X. Li et al., J. Power Sources 345 (2017) 78–84.",
+          "bbox": [
+            40.1,
+            213.1,
+            199.6,
+            221.2
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L18",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[25] D. Song et al., J. Power Sources 232 (2013) 348–352.",
+          "bbox": [
+            40.1,
+            222.6,
+            216.7,
+            230.7
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L19",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[26] J. Chen et al., Green Chem. 18 (2016) 2500–2506.",
+          "bbox": [
+            40.1,
+            232.0,
+            210.8,
+            240.1
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L20",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[27] Z. Zhang et al., Int. J. Electrochem. Sci. 9 (2014) 3691–3700.",
+          "bbox": [
+            40.1,
+            241.4,
+            241.6,
+            249.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L21",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[28] T. Georgi-Maschler et al., J. Power Sources 207 (2012) 173–182.",
+          "bbox": [
+            40.1,
+            250.9,
+            250.7,
+            259.0
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L22",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[29] Guoxing, R. et al. in Advances in Molten Slags, Fluxes, and Salts: Proceedings of",
+          "bbox": [
+            40.1,
+            262.0,
+            294.8,
+            268.5
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L25",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[30] T. Träger, B. Friedrich, R. Weyhe, Chem. Ing. Tech. 87 (2015) 1550–1557.",
+          "bbox": [
+            40.1,
+            288.8,
+            282.8,
+            296.9
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L26",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[31] J. Li, G. Wang, Z. Xu, J. Hazard. Mater. 302 (2016) 97–104.",
+          "bbox": [
+            40.1,
+            298.2,
+            237.4,
+            306.3
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        },
+        {
+          "atom": "mattod-2020:p11.L27",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[32] J. Hu et al., J. Power Sources 351 (2017) 192–199.",
+          "bbox": [
+            40.1,
+            307.7,
+            207.9,
+            315.8
+          ],
+          "doc": "mattod-2020",
+          "doi": "10.1016/j.mattod.2020.09.001"
+        }
+      ],
+      "n": 1,
+      "rendered": "156"
+    },
+    {
+      "kind": "quote",
+      "quote": "[1] A. Yoshino",
+      "source": {
+        "atom": "mattod-2020:p10.L88",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "[1] A. Yoshino, Angew. Chem. Int. Ed. 51 (2012) 5798–5800, https://doi.org/",
+        "bbox": [
+          324.0,
+          451.3,
+          575.4,
+          459.4
+        ],
+        "doc": "mattod-2020",
+        "doi": "10.1016/j.mattod.2020.09.001"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "[1] A. Yoshino"
+    },
+    {
+      "kind": "quote",
+      "quote": "[156] D.H.S. Tan et al.",
+      "source": {
+        "atom": "mattod-2020:p12.L54",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "[156] D.H.S. Tan et al., Nat. Nanotechnol. 15 (2020) 170–180, https://doi.org/",
+        "bbox": [
+          317.5,
+          298.2,
+          575.4,
+          306.3
+        ],
+        "doc": "mattod-2020",
+        "doi": "10.1016/j.mattod.2020.09.001"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "[156] D.H.S. Tan et al."
+    },
+    {
+      "kind": "quote",
+      "quote": "156",
+      "source": {
+        "atom": "mattod-2020:p12.L54",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "[156] D.H.S. Tan et al., Nat. Nanotechnol. 15 (2020) 170–180, https://doi.org/",
+        "bbox": [
+          317.5,
+          298.2,
+          575.4,
+          306.3
+        ],
+        "doc": "mattod-2020",
+        "doi": "10.1016/j.mattod.2020.09.001"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "156"
+    }
+  ],
+  "seals": {
+    "extraction": "2cfc43ae5a6f18244636caded1b1855f4127785cc92a3d819ea30543b448d660",
+    "readings": "439ed13c9060c72e79e20b4f73e9cef81a82323c9972c22c1218b96f300aca21"
+  },
+  "created_at": "2026-10-13T11:57:30+00:00",
+  "probe": "G8",
+  "kind": "general"
+}

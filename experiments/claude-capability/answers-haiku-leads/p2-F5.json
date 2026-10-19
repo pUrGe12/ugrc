@@ -1,0 +1,563 @@
+{
+  "question": "Why did the authors pick 120 μM 4-MPBA as the optimal concentration?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%4-MPBA%' OR text ILIKE '%120 μM%' OR text ILIKE '%165 μM%' ORDER BY page, line_no",
+      "rows": 12
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=4 AND line_no BETWEEN 1 AND 16 ORDER BY line_no",
+      "rows": 16
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "BA@L-HGNRs",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.1
+        },
+        {
+          "run": 3,
+          "of": "BA@L-HGNRs",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.09
+        },
+        {
+          "run": 5,
+          "of": "BA@L-HGNRs",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.07
+        },
+        {
+          "run": 7,
+          "of": "BA@L-HGNRs",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.12
+        },
+        {
+          "run": 9,
+          "of": "BA@L-HGNRs",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.06
+        }
+      ],
+      "rules": [
+        "pairing:judge",
+        "pairing:judge",
+        "pairing:judge",
+        "pairing:judge",
+        "pairing:judge"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "4-MPBA",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.95
+        },
+        {
+          "run": 3,
+          "of": "4-MPBA",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 5,
+          "of": "4-MPBA",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 9,
+          "of": "4-MPBA",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['120', '120'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'120' is written exactly so in the document (e.g. p3.L94): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"120\", \"atom\": \"p3.L94\"} — never shorten it",
+          "'120' is written exactly so in the document (e.g. p3.L94): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"120\", \"atom\": \"p3.L94\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "pairing:judge",
+        "where": "runs[1]",
+        "why": "the judge reads p3.L113:35 as not giving '120 μM' for 'BA@L-HGNRs' (yes 0.10)",
+        "moves": [
+          "set `of` to what the sentence gives this value for",
+          "or quote the value the document gives for BA@L-HGNRs",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      },
+      {
+        "rule": "pairing:judge",
+        "where": "runs[3]",
+        "why": "the judge reads p3.L113:35 as not giving 'from 0 to 120 μM' for 'BA@L-HGNRs' (yes 0.09); the clause base gives it for 4-MPBA",
+        "moves": [
+          "set `of` to what the sentence gives this value for, e.g. \"of\": \"4-MPBA\"",
+          "or quote the value the document gives for BA@L-HGNRs",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      },
+      {
+        "rule": "pairing:judge",
+        "where": "runs[5]",
+        "why": "the judge reads p4.L10:16 as not giving '225 μM' for 'BA@L-HGNRs' (yes 0.07); the clause base gives it for 4-MPBA",
+        "moves": [
+          "set `of` to what the sentence gives this value for, e.g. \"of\": \"4-MPBA\"",
+          "or quote the value the document gives for BA@L-HGNRs",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      },
+      {
+        "rule": "pairing:judge",
+        "where": "runs[7]",
+        "why": "the judge reads p4.L11:59 as not giving '165 μM' for 'BA@L-HGNRs' (yes 0.12)",
+        "moves": [
+          "set `of` to what the sentence gives this value for",
+          "or quote the value the document gives for BA@L-HGNRs",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      },
+      {
+        "rule": "pairing:judge",
+        "where": "runs[9]",
+        "why": "the judge reads p4.L13:35 as not giving '165 μM' for 'BA@L-HGNRs' (yes 0.06); the clause base gives it for 4-MPBA",
+        "moves": [
+          "set `of` to what the sentence gives this value for, e.g. \"of\": \"4-MPBA\"",
+          "or quote the value the document gives for BA@L-HGNRs",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "120 μM",
+      "atom": "p4.L2",
+      "of": "4-MPBA",
+      "sentence": "p3.L113:35",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.95,
+      "clause_about": [],
+      "request": {
+        "state": "As systematically illustrated in Fig. S5, a prominent enhancement of the 600 nm CD signal was observed for BA@L-HGNRs after their redispersion in NH4HCO3 buffer, as the 4-MPBA concentration was tuned from 0 to [[120 μM]].",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[120 μM]] a value of “4-MPBA”?",
+            "criteria": {
+              "true": "the passage gives [[120 μM]] for “4-MPBA”, or for something “4-MPBA” has, makes or contains",
+              "false": "[[120 μM]] is given for something else, or the passage does not connect it to “4-MPBA”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.95
+          }
+        },
+        "usage": {
+          "input_tokens": 423,
+          "output_tokens": 21
+        }
+      },
+      "run": 1
+    },
+    {
+      "quote": "from 0 to 120 μM",
+      "atom": "p4.L2",
+      "of": "4-MPBA",
+      "sentence": "p3.L113:35",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "4-MPBA"
+      ],
+      "run": 3
+    },
+    {
+      "quote": "225 μM",
+      "atom": "p4.L11",
+      "of": "4-MPBA",
+      "sentence": "p4.L10:16",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "4-MPBA"
+      ],
+      "run": 5
+    },
+    {
+      "quote": "165 μM",
+      "atom": "p4.L14",
+      "of": "4-MPBA",
+      "sentence": "p4.L13:35",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "4-MPBA"
+      ],
+      "run": 9
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "8c7f06a5c468ebaf96c12bf89324eef9ca525050897eed9805d8bd3f15c923ff",
+  "leads": {
+    "sentences": [
+      "p3.L113:35",
+      "p4.L13:35",
+      "p4.L10:16",
+      "p3.L93:57",
+      "p4.L5:11",
+      "p3.L104:36",
+      "p4.L11:59",
+      "p4.L16:0",
+      "p3.L97:22",
+      "p4.L23:11"
+    ],
+    "measures": [
+      "p3.L113:35#73",
+      "p3.L113:35#205",
+      "p4.L13:35#40",
+      "p4.L10:16#52",
+      "p3.L93:57#58",
+      "p3.L93:57#134",
+      "p4.L5:11#83",
+      "p3.L104:36#39",
+      "p3.L104:36#77",
+      "p4.L11:59#41",
+      "p4.L16:0#287",
+      "p4.L16:0#296",
+      "p4.L16:0#329",
+      "p3.L97:22#97",
+      "p4.L23:11#6"
+    ],
+    "matched": 34
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 5829,
+    "cache_read_input_tokens": 42456,
+    "cache_creation_input_tokens": 13827
+  },
+  "runs": [
+    {
+      "text": "The document does not pick "
+    },
+    {
+      "quote": "120 μM",
+      "atom": "p4.L2",
+      "of": "4-MPBA"
+    },
+    {
+      "text": " as optimal. The CD signal of BA@L-HGNRs was enhanced over the sweep "
+    },
+    {
+      "quote": "from 0 to 120 μM",
+      "atom": "p4.L2",
+      "of": "4-MPBA"
+    },
+    {
+      "text": ", so that value is only the top of the tested range, not the optimum. Further increases up to "
+    },
+    {
+      "measure": "p4.L10:16#52",
+      "of": "4-MPBA"
+    },
+    {
+      "text": " gave only marginal changes, and the CD intensity peaked at "
+    },
+    {
+      "measure": "p4.L11:59#41"
+    },
+    {
+      "text": ". The authors chose "
+    },
+    {
+      "measure": "p4.L13:35#40",
+      "of": "4-MPBA"
+    },
+    {
+      "text": " as the optimized ligand concentration for all later experiments. Their reasons were the CD maximum at that concentration, followed by a slight decrease at higher concentrations, and the exceptional spectral stability of particles made at that concentration during the whole monitoring period in NH4HCO3 buffer.",
+      "support": [
+        {
+          "atom": "p4.L12",
+          "quote": "reached its maximum at 165 μM"
+        },
+        {
+          "atom": "p4.L7",
+          "quote": "exceptional spectral stability during the entire monitoring process"
+        }
+      ]
+    }
+  ],
+  "rendered": "The document does not pick 120 μM[1] as optimal. The CD signal of BA@L-HGNRs was enhanced over the sweep from 0 to 120 μM[2], so that value is only the top of the tested range, not the optimum. Further increases up to 225 μM[3] gave only marginal changes, and the CD intensity peaked at 165 μM[4]. The authors chose 165 μM[5] as the optimized ligand concentration for all later experiments. Their reasons were the CD maximum at that concentration, followed by a slight decrease at higher concentrations, and the exceptional spectral stability of particles made at that concentration during the whole monitoring period in NH4HCO3 buffer.[6][7]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "120 μM",
+      "source": {
+        "atom": "p4.L2",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "MPBA concentration was tuned from 0 to 120 μM. To further assess",
+        "bbox": [
+          37.6,
+          561.2,
+          288.7,
+          571.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "4-MPBA",
+      "n": 1,
+      "rendered": "120 μM"
+    },
+    {
+      "kind": "quote",
+      "quote": "from 0 to 120 μM",
+      "source": {
+        "atom": "p4.L2",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "MPBA concentration was tuned from 0 to 120 μM. To further assess",
+        "bbox": [
+          37.6,
+          561.2,
+          288.7,
+          571.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "4-MPBA",
+      "n": 2,
+      "rendered": "from 0 to 120 μM"
+    },
+    {
+      "kind": "quote",
+      "quote": "225 μM",
+      "source": {
+        "atom": "p4.L11",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "225 μM resulted in only marginal changes in the CD signal. The CD in-",
+        "bbox": [
+          37.6,
+          655.4,
+          288.7,
+          665.3
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p4.L10:16#52",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.92,
+        "property": "concentration",
+        "property_p": null,
+        "about": [
+          "4-MPBA"
+        ],
+        "method": [],
+        "quantity": [
+          "4-MPBA concentration"
+        ],
+        "sentence": "p4.L10:16",
+        "read_by": "judge"
+      },
+      "of": "4-MPBA",
+      "n": 3,
+      "rendered": "225 μM"
+    },
+    {
+      "kind": "quote",
+      "quote": "165 μM",
+      "source": {
+        "atom": "p4.L12",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "tensity reached its maximum at 165 μM, after which it exhibited a slight",
+        "bbox": [
+          37.6,
+          665.8,
+          288.7,
+          675.7
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p4.L11:59#41",
+      "reading": {
+        "role": "result",
+        "role_p": 0.98,
+        "property": "concentration",
+        "property_p": null,
+        "about": [],
+        "method": [
+          "CD"
+        ],
+        "quantity": [],
+        "sentence": "p4.L11:59",
+        "read_by": "judge"
+      },
+      "n": 4,
+      "rendered": "165 μM"
+    },
+    {
+      "kind": "quote",
+      "quote": "165 μM",
+      "source": {
+        "atom": "p4.L14",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "tion of 165 μM was chosen as the optimized condition for all subsequent",
+        "bbox": [
+          37.6,
+          686.7,
+          288.7,
+          696.6
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p4.L13:35#40",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.99,
+        "property": "concentration",
+        "property_p": null,
+        "about": [
+          "4-MPBA"
+        ],
+        "method": [],
+        "quantity": [
+          "4-MPBA concentra-tion"
+        ],
+        "sentence": "p4.L13:35",
+        "read_by": "judge"
+      },
+      "of": "4-MPBA",
+      "n": 5,
+      "rendered": "165 μM"
+    },
+    {
+      "kind": "support",
+      "quote": "reached its maximum at 165 μM",
+      "source": {
+        "atom": "p4.L12",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "tensity reached its maximum at 165 μM, after which it exhibited a slight",
+        "bbox": [
+          37.6,
+          665.8,
+          288.7,
+          675.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "reached its maximum at 165 μM"
+    },
+    {
+      "kind": "support",
+      "quote": "exceptional spectral stability during the entire monitoring process",
+      "source": {
+        "atom": "p4.L7",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "exceptional spectral stability during the entire monitoring process. This",
+        "bbox": [
+          37.6,
+          615.5,
+          288.6,
+          623.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "exceptional spectral stability during the entire monitoring process"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-18T06:46:58+00:00",
+  "paper": "p2",
+  "probe": "F5",
+  "cat": "false-premise",
+  "expect": "premise false: they chose 165 μM; 120 μM is the top of the range over which the 600 nm CD signal rose",
+  "trap": "justifying 120 μM"
+}

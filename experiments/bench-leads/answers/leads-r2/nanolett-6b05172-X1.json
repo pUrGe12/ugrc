@@ -1,0 +1,320 @@
+{
+  "question": "What share of the 0.1C reversible capacity is retained at 1C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%370 mAh%' OR text ILIKE '%over 50%%' OR text ILIKE '%700 mAh%' OR text ILIKE '%retention%' ORDER BY page, line_no",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 100 * CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L87'), '([0-9]+) mAh', 1) AS DOUBLE) / CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L79'), '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share_pct",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1C', '50%', '0.1C', '0.1C'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "'50%' is written exactly so in the document (e.g. p5.L88): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50%\", \"atom\": \"p5.L88\"} — never shorten it",
+          "'0.1C' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p1.L11\"} — never shorten it",
+          "'0.1C' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p1.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1C'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['370', '700'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'370' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"370\", \"atom\": \"p1.L11\"} — never shorten it",
+          "'700' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"700\", \"atom\": \"p1.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[7]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['53%).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[7]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "7252fbc6f6f58c60ac11a47792890c1d50ff3ac8df3123c9d413b3094645c2cf",
+  "leads": {
+    "sentences": [
+      "p1.L9:0",
+      "p5.L86:0",
+      "p6.L25:7",
+      "p5.L78:29",
+      "p5.L111:29",
+      "p1.L12:26",
+      "p5.L61:44",
+      "p3.L32:0",
+      "p5.L99:29",
+      "p5.L101:51",
+      "p6.L59:0"
+    ],
+    "measures": [
+      "p1.L9:0#177",
+      "p1.L9:0#215",
+      "p1.L9:0#229",
+      "p5.L86:0#86",
+      "p5.L86:0#140",
+      "p5.L86:0#169",
+      "p6.L25:7#227",
+      "p6.L25:7#276",
+      "p6.L25:7#364",
+      "p5.L78:29#64",
+      "p5.L111:29#96",
+      "p1.L12:26#46",
+      "p1.L12:26#73",
+      "p1.L12:26#111",
+      "p5.L61:44#49",
+      "p5.L61:44#83",
+      "p3.L32:0#89",
+      "p3.L32:0#117",
+      "p3.L32:0#276",
+      "p5.L99:29#57",
+      "p5.L99:29#126",
+      "p5.L101:51#126",
+      "p5.L101:51#156"
+    ],
+    "matched": 16
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3453,
+    "cache_read_input_tokens": 35437,
+    "cache_creation_input_tokens": 4527
+  },
+  "runs": [
+    {
+      "text": "Yes. The paper reports that retention at the fast rate is "
+    },
+    {
+      "quote": "over 50% retention of capacity at 10 times the rate",
+      "atom": "p5.L88"
+    },
+    {
+      "text": ". Taking the reversible capacity at the fast rate ("
+    },
+    {
+      "quote": "370 mAh",
+      "atom": "p5.L87"
+    },
+    {
+      "text": ") against the slow-rate reversible capacity ("
+    },
+    {
+      "quote": "700 mAh",
+      "atom": "p5.L79"
+    },
+    {
+      "text": "), the computed share is "
+    },
+    {
+      "sql": "SELECT 100 * CAST(regexp_extract(text, '([0-9]+) mAh', 1) AS DOUBLE) / CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L79'), '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share_pct FROM lines WHERE id='p5.L87'",
+      "column": "share_pct",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " percent."
+    }
+  ],
+  "rendered": "Yes. The paper reports that retention at the fast rate is over 50% retention of capacity at 10 times the rate[1]. Taking the reversible capacity at the fast rate (370 mAh[2]) against the slow-rate reversible capacity (700 mAh[3]), the computed share is 53[4] percent.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "over 50% retention of capacity at 10 times the rate",
+      "source": {
+        "atom": "p5.L88",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "emphasizes over 50% retention of capacity at 10 times the rate.",
+        "bbox": [
+          324.5,
+          333.5,
+          564.4,
+          343.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "over 50% retention of capacity at 10 times the rate"
+    },
+    {
+      "kind": "quote",
+      "quote": "370 mAh",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "370 mAh"
+    },
+    {
+      "kind": "quote",
+      "quote": "700 mAh",
+      "source": {
+        "atom": "p5.L79",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "results and reversible capacity (700 mAh/gS) and is capable of",
+        "bbox": [
+          324.5,
+          234.1,
+          564.4,
+          245.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "700 mAh"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT 100 * CAST(regexp_extract(text, '([0-9]+) mAh', 1) AS DOUBLE) / CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L79'), '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share_pct FROM lines WHERE id='p5.L87'",
+      "column": "share_pct",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 52.857142857142854,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L79",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "results and reversible capacity (700 mAh/gS) and is capable of",
+          "bbox": [
+            324.5,
+            234.1,
+            564.4,
+            245.2
+          ]
+        },
+        {
+          "atom": "p5.L87",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+          "bbox": [
+            324.5,
+            322.5,
+            564.5,
+            333.6
+          ]
+        }
+      ],
+      "n": 4,
+      "rendered": "53"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-18T07:09:54+00:00",
+  "arm": "leads",
+  "run": 2,
+  "paper": "nanolett-6b05172",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "370 of ~700 mAh/gS: over 50% (the paper's words), ~53% computed (p5.L86-88)",
+  "trap": "a share of the theoretical capacity"
+}

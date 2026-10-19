@@ -1,0 +1,188 @@
+{
+  "question": "What scale bar is shown on the TEM image in Fig. 1a?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F1"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT figure_id, line_no, text, conf FROM figure_ocr WHERE figure_id='p4.F1' ORDER BY line_no",
+      "rows": 30
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT fact_no, statement, printed_text, value, unit, panel, ocr_confirmed, check_note FROM figure_facts WHERE figure_id='p4.F1' AND (statement ILIKE '%scale%' OR printed_text ILIKE '%nm%' OR panel ILIKE '%a%' OR fact_no=0) ORDER BY fact_no",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE text ILIKE '%50 nm%' ORDER BY id",
+      "rows": 5
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1a'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1a' is written exactly so in the document (e.g. p3.L60): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1a\", \"atom\": \"p3.L60\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['50', '50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'50' is written exactly so in the document (e.g. p4.F1.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50\", \"atom\": \"p4.F1.k0\"} — never shorten it",
+          "'50' is written exactly so in the document (e.g. p4.F1.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50\", \"atom\": \"p4.F1.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1a'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1a' is written exactly so in the document (e.g. p3.L60): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1a\", \"atom\": \"p3.L60\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1270,
+    "cache_read_input_tokens": 36932,
+    "cache_creation_input_tokens": 12261
+  },
+  "runs": [
+    {
+      "text": "The TEM image in Fig. (panel "
+    },
+    {
+      "quote": "1a",
+      "atom": "p3.L60"
+    },
+    {
+      "text": ") is labelled with a scale bar reading \""
+    },
+    {
+      "quote": "50 nm",
+      "atom": "p4.F1.k1"
+    },
+    {
+      "text": "\". The same bar appears on the EDS maps in panel b. The label comes from the figure's own printed text; OCR did not pick it up, so the reading rests on the figure fact."
+    }
+  ],
+  "rendered": "The TEM image in Fig. (panel 1a[1]) is labelled with a scale bar reading \"50 nm[2]\". The same bar appears on the EDS maps in panel b. The label comes from the figure's own printed text; OCR did not pick it up, so the reading rests on the figure fact.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1a",
+      "source": {
+        "atom": "p3.L60",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "structure and an average length of 126 nm (Fig. 1a, S2). Given that L-",
+        "bbox": [
+          306.6,
+          129.6,
+          557.7,
+          137.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1a"
+    },
+    {
+      "kind": "quote",
+      "quote": "50 nm",
+      "source": {
+        "atom": "p4.F1.k1",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "Panel a shows a TEM image with a 50 nm scale bar.",
+        "bbox": [
+          41.6,
+          56.2,
+          552.7,
+          500.4
+        ],
+        "figure": "Fig. 1",
+        "figure_png": "figures/p4.F1.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "50 nm"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find '50 nm'"
+      },
+      "strength": "model-read",
+      "n": 2,
+      "rendered": "50 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T08:53:43+00:00",
+  "paper": "p2",
+  "probe": "G3",
+  "cat": "figure",
+  "expect": "50 nm, as a model reading of the figure (OCR did not confirm)",
+  "trap": "presenting it as verbatim, or another value"
+}

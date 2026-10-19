@@ -1,0 +1,304 @@
+{
+  "question": "By how many billion dollars is the Li-ion battery recycling market projected to grow between 2025 and 2030, and at what annual growth rate?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 2 AND (text ILIKE '%12.2%' OR text ILIKE '%18.1%' OR text ILIKE '%8.2%' OR text ILIKE '%billion%') ORDER BY id",
+      "rows": 2
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role FROM measures WHERE sentence ILIKE '%LIB recycling market%' OR text IN ('12.2','18.1','8.2%')",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT printf('%.1f', CAST(regexp_extract(a.text, '\\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE)) AS increase FROM lines a, lines b WHERE a.id = 'p2.L58' AND b.id = 'p2.L58'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "sql:literal",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "sql:literal",
+        "where": "runs[3]",
+        "why": "the text \"'%.1f'\" puts digits into the value \"PRINTF('%.1f', CAST(REGEXP_EXTRACT(a.text, '\\\\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(REGEXP_EXTRACT(b.text, '\\\\$([0-9.]+) billion in 2025', 1) AS DOUBL\" — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2025', '2030.', '2025', '2030', 'billion'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2025' is written exactly so in the document (e.g. p2.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2025\", \"atom\": \"p2.L6\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p1.L45\"} — never shorten it",
+          "'2025' is written exactly so in the document (e.g. p2.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2025\", \"atom\": \"p2.L6\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['8.2%', '2025', '2030.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8.2%' is written exactly so in the document (e.g. p2.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8.2%\", \"atom\": \"p2.L59\"} — never shorten it",
+          "'2025' is written exactly so in the document (e.g. p2.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2025\", \"atom\": \"p2.L6\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['billion'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "839bf151642fcfab90df674c235b2241068a2df3c3d4f8d8935148d5b0190a5d",
+  "leads": {
+    "sentences": [
+      "p2.L56:50",
+      "p2.L20:21",
+      "p2.L5:7",
+      "p2.L2:0",
+      "p1.L43:0"
+    ],
+    "measures": [
+      "p2.L56:50#96",
+      "p2.L56:50#121",
+      "p2.L56:50#163",
+      "p2.L56:50#173",
+      "p2.L5:7#98",
+      "p2.L2:0#3",
+      "p2.L2:0#9",
+      "p2.L2:0#160",
+      "p2.L2:0#183",
+      "p1.L43:0#151"
+    ],
+    "matched": 172
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2665,
+    "cache_read_input_tokens": 28511,
+    "cache_creation_input_tokens": 3604
+  },
+  "runs": [
+    {
+      "text": "The market is projected to grow from "
+    },
+    {
+      "quote": "$12.2 billion in 2025 to $18.1 billion by 2030",
+      "atom": "p2.L58"
+    },
+    {
+      "text": ", an increase of "
+    },
+    {
+      "sql": "SELECT round(CAST(regexp_extract(a.text, '\\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(a.text, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE), 1) AS increase FROM lines a WHERE a.id = 'p2.L58'",
+      "column": "increase",
+      "row": 0,
+      "fmt": "raw"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "billion",
+      "atom": "p2.L58"
+    },
+    {
+      "text": " dollars. The annual growth rate over that period is "
+    },
+    {
+      "quote": "8.2%",
+      "atom": "p2.L59"
+    },
+    {
+      "text": " (compound annual growth rate, "
+    },
+    {
+      "quote": "2025 to 2030",
+      "atom": "p2.L59"
+    },
+    {
+      "text": ")."
+    }
+  ],
+  "rendered": "The market is projected to grow from $12.2 billion in 2025 to $18.1 billion by 2030[1], an increase of 5.9[2] billion[3] dollars. The annual growth rate over that period is 8.2%[4] (compound annual growth rate, 2025 to 2030[5]).",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "$12.2 billion in 2025 to $18.1 billion by 2030",
+      "source": {
+        "atom": "p2.L58",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "$12.2 billion in 2025 to $18.1 billion by 2030, at a compound",
+        "bbox": [
+          317.5,
+          395.5,
+          575.4,
+          404.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "$12.2 billion in 2025 to $18.1 billion by 2030"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT round(CAST(regexp_extract(a.text, '\\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(a.text, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE), 1) AS increase FROM lines a WHERE a.id = 'p2.L58'",
+      "column": "increase",
+      "row": 0,
+      "fmt": "raw",
+      "value": 5.9,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p2.L58",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "$12.2 billion in 2025 to $18.1 billion by 2030, at a compound",
+          "bbox": [
+            317.5,
+            395.5,
+            575.4,
+            404.0
+          ]
+        }
+      ],
+      "n": 2,
+      "rendered": "5.9"
+    },
+    {
+      "kind": "quote",
+      "quote": "billion",
+      "source": {
+        "atom": "p2.L58",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "$12.2 billion in 2025 to $18.1 billion by 2030, at a compound",
+        "bbox": [
+          317.5,
+          395.5,
+          575.4,
+          404.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "billion"
+    },
+    {
+      "kind": "quote",
+      "quote": "8.2%",
+      "source": {
+        "atom": "p2.L59",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "annual growth rate of 8.2% from 2025 to 2030 [10]. Market",
+        "bbox": [
+          317.5,
+          407.5,
+          575.4,
+          416.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "8.2%"
+    },
+    {
+      "kind": "quote",
+      "quote": "2025 to 2030",
+      "source": {
+        "atom": "p2.L59",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "annual growth rate of 8.2% from 2025 to 2030 [10]. Market",
+        "bbox": [
+          317.5,
+          407.5,
+          575.4,
+          416.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "2025 to 2030"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-18T08:58:40+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "mattod-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "$12.2 billion to $18.1 billion (p2.L58): $5.9 billion; CAGR 8.2%",
+  "trap": ""
+}

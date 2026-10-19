@@ -1,0 +1,229 @@
+{
+  "question": "By how much did the recovered NMC622's first charge capacity fall short of the baseline's?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE id IN ('p6.L20:14#71','p6.L20:14#81') OR text LIKE '%205.6%' OR text LIKE '%194.0%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH t AS (SELECT text FROM atoms WHERE id = 'p6.L21'), n AS (SELECT CAST(unnest(regexp_extract_all(text, '[0-9]+\\.[0-9]+')) AS DOUBLE) AS v FROM t) SELECT (SELECT v FROM n ORDER BY v DESC LIMIT 1) - (SELECT v FROM n ORDER BY v ASC LIMIT 1) AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "3d77803c405379e511940ae37df2f17d364cfc08f7045fd47edf128c15fe3110",
+  "leads": {
+    "sentences": [
+      "p6.L20:14",
+      "p6.L27:23",
+      "p6.L21:49",
+      "p6.L24:23"
+    ],
+    "measures": [
+      "p6.L20:14#71",
+      "p6.L20:14#81",
+      "p6.L27:23#53",
+      "p6.L27:23#71",
+      "p6.L27:23#99",
+      "p6.L21:49#32",
+      "p6.L24:23#91",
+      "p6.L24:23#124"
+    ],
+    "matched": 63
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1592,
+    "cache_read_input_tokens": 21864,
+    "cache_creation_input_tokens": 1363
+  },
+  "runs": [
+    {
+      "text": "The baseline NMC622 first charge capacity was "
+    },
+    {
+      "measure": "p6.L20:14#71"
+    },
+    {
+      "text": " mAh/g, and the recovered NMC622 first charge capacity was "
+    },
+    {
+      "measure": "p6.L20:14#81"
+    },
+    {
+      "text": ". The recovered sample therefore fell short of the baseline by "
+    },
+    {
+      "sql": "SELECT max(v) - min(v) AS diff FROM (SELECT CAST(unnest(regexp_extract_all(text, '[0-9]+\\.[0-9]+')) AS DOUBLE) AS v FROM atoms WHERE id = 'p6.L21')",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " mAh/g."
+    }
+  ],
+  "rendered": "The baseline NMC622 first charge capacity was 205.6[1] mAh/g, and the recovered NMC622 first charge capacity was 194.0 mAh/g[2]. The recovered sample therefore fell short of the baseline by 11.6[3] mAh/g.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "205.6",
+      "source": {
+        "atom": "p6.L21",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+        "bbox": [
+          33.7,
+          266.6,
+          284.8,
+          274.5
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p6.L20:14#71",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "other",
+        "property_p": 0.99,
+        "about": [
+          "baseline"
+        ],
+        "method": [],
+        "quantity": [
+          "first charge capacities"
+        ],
+        "sentence": "p6.L20:14",
+        "read_by": "judge"
+      },
+      "n": 1,
+      "rendered": "205.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "194.0 mAh/g",
+      "source": {
+        "atom": "p6.L21",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+        "bbox": [
+          33.7,
+          266.6,
+          284.8,
+          274.5
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p6.L20:14#81",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "other",
+        "property_p": 0.98,
+        "about": [
+          "NMC622"
+        ],
+        "method": [],
+        "quantity": [
+          "first charge capacities"
+        ],
+        "sentence": "p6.L20:14",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "194.0 mAh/g"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT max(v) - min(v) AS diff FROM (SELECT CAST(unnest(regexp_extract_all(text, '[0-9]+\\.[0-9]+')) AS DOUBLE) AS v FROM atoms WHERE id = 'p6.L21')",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 11.599999999999994,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p6.L21",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+          "bbox": [
+            33.7,
+            266.6,
+            284.8,
+            274.5
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "11.6"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-18T07:09:27+00:00",
+  "arm": "leads",
+  "run": 2,
+  "paper": "susmat-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "205.6 - 194.0 = 11.6 mAh/g",
+  "trap": "a wrong difference"
+}

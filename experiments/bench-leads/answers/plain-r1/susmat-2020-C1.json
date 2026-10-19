@@ -1,0 +1,153 @@
+{
+  "question": "What areal loading did the NMC622 cathode scraps have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%loading%' OR lower(text) LIKE '%mg cm%' OR lower(text) LIKE '%mg/cm%' OR lower(text) LIKE '%mg cm−2%' ORDER BY page, id",
+      "rows": 2
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=3 AND line_no BETWEEN 1 AND 14 ORDER BY line_no",
+      "rows": 14
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['~10.2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'~10.2' is written exactly so in the document (e.g. p3.L10): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"~10.2\", \"atom\": \"p3.L10\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['90:5:5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'90:5:5' is written exactly so in the document (e.g. p3.L9): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"90:5:5\", \"atom\": \"p3.L9\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 668,
+    "cache_read_input_tokens": 12237,
+    "cache_creation_input_tokens": 5224
+  },
+  "runs": [
+    {
+      "text": "The NMC622 cathode had an areal loading of "
+    },
+    {
+      "quote": "~10.2 mg/cm^2",
+      "atom": "p3.L10"
+    },
+    {
+      "text": ". The cathode was made of NMC622, carbon black and PVDF binder in a weight ratio of "
+    },
+    {
+      "quote": "90:5:5",
+      "atom": "p3.L9"
+    },
+    {
+      "text": ", and the cathode scraps were trimmings of that cathode."
+    }
+  ],
+  "rendered": "The NMC622 cathode had an areal loading of ~10.2 mg/cm^2[1]. The cathode was made of NMC622, carbon black and PVDF binder in a weight ratio of 90:5:5[2], and the cathode scraps were trimmings of that cathode.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "~10.2 mg/cm^2",
+      "source": {
+        "atom": "p3.L10",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "~10.2 mg/cm^2. Cyrene was purchased from Sigma-Aldrich and used",
+        "bbox": [
+          42.5,
+          586.9,
+          293.5,
+          596.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "~10.2 mg/cm^2"
+    },
+    {
+      "kind": "quote",
+      "quote": "90:5:5",
+      "source": {
+        "atom": "p3.L9",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "ratio of 90:5:5. The areal loading of the NMC622 cathode was",
+        "bbox": [
+          42.5,
+          577.9,
+          293.6,
+          585.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "90:5:5"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-18T07:03:21+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "susmat-2020",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "~10.2 mg/cm^2 (p3.L9-10)",
+  "trap": "the 90:5:5 weight ratio"
+}

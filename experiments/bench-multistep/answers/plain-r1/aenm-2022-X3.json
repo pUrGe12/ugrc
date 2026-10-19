@@ -1,0 +1,418 @@
+{
+  "question": "By what factors have LIB energy density risen and battery cost fallen, between the starting points the review gives and 2020?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), '(energy density|cost of|\\$/kwh|per kwh|kwh)') ORDER BY page, id LIMIT 80",
+      "rows": 12
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p13.F11"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=13 AND line_no BETWEEN 12 AND 30 OR (page=13 AND id IN ('p13.L19','p13.L20','p13.L21','p13.L22','p13.L23')) ORDER BY page, line_no",
+      "rows": 19
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH e AS (SELECT CAST(regexp_extract(text,'from (\\d+) to',1) AS DOUBLE) s, CAST(regexp_extract(text,'to (\\d+) Wh',1) AS DOUBLE) f FROM lines WHERE id='p13.L20'), c AS (SELECT CAST(regexp_extract(text,'over \\$(\\d+)',1) AS DOUBLE) c0 FROM lines WHERE id='p13.L21'), c2 AS (SELECT CAST(regexp_extract(text,'around \\$(\\d+)',1) AS DOUBLE) c1 FROM lines WHERE id='p13.L22') SELECT f/s AS energy_density_factor, c0/c1 AS cost_factor_at_least FROM e, c, c2",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, strength FROM atoms WHERE regexp_matches(text, '(126|450|55 Wh|\\$1000|\\$800|\\$325)') AND kind IN ('figure_ocr','figure_facts','ocr','model-read') LIMIT 20",
+      "rows": 5
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "LIBs",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "battery pack",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 9,
+          "of": "battery pack",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['2020'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2020' is written exactly so in the document (e.g. p7.L26): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2020\", \"atom\": \"p7.L26\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "from 150 to 250 Wh kg",
+      "atom": "p13.L20",
+      "of": "LIBs",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "over $1000 kWh^− 1 in 2008",
+      "atom": "p13.L21",
+      "of": "battery pack",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    },
+    {
+      "quote": "around $130 kWh^− 1 in 2020",
+      "atom": "p13.L22",
+      "of": "battery pack",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 9
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 6595,
+    "cache_read_input_tokens": 27931,
+    "cache_creation_input_tokens": 12873
+  },
+  "runs": [
+    {
+      "text": "Energy density (LIBs) has risen by a factor of about "
+    },
+    {
+      "sql": "WITH e AS (SELECT CAST(regexp_extract(text,'from (\\d+) to',1) AS DOUBLE) s, CAST(regexp_extract(text,'to (\\d+) Wh',1) AS DOUBLE) f FROM lines WHERE id='p13.L20'), c AS (SELECT CAST(regexp_extract(text,'over \\$(\\d+)',1) AS DOUBLE) c0 FROM lines WHERE id='p13.L21'), c2 AS (SELECT CAST(regexp_extract(text,'around \\$(\\d+)',1) AS DOUBLE) c1 FROM lines WHERE id='p13.L22') SELECT f/s AS energy_density_factor, c0/c1 AS cost_factor_at_least FROM e, c, c2",
+      "column": "energy_density_factor",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": "-fold, going "
+    },
+    {
+      "quote": "from 150 to 250 Wh kg",
+      "atom": "p13.L20",
+      "of": "LIBs"
+    },
+    {
+      "text": " since commercial debut. Battery cost has fallen by a factor of at least about "
+    },
+    {
+      "sql": "WITH e AS (SELECT CAST(regexp_extract(text,'from (\\d+) to',1) AS DOUBLE) s, CAST(regexp_extract(text,'to (\\d+) Wh',1) AS DOUBLE) f FROM lines WHERE id='p13.L20'), c AS (SELECT CAST(regexp_extract(text,'over \\$(\\d+)',1) AS DOUBLE) c0 FROM lines WHERE id='p13.L21'), c2 AS (SELECT CAST(regexp_extract(text,'around \\$(\\d+)',1) AS DOUBLE) c1 FROM lines WHERE id='p13.L22') SELECT f/s AS energy_density_factor, c0/c1 AS cost_factor_at_least FROM e, c, c2",
+      "column": "cost_factor_at_least",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": "-fold, from "
+    },
+    {
+      "quote": "over $1000 kWh^− 1 in 2008",
+      "atom": "p13.L21",
+      "of": "battery pack"
+    },
+    {
+      "text": " to "
+    },
+    {
+      "quote": "around $130 kWh^− 1 in 2020",
+      "atom": "p13.L22",
+      "of": "battery pack"
+    },
+    {
+      "text": ". The factors are simple ratios of the review's text values; the cost factor is a minimum because the starting cost is only given as over $1000. "
+    },
+    {
+      "figure": "p13.F11"
+    },
+    {
+      "text": " labels the final pack cost at "
+    },
+    {
+      "quote": "$126",
+      "atom": "p13.F11.o2"
+    },
+    {
+      "text": " per kWh."
+    }
+  ],
+  "rendered": "Energy density (LIBs) has risen by a factor of about 1.67[1]-fold, going from 150 to 250 Wh kg[2] since commercial debut. Battery cost has fallen by a factor of at least about 7.69[3]-fold, from over $1000 kWh^− 1 in 2008[4] to around $130 kWh^− 1 in 2020[5]. The factors are simple ratios of the review's text values; the cost factor is a minimum because the starting cost is only given as over $1000. Fig. 11[6] labels the final pack cost at $126[7] per kWh.",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "WITH e AS (SELECT CAST(regexp_extract(text,'from (\\d+) to',1) AS DOUBLE) s, CAST(regexp_extract(text,'to (\\d+) Wh',1) AS DOUBLE) f FROM lines WHERE id='p13.L20'), c AS (SELECT CAST(regexp_extract(text,'over \\$(\\d+)',1) AS DOUBLE) c0 FROM lines WHERE id='p13.L21'), c2 AS (SELECT CAST(regexp_extract(text,'around \\$(\\d+)',1) AS DOUBLE) c1 FROM lines WHERE id='p13.L22') SELECT f/s AS energy_density_factor, c0/c1 AS cost_factor_at_least FROM e, c, c2",
+      "column": "energy_density_factor",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 1.6666666666666667,
+      "strength": "computed from verbatim",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p13.L20",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "LIBs has increased from 150 to 250 Wh kg^− 1. Similarly, bat-",
+          "bbox": [
+            51.0,
+            487.8,
+            292.0,
+            497.9
+          ]
+        },
+        {
+          "atom": "p13.L21",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "tery cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+          "bbox": [
+            51.0,
+            498.8,
+            292.0,
+            508.9
+          ]
+        },
+        {
+          "atom": "p13.L22",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "to around $130 kWh^− 1 in 2020 (Figure 11) which has enabled",
+          "bbox": [
+            51.0,
+            509.8,
+            292.0,
+            519.9
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "1.67"
+    },
+    {
+      "kind": "quote",
+      "quote": "from 150 to 250 Wh kg",
+      "source": {
+        "atom": "p13.L20",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "LIBs has increased from 150 to 250 Wh kg^− 1. Similarly, bat-",
+        "bbox": [
+          51.0,
+          487.8,
+          292.0,
+          497.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "LIBs",
+      "n": 2,
+      "rendered": "from 150 to 250 Wh kg"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH e AS (SELECT CAST(regexp_extract(text,'from (\\d+) to',1) AS DOUBLE) s, CAST(regexp_extract(text,'to (\\d+) Wh',1) AS DOUBLE) f FROM lines WHERE id='p13.L20'), c AS (SELECT CAST(regexp_extract(text,'over \\$(\\d+)',1) AS DOUBLE) c0 FROM lines WHERE id='p13.L21'), c2 AS (SELECT CAST(regexp_extract(text,'around \\$(\\d+)',1) AS DOUBLE) c1 FROM lines WHERE id='p13.L22') SELECT f/s AS energy_density_factor, c0/c1 AS cost_factor_at_least FROM e, c, c2",
+      "column": "cost_factor_at_least",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 7.6923076923076925,
+      "strength": "computed from verbatim",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p13.L20",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "LIBs has increased from 150 to 250 Wh kg^− 1. Similarly, bat-",
+          "bbox": [
+            51.0,
+            487.8,
+            292.0,
+            497.9
+          ]
+        },
+        {
+          "atom": "p13.L21",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "tery cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+          "bbox": [
+            51.0,
+            498.8,
+            292.0,
+            508.9
+          ]
+        },
+        {
+          "atom": "p13.L22",
+          "kind": "line",
+          "page": 13,
+          "strength": "verbatim",
+          "text": "to around $130 kWh^− 1 in 2020 (Figure 11) which has enabled",
+          "bbox": [
+            51.0,
+            509.8,
+            292.0,
+            519.9
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "7.69"
+    },
+    {
+      "kind": "quote",
+      "quote": "over $1000 kWh^− 1 in 2008",
+      "source": {
+        "atom": "p13.L21",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "tery cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+        "bbox": [
+          51.0,
+          498.8,
+          292.0,
+          508.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "battery pack",
+      "n": 4,
+      "rendered": "over $1000 kWh^− 1 in 2008"
+    },
+    {
+      "kind": "quote",
+      "quote": "around $130 kWh^− 1 in 2020",
+      "source": {
+        "atom": "p13.L22",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "to around $130 kWh^− 1 in 2020 (Figure 11) which has enabled",
+        "bbox": [
+          51.0,
+          509.8,
+          292.0,
+          519.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "battery pack",
+      "n": 5,
+      "rendered": "around $130 kWh^− 1 in 2020"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p13.F11",
+        "kind": "figure",
+        "label": "Fig. 11",
+        "page": 13,
+        "caption": "Figure 11. a) Energy density and cost of Li-ion battery packs from 2008 to 2020. b) Schematics showing the electrode/electrolyte interfacial contact for liquid versus solid-state electrolytes.",
+        "png": "figures/p13.F11.png",
+        "png_pixels_sha256": "9412b1aaa62e6898b51231a01c810763d32a465463b30c1c3e4278656bfefe04",
+        "bbox": [
+          53.1,
+          70.9,
+          545.1,
+          252.2
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Fig. 11"
+    },
+    {
+      "kind": "quote",
+      "quote": "$126",
+      "source": {
+        "atom": "p13.F11.o2",
+        "kind": "ocr",
+        "page": 13,
+        "strength": "ocr",
+        "text": "$126",
+        "bbox": [
+          175.5,
+          114.3,
+          189.1,
+          119.3
+        ],
+        "figure": "Fig. 11",
+        "figure_png": "figures/p13.F11.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 7,
+      "rendered": "$126"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-18T08:46:44+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "aenm-2022",
+  "probe": "X3",
+  "cat": "X",
+  "expect": "energy density 150 to 250 Wh/kg since 1991 (1.7 times); cost from over $1000/kWh in 2008 to around $130/kWh in 2020 (7.7 times lower) (p13.L19-22)",
+  "trap": ""
+}

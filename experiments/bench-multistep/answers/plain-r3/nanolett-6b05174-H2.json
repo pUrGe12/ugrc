@@ -1,0 +1,269 @@
+{
+  "question": "What cathode does the anode-free full cell use, how is it prepared so that the cell contains no sodium metal on assembly, and what cathode capacity was assumed for its energy density?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE kind IN ('line','cell','figure_fact') AND (lower(text) LIKE '%cathode%' OR lower(text) LIKE '%energy density%' OR lower(text) LIKE '%mAh%' OR lower(text) LIKE '%full cell%' OR lower(text) LIKE '%sodiated%' OR lower(text) LIKE '%assembl%') ORDER BY page, id",
+      "rows": 29
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE page IN (4,5,6) AND kind='line' ORDER BY page, id",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['400', '335'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "'335' is written exactly so in the document (e.g. p5.L53): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"335\", \"atom\": \"p5.L53\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[2]",
+        "why": "the words before citation [4] end in 'ed is an FeS2 capacity of' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ed is an FeS2 capacity of[4]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 3214,
+    "cache_read_input_tokens": 29940,
+    "cache_creation_input_tokens": 10102
+  },
+  "runs": [
+    {
+      "text": "The anode-free full cell uses a presodiated pyrite cathode. The paper states that it employed ",
+      "support": [
+        {
+          "atom": "p5.L29",
+          "quote": "we employed pyrite (FeS2) for the cathode"
+        }
+      ]
+    },
+    {
+      "text": "Pyrite does not natively contain sodium, so it is presodiated before assembly. Full cells are built from the presodiated pyrite paired with carbon/Al current collectors, which is a discharged device state. Sodium is then formed in situ on the carbon/Al electrode during the first charge, so the cell has no sodium metal on assembly. ",
+      "support": [
+        {
+          "atom": "p5.L33",
+          "quote": "presodiated the pyrite cathode prior to cell assembly"
+        },
+        {
+          "atom": "p5.L41",
+          "quote": "does not contain sodium metal on assembly"
+        }
+      ]
+    },
+    {
+      "text": "The energy density is calculated on the mass of the presodiated pyrite plus the carbon nucleation layer. The cathode capacity assumed for it is ",
+      "support": [
+        {
+          "atom": "p5.L53",
+          "quote": "FeS2 capacity of 335 mAh/g"
+        }
+      ]
+    },
+    {
+      "quote": "FeS2 capacity of 335 mAh/g",
+      "atom": "p5.L53"
+    },
+    {
+      "text": ", with a Na1.5FeS2 stoichiometry.",
+      "support": [
+        {
+          "atom": "p5.L52",
+          "quote": "Na1.5FeS2 stoichiometry"
+        }
+      ]
+    }
+  ],
+  "rendered": "The anode-free full cell uses a presodiated pyrite cathode. The paper states that it employed[1] Pyrite does not natively contain sodium, so it is presodiated before assembly. Full cells are built from the presodiated pyrite paired with carbon/Al current collectors, which is a discharged device state. Sodium is then formed in situ on the carbon/Al electrode during the first charge, so the cell has no sodium metal on assembly.[2][3] The energy density is calculated on the mass of the presodiated pyrite plus the carbon nucleation layer. The cathode capacity assumed for it is[4] FeS2 capacity of 335 mAh/g[5], with a Na1.5FeS2 stoichiometry.[6]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "we employed pyrite (FeS2) for the cathode",
+      "source": {
+        "atom": "p5.L29",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "we employed pyrite (FeS2) for the cathode as it is a cheap,",
+        "bbox": [
+          60.5,
+          377.7,
+          300.4,
+          388.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "we employed pyrite (FeS2) for the cathode"
+    },
+    {
+      "kind": "support",
+      "quote": "presodiated the pyrite cathode prior to cell assembly",
+      "source": {
+        "atom": "p5.L33",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "presodiated the pyrite cathode prior to cell assembly, in a",
+        "bbox": [
+          60.5,
+          421.9,
+          300.5,
+          431.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "presodiated the pyrite cathode prior to cell assembly"
+    },
+    {
+      "kind": "support",
+      "quote": "does not contain sodium metal on assembly",
+      "source": {
+        "atom": "p5.L41",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "does not contain sodium metal on assembly. To prove that",
+        "bbox": [
+          60.5,
+          510.3,
+          300.4,
+          520.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "does not contain sodium metal on assembly"
+    },
+    {
+      "kind": "support",
+      "quote": "FeS2 capacity of 335 mAh/g",
+      "source": {
+        "atom": "p5.L53",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "FeS2 capacity of 335 mAh/g) and the carbon nucleation layer,",
+        "bbox": [
+          60.5,
+          642.9,
+          300.4,
+          654.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "FeS2 capacity of 335 mAh/g"
+    },
+    {
+      "kind": "quote",
+      "quote": "FeS2 capacity of 335 mAh/g",
+      "source": {
+        "atom": "p5.L53",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "FeS2 capacity of 335 mAh/g) and the carbon nucleation layer,",
+        "bbox": [
+          60.5,
+          642.9,
+          300.4,
+          654.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "FeS2 capacity of 335 mAh/g"
+    },
+    {
+      "kind": "support",
+      "quote": "Na1.5FeS2 stoichiometry",
+      "source": {
+        "atom": "p5.L52",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the presodiated pyrite (assuming a Na1.5FeS2 stoichiometry or a",
+        "bbox": [
+          60.5,
+          631.8,
+          300.5,
+          643.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Na1.5FeS2 stoichiometry"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-18T08:54:46+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "nanolett-6b05174",
+  "probe": "H2",
+  "cat": "H",
+  "expect": "pyrite (FeS2), presodiated before assembly (p5.L29-41); Na1.5FeS2 stoichiometry, an FeS2 capacity of 335 mAh/g (p5.L52-53)",
+  "trap": ""
+}

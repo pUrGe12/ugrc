@@ -1,0 +1,1405 @@
+{
+  "question": "How many clinical trials are listed in Table 1, and how many of them use a lipid nanoparticle (LNP) carrier?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 5,
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:in-subquery",
+        "where": "runs[4]",
+        "why": "IN (SELECT ...) cannot be traced to the rows that matched",
+        "moves": [
+          "write it as a JOIN on the same condition"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[5]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[7]",
+        "why": "your own words contain number(s) ['four'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "2",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3023,
+    "cache_read_input_tokens": 25826,
+    "cache_creation_input_tokens": 9970
+  },
+  "runs": [
+    {
+      "table": "p2.T1"
+    },
+    {
+      "text": " lists "
+    },
+    {
+      "sql": "SELECT count(*) AS n_trials FROM cells WHERE table_id='p2.T1' AND col_no=8 AND text LIKE 'NCT%'",
+      "column": "n_trials",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " clinical trial numbers. These cover "
+    },
+    {
+      "sql": "SELECT count(DISTINCT d.row_no) AS n_drugs FROM cells d JOIN cells n ON n.table_id=d.table_id AND n.row_no=d.row_no WHERE d.table_id='p2.T1' AND d.col_no=2 AND n.col_no=8 AND n.text LIKE 'NCT%'",
+      "column": "n_drugs",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " drug entries. Some drugs have several trial numbers, for example DCR-MYC.\n\n"
+    },
+    {
+      "sql": "SELECT count(*) AS n_lnp FROM cells WHERE table_id='p2.T1' AND col_no=5 AND text LIKE 'LNP%'",
+      "column": "n_lnp",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " drugs list an LNP carrier. Their trial numbers are:\n- "
+    },
+    {
+      "quote": "TKM-080301",
+      "atom": "p2.T1.r5c2"
+    },
+    {
+      "text": " (carrier "
+    },
+    {
+      "quote": "LNP",
+      "atom": "p2.T1.r5c5"
+    },
+    {
+      "text": "): "
+    },
+    {
+      "quote": "NCT01437007",
+      "atom": "p2.T1.r5c8"
+    },
+    {
+      "text": "\n- "
+    },
+    {
+      "quote": "DCR-MYC",
+      "atom": "p2.T1.r8c2"
+    },
+    {
+      "text": " (carrier "
+    },
+    {
+      "quote": "LNP",
+      "atom": "p2.T1.r8c5"
+    },
+    {
+      "text": "): "
+    },
+    {
+      "quote": "NCT02110563",
+      "atom": "p2.T1.r8c8"
+    },
+    {
+      "text": " and "
+    },
+    {
+      "quote": "NCT02314052",
+      "atom": "p2.T1.r9c8"
+    },
+    {
+      "text": "\n- "
+    },
+    {
+      "quote": "NBF-006",
+      "atom": "p2.T1.r12c2"
+    },
+    {
+      "text": " (carrier "
+    },
+    {
+      "quote": "LNPs",
+      "atom": "p2.T1.r12c5"
+    },
+    {
+      "text": "): "
+    },
+    {
+      "quote": "NCT03819387",
+      "atom": "p2.T1.r12c8"
+    },
+    {
+      "text": "\n\nI didn't count the other lipid-based entries because the table doesn't label their carriers as LNPs: Atu027 uses "
+    },
+    {
+      "quote": "Liposomes",
+      "atom": "p2.T1.r3c5"
+    },
+    {
+      "text": " and EphA2 siRNA uses "
+    },
+    {
+      "quote": "DOPC",
+      "atom": "p2.T1.r15c5"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "Table 1[1] lists 19[2] clinical trial numbers. These cover 15[3] drug entries. Some drugs have several trial numbers, for example DCR-MYC.\n\n3[4] drugs list an LNP carrier. Their trial numbers are:\n- TKM-080301[5] (carrier LNP[6]): NCT01437007[7]\n- DCR-MYC[8] (carrier LNP[9]): NCT02110563[10] and NCT02314052[11]\n- NBF-006[12] (carrier LNPs[13]): NCT03819387[14]\n\nI didn't count the other lipid-based entries because the table doesn't label their carriers as LNPs: Atu027 uses Liposomes[15] and EphA2 siRNA uses DOPC[16].",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p2.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 2,
+        "caption": "Table 1 Clinical trials of siRNA-based anticancer drugs.",
+        "bbox": [
+          37.6,
+          354.6,
+          557.7,
+          740.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n_trials FROM cells WHERE table_id='p2.T1' AND col_no=8 AND text LIKE 'NCT%'",
+      "column": "n_trials",
+      "row": 0,
+      "fmt": "int",
+      "value": 19,
+      "strength": "computed from verbatim",
+      "n_sources": 19,
+      "sources": [
+        {
+          "atom": "p2.T1.r12c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03819387",
+          "bbox": [
+            494.5,
+            459.0,
+            535.6,
+            465.4
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r15c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01591356",
+          "bbox": [
+            494.5,
+            484.8,
+            535.6,
+            491.2
+          ],
+          "table": "Table 1",
+          "row": 15,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r17c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01188785",
+          "bbox": [
+            494.5,
+            501.9,
+            535.6,
+            508.3
+          ],
+          "table": "Table 1",
+          "row": 17,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r18c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01676259",
+          "bbox": [
+            494.5,
+            510.5,
+            535.6,
+            516.8
+          ],
+          "table": "Table 1",
+          "row": 18,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r20c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT07583914",
+          "bbox": [
+            494.5,
+            527.6,
+            535.6,
+            534.0
+          ],
+          "table": "Table 1",
+          "row": 20,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r23c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT05499013",
+          "bbox": [
+            494.5,
+            553.3,
+            535.6,
+            559.7
+          ],
+          "table": "Table 1",
+          "row": 23,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r26c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT04995536",
+          "bbox": [
+            494.5,
+            579.0,
+            535.6,
+            585.4
+          ],
+          "table": "Table 1",
+          "row": 26,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r29c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03020017",
+          "bbox": [
+            494.5,
+            604.7,
+            535.6,
+            611.1
+          ],
+          "table": "Table 1",
+          "row": 29,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r31c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03608631",
+          "bbox": [
+            494.5,
+            621.9,
+            535.6,
+            628.2
+          ],
+          "table": "Table 1",
+          "row": 31,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r34c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT00672542",
+          "bbox": [
+            494.5,
+            647.5,
+            535.6,
+            653.9
+          ],
+          "table": "Table 1",
+          "row": 34,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r38c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT02166255",
+          "bbox": [
+            494.5,
+            681.8,
+            535.6,
+            688.2
+          ],
+          "table": "Table 1",
+          "row": 38,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r39c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03087591",
+          "bbox": [
+            494.5,
+            690.4,
+            535.6,
+            696.8
+          ],
+          "table": "Table 1",
+          "row": 39,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r3c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT00938574",
+          "bbox": [
+            494.5,
+            381.9,
+            535.6,
+            388.3
+          ],
+          "table": "Table 1",
+          "row": 3,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r40c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT06172894",
+          "bbox": [
+            494.5,
+            699.0,
+            535.6,
+            705.3
+          ],
+          "table": "Table 1",
+          "row": 40,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r41c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT06424301",
+          "bbox": [
+            494.5,
+            707.5,
+            535.6,
+            713.9
+          ],
+          "table": "Table 1",
+          "row": 41,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r43c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT04844983",
+          "bbox": [
+            494.5,
+            724.6,
+            535.6,
+            731.0
+          ],
+          "table": "Table 1",
+          "row": 43,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r5c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01437007",
+          "bbox": [
+            494.5,
+            399.1,
+            535.6,
+            405.5
+          ],
+          "table": "Table 1",
+          "row": 5,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r8c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT02110563",
+          "bbox": [
+            494.5,
+            424.8,
+            535.6,
+            431.2
+          ],
+          "table": "Table 1",
+          "row": 8,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r9c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT02314052",
+          "bbox": [
+            494.5,
+            433.4,
+            535.6,
+            439.7
+          ],
+          "table": "Table 1",
+          "row": 9,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        }
+      ],
+      "n": 2,
+      "rendered": "19"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(DISTINCT d.row_no) AS n_drugs FROM cells d JOIN cells n ON n.table_id=d.table_id AND n.row_no=d.row_no WHERE d.table_id='p2.T1' AND d.col_no=2 AND n.col_no=8 AND n.text LIKE 'NCT%'",
+      "column": "n_drugs",
+      "row": 0,
+      "fmt": "int",
+      "value": 15,
+      "strength": "computed from verbatim",
+      "n_sources": 30,
+      "sources": [
+        {
+          "atom": "p2.T1.r12c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NBF-006",
+          "bbox": [
+            95.0,
+            459.0,
+            119.7,
+            465.4
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r12c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03819387",
+          "bbox": [
+            494.5,
+            459.0,
+            535.6,
+            465.4
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r15c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "EphA2 siRNA",
+          "bbox": [
+            95.0,
+            484.8,
+            133.2,
+            491.2
+          ],
+          "table": "Table 1",
+          "row": 15,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r15c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01591356",
+          "bbox": [
+            494.5,
+            484.8,
+            535.6,
+            491.2
+          ],
+          "table": "Table 1",
+          "row": 15,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r17c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "siG12D",
+          "bbox": [
+            95.0,
+            501.9,
+            115.5,
+            508.3
+          ],
+          "table": "Table 1",
+          "row": 17,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r17c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01188785",
+          "bbox": [
+            494.5,
+            501.9,
+            535.6,
+            508.3
+          ],
+          "table": "Table 1",
+          "row": 17,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r20c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCP-CD47 siRNA",
+          "bbox": [
+            95.0,
+            527.6,
+            144.3,
+            534.0
+          ],
+          "table": "Table 1",
+          "row": 20,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r20c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT07583914",
+          "bbox": [
+            494.5,
+            527.6,
+            535.6,
+            534.0
+          ],
+          "table": "Table 1",
+          "row": 20,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r23c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "SLN124",
+          "bbox": [
+            95.0,
+            553.3,
+            117.0,
+            559.7
+          ],
+          "table": "Table 1",
+          "row": 23,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r23c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT05499013",
+          "bbox": [
+            494.5,
+            553.3,
+            535.6,
+            559.7
+          ],
+          "table": "Table 1",
+          "row": 23,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r26c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "CpG-STAT3",
+          "bbox": [
+            95.0,
+            579.0,
+            127.8,
+            585.4
+          ],
+          "table": "Table 1",
+          "row": 26,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r26c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT04995536",
+          "bbox": [
+            494.5,
+            579.0,
+            535.6,
+            585.4
+          ],
+          "table": "Table 1",
+          "row": 26,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r29c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NU-0129",
+          "bbox": [
+            95.0,
+            604.7,
+            120.5,
+            611.1
+          ],
+          "table": "Table 1",
+          "row": 29,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r29c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03020017",
+          "bbox": [
+            494.5,
+            604.7,
+            535.6,
+            611.1
+          ],
+          "table": "Table 1",
+          "row": 29,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r31c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "SY",
+          "bbox": [
+            95.0,
+            621.9,
+            102.3,
+            628.2
+          ],
+          "table": "Table 1",
+          "row": 31,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r31c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT03608631",
+          "bbox": [
+            494.5,
+            621.9,
+            535.6,
+            628.2
+          ],
+          "table": "Table 1",
+          "row": 31,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r34c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Tumor Antigen",
+          "bbox": [
+            95.0,
+            647.5,
+            137.8,
+            653.9
+          ],
+          "table": "Table 1",
+          "row": 34,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r34c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT00672542",
+          "bbox": [
+            494.5,
+            647.5,
+            535.6,
+            653.9
+          ],
+          "table": "Table 1",
+          "row": 34,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r38c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "APN401",
+          "bbox": [
+            95.0,
+            681.8,
+            118.3,
+            688.2
+          ],
+          "table": "Table 1",
+          "row": 38,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r38c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT02166255",
+          "bbox": [
+            494.5,
+            681.8,
+            535.6,
+            688.2
+          ],
+          "table": "Table 1",
+          "row": 38,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r3c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Atu027",
+          "bbox": [
+            95.0,
+            381.9,
+            115.8,
+            388.3
+          ],
+          "table": "Table 1",
+          "row": 3,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r3c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT00938574",
+          "bbox": [
+            494.5,
+            381.9,
+            535.6,
+            388.3
+          ],
+          "table": "Table 1",
+          "row": 3,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r41c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NUDT21 siRNA",
+          "bbox": [
+            95.0,
+            707.5,
+            138.9,
+            713.9
+          ],
+          "table": "Table 1",
+          "row": 41,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r41c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT06424301",
+          "bbox": [
+            494.5,
+            707.5,
+            535.6,
+            713.9
+          ],
+          "table": "Table 1",
+          "row": 41,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r43c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "STP705",
+          "bbox": [
+            95.0,
+            724.6,
+            116.6,
+            731.0
+          ],
+          "table": "Table 1",
+          "row": 43,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r43c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT04844983",
+          "bbox": [
+            494.5,
+            724.6,
+            535.6,
+            731.0
+          ],
+          "table": "Table 1",
+          "row": 43,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r5c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "TKM-080301",
+          "bbox": [
+            95.0,
+            399.1,
+            132.0,
+            405.5
+          ],
+          "table": "Table 1",
+          "row": 5,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r5c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT01437007",
+          "bbox": [
+            494.5,
+            399.1,
+            535.6,
+            405.5
+          ],
+          "table": "Table 1",
+          "row": 5,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        },
+        {
+          "atom": "p2.T1.r8c2",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "DCR-MYC",
+          "bbox": [
+            95.0,
+            424.8,
+            123.1,
+            431.2
+          ],
+          "table": "Table 1",
+          "row": 8,
+          "col": 2,
+          "column_header": "Drug"
+        },
+        {
+          "atom": "p2.T1.r8c8",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "NCT02110563",
+          "bbox": [
+            494.5,
+            424.8,
+            535.6,
+            431.2
+          ],
+          "table": "Table 1",
+          "row": 8,
+          "col": 8,
+          "column_header": "Clinical trial number"
+        }
+      ],
+      "n": 3,
+      "rendered": "15"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT count(*) AS n_lnp FROM cells WHERE table_id='p2.T1' AND col_no=5 AND text LIKE 'LNP%'",
+      "column": "n_lnp",
+      "row": 0,
+      "fmt": "int",
+      "value": 3,
+      "strength": "computed from verbatim",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p2.T1.r12c5",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "LNPs",
+          "bbox": [
+            312.1,
+            459.0,
+            326.3,
+            465.4
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 5,
+          "column_header": "Carrier"
+        },
+        {
+          "atom": "p2.T1.r5c5",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "LNP",
+          "bbox": [
+            312.1,
+            399.1,
+            323.8,
+            405.5
+          ],
+          "table": "Table 1",
+          "row": 5,
+          "col": 5,
+          "column_header": "Carrier"
+        },
+        {
+          "atom": "p2.T1.r8c5",
+          "kind": "cell",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "LNP",
+          "bbox": [
+            312.1,
+            424.8,
+            323.8,
+            431.2
+          ],
+          "table": "Table 1",
+          "row": 8,
+          "col": 5,
+          "column_header": "Carrier"
+        }
+      ],
+      "n": 4,
+      "rendered": "3"
+    },
+    {
+      "kind": "quote",
+      "quote": "TKM-080301",
+      "source": {
+        "atom": "p2.T1.r5c2",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "TKM-080301",
+        "bbox": [
+          95.0,
+          399.1,
+          132.0,
+          405.5
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 2,
+        "column_header": "Drug"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "TKM-080301"
+    },
+    {
+      "kind": "quote",
+      "quote": "LNP",
+      "source": {
+        "atom": "p2.T1.r5c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "LNP",
+        "bbox": [
+          312.1,
+          399.1,
+          323.8,
+          405.5
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "LNP"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCT01437007",
+      "source": {
+        "atom": "p2.T1.r5c8",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NCT01437007",
+        "bbox": [
+          494.5,
+          399.1,
+          535.6,
+          405.5
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 8,
+        "column_header": "Clinical trial number"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "NCT01437007"
+    },
+    {
+      "kind": "quote",
+      "quote": "DCR-MYC",
+      "source": {
+        "atom": "p2.T1.r8c2",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "DCR-MYC",
+        "bbox": [
+          95.0,
+          424.8,
+          123.1,
+          431.2
+        ],
+        "table": "Table 1",
+        "row": 8,
+        "col": 2,
+        "column_header": "Drug"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "DCR-MYC"
+    },
+    {
+      "kind": "quote",
+      "quote": "LNP",
+      "source": {
+        "atom": "p2.T1.r8c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "LNP",
+        "bbox": [
+          312.1,
+          424.8,
+          323.8,
+          431.2
+        ],
+        "table": "Table 1",
+        "row": 8,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "LNP"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCT02110563",
+      "source": {
+        "atom": "p2.T1.r8c8",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NCT02110563",
+        "bbox": [
+          494.5,
+          424.8,
+          535.6,
+          431.2
+        ],
+        "table": "Table 1",
+        "row": 8,
+        "col": 8,
+        "column_header": "Clinical trial number"
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "NCT02110563"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCT02314052",
+      "source": {
+        "atom": "p2.T1.r9c8",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NCT02314052",
+        "bbox": [
+          494.5,
+          433.4,
+          535.6,
+          439.7
+        ],
+        "table": "Table 1",
+        "row": 9,
+        "col": 8,
+        "column_header": "Clinical trial number"
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "NCT02314052"
+    },
+    {
+      "kind": "quote",
+      "quote": "NBF-006",
+      "source": {
+        "atom": "p2.T1.r12c2",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NBF-006",
+        "bbox": [
+          95.0,
+          459.0,
+          119.7,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 2,
+        "column_header": "Drug"
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "NBF-006"
+    },
+    {
+      "kind": "quote",
+      "quote": "LNPs",
+      "source": {
+        "atom": "p2.T1.r12c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "LNPs",
+        "bbox": [
+          312.1,
+          459.0,
+          326.3,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "LNPs"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCT03819387",
+      "source": {
+        "atom": "p2.T1.r12c8",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NCT03819387",
+        "bbox": [
+          494.5,
+          459.0,
+          535.6,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 8,
+        "column_header": "Clinical trial number"
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "NCT03819387"
+    },
+    {
+      "kind": "quote",
+      "quote": "Liposomes",
+      "source": {
+        "atom": "p2.T1.r3c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Liposomes",
+        "bbox": [
+          312.1,
+          381.9,
+          341.5,
+          388.3
+        ],
+        "table": "Table 1",
+        "row": 3,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "Liposomes"
+    },
+    {
+      "kind": "quote",
+      "quote": "DOPC",
+      "source": {
+        "atom": "p2.T1.r15c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "DOPC",
+        "bbox": [
+          312.1,
+          484.8,
+          328.9,
+          491.2
+        ],
+        "table": "Table 1",
+        "row": 15,
+        "col": 5,
+        "column_header": "Carrier"
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "DOPC"
+    }
+  ],
+  "seals": {
+    "extraction": "6ed746955faa35941736356f893cc4370f776ffa7fa546702847a7e2d560fa51",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-06T10:59:18+00:00"
+}

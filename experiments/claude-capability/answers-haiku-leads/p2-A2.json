@@ -1,0 +1,194 @@
+{
+  "question": "How long can the BA@HGNRs probes be stored before use?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%stor%' OR text ILIKE '%days%' OR text ILIKE '%week%' OR text ILIKE '%month%' OR text ILIKE '%shelf%' OR text ILIKE '%preserv%' OR text ILIKE '%freshly%' OR text ILIKE '%fresh%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE text ILIKE '%stabil%' OR text ILIKE '%store%' OR text ILIKE '%storage%' OR text ILIKE '%long-term%' OR text ILIKE '%day%' OR text ILIKE '%prepared%' OR text ILIKE '%4 ◦C%' OR text ILIKE '%4 °C%' ORDER BY page, id",
+      "rows": 10
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=4 AND line_no<=12 ORDER BY line_no",
+      "rows": 12
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "absent:shape",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "absent:shape",
+        "where": "runs[0].absent",
+        "why": "absent must be a non-empty list of search terms",
+        "moves": [
+          "list the words the document would use if it said this, e.g. [\"mg/kg\", \"dose\"]"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['4'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4' is written exactly so in the document (e.g. p1.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4\", \"atom\": \"p1.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['4'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4' is written exactly so in the document (e.g. p1.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4\", \"atom\": \"p1.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "8c7f06a5c468ebaf96c12bf89324eef9ca525050897eed9805d8bd3f15c923ff",
+  "leads": {
+    "sentences": [
+      "p1.L20:14",
+      "p2.L36:0",
+      "p3.L17:23",
+      "p2.L32:0",
+      "p3.L57:0",
+      "p2.L23:58",
+      "p2.L39:22",
+      "p4.L27:0",
+      "p5.L12:11",
+      "p5.L14:42",
+      "p3.L69:24",
+      "p3.L37:0"
+    ],
+    "measures": [
+      "p3.L17:23#43",
+      "p3.L17:23#56",
+      "p3.L17:23#110",
+      "p3.L17:23#120",
+      "p3.L17:23#191",
+      "p3.L57:0#78",
+      "p3.L69:24#105",
+      "p3.L37:0#11",
+      "p3.L37:0#104",
+      "p3.L37:0#119",
+      "p3.L37:0#129"
+    ],
+    "matched": 88
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2100,
+    "cache_read_input_tokens": 37911,
+    "cache_creation_input_tokens": 9603
+  },
+  "runs": [
+    {
+      "text": "The document does not give a storage duration for the BA@HGNRs probes. It states only that, after preparation, the probes were stored at "
+    },
+    {
+      "quote": "4 ◦C",
+      "atom": "p3.L20"
+    },
+    {
+      "text": " for subsequent bacterial detection. No shelf life, storage period or storage time is reported. The only time-dependent stability tests reported concern the redispersion of BA@L-HGNRs in NH4HCO3 buffer, not storage of the probes before use.",
+      "absent": [
+        "shelf life",
+        "storage time",
+        "storage period"
+      ]
+    }
+  ],
+  "rendered": "The document does not give a storage duration for the BA@HGNRs probes. It states only that, after preparation, the probes were stored at 4 ◦C[1] for subsequent bacterial detection. No shelf life, storage period or storage time is reported. The only time-dependent stability tests reported concern the redispersion of BA@L-HGNRs in NH4HCO3 buffer, not storage of the probes before use.[2]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "4 ◦C",
+      "source": {
+        "atom": "p3.L20",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "stored at 4 ◦C for subsequent bacterial detection.",
+        "bbox": [
+          37.6,
+          325.7,
+          210.6,
+          336.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "4 ◦C"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "shelf life",
+        "storage time",
+        "storage period"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1130,
+      "strength": "search",
+      "n": 2,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-18T06:46:56+00:00",
+  "paper": "p2",
+  "probe": "A2",
+  "cat": "absent",
+  "expect": "only 'stored at 4 °C for subsequent bacterial detection'; no duration",
+  "trap": "inventing a shelf life"
+}

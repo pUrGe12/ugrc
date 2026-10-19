@@ -1,0 +1,213 @@
+{
+  "question": "What scale bar is shown on the TEM image in Fig. 1a?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F1"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text, conf, reader FROM figure_ocr WHERE figure_id='p4.F1' ORDER BY line_no",
+      "rows": 30
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, fact_no, statement, basis, printed_text, quantity, value, unit, panel, ocr_confirmed FROM figure_facts WHERE figure_id='p4.F1' AND (statement ILIKE '%scale%' OR printed_text ILIKE '%nm%' OR panel ILIKE '%a%' OR statement ILIKE '%bar%') ORDER BY fact_no",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, text, region, strength FROM atoms WHERE text ILIKE '%50 nm%' AND page=4",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%50 nm%' AND page=4",
+      "rows": 5
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1a'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1a' is written exactly so in the document (e.g. p3.L60): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1a\", \"atom\": \"p3.L60\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'50' is written exactly so in the document (e.g. p4.F1.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50\", \"atom\": \"p4.F1.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1a'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1a' is written exactly so in the document (e.g. p3.L60): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1a\", \"atom\": \"p3.L60\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "8c7f06a5c468ebaf96c12bf89324eef9ca525050897eed9805d8bd3f15c923ff",
+  "leads": {
+    "sentences": [
+      "p3.L58:35",
+      "p3.L65:43",
+      "p4.L35:50"
+    ],
+    "measures": [
+      "p3.L58:35#136",
+      "p3.L65:43#136",
+      "p3.L65:43#147",
+      "p3.L65:43#210",
+      "p3.L65:43#221"
+    ],
+    "matched": 41
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1256,
+    "cache_read_input_tokens": 58787,
+    "cache_creation_input_tokens": 14649
+  },
+  "runs": [
+    {
+      "text": "The scale bar on the TEM image in panel a of "
+    },
+    {
+      "figure": "p4.F1"
+    },
+    {
+      "text": " is labelled "
+    },
+    {
+      "quote": "50 nm",
+      "atom": "p4.F1.k1"
+    },
+    {
+      "text": ". The bar sits at the lower left of the panel a image, and the same bar length is used on the EDS maps in panel b."
+    }
+  ],
+  "rendered": "The scale bar on the TEM image in panel a of Fig. 1[1] is labelled 50 nm[2]. The bar sits at the lower left of the panel a image, and the same bar length is used on the EDS maps in panel b.",
+  "citations": [
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F1",
+        "kind": "figure",
+        "label": "Fig. 1",
+        "page": 4,
+        "caption": "Fig. 1. Characterization of HGNRs and BA@L-HGNRs. (a) Transmission electron microscopy imaging of L-HGNRs; (b) EDS elemental (Au, Ag, S) mapping images of L-HGNRs; (c) CD of L/D-HGNRs; (d) g-factor spectra of L/D-HGNRs; (e) XPS spectra of BA@L-HGNRs; (f) CD of L-HGNRs and BA@L-HGNRs; (g) UV–vis spectra of L- HGNRs and BA@L-HGNRs; (h) zeta potential measurements of BA, L-HGNRs and BA@L-HGNRs.",
+        "png": "figures/p4.F1.png",
+        "png_pixels_sha256": "a1bbc18f9d6a8b343d4bde4dc20a5ab60db63b3da5f9b457a7eb8987b515d2e9",
+        "bbox": [
+          41.6,
+          56.2,
+          552.7,
+          500.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Fig. 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "50 nm",
+      "source": {
+        "atom": "p4.F1.k1",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "Panel a shows a TEM image with a 50 nm scale bar.",
+        "bbox": [
+          41.6,
+          56.2,
+          552.7,
+          500.4
+        ],
+        "figure": "Fig. 1",
+        "figure_png": "figures/p4.F1.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "50 nm"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find '50 nm'"
+      },
+      "strength": "model-read",
+      "n": 2,
+      "rendered": "50 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-18T06:47:09+00:00",
+  "paper": "p2",
+  "probe": "G3",
+  "cat": "figure",
+  "expect": "50 nm, as a model reading of the figure (OCR did not confirm)",
+  "trap": "presenting it as verbatim, or another value"
+}

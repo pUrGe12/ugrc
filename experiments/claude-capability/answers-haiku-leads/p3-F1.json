@@ -1,0 +1,172 @@
+{
+  "question": "What taxadiene titer was achieved in S. marcescens?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%taxadiene%' OR text ILIKE '%taxa%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, page, row_no, col_no, text FROM cells WHERE text ILIKE '%taxa%' OR text ILIKE '%taxol%' OR table_id='p9.T2' AND row_no IN (SELECT row_no FROM cells WHERE table_id='p9.T2' AND text ILIKE '%taxa%')",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, printed_text FROM figure_facts WHERE statement ILIKE '%taxa%' OR printed_text ILIKE '%taxa%'",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, printed_text FROM figure_facts WHERE statement ILIKE '%taxa%' OR array_to_string(printed_text, ' ') ILIKE '%taxa%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%diterpen%' OR text ILIKE '%GGPP%' OR text ILIKE '%squalene%' OR text ILIKE '%carotene%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%taxa%' OR text ILIKE '%diterpene%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%diene%' OR text ILIKE '%taxo%' OR text ILIKE '%paclitaxel%'",
+      "rows": 21
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 1,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 1
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['32.5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'32.5' is written exactly so in the document (e.g. p7.L56): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"32.5\", \"atom\": \"p7.L56\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "1de23c224e803ccf854cfe47619baaefd28a1ef2cfef2a6728d2953fd336d207",
+  "leads": {
+    "sentences": [
+      "p7.L55:10",
+      "p10.L37:16",
+      "p11.L22:43",
+      "p2.L49:41",
+      "p1.L23:73",
+      "p11.L39:0",
+      "p8.L43:30",
+      "p11.L43:42",
+      "p10.L34:0",
+      "p2.L40:23",
+      "p7.L10:29",
+      "p10.L22:38"
+    ],
+    "measures": [
+      "p7.L55:10#112",
+      "p10.L37:16#40",
+      "p10.L37:16#77",
+      "p10.L37:16#127",
+      "p11.L22:43#151",
+      "p2.L49:41#18",
+      "p2.L49:41#25",
+      "p2.L49:41#36",
+      "p2.L40:23#278",
+      "p10.L22:38#114",
+      "p10.L22:38#156",
+      "p10.L22:38#177"
+    ],
+    "matched": 111
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1811,
+    "cache_read_input_tokens": 33389,
+    "cache_creation_input_tokens": 10453
+  },
+  "runs": [
+    {
+      "text": "The document gives no taxadiene titer for S. marcescens. Taxadiene is named only once, as a longer-chain terpenoid with untapped production potential: \"longer-chain terpenoids (e.g., taxadiene, squa-\" (continued on the next line: \"lene, β-carotene\"). No titer, yield or production result for taxadiene is reported in the text, tables or figures.",
+      "support": [
+        {
+          "atom": "p11.L47",
+          "quote": "longer-chain terpenoids (e.g., taxadiene, squa-"
+        }
+      ]
+    }
+  ],
+  "rendered": "The document gives no taxadiene titer for S. marcescens. Taxadiene is named only once, as a longer-chain terpenoid with untapped production potential: \"longer-chain terpenoids (e.g., taxadiene, squa-\" (continued on the next line: \"lene, β-carotene\"). No titer, yield or production result for taxadiene is reported in the text, tables or figures.[1]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "longer-chain terpenoids (e.g., taxadiene, squa-",
+      "source": {
+        "atom": "p11.L47",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "polyketides) [135], and longer-chain terpenoids (e.g., taxadiene, squa-",
+        "bbox": [
+          306.6,
+          474.8,
+          557.7,
+          482.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "longer-chain terpenoids (e.g., taxadiene, squa-"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-18T06:47:51+00:00",
+  "paper": "p3",
+  "probe": "F1",
+  "cat": "false premise",
+  "expect": "premise false: no taxadiene was produced. Taxadiene is named only as untapped potential for longer-chain terpenoids (p11.L47-48)",
+  "trap": "inventing a titer"
+}

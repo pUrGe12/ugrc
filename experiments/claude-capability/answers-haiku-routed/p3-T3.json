@@ -1,0 +1,2568 @@
+{
+  "question": "How many Table 2 entries use fed-batch cultivation, and how does that compare with shake flask?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND col_no=4 ORDER BY row_no",
+      "rows": 30
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p9.T2' ORDER BY row_no, col_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND row_no>=33 ORDER BY row_no, col_no",
+      "rows": 77
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT COUNT(*) FILTER (WHERE col4='fed-batch') AS fed_batch, COUNT(*) FILTER (WHERE col4='shake flask') AS shake_flask, COUNT(*) AS entries FROM (SELECT r.row_no, MAX(CASE WHEN c.col_no=4 THEN c.text END) AS col4 FROM (SELECT DISTINCT row_no FROM cells WHERE table_id='p9.T2' AND col_no=7 AND row_no>1) r JOIN cells c ON c.table_id='p9.T2' AND c.row_no=r.row_no) t",
+      "rows": null
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c4.text AS mode, COUNT(*) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1 GROUP BY c4.text ORDER BY n DESC",
+      "rows": 3
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id='p9.T2' AND col_no=4 AND text IN ('fed-batch','shake flask') ORDER BY row_no LIMIT 6",
+      "rows": 6
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number",
+        "text:number",
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 14
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2', '27'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'27' is written exactly so in the document (e.g. p8.L53): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"27\", \"atom\": \"p8.L53\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['15', '10', '2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'15' is written exactly so in the document (e.g. p7.L82): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"15\", \"atom\": \"p7.L82\"} — never shorten it",
+          "'10' is written exactly so in the document (e.g. p2.L17): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p2.L17\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[11]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 4398,
+    "cache_read_input_tokens": 68942,
+    "cache_creation_input_tokens": 13284
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": " holds "
+    },
+    {
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " entries, each product row with its reference. Fed-batch cultivation accounts for "
+    },
+    {
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1 AND c4.text='fed-batch'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " entries, for example the acetoin entry, where the mode reads "
+    },
+    {
+      "quote": "fed-batch",
+      "atom": "p9.T2.r10c4"
+    },
+    {
+      "text": ". Shake flask cultivation accounts for "
+    },
+    {
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1 AND c4.text='shake flask'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " entries, for example the first prodigiosin entry, where the mode reads "
+    },
+    {
+      "quote": "shake flask",
+      "atom": "p9.T2.r3c4"
+    },
+    {
+      "text": ". So fed-batch is the more common mode, by "
+    },
+    {
+      "sql": "SELECT SUM(CASE WHEN c4.text='fed-batch' THEN 1 WHEN c4.text='shake flask' THEN -1 ELSE 0 END) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1",
+      "column": "n",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " entries. The remaining entries are whole-cell biocatalysis."
+    }
+  ],
+  "rendered": "Table 2[1] holds 27[2] entries, each product row with its reference. Fed-batch cultivation accounts for 15[3] entries, for example the acetoin entry, where the mode reads fed-batch[4]. Shake flask cultivation accounts for 10[5] entries, for example the first prodigiosin entry, where the mode reads shake flask[6]. So fed-batch is the more common mode, by 5[7] entries. The remaining entries are whole-cell biocatalysis.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 27,
+      "strength": "computed from verbatim",
+      "n_sources": 27,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[17]",
+          "bbox": [
+            523.9,
+            162.0,
+            536.5,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r12c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[103]",
+          "bbox": [
+            523.9,
+            179.1,
+            540.1,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r13c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[104]",
+          "bbox": [
+            523.9,
+            187.6,
+            540.1,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r15c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[105]",
+          "bbox": [
+            523.9,
+            204.8,
+            540.1,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r17c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[105]",
+          "bbox": [
+            523.9,
+            221.9,
+            540.1,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r19c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[106]",
+          "bbox": [
+            523.9,
+            239.1,
+            540.1,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r21c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[107]",
+          "bbox": [
+            523.9,
+            256.2,
+            540.1,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r23c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            273.3,
+            536.5,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r25c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            290.5,
+            536.5,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r27c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[8]",
+          "bbox": [
+            523.9,
+            307.6,
+            532.9,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r29c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[108]",
+          "bbox": [
+            523.9,
+            324.7,
+            540.1,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r31c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            341.9,
+            536.5,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r33c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[95]",
+          "bbox": [
+            523.9,
+            359.0,
+            536.5,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r35c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[21]",
+          "bbox": [
+            523.9,
+            376.2,
+            536.5,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r37c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[20]",
+          "bbox": [
+            523.9,
+            393.3,
+            536.5,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r39c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[19]",
+          "bbox": [
+            523.9,
+            410.5,
+            536.5,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r3c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[100]",
+          "bbox": [
+            523.9,
+            102.0,
+            540.1,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r40c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[24]",
+          "bbox": [
+            523.9,
+            419.0,
+            536.5,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r42c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[23]",
+          "bbox": [
+            523.9,
+            436.1,
+            536.5,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r43c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            444.7,
+            536.5,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r45c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[109]",
+          "bbox": [
+            523.9,
+            461.8,
+            540.1,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r46c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[22]",
+          "bbox": [
+            523.9,
+            470.4,
+            536.5,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r48c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[110]",
+          "bbox": [
+            523.9,
+            487.6,
+            540.1,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r5c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[101]",
+          "bbox": [
+            523.9,
+            119.1,
+            540.1,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r6c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[102]",
+          "bbox": [
+            523.9,
+            127.7,
+            540.1,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r8c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[14]",
+          "bbox": [
+            523.9,
+            144.8,
+            536.5,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r9c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[18]",
+          "bbox": [
+            523.9,
+            153.4,
+            536.5,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 7,
+          "column_header": "Reference"
+        }
+      ],
+      "n": 2,
+      "rendered": "27"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1 AND c4.text='fed-batch'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 15,
+      "strength": "computed from verbatim",
+      "n_sources": 30,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r10c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[17]",
+          "bbox": [
+            523.9,
+            162.0,
+            536.5,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[103]",
+          "bbox": [
+            523.9,
+            179.1,
+            540.1,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[106]",
+          "bbox": [
+            523.9,
+            239.1,
+            540.1,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[107]",
+          "bbox": [
+            523.9,
+            256.2,
+            540.1,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[8]",
+          "bbox": [
+            523.9,
+            307.6,
+            532.9,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[108]",
+          "bbox": [
+            523.9,
+            324.7,
+            540.1,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[95]",
+          "bbox": [
+            523.9,
+            359.0,
+            536.5,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[21]",
+          "bbox": [
+            523.9,
+            376.2,
+            536.5,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[20]",
+          "bbox": [
+            523.9,
+            393.3,
+            536.5,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[19]",
+          "bbox": [
+            523.9,
+            410.5,
+            536.5,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[24]",
+          "bbox": [
+            523.9,
+            419.0,
+            536.5,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[23]",
+          "bbox": [
+            523.9,
+            436.1,
+            536.5,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[109]",
+          "bbox": [
+            523.9,
+            461.8,
+            540.1,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[22]",
+          "bbox": [
+            523.9,
+            470.4,
+            536.5,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[110]",
+          "bbox": [
+            523.9,
+            487.6,
+            540.1,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 7,
+          "column_header": "Reference"
+        }
+      ],
+      "n": 3,
+      "rendered": "15"
+    },
+    {
+      "kind": "quote",
+      "quote": "fed-batch",
+      "source": {
+        "atom": "p9.T2.r10c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "fed-batch",
+        "bbox": [
+          397.0,
+          162.0,
+          423.4,
+          168.3
+        ],
+        "table": "Table 2",
+        "row": 10,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "fed-batch"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT COUNT(*) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1 AND c4.text='shake flask'",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 10,
+      "strength": "computed from verbatim",
+      "n_sources": 20,
+      "sources": [
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[104]",
+          "bbox": [
+            523.9,
+            187.6,
+            540.1,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            273.3,
+            536.5,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            290.5,
+            536.5,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            341.9,
+            536.5,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[100]",
+          "bbox": [
+            523.9,
+            102.0,
+            540.1,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            444.7,
+            536.5,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[101]",
+          "bbox": [
+            523.9,
+            119.1,
+            540.1,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[102]",
+          "bbox": [
+            523.9,
+            127.7,
+            540.1,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[14]",
+          "bbox": [
+            523.9,
+            144.8,
+            536.5,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[18]",
+          "bbox": [
+            523.9,
+            153.4,
+            536.5,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 7,
+          "column_header": "Reference"
+        }
+      ],
+      "n": 5,
+      "rendered": "10"
+    },
+    {
+      "kind": "quote",
+      "quote": "shake flask",
+      "source": {
+        "atom": "p9.T2.r3c4",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "shake flask",
+        "bbox": [
+          397.0,
+          102.0,
+          428.0,
+          108.4
+        ],
+        "table": "Table 2",
+        "row": 3,
+        "col": 4,
+        "column_header": "Cultivation mode"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "shake flask"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT SUM(CASE WHEN c4.text='fed-batch' THEN 1 WHEN c4.text='shake flask' THEN -1 ELSE 0 END) AS n FROM cells c7 JOIN cells c4 ON c4.table_id=c7.table_id AND c4.row_no=c7.row_no AND c4.col_no=4 WHERE c7.table_id='p9.T2' AND c7.col_no=7 AND c7.row_no>1",
+      "column": "n",
+      "row": 0,
+      "fmt": "int",
+      "value": 5,
+      "strength": "computed from verbatim",
+      "n_sources": 54,
+      "sources": [
+        {
+          "atom": "p9.T2.r10c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            162.0,
+            423.4,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r10c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[17]",
+          "bbox": [
+            523.9,
+            162.0,
+            536.5,
+            168.3
+          ],
+          "table": "Table 2",
+          "row": 10,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r12c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            179.1,
+            423.4,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r12c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[103]",
+          "bbox": [
+            523.9,
+            179.1,
+            540.1,
+            185.5
+          ],
+          "table": "Table 2",
+          "row": 12,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r13c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            187.6,
+            428.0,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r13c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[104]",
+          "bbox": [
+            523.9,
+            187.6,
+            540.1,
+            194.0
+          ],
+          "table": "Table 2",
+          "row": 13,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r15c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            204.8,
+            426.0,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r15c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[105]",
+          "bbox": [
+            523.9,
+            204.8,
+            540.1,
+            211.1
+          ],
+          "table": "Table 2",
+          "row": 15,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r17c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "whole-cell",
+          "bbox": [
+            397.0,
+            221.9,
+            426.0,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r17c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[105]",
+          "bbox": [
+            523.9,
+            221.9,
+            540.1,
+            228.3
+          ],
+          "table": "Table 2",
+          "row": 17,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r19c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            239.1,
+            423.4,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r19c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[106]",
+          "bbox": [
+            523.9,
+            239.1,
+            540.1,
+            245.4
+          ],
+          "table": "Table 2",
+          "row": 19,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r21c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            256.2,
+            423.4,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r21c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[107]",
+          "bbox": [
+            523.9,
+            256.2,
+            540.1,
+            262.6
+          ],
+          "table": "Table 2",
+          "row": 21,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r23c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            273.3,
+            428.0,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r23c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            273.3,
+            536.5,
+            279.7
+          ],
+          "table": "Table 2",
+          "row": 23,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r25c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            290.5,
+            428.0,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r25c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[16]",
+          "bbox": [
+            523.9,
+            290.5,
+            536.5,
+            296.9
+          ],
+          "table": "Table 2",
+          "row": 25,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r27c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            307.6,
+            423.4,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r27c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[8]",
+          "bbox": [
+            523.9,
+            307.6,
+            532.9,
+            314.0
+          ],
+          "table": "Table 2",
+          "row": 27,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r29c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            324.7,
+            423.4,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r29c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[108]",
+          "bbox": [
+            523.9,
+            324.7,
+            540.1,
+            331.1
+          ],
+          "table": "Table 2",
+          "row": 29,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r31c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            341.9,
+            428.0,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r31c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            341.9,
+            536.5,
+            348.2
+          ],
+          "table": "Table 2",
+          "row": 31,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r33c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            359.0,
+            423.4,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r33c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[95]",
+          "bbox": [
+            523.9,
+            359.0,
+            536.5,
+            365.4
+          ],
+          "table": "Table 2",
+          "row": 33,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r35c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            376.2,
+            423.4,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r35c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[21]",
+          "bbox": [
+            523.9,
+            376.2,
+            536.5,
+            382.5
+          ],
+          "table": "Table 2",
+          "row": 35,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r37c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            393.3,
+            423.4,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r37c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[20]",
+          "bbox": [
+            523.9,
+            393.3,
+            536.5,
+            399.6
+          ],
+          "table": "Table 2",
+          "row": 37,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r39c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            410.5,
+            423.4,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r39c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[19]",
+          "bbox": [
+            523.9,
+            410.5,
+            536.5,
+            416.8
+          ],
+          "table": "Table 2",
+          "row": 39,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r3c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            102.0,
+            428.0,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r3c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[100]",
+          "bbox": [
+            523.9,
+            102.0,
+            540.1,
+            108.4
+          ],
+          "table": "Table 2",
+          "row": 3,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r40c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            419.0,
+            423.4,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r40c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[24]",
+          "bbox": [
+            523.9,
+            419.0,
+            536.5,
+            425.4
+          ],
+          "table": "Table 2",
+          "row": 40,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r42c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            436.1,
+            423.4,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r42c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[23]",
+          "bbox": [
+            523.9,
+            436.1,
+            536.5,
+            442.5
+          ],
+          "table": "Table 2",
+          "row": 42,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r43c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            444.7,
+            428.0,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r43c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[25]",
+          "bbox": [
+            523.9,
+            444.7,
+            536.5,
+            451.1
+          ],
+          "table": "Table 2",
+          "row": 43,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r45c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            461.8,
+            423.4,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r45c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[109]",
+          "bbox": [
+            523.9,
+            461.8,
+            540.1,
+            468.2
+          ],
+          "table": "Table 2",
+          "row": 45,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r46c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            470.4,
+            423.4,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r46c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[22]",
+          "bbox": [
+            523.9,
+            470.4,
+            536.5,
+            476.8
+          ],
+          "table": "Table 2",
+          "row": 46,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r48c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "fed-batch",
+          "bbox": [
+            397.0,
+            487.6,
+            423.4,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r48c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[110]",
+          "bbox": [
+            523.9,
+            487.6,
+            540.1,
+            493.9
+          ],
+          "table": "Table 2",
+          "row": 48,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r5c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            119.1,
+            428.0,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r5c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[101]",
+          "bbox": [
+            523.9,
+            119.1,
+            540.1,
+            125.5
+          ],
+          "table": "Table 2",
+          "row": 5,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r6c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            127.7,
+            428.0,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r6c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[102]",
+          "bbox": [
+            523.9,
+            127.7,
+            540.1,
+            134.0
+          ],
+          "table": "Table 2",
+          "row": 6,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r8c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            144.8,
+            428.0,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r8c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[14]",
+          "bbox": [
+            523.9,
+            144.8,
+            536.5,
+            151.2
+          ],
+          "table": "Table 2",
+          "row": 8,
+          "col": 7,
+          "column_header": "Reference"
+        },
+        {
+          "atom": "p9.T2.r9c4",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "shake flask",
+          "bbox": [
+            397.0,
+            153.4,
+            428.0,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 4,
+          "column_header": "Cultivation mode"
+        },
+        {
+          "atom": "p9.T2.r9c7",
+          "kind": "cell",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "[18]",
+          "bbox": [
+            523.9,
+            153.4,
+            536.5,
+            159.8
+          ],
+          "table": "Table 2",
+          "row": 9,
+          "col": 7,
+          "column_header": "Reference"
+        }
+      ],
+      "n": 7,
+      "rendered": "5"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:58:45+00:00",
+  "paper": "p3",
+  "probe": "T3",
+  "cat": "table",
+  "expect": "27 data rows total: 15 fed-batch, 10 shake flask, 2 whole-cell biocatalyst",
+  "trap": "miscounting because of the table's multi-line rows"
+}

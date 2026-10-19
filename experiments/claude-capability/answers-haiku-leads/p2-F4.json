@@ -1,0 +1,277 @@
+{
+  "question": "What classification accuracy did the blind tests achieve on the ternary bacterial mixtures?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%blind%' OR text ILIKE '%ternary%' OR text ILIKE '%unknown%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (6,7) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit, condition, check_note FROM figure_facts WHERE figure_id='p7.F4' ORDER BY fact_no",
+      "rows": 41
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%accuracy%' OR text ILIKE '%classif%' OR text ILIKE '%100%' OR text ILIKE '%blind%' ORDER BY page, line_no",
+      "rows": 12
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['four'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1:1:1', '4d-f).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1:1:1' is written exactly so in the document (e.g. p7.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1:1:1\", \"atom\": \"p7.L7\"} — never shorten it",
+          "'4d-f' is written exactly so in the document (e.g. p7.L9): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4d-f\", \"atom\": \"p7.L9\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[9]",
+        "why": "your own words contain number(s) ['4d-f).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4d-f' is written exactly so in the document (e.g. p7.L9): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4d-f\", \"atom\": \"p7.L9\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "8c7f06a5c468ebaf96c12bf89324eef9ca525050897eed9805d8bd3f15c923ff",
+  "leads": {
+    "sentences": [
+      "p6.L70:61",
+      "p7.L4:30",
+      "p2.L46:26"
+    ],
+    "measures": [
+      "p6.L70:61#86",
+      "p7.L4:30#205",
+      "p2.L46:26#69",
+      "p2.L46:26#74"
+    ],
+    "matched": 80
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2738,
+    "cache_read_input_tokens": 56765,
+    "cache_creation_input_tokens": 18728
+  },
+  "runs": [
+    {
+      "text": "The document does not report a classification accuracy for the ternary bacterial mixtures. The only accuracy figure tied to blind tests is for single strains: blind tests were run on "
+    },
+    {
+      "quote": "four",
+      "atom": "p6.L71"
+    },
+    {
+      "text": " strains at unknown concentrations and delivered "
+    },
+    {
+      "quote": "100%",
+      "atom": "p6.L72"
+    },
+    {
+      "text": " classification accuracy, with the detail in Tables S9-S12. For the mixtures, the paper only states that binary mixtures (A +B) and ternary mixtures (A +B +C) at a ratio of "
+    },
+    {
+      "quote": "1:1:1",
+      "atom": "p7.L7"
+    },
+    {
+      "text": " were investigated (Tables S16-S18) and that the multicomponent mixtures could also be "
+    },
+    {
+      "quote": "effectively classified",
+      "atom": "p7.L9"
+    },
+    {
+      "text": " by LDA (Fig. "
+    },
+    {
+      "quote": "4d-f",
+      "atom": "p7.L9"
+    },
+    {
+      "text": "). No accuracy percentage is given for the ternary mixtures in the document text, and the supplementary tables that would hold it are not part of this document."
+    }
+  ],
+  "rendered": "The document does not report a classification accuracy for the ternary bacterial mixtures. The only accuracy figure tied to blind tests is for single strains: blind tests were run on four[1] strains at unknown concentrations and delivered 100%[2] classification accuracy, with the detail in Tables S9-S12. For the mixtures, the paper only states that binary mixtures (A +B) and ternary mixtures (A +B +C) at a ratio of 1:1:1[3] were investigated (Tables S16-S18) and that the multicomponent mixtures could also be effectively classified[4] by LDA (Fig. 4d-f[5]). No accuracy percentage is given for the ternary mixtures in the document text, and the supplementary tables that would hold it are not part of this document.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "four",
+      "source": {
+        "atom": "p6.L71",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "were performed on four strains at unknown concentrations, which",
+        "bbox": [
+          306.6,
+          391.8,
+          557.7,
+          399.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "four"
+    },
+    {
+      "kind": "quote",
+      "quote": "100%",
+      "source": {
+        "atom": "p6.L72",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "delivered 100% classification accuracy (Tables S9-S12).",
+        "bbox": [
+          306.6,
+          402.3,
+          503.7,
+          410.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "100%"
+    },
+    {
+      "kind": "quote",
+      "quote": "1:1:1",
+      "source": {
+        "atom": "p7.L7",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "with a compositional ratio of 1:1:1 were investigated (Tables S16-S18).",
+        "bbox": [
+          37.6,
+          119.1,
+          288.7,
+          127.1
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "1:1:1"
+    },
+    {
+      "kind": "quote",
+      "quote": "effectively classified",
+      "source": {
+        "atom": "p7.L9",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "bacterial mixtures could also be effectively classified (Fig. 4d-f and",
+        "bbox": [
+          37.6,
+          140.0,
+          288.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "effectively classified"
+    },
+    {
+      "kind": "quote",
+      "quote": "4d-f",
+      "source": {
+        "atom": "p7.L9",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "bacterial mixtures could also be effectively classified (Fig. 4d-f and",
+        "bbox": [
+          37.6,
+          140.0,
+          288.7,
+          148.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "4d-f"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-18T06:46:43+00:00",
+  "paper": "p2",
+  "probe": "F4",
+  "cat": "false-premise",
+  "expect": "premise false: blind tests were on four strains at unknown concentrations (100%), not on mixtures",
+  "trap": "reporting 100% for mixtures"
+}

@@ -1,0 +1,290 @@
+{
+  "question": "In Table 3, what tumor inhibition rates did TP-siRC@tHyNPs reach in the PMM and the PDX models, and how many percentage points apart are they?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id IN ('p16.T3','p17.T3') AND (text ILIKE '%tHyNP%' OR text ILIKE '%PMM%' OR text ILIKE '%PDX%' OR text ILIKE '%inhib%')",
+      "rows": 14
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p16.T3' AND row_no BETWEEN 9 AND 17 ORDER BY row_no, col_no",
+      "rows": 27
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 94.91 - 91.00 AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number",
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE), 2) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['3,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L40): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L40\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[5]",
+        "why": "the number 94.91 is written into the value 'ROUND(94.91 - 91.00, 2) AS diff' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['3,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L40): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L40\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2363,
+    "cache_read_input_tokens": 38244,
+    "cache_creation_input_tokens": 3782
+  },
+  "runs": [
+    {
+      "text": "In "
+    },
+    {
+      "table": "p16.T3"
+    },
+    {
+      "text": ", TP-siRC@tHyNPs reached a tumor inhibition rate of "
+    },
+    {
+      "quote": "94.91 ±2.01%",
+      "atom": "p16.T3.r10c6"
+    },
+    {
+      "text": " in the PMM model (SCID mice), and "
+    },
+    {
+      "quote": "91.00 ±3.83%",
+      "atom": "p16.T3.r12c6"
+    },
+    {
+      "text": " in the PDX model (B-NDG mice). The gap between these rates is "
+    },
+    {
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE), 2) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points."
+    }
+  ],
+  "rendered": "In Table 3[1], TP-siRC@tHyNPs reached a tumor inhibition rate of 94.91 ±2.01%[2] in the PMM model (SCID mice), and 91.00 ±3.83%[3] in the PDX model (B-NDG mice). The gap between these rates is 3.91[4] percentage points.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p16.T3",
+        "kind": "table",
+        "label": "Table 3",
+        "page": 16,
+        "caption": "Table 3 Nanotechnology-Based siRNA Combination Therapies.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          736.3
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 3"
+    },
+    {
+      "kind": "quote",
+      "quote": "94.91 ±2.01%",
+      "source": {
+        "atom": "p16.T3.r10c6",
+        "kind": "cell",
+        "page": 16,
+        "strength": "verbatim",
+        "text": "PMM: Tumor inhibition rate:94.91 ±2.01%,",
+        "bbox": [
+          386.4,
+          160.3,
+          513.0,
+          168.3
+        ],
+        "table": "Table 3",
+        "row": 10,
+        "col": 6,
+        "column_header": "Results"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "94.91 ±2.01%"
+    },
+    {
+      "kind": "quote",
+      "quote": "91.00 ±3.83%",
+      "source": {
+        "atom": "p16.T3.r12c6",
+        "kind": "cell",
+        "page": 16,
+        "strength": "verbatim",
+        "text": "PDX: Tumor inhibition rate: 91.00 ±3.83%",
+        "bbox": [
+          386.4,
+          177.4,
+          510.4,
+          185.5
+        ],
+        "table": "Table 3",
+        "row": 12,
+        "col": 6,
+        "column_header": "Results"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "91.00 ±3.83%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+) ?±', 1) AS DOUBLE), 2) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 3.91,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p16.T3.r10c6",
+          "kind": "cell",
+          "page": 16,
+          "strength": "verbatim",
+          "text": "PMM: Tumor inhibition rate:94.91 ±2.01%,",
+          "bbox": [
+            386.4,
+            160.3,
+            513.0,
+            168.3
+          ],
+          "table": "Table 3",
+          "row": 10,
+          "col": 6,
+          "column_header": "Results"
+        },
+        {
+          "atom": "p16.T3.r12c6",
+          "kind": "cell",
+          "page": 16,
+          "strength": "verbatim",
+          "text": "PDX: Tumor inhibition rate: 91.00 ±3.83%",
+          "bbox": [
+            386.4,
+            177.4,
+            510.4,
+            185.5
+          ],
+          "table": "Table 3",
+          "row": 12,
+          "col": 6,
+          "column_header": "Results"
+        }
+      ],
+      "n": 4,
+      "rendered": "3.91"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T08:51:55+00:00",
+  "arm": "plain",
+  "run": 2,
+  "paper": "cai2026",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "PMM 94.91 ±2.01%, PDX 91.00 ±3.83% (p16.T3 rows 10-12): 3.91 points",
+  "trap": "80.34 (the TUNEL apoptosis rate)"
+}

@@ -1,0 +1,184 @@
+{
+  "question": "According to Fig. 2, which nanocarriers are shown under the metal-based nanoparticles heading?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p5.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, fact_no, statement, basis, printed_text, panel, ocr_confirmed FROM figure_facts WHERE figure_id='p5.F2' ORDER BY fact_no",
+      "rows": 26
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text FROM figure_ocr WHERE figure_id='p5.F2' ORDER BY line_no",
+      "rows": 13
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2', 'three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[1]",
+        "why": "p5.F2.k16 does not contain '2'; its text is 'Under the metal-based nanoparticles heading, the three nanocarriers shown are AuNPs, SPIONs and MOF.'",
+        "moves": [
+          "the quote is verbatim in 22 places (p1.L37, p1.L68, p2.L38, p2.L53, p3.L12, p3.L14, p3.L36, p3.L39, …): set \"atom\" to the one you mean"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1549,
+    "cache_read_input_tokens": 26880,
+    "cache_creation_input_tokens": 6581
+  },
+  "runs": [
+    {
+      "text": "Under the Metal-based nanoparticles heading, the figure shows the following nanocarriers: "
+    },
+    {
+      "text": "AuNPs, SPIONs and MOF",
+      "support": [
+        {
+          "atom": "p5.F2.k16",
+          "quote": "the three nanocarriers shown are AuNPs, SPIONs and MOF"
+        }
+      ]
+    },
+    {
+      "text": ". The figure's OCR reading of that row also gives \"AuNPs SPIONs MOF\".",
+      "support": [
+        {
+          "atom": "p5.F2.o10",
+          "quote": "AuNPs SPIONs MOF"
+        }
+      ]
+    }
+  ],
+  "rendered": "Under the Metal-based nanoparticles heading, the figure shows the following nanocarriers: AuNPs, SPIONs and MOF[1]. The figure's OCR reading of that row also gives \"AuNPs SPIONs MOF\".[2]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "the three nanocarriers shown are AuNPs, SPIONs and MOF",
+      "source": {
+        "atom": "p5.F2.k16",
+        "kind": "figure_fact",
+        "page": 5,
+        "strength": "model-read, ocr-confirmed",
+        "text": "Under the metal-based nanoparticles heading, the three nanocarriers shown are AuNPs, SPIONs and MOF.",
+        "bbox": [
+          310.1,
+          56.1,
+          553.9,
+          379.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "AuNPs",
+          "SPIONs",
+          "MOF"
+        ],
+        "ocr_confirmed": true,
+        "check_note": null
+      },
+      "strength": "model-read, ocr-confirmed",
+      "n": 1,
+      "rendered": "the three nanocarriers shown are AuNPs, SPIONs and MOF"
+    },
+    {
+      "kind": "support",
+      "quote": "AuNPs SPIONs MOF",
+      "source": {
+        "atom": "p5.F2.o10",
+        "kind": "ocr",
+        "page": 5,
+        "strength": "ocr",
+        "text": "AuNPs SPIONs MOF",
+        "bbox": [
+          342.5,
+          275.0,
+          470.2,
+          284.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 2,
+      "rendered": "AuNPs SPIONs MOF"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:13:28+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "G1",
+  "cat": "G",
+  "expect": "AuNPs, SPIONs and MOF (figure reading, OCR-confirmed)",
+  "trap": "adding CQD or MSNP"
+}

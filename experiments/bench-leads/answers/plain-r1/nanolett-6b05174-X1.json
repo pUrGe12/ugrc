@@ -1,0 +1,202 @@
+{
+  "question": "What energy density does the anode-free full cell reach, and how does it compare with the theoretical maximum of LiCoO2/graphite cells?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%energy density%' OR lower(text) LIKE '%licoo%' OR lower(text) LIKE '%wh%kg%' OR lower(text) LIKE '%wh kg%' OR lower(text) LIKE '%graphite%' ORDER BY page, id",
+      "rows": 12
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (1,2,5) AND (line_no BETWEEN 1 AND 60) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=5 AND line_no>=40 ORDER BY line_no",
+      "rows": 88
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['400'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2730,
+    "cache_read_input_tokens": 19458,
+    "cache_creation_input_tokens": 14497
+  },
+  "runs": [
+    {
+      "text": "The anode-free full cell, built with a presodiated pyrite cathode, reaches an energy density of "
+    },
+    {
+      "quote": "∼400 Wh/kg",
+      "atom": "p1.L19"
+    },
+    {
+      "text": ". This is calculated from the mass of the presodiated pyrite and the carbon nucleation layer, assuming a Na1.5FeS2 stoichiometry (\"calculated based on the mass of\" the presodiated pyrite, p5.L51-L53). The paper gives the theoretical maximum for LIB technology as "
+    },
+    {
+      "quote": "387 Wh/kg for LiCoO2/graphite cells",
+      "atom": "p1.L21"
+    },
+    {
+      "text": ". So the cell's value is slightly above that LiCoO2/graphite ceiling. The paper qualifies the LIB comparison: the cell exceeds all previous SIB reports, and, "
+    },
+    {
+      "quote": "assuming a 50%",
+      "atom": "p5.L54"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "packaging penalty, exceeds current LIB technology",
+      "atom": "p5.L55"
+    },
+    {
+      "text": ". In other words, the claim of beating LIB technology depends on that packaging assumption."
+    }
+  ],
+  "rendered": "The anode-free full cell, built with a presodiated pyrite cathode, reaches an energy density of ∼400 Wh/kg[1]. This is calculated from the mass of the presodiated pyrite and the carbon nucleation layer, assuming a Na1.5FeS2 stoichiometry (\"calculated based on the mass of\" the presodiated pyrite, p5.L51-L53). The paper gives the theoretical maximum for LIB technology as 387 Wh/kg for LiCoO2/graphite cells[2]. So the cell's value is slightly above that LiCoO2/graphite ceiling. The paper qualifies the LIB comparison: the cell exceeds all previous SIB reports, and, assuming a 50%[3] packaging penalty, exceeds current LIB technology[4]. In other words, the claim of beating LIB technology depends on that packaging assumption.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "∼400 Wh/kg",
+      "source": {
+        "atom": "p1.L19",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "sodiated pyrite cathode to achieve energy densities of ∼400 Wh/kg,",
+        "bbox": [
+          69.4,
+          353.7,
+          329.2,
+          366.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "∼400 Wh/kg"
+    },
+    {
+      "kind": "quote",
+      "quote": "387 Wh/kg for LiCoO2/graphite cells",
+      "source": {
+        "atom": "p1.L21",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and",
+        "bbox": [
+          69.4,
+          378.4,
+          555.5,
+          389.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "387 Wh/kg for LiCoO2/graphite cells"
+    },
+    {
+      "kind": "quote",
+      "quote": "assuming a 50%",
+      "source": {
+        "atom": "p5.L54",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "exceeds all previous reports for SIBs and, assuming a 50%",
+        "bbox": [
+          60.5,
+          653.9,
+          300.4,
+          663.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "assuming a 50%"
+    },
+    {
+      "kind": "quote",
+      "quote": "packaging penalty, exceeds current LIB technology",
+      "source": {
+        "atom": "p5.L55",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "packaging penalty, exceeds current LIB technology. Going",
+        "bbox": [
+          60.5,
+          665.0,
+          300.5,
+          675.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "packaging penalty, exceeds current LIB technology"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-18T07:03:38+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "nanolett-6b05174",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "~400 Wh/kg vs 387 Wh/kg for LiCoO2/graphite (p1.L19-21)",
+  "trap": "the ~200 Wh/kg of earlier SIB full cells"
+}

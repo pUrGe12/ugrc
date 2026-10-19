@@ -1,0 +1,182 @@
+{
+  "question": "What recycling cost per kilogram does the review give for direct recycling?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE lower(text) LIKE '%direct recycling%' OR lower(text) LIKE '%per kg%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%kg%' ORDER BY page, line_no",
+      "rows": 20
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (6,9,10) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), '(\\$|usd|cost|per kg|/kg|kg-1|kg−1|\\$/)') ORDER BY page, id",
+      "rows": 34
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (10) ORDER BY line_no",
+      "rows": 122
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, page, text FROM figure_ocr WHERE regexp_matches(lower(text), '(kg|\\$|cost|usd|direct|\\$/)') OR figure_id IN ('p4.F3') ORDER BY figure_id, line_no",
+      "rows": 20
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), '(kg|kilogram|per kg|\\/kg|usd|dollar|price)') ORDER BY page, id",
+      "rows": 4
+    },
+    {
+      "turn": 7,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p6.F4"
+    },
+    {
+      "turn": 7,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F3"
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "run:kind",
+        "run:kind"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "run:kind",
+        "where": "runs[1]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      },
+      {
+        "rule": "run:kind",
+        "where": "runs[3]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 2775,
+    "cache_read_input_tokens": 90261,
+    "cache_creation_input_tokens": 15751
+  },
+  "runs": [
+    {
+      "text": "The review does not give a recycling cost per kilogram for direct recycling. It only makes a qualitative economic claim: life-cycle analysis and process-based cost models have revealed "
+    },
+    {
+      "quote": "that direct recycling potentially has both economic benefits",
+      "atom": "p6.L19"
+    },
+    {
+      "text": " over pyrometallurgical and hydrometallurgical processes. No per-kilogram cost figure appears in the text or in the figures. "
+    },
+    {
+      "text": "The searched text contains no such figure.",
+      "absent": [
+        "per kg",
+        "per kilogram",
+        "/kg"
+      ]
+    }
+  ],
+  "rendered": "The review does not give a recycling cost per kilogram for direct recycling. It only makes a qualitative economic claim: life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits[1] over pyrometallurgical and hydrometallurgical processes. No per-kilogram cost figure appears in the text or in the figures. The searched text contains no such figure.[2]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "that direct recycling potentially has both economic benefits",
+      "source": {
+        "atom": "p6.L19",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "that direct recycling potentially has both economic benefits",
+        "bbox": [
+          42.5,
+          277.3,
+          300.5,
+          287.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "that direct recycling potentially has both economic benefits"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "per kg",
+        "per kilogram",
+        "/kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1234,
+      "strength": "search",
+      "n": 2,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-18T07:13:04+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "mattod-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not given",
+  "trap": "inventing a cost"
+}

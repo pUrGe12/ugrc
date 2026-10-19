@@ -1,0 +1,536 @@
+{
+  "question": "In the BatPaC scenario, how many times more cobalt would NMC 111 need than NMC 811 or NCA, and what pack energy and vehicle range does the scenario assume?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%BatPaC%' OR text ILIKE '%cobalt%' OR text ILIKE '%kWh%' OR text ILIKE '%mile%' OR text ILIKE '%range%' ORDER BY page, id",
+      "rows": 83
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F1"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p2.L79','p2.L80','p2.L81','p2.L82','p2.L83','p2.L84','p2.L85','p2.L86','p2.L87','p2.L88','p2.L89','p2.L90','p2.L91','p2.L92','p2.L93','p2.L94','p2.L95','p2.L96','p2.L97','p2.L98','p2.L99','p2.L5','p2.L6','p2.L7','p2.L8','p2.L9','p2.L10','p2.L11','p2.L12','p2.L13','p2.L14','p2.L15','p2.L16') ORDER BY id; SELECT id, text FROM atoms WHERE id='p3.F1.o3' OR (id LIKE 'p3.F1.o%' AND (text ILIKE '%EV%' OR text ILIKE '%ton%' OR text ILIKE '%mile%' OR text ILIKE '%kWh%'))",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=2 AND id IN ('p2.L79','p2.L80','p2.L81','p2.L82','p2.L83','p2.L84','p2.L85','p2.L86','p2.L87','p2.L88','p2.L89','p2.L90','p2.L91','p2.L92','p2.L93','p2.L94','p2.L95','p2.L96','p2.L97','p2.L98','p2.L99','p2.L100','p2.L101','p2.L102','p2.L103','p2.L104') ORDER BY id",
+      "rows": 26
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE id LIKE 'p3.F1.o%' ORDER BY id",
+      "rows": 29
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (SELECT CAST(regexp_extract(text,'≈([0-9]+)',1) AS DOUBLE) FROM lines WHERE id='p2.L93') / (SELECT CAST(regexp_extract(text,'≈([0-9]+)',1) AS DOUBLE) FROM lines WHERE id='p2.L96') AS ratio",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number",
+        "lineage:no-source",
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 17,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 21,
+      "pairings": [
+        {
+          "run": 9,
+          "of": "NMC 111",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 13,
+          "of": "NMC 811 and NCA",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 17,
+          "of": "electric vehicle",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['111'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'111' is written exactly so in the document (e.g. p2.L86): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"111\", \"atom\": \"p2.L86\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[3]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['111'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'111' is written exactly so in the document (e.g. p2.L86): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"111\", \"atom\": \"p2.L86\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['111'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'111' is written exactly so in the document (e.g. p2.L86): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"111\", \"atom\": \"p2.L86\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "≈2500 tons",
+      "atom": "p2.L93",
+      "of": "NMC 111",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 9
+    },
+    {
+      "quote": "≈700 tons",
+      "atom": "p2.L96",
+      "of": "NMC 811 and NCA",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 13
+    },
+    {
+      "quote": "≈76.47 kWh",
+      "atom": "p2.L85",
+      "of": "electric vehicle",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 17
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 6722,
+    "cache_read_input_tokens": 68931,
+    "cache_creation_input_tokens": 14207
+  },
+  "runs": [
+    {
+      "text": "The BatPaC scenario is set up as "
+    },
+    {
+      "quote": "For 1,000,000 EVs with 260 miles drive range",
+      "atom": "p3.F1.o3"
+    },
+    {
+      "text": ". Under it, "
+    },
+    {
+      "quote": "NMC 111",
+      "atom": "p2.L91"
+    },
+    {
+      "text": " needs about "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text,'≈([0-9]+)',1) AS DOUBLE) / CAST(regexp_extract(b.text,'≈([0-9]+)',1) AS DOUBLE) AS ratio FROM lines a, lines b WHERE a.id='p2.L93' AND b.id='p2.L96'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " times as much cobalt as "
+    },
+    {
+      "quote": "NMC 811",
+      "atom": "p2.L94"
+    },
+    {
+      "text": " or NCA. The totals are "
+    },
+    {
+      "quote": "≈2500 tons",
+      "atom": "p2.L93",
+      "of": "NMC 111"
+    },
+    {
+      "text": " of cobalt for "
+    },
+    {
+      "quote": "NMC 111",
+      "atom": "p2.L91"
+    },
+    {
+      "text": " against "
+    },
+    {
+      "quote": "≈700 tons",
+      "atom": "p2.L96",
+      "of": "NMC 811 and NCA"
+    },
+    {
+      "text": " for "
+    },
+    {
+      "quote": "NMC 811",
+      "atom": "p2.L94"
+    },
+    {
+      "text": " and NCA. The pack energy assumed is "
+    },
+    {
+      "quote": "≈76.47 kWh",
+      "atom": "p2.L85",
+      "of": "electric vehicle"
+    },
+    {
+      "text": ", and the vehicle range is "
+    },
+    {
+      "quote": "260 miles",
+      "atom": "p2.L85"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The BatPaC scenario is set up as For 1,000,000 EVs with 260 miles drive range[1]. Under it, NMC 111[2] needs about 3.6[3] times as much cobalt as NMC 811[4] or NCA. The totals are ≈2500 tons[5] of cobalt for NMC 111[6] against ≈700 tons[7] for NMC 811[8] and NCA. The pack energy assumed is ≈76.47 kWh[9], and the vehicle range is 260 miles[10].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "For 1,000,000 EVs with 260 miles drive range",
+      "source": {
+        "atom": "p3.F1.o3",
+        "kind": "ocr",
+        "page": 3,
+        "strength": "ocr",
+        "text": "a — For 1,000,000 EVs with 260 miles drive range 9",
+        "bbox": [
+          251.8,
+          103.3,
+          474.7,
+          111.2
+        ],
+        "figure": "Fig. 1",
+        "figure_png": "figures/p3.F1.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 1,
+      "rendered": "For 1,000,000 EVs with 260 miles drive range"
+    },
+    {
+      "kind": "quote",
+      "quote": "NMC 111",
+      "source": {
+        "atom": "p2.L91",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "that in such a scenario if the current mainstream, NMC 111",
+        "bbox": [
+          303.3,
+          367.9,
+          544.2,
+          376.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "NMC 111"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text,'≈([0-9]+)',1) AS DOUBLE) / CAST(regexp_extract(b.text,'≈([0-9]+)',1) AS DOUBLE) AS ratio FROM lines a, lines b WHERE a.id='p2.L93' AND b.id='p2.L96'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 3.5714285714285716,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p2.L93",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "cobalt required would be ≈2500 tons. Even the next-generation",
+          "bbox": [
+            303.3,
+            389.9,
+            544.3,
+            399.2
+          ]
+        },
+        {
+          "atom": "p2.L96",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "still require ≈700 tons of cobalt to realize this scenario. These",
+          "bbox": [
+            303.3,
+            422.9,
+            544.3,
+            432.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "3.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "NMC 811",
+      "source": {
+        "atom": "p2.L94",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cathodes, such as NMC 811 and NCA which are poised for a",
+        "bbox": [
+          303.3,
+          400.9,
+          544.2,
+          409.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "NMC 811"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈2500 tons",
+      "source": {
+        "atom": "p2.L93",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cobalt required would be ≈2500 tons. Even the next-generation",
+        "bbox": [
+          303.3,
+          389.9,
+          544.3,
+          399.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NMC 111",
+      "n": 5,
+      "rendered": "≈2500 tons"
+    },
+    {
+      "kind": "quote",
+      "quote": "NMC 111",
+      "source": {
+        "atom": "p2.L91",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "that in such a scenario if the current mainstream, NMC 111",
+        "bbox": [
+          303.3,
+          367.9,
+          544.2,
+          376.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "NMC 111"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈700 tons",
+      "source": {
+        "atom": "p2.L96",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "still require ≈700 tons of cobalt to realize this scenario. These",
+        "bbox": [
+          303.3,
+          422.9,
+          544.3,
+          432.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NMC 811 and NCA",
+      "n": 7,
+      "rendered": "≈700 tons"
+    },
+    {
+      "kind": "quote",
+      "quote": "NMC 811",
+      "source": {
+        "atom": "p2.L94",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cathodes, such as NMC 811 and NCA which are poised for a",
+        "bbox": [
+          303.3,
+          400.9,
+          544.2,
+          409.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "NMC 811"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈76.47 kWh",
+      "source": {
+        "atom": "p2.L85",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "of 260 miles (battery pack energy ≈76.47 kWh) using the NCM",
+        "bbox": [
+          303.3,
+          301.9,
+          544.2,
+          311.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "electric vehicle",
+      "n": 9,
+      "rendered": "≈76.47 kWh"
+    },
+    {
+      "kind": "quote",
+      "quote": "260 miles",
+      "source": {
+        "atom": "p2.L85",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "of 260 miles (battery pack energy ≈76.47 kWh) using the NCM",
+        "bbox": [
+          303.3,
+          301.9,
+          544.2,
+          311.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "260 miles"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T08:55:40+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "adma-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "~2500 vs ~700 tons (p2.L93-96): 3.6 times; 260 miles, pack ~76.47 kWh, about 1,000,000 EVs (p2.L84-88)",
+  "trap": ""
+}

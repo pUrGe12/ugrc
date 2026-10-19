@@ -1,0 +1,430 @@
+{
+  "question": "What capacity retention did NFA 811 show after 100 cycles at C/3?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE (page IN (10,11) AND (text ILIKE '%811%' OR text ILIKE '%C/3%' OR text ILIKE '%retention%' OR text ILIKE '%100 cycles%' OR text ILIKE '%cycl%')) ORDER BY page, line_no",
+      "rows": 18
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, fact_no, statement, value, unit, condition FROM figure_facts WHERE figure_id IN ('p10.F7','p11.F8') ORDER BY figure_id, fact_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=10 AND line_no BETWEEN 44 AND 52 OR (page=11 AND line_no BETWEEN 1 AND 5) ORDER BY page, line_no",
+      "rows": 14
+    },
+    {
+      "turn": 2,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p10.F7"
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "NFA 811",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['100', '3', '4.5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p1.L70): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p1.L70\"} — never shorten it",
+          "'3' is written exactly so in the document (e.g. p2.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p2.L23\"} — never shorten it",
+          "'4.5' is written exactly so in the document (e.g. p2.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.5\", \"atom\": \"p2.L23\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['811', '80%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "'80%' is written exactly so in the document (e.g. p2.L120): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"80%\", \"atom\": \"p2.L120\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['80%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'80%' is written exactly so in the document (e.g. p2.L120): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"80%\", \"atom\": \"p2.L120\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[13]",
+        "why": "'80%' occurs in p10.L49 only as part of a longer word or number (its text: 'The NFA-A variant with 15% Al maintained ≈80% capacity after')",
+        "moves": [
+          "the quote is verbatim in 2 places (p2.L120, p8.L23): set \"atom\" to the one you mean"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "≈70%",
+      "atom": "p10.L50",
+      "of": "NFA 811",
+      "sentence": "p10.L49:0",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "NFA 811"
+      ],
+      "run": 3
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "e2fbab0cd6d21365933e78a120875cee9dc4ea8fd681513fdd7f999d41f5c878",
+  "leads": {
+    "sentences": [
+      "p1.L68:0",
+      "p11.L20:19",
+      "p11.L56:25",
+      "p10.L49:0",
+      "p8.L26:32",
+      "p11.L52:22"
+    ],
+    "measures": [
+      "p1.L68:0#46",
+      "p1.L68:0#129",
+      "p1.L68:0#159",
+      "p11.L20:19#97",
+      "p11.L20:19#143",
+      "p11.L20:19#155",
+      "p11.L20:19#212",
+      "p11.L56:25#170",
+      "p11.L56:25#200",
+      "p10.L49:0#23",
+      "p10.L49:0#41",
+      "p10.L49:0#61",
+      "p10.L49:0#104",
+      "p10.L49:0#120",
+      "p10.L49:0#129",
+      "p10.L49:0#135",
+      "p10.L49:0#140",
+      "p8.L26:32#92",
+      "p8.L26:32#122",
+      "p8.L26:32#128",
+      "p8.L26:32#181",
+      "p8.L26:32#207",
+      "p8.L26:32#213",
+      "p8.L26:32#222",
+      "p11.L52:22#92",
+      "p11.L52:22#225"
+    ],
+    "matched": 108
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2486,
+    "cache_read_input_tokens": 54864,
+    "cache_creation_input_tokens": 5944
+  },
+  "runs": [
+    {
+      "text": "Answer: NFA "
+    },
+    {
+      "quote": "811",
+      "atom": "p10.L50"
+    },
+    {
+      "text": " retained "
+    },
+    {
+      "measure": "p10.L49:0#104",
+      "of": "NFA 811"
+    },
+    {
+      "text": " capacity after "
+    },
+    {
+      "quote": "100 cycles",
+      "atom": "p10.L50"
+    },
+    {
+      "text": ". This was galvanostatic cycling at "
+    },
+    {
+      "quote": "C/3",
+      "atom": "p10.L48"
+    },
+    {
+      "text": " between "
+    },
+    {
+      "quote": "3 and 4.5 V",
+      "atom": "p10.L48"
+    },
+    {
+      "text": " ("
+    },
+    {
+      "figure": "p10.F7"
+    },
+    {
+      "text": " panel B). The NFA-A variant is reported separately at about "
+    },
+    {
+      "quote": "≈80%",
+      "atom": "p10.L49"
+    },
+    {
+      "text": " under the same conditions."
+    }
+  ],
+  "rendered": "Answer: NFA 811[1] retained ≈70%[2] capacity after 100 cycles[3]. This was galvanostatic cycling at C/3[4] between 3 and 4.5 V[5] (Fig. 7[6] panel B). The NFA-A variant is reported separately at about ≈80%[7] under the same conditions.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "811",
+      "source": {
+        "atom": "p10.L50",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "100 cycles when compared with the NFA 811 (≈70%) and NFA-F",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          322.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "811"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈70%",
+      "source": {
+        "atom": "p10.L50",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "100 cycles when compared with the NFA 811 (≈70%) and NFA-F",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          322.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p10.L49:0#104",
+      "reading": {
+        "role": "result",
+        "role_p": 0.87,
+        "property": "share",
+        "property_p": 0.96,
+        "about": [
+          "NFA 811"
+        ],
+        "method": [],
+        "quantity": [
+          "capacity"
+        ],
+        "sentence": "p10.L49:0",
+        "read_by": "judge"
+      },
+      "of": "NFA 811",
+      "n": 2,
+      "rendered": "≈70%"
+    },
+    {
+      "kind": "quote",
+      "quote": "100 cycles",
+      "source": {
+        "atom": "p10.L50",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "100 cycles when compared with the NFA 811 (≈70%) and NFA-F",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          322.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "100 cycles"
+    },
+    {
+      "kind": "quote",
+      "quote": "C/3",
+      "source": {
+        "atom": "p10.L48",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "cycling at a C/3 between 3 and 4.5 V as shown in Figure 7B.",
+        "bbox": [
+          303.3,
+          290.9,
+          544.3,
+          299.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "C/3"
+    },
+    {
+      "kind": "quote",
+      "quote": "3 and 4.5 V",
+      "source": {
+        "atom": "p10.L48",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "cycling at a C/3 between 3 and 4.5 V as shown in Figure 7B.",
+        "bbox": [
+          303.3,
+          290.9,
+          544.3,
+          299.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "3 and 4.5 V"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p10.F7",
+        "kind": "figure",
+        "label": "Fig. 7",
+        "page": 10,
+        "caption": "Figure 7. Electrochemical performance evaluation of the NFA variants. A) Rate capability and B) charge/discharge cycling.",
+        "png": "figures/p10.F7.png",
+        "png_pixels_sha256": "ec76d40c06a06f00319d481b62ac864785ee534d002abee9478ca0bac41e124f",
+        "bbox": [
+          116.2,
+          339.4,
+          476.2,
+          701.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Fig. 7"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈80%",
+      "source": {
+        "atom": "p10.L49",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "The NFA-A variant with 15% Al maintained ≈80% capacity after",
+        "bbox": [
+          303.3,
+          301.9,
+          544.2,
+          311.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "≈80%"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T07:14:22+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "adma-2020",
+  "probe": "B2",
+  "cat": "B",
+  "expect": "≈70% (NFA-A ≈80%, NFA-F ≈50%) (p10.L49-p11.L5)",
+  "trap": "NFA-A's 80%"
+}

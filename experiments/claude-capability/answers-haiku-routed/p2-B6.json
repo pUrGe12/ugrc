@@ -1,0 +1,140 @@
+{
+  "question": "What concentration range was used for the concentration-dependent identification?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%OD%' OR text ILIKE '%concentration%' ORDER BY page, line_no",
+      "rows": 84
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=6 AND id IN ('p6.L47','p6.L48','p6.L49','p6.L50','p6.L51','p6.L52','p6.L53','p6.L54','p6.L55','p6.L56') ORDER BY line_no",
+      "rows": 10
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['3.6)'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3.6' is written exactly so in the document (e.g. p6.L47): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3.6\", \"atom\": \"p6.L47\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['3', 'five'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['3'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1070,
+    "cache_read_input_tokens": 29888,
+    "cache_creation_input_tokens": 9647
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The concentration-dependent identification tested the bacteria across a concentration gradient of "
+    },
+    {
+      "quote": "OD600 =0.02–0.2",
+      "atom": "p6.L50"
+    },
+    {
+      "text": ". The figure caption for the concentration-dependent discrimination describes the same range, with the bacteria tested at several different concentrations within it."
+    }
+  ],
+  "rendered": "The concentration-dependent identification tested the bacteria across a concentration gradient of OD600 =0.02–0.2[1]. The figure caption for the concentration-dependent discrimination describes the same range, with the bacteria tested at several different concentrations within it.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "OD600 =0.02–0.2",
+      "source": {
+        "atom": "p6.L50",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "tration gradient (OD600 =0.02–0.2). In the case of P. aeruginosa, E. coli,",
+        "bbox": [
+          306.6,
+          170.1,
+          557.6,
+          180.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "OD600 =0.02–0.2"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:57:06+00:00",
+  "paper": "p2",
+  "probe": "B6",
+  "cat": "binding",
+  "expect": "OD600 = 0.02-0.2 (five concentrations)",
+  "trap": "giving CFU/mL values instead"
+}

@@ -1,0 +1,241 @@
+{
+  "question": "Which delivery system in Table 2 has a particle size of 139.83 nm, and how is its release triggered?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT t.id, t.row_no, t.col_no, t.text FROM cells t WHERE t.table_id='p6.T2' AND (t.text LIKE '%139.83%' OR t.row_no IN (SELECT row_no FROM cells WHERE table_id='p6.T2' AND text LIKE '%139.83%')) ORDER BY t.row_no, t.col_no",
+      "rows": 7
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text LIKE '%139.83%' OR text LIKE '%139%'",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 8 AND 13 ORDER BY row_no, col_no",
+      "rows": 27
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND col_no=1 ORDER BY row_no",
+      "rows": 5
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%US-EV%' OR text ILIKE '%ultrasou%' OR text ILIKE '%HMME%'",
+      "rows": 6
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p7.L108:0",
+      "p13.L82:56",
+      "p13.L121:18",
+      "p5.L83:48",
+      "p5.L39:15",
+      "p12.L126:7",
+      "p21.L7:49",
+      "p5.L53:56",
+      "p6.L25:0",
+      "p19.L103:62",
+      "p11.L17:44",
+      "p15.L22:46"
+    ],
+    "measures": [
+      "p7.L108:0#101",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p5.L83:48#71"
+    ],
+    "matched": 234
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1993,
+    "cache_read_input_tokens": 43181,
+    "cache_creation_input_tokens": 2992
+  },
+  "runs": [
+    {
+      "text": "The delivery system is the US-EV (ultrasound-engineered tumor-derived exosomes) co-delivering HMME and YTHDF1 siRNA, listed in the table under passive targeting with a particle size of "
+    },
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6"
+    },
+    {
+      "text": ". Its release is triggered by "
+    },
+    {
+      "quote": "Ultrasonic Triggering",
+      "atom": "p6.T2.r11c7"
+    },
+    {
+      "text": ", i.e. ultrasound stimulation. The prose describes the same system: the cells are stimulated with "
+    },
+    {
+      "quote": "ultrasound to stimulate tumor cells, producing ultrasound-engineered",
+      "atom": "p7.L94"
+    },
+    {
+      "text": " tumor-derived exosomes (US-EV) for the co-delivery of hematoporphyrin monomethyl ether (HMME) and YTHDF1 siRNA.",
+      "support": [
+        {
+          "atom": "p7.L95",
+          "quote": "tumor-derived exosomes (US-EV) for the co-delivery of hematoporphy-"
+        }
+      ]
+    }
+  ],
+  "rendered": "The delivery system is the US-EV (ultrasound-engineered tumor-derived exosomes) co-delivering HMME and YTHDF1 siRNA, listed in the table under passive targeting with a particle size of 139.83 nm[1]. Its release is triggered by Ultrasonic Triggering[2], i.e. ultrasound stimulation. The prose describes the same system: the cells are stimulated with ultrasound to stimulate tumor cells, producing ultrasound-engineered[3] tumor-derived exosomes (US-EV) for the co-delivery of hematoporphyrin monomethyl ether (HMME) and YTHDF1 siRNA.[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "139.83 nm",
+      "source": {
+        "atom": "p6.T2.r11c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "139.83 nm",
+        "bbox": [
+          357.9,
+          170.5,
+          388.5,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "139.83 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "Ultrasonic Triggering",
+      "source": {
+        "atom": "p6.T2.r11c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Ultrasonic Triggering",
+        "bbox": [
+          412.9,
+          170.5,
+          473.2,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 7,
+        "column_header": "Release mechanism"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Ultrasonic Triggering"
+    },
+    {
+      "kind": "quote",
+      "quote": "ultrasound to stimulate tumor cells, producing ultrasound-engineered",
+      "source": {
+        "atom": "p7.L94",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "ultrasound to stimulate tumor cells, producing ultrasound-engineered",
+        "bbox": [
+          306.6,
+          359.7,
+          557.6,
+          367.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "ultrasound to stimulate tumor cells, producing ultrasound-engineered"
+    },
+    {
+      "kind": "support",
+      "quote": "tumor-derived exosomes (US-EV) for the co-delivery of hematoporphy-",
+      "source": {
+        "atom": "p7.L95",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "tumor-derived exosomes (US-EV) for the co-delivery of hematoporphy-",
+        "bbox": [
+          306.6,
+          370.2,
+          557.7,
+          378.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "tumor-derived exosomes (US-EV) for the co-delivery of hematoporphy-"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-18T07:15:19+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "US-EV (HMME siYTHDF1, target YTHDF1): Ultrasonic Triggering, with Proton Sponge Effect (p6.T2 r11-12)",
+  "trap": "a neighbouring EV row"
+}

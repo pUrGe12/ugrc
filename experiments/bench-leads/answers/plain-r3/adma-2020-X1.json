@@ -1,0 +1,371 @@
+{
+  "question": "In the BatPaC scenario, how much cobalt would NMC 111 and NMC 811/NCA require, and how much would NFA?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE text ILIKE '%batpac%' OR text ILIKE '%cobalt%' ORDER BY page, id",
+      "rows": 68
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F1"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text FROM lines WHERE page=2 AND line_no BETWEEN 76 AND 100 ORDER BY line_no",
+      "rows": 25
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, reader FROM figure_ocr WHERE figure_id='p3.F1' ORDER BY line_no",
+      "rows": 29
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text FROM lines WHERE page=2 AND line_no BETWEEN 100 AND 106 ORDER BY line_no",
+      "rows": 7
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 17,
+      "pairings": [
+        {
+          "run": 7,
+          "of": "NMC 111",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1,000,000', '260-mile', '111', '(33.3%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1,000,000' is written exactly so in the document (e.g. p3.F1.o3): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1,000,000\", \"atom\": \"p3.F1.o3\"} — never shorten it",
+          "'111' is written exactly so in the document (e.g. p2.L86): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"111\", \"atom\": \"p2.L86\"} — never shorten it",
+          "'33.3%' is written exactly so in the document (e.g. p2.L92): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"33.3%\", \"atom\": \"p2.L92\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1B'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1B' is written exactly so in the document (e.g. p2.L83): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1B\", \"atom\": \"p2.L83\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "≈2500 tons",
+      "atom": "p2.L93",
+      "of": "NMC 111",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2397,
+    "cache_read_input_tokens": 40260,
+    "cache_creation_input_tokens": 9375
+  },
+  "runs": [
+    {
+      "text": "In the BatPaC scenario ("
+    },
+    {
+      "quote": "For 1,000,000 EVs with 260 miles drive range",
+      "atom": "p3.F1.o3"
+    },
+    {
+      "text": "), the text gives these cobalt requirements. The mainstream NMC "
+    },
+    {
+      "quote": "111",
+      "atom": "p2.L86"
+    },
+    {
+      "text": " cathode ("
+    },
+    {
+      "quote": "33.3%",
+      "atom": "p2.L92"
+    },
+    {
+      "text": " Co) would need "
+    },
+    {
+      "quote": "≈2500 tons",
+      "atom": "p2.L93",
+      "of": "NMC 111"
+    },
+    {
+      "text": " of cobalt. The next-generation cathodes, NMC "
+    },
+    {
+      "quote": "811",
+      "atom": "p2.L94"
+    },
+    {
+      "text": " and NCA, would "
+    },
+    {
+      "quote": "still require ≈700 tons of cobalt",
+      "atom": "p2.L96"
+    },
+    {
+      "text": " to realize this scenario. For NFA, the document says that "
+    },
+    {
+      "quote": "no cobalt would be required",
+      "atom": "p2.L104"
+    },
+    {
+      "text": ", and the NFA bar in "
+    },
+    {
+      "figure": "p3.F1"
+    },
+    {
+      "text": " shows no cobalt segment."
+    }
+  ],
+  "rendered": "In the BatPaC scenario (For 1,000,000 EVs with 260 miles drive range[1]), the text gives these cobalt requirements. The mainstream NMC 111[2] cathode (33.3%[3] Co) would need ≈2500 tons[4] of cobalt. The next-generation cathodes, NMC 811[5] and NCA, would still require ≈700 tons of cobalt[6] to realize this scenario. For NFA, the document says that no cobalt would be required[7], and the NFA bar in Fig. 1[8] shows no cobalt segment.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "For 1,000,000 EVs with 260 miles drive range",
+      "source": {
+        "atom": "p3.F1.o3",
+        "kind": "ocr",
+        "page": 3,
+        "strength": "ocr",
+        "text": "a — For 1,000,000 EVs with 260 miles drive range 9",
+        "bbox": [
+          251.8,
+          103.3,
+          474.7,
+          111.2
+        ],
+        "figure": "Fig. 1",
+        "figure_png": "figures/p3.F1.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 1,
+      "rendered": "For 1,000,000 EVs with 260 miles drive range"
+    },
+    {
+      "kind": "quote",
+      "quote": "111",
+      "source": {
+        "atom": "p2.L86",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(111, 532, 622, 811), NCA, and NFA classes of cathodes was con-",
+        "bbox": [
+          303.3,
+          312.9,
+          544.2,
+          321.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "111"
+    },
+    {
+      "kind": "quote",
+      "quote": "33.3%",
+      "source": {
+        "atom": "p2.L92",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(33.3% Co), was the cathode of choice, then the total amount of",
+        "bbox": [
+          303.3,
+          378.9,
+          544.2,
+          387.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "33.3%"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈2500 tons",
+      "source": {
+        "atom": "p2.L93",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cobalt required would be ≈2500 tons. Even the next-generation",
+        "bbox": [
+          303.3,
+          389.9,
+          544.3,
+          399.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NMC 111",
+      "n": 4,
+      "rendered": "≈2500 tons"
+    },
+    {
+      "kind": "quote",
+      "quote": "811",
+      "source": {
+        "atom": "p2.L94",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cathodes, such as NMC 811 and NCA which are poised for a",
+        "bbox": [
+          303.3,
+          400.9,
+          544.2,
+          409.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "811"
+    },
+    {
+      "kind": "quote",
+      "quote": "still require ≈700 tons of cobalt",
+      "source": {
+        "atom": "p2.L96",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "still require ≈700 tons of cobalt to realize this scenario. These",
+        "bbox": [
+          303.3,
+          422.9,
+          544.3,
+          432.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "still require ≈700 tons of cobalt"
+    },
+    {
+      "kind": "quote",
+      "quote": "no cobalt would be required",
+      "source": {
+        "atom": "p2.L104",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "gies, no cobalt would be required. These comparisons categori-",
+        "bbox": [
+          303.3,
+          510.8,
+          544.2,
+          519.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "no cobalt would be required"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p3.F1",
+        "kind": "figure",
+        "label": "Fig. 1",
+        "page": 3,
+        "caption": "Figure 1. A) Schematic representation of a cobalt-free battery with NFA cathode; B) results of the BatPaC model showing the cobalt content in cathode materials compared with NFA; C) optical and SEM images of the synthesized NFA cathode variants-precursors and final cathode materials (LiNi0.8FexAl1 − xO2); and D) energy-dispersive spectra and the determined elemental compositions.",
+        "png": "figures/p3.F1.png",
+        "png_pixels_sha256": "a6a1cf2a31dac6fdde30e9b99b0cec5b6a0ea22c4c8eb730e9adfec356ddcbf5",
+        "bbox": [
+          119.1,
+          70.9,
+          479.1,
+          521.0
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Fig. 1"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T07:12:22+00:00",
+  "arm": "plain",
+  "run": 3,
+  "paper": "adma-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "≈2500 tons (NMC 111), ≈700 tons (NMC 811 and NCA), none for NFA (1,000,000 EVs, 260 miles) (p2.L84-104)",
+  "trap": "the 215 million EV projection"
+}

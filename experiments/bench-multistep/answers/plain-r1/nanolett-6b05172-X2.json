@@ -1,0 +1,354 @@
+{
+  "question": "What capacity per gram of sulfur did the cathode deliver at cycle 1500 at 1C, and what share is that of the reversible capacity it showed at 1C in the rate test?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE kind IN ('line','cell') AND (text ILIKE '%1500%' OR text ILIKE '%1C%' OR text ILIKE '%mAh%' OR text ILIKE '%cycle%') ORDER BY page, id",
+      "rows": 26
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, left(text, 300) AS t, strength FROM atoms WHERE page IN (3,4,5) AND kind='line' ORDER BY page, id",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=5 AND line_no BETWEEN 55 AND 110 ORDER BY line_no",
+      "rows": 56
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 306.0/370.0*100 AS share_pct",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "sql:literal",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1500', '1C,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1500' is written exactly so in the document (e.g. p1.L13): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1500\", \"atom\": \"p1.L13\"} — never shorten it",
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1C.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[7]",
+        "why": "the number 306.0 is written into the value 'ROUND(306.0 / 370.0 * 100, 1) AS share_pct' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['1C', '(306', '370).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "'306' is written exactly so in the document (e.g. p5.L103): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"306\", \"atom\": \"p5.L103\"} — never shorten it",
+          "'370' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"370\", \"atom\": \"p1.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2759,
+    "cache_read_input_tokens": 39869,
+    "cache_creation_input_tokens": 14427
+  },
+  "runs": [
+    {
+      "text": "Durability at the high rate: at cycle "
+    },
+    {
+      "quote": "1500",
+      "atom": "p5.L104"
+    },
+    {
+      "text": " the cathode, cycled at "
+    },
+    {
+      "quote": "1C",
+      "atom": "p1.L12"
+    },
+    {
+      "text": ", delivered "
+    },
+    {
+      "quote": "306 mAh/gS",
+      "atom": "p5.L103"
+    },
+    {
+      "text": " (per gram of sulfur). The rate test at "
+    },
+    {
+      "quote": "1C",
+      "atom": "p5.L87"
+    },
+    {
+      "text": " showed a reversible capacity of "
+    },
+    {
+      "quote": "370 mAh/gS",
+      "atom": "p5.L87"
+    },
+    {
+      "text": ". The cycle-"
+    },
+    {
+      "quote": "1500",
+      "atom": "p5.L104"
+    },
+    {
+      "text": " capacity is therefore "
+    },
+    {
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+) mAh/', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '([0-9]+) mAh/gS', 1) AS DOUBLE) * 100, 1) AS share_pct FROM atoms a, atoms b WHERE a.id = 'p5.L103' AND b.id = 'p5.L87'",
+      "column": "share_pct",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " percent of that rate-test reversible capacity."
+    }
+  ],
+  "rendered": "Durability at the high rate: at cycle 1500[1] the cathode, cycled at 1C[2], delivered 306 mAh/gS[3] (per gram of sulfur). The rate test at 1C[4] showed a reversible capacity of 370 mAh/gS[5]. The cycle-1500[6] capacity is therefore 82.7[7] percent of that rate-test reversible capacity.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1500",
+      "source": {
+        "atom": "p5.L104",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "gS delivered at cycle 1500. With respect to the entire mass of",
+        "bbox": [
+          324.5,
+          510.3,
+          564.4,
+          521.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1500"
+    },
+    {
+      "kind": "quote",
+      "quote": "1C",
+      "source": {
+        "atom": "p1.L12",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "times higher rates of 1C. Cycling at 1C rates reveals retention of over 300 mAh/gS",
+        "bbox": [
+          69.4,
+          286.3,
+          379.7,
+          297.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "306 mAh/gS",
+      "source": {
+        "atom": "p5.L103",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "initial decay exhibited extremely stable capacity with 306 mAh/ gS delivered at cycle 1500. With respect to the entire mass of",
+        "bbox": [
+          324.5,
+          499.2,
+          564.4,
+          521.4
+        ],
+        "atoms": [
+          "p5.L103",
+          "p5.L104"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "306 mAh/gS"
+    },
+    {
+      "kind": "quote",
+      "quote": "1C",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "370 mAh/gS",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "370 mAh/gS"
+    },
+    {
+      "kind": "quote",
+      "quote": "1500",
+      "source": {
+        "atom": "p5.L104",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "gS delivered at cycle 1500. With respect to the entire mass of",
+        "bbox": [
+          324.5,
+          510.3,
+          564.4,
+          521.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "1500"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+) mAh/', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '([0-9]+) mAh/gS', 1) AS DOUBLE) * 100, 1) AS share_pct FROM atoms a, atoms b WHERE a.id = 'p5.L103' AND b.id = 'p5.L87'",
+      "column": "share_pct",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 82.7,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L103",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "initial decay exhibited extremely stable capacity with 306 mAh/",
+          "bbox": [
+            324.5,
+            499.2,
+            564.4,
+            509.2
+          ]
+        },
+        {
+          "atom": "p5.L87",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+          "bbox": [
+            324.5,
+            322.5,
+            564.5,
+            333.6
+          ]
+        }
+      ],
+      "n": 7,
+      "rendered": "82.7"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-18T08:45:00+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "nanolett-6b05172",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "306 mAh/gS at cycle 1500 (p5.L103-104); 370 mAh/gS at 1C (p5.L87): 82.7%",
+  "trap": ""
+}

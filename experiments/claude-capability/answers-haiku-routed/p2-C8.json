@@ -1,0 +1,182 @@
+{
+  "question": "Which grants funded the work?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%grant%' OR text ILIKE '%fund%' OR text ILIKE '%acknowledg%' OR text ILIKE '%foundation%' OR text ILIKE '%project%' OR text ILIKE '%No.%' ORDER BY page, line_no",
+      "rows": 11
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=8 AND line_no BETWEEN 18 AND 40 ORDER BY line_no",
+      "rows": 23
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "quote:absent"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[3]",
+        "why": "p8.L29 does not contain 'Natural Science Foundation of Chongqing Municipality (CSTB2024NSCQ-MSX0430)'; its text is 'Natural Science Foundation of China (No. 22174115), the Natural Sci-'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2047,
+    "cache_read_input_tokens": 15155,
+    "cache_creation_input_tokens": 7414
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "The Acknowledgements say the work received financial support from the following grants: the "
+    },
+    {
+      "quote": "National Natural Science Foundation of China (No. 22174115)",
+      "atom": "p8.L28"
+    },
+    {
+      "text": ", the "
+    },
+    {
+      "quote": "Natural Sci-ence Foundation of Chongqing Municipality (CSTB2024NSCQ-MSX0430)",
+      "atom": "p8.L29"
+    },
+    {
+      "text": ", and the "
+    },
+    {
+      "quote": "Chongqing Public Health Key Specialty (Discipline) Project (2025ZDSYS008)",
+      "atom": "p8.L31"
+    },
+    {
+      "text": ". The author contribution statement also lists Jian Wang as responsible for funding acquisition.\n"
+    }
+  ],
+  "rendered": "The Acknowledgements say the work received financial support from the following grants: the National Natural Science Foundation of China (No. 22174115)[1], the Natural Sci-ence Foundation of Chongqing Municipality (CSTB2024NSCQ-MSX0430)[2], and the Chongqing Public Health Key Specialty (Discipline) Project (2025ZDSYS008)[3]. The author contribution statement also lists Jian Wang as responsible for funding acquisition.\n",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "National Natural Science Foundation of China (No. 22174115)",
+      "source": {
+        "atom": "p8.L28",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "It is highly appreciated the financial supported from the National Natural Science Foundation of China (No. 22174115), the Natural Sci-",
+        "bbox": [
+          37.6,
+          569.9,
+          288.7,
+          588.3
+        ],
+        "atoms": [
+          "p8.L28",
+          "p8.L29"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "National Natural Science Foundation of China (No. 22174115)"
+    },
+    {
+      "kind": "quote",
+      "quote": "Natural Sci-ence Foundation of Chongqing Municipality (CSTB2024NSCQ-MSX0430)",
+      "source": {
+        "atom": "p8.L29",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "Natural Science Foundation of China (No. 22174115), the Natural Sci- ence Foundation of Chongqing Municipality (CSTB2024NSCQ- MSX0430), as well as the Chongqing Public Health Key Specialty",
+        "bbox": [
+          37.6,
+          580.3,
+          288.7,
+          609.2
+        ],
+        "atoms": [
+          "p8.L29",
+          "p8.L30",
+          "p8.L31"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Natural Sci-ence Foundation of Chongqing Municipality (CSTB2024NSCQ-MSX0430)"
+    },
+    {
+      "kind": "quote",
+      "quote": "Chongqing Public Health Key Specialty (Discipline) Project (2025ZDSYS008)",
+      "source": {
+        "atom": "p8.L31",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "MSX0430), as well as the Chongqing Public Health Key Specialty (Discipline) Project (2025ZDSYS008).",
+        "bbox": [
+          37.6,
+          601.2,
+          288.6,
+          619.7
+        ],
+        "atoms": [
+          "p8.L31",
+          "p8.L32"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Chongqing Public Health Key Specialty (Discipline) Project (2025ZDSYS008)"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T11:56:59+00:00",
+  "paper": "p2",
+  "probe": "C8",
+  "cat": "control",
+  "expect": "NSFC No. 22174115; Natural Science Foundation of Chongqing CSTB2024NSCQ-MSX0430; Chongqing Public Health Key Specialty 2025ZDSYS008",
+  "trap": "invented grant numbers"
+}

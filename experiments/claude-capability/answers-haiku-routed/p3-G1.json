@@ -1,0 +1,247 @@
+{
+  "question": "According to Fig. 2, what is the mean genome GC content, and what is the correlation between coding and intergenic GC?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, statement, printed_text, value, unit, panel, check_note FROM figure_facts WHERE figure_id='p4.F2' AND (statement ILIKE '%GC%' OR statement ILIKE '%correlat%' OR statement ILIKE '%mean%' OR printed_text ILIKE '%GC%' OR printed_text ILIKE '%r =%' OR printed_text ILIKE '%r=%')",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, text, conf FROM atoms WHERE kind LIKE '%ocr%' AND id LIKE 'p4.F2.o%' AND (text ILIKE '%GC%' OR text ILIKE '%mean%' OR text ILIKE '%r =%' OR text ILIKE '%r=%' OR text ILIKE '%coding%' OR text ILIKE '%intergenic%' OR text ILIKE '%0.%')",
+      "rows": null
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE text ILIKE '%59.74%' OR text ILIKE '%r = 0.57%' OR text ILIKE '%0.57%' OR text ILIKE '%μ%'",
+      "rows": 5
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE id LIKE 'p4.F2.o%' AND (text ILIKE '%r =%' OR text ILIKE '%r=%' OR text ILIKE '%p <%' OR text ILIKE '%0.5%' OR text ILIKE '%GC%' OR text ILIKE 'r %')",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['0.001,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'0.001' is written exactly so in the document (e.g. p4.F2.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.001\", \"atom\": \"p4.F2.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "pairings": [],
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1851,
+    "cache_read_input_tokens": 43795,
+    "cache_creation_input_tokens": 14447
+  },
+  "clause_base": true,
+  "runs": [
+    {
+      "text": "According to "
+    },
+    {
+      "figure": "p4.F2"
+    },
+    {
+      "text": ", panel C annotates the mean genome GC content as "
+    },
+    {
+      "quote": "μ = 59.74%",
+      "atom": "p4.F2.k28"
+    },
+    {
+      "text": ". In panel D, the correlation between intergenic GC and coding GC is reported as "
+    },
+    {
+      "quote": "r = 0.57",
+      "atom": "p4.F2.k34"
+    },
+    {
+      "text": ", and it is marked as statistically significant ("
+    },
+    {
+      "quote": "p < 0.001",
+      "atom": "p4.F2.k35"
+    },
+    {
+      "text": "). The regression line slopes upward, so coding GC rises with intergenic GC.\n"
+    }
+  ],
+  "rendered": "According to Fig. 2[1], panel C annotates the mean genome GC content as μ = 59.74%[2]. In panel D, the correlation between intergenic GC and coding GC is reported as r = 0.57[3], and it is marked as statistically significant (p < 0.001[4]). The regression line slopes upward, so coding GC rises with intergenic GC.\n",
+  "citations": [
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 4,
+        "caption": "Fig. 2. Phenotypic characteristics and genomic diversity of S. marcescens. (A) Temperature-dependent prodigiosin pigmentation phenotype; (B) distribution of the prodigiosin biosynthetic gene cluster among different biogroups; (C–D) GC content and genomic compositional characteristics; (E) pangenome composition and genomic variability; and (F) predicted host range of plasmids identified in S. marcescens. The figure summarizes the multi-level diversity of S. marcescens in phenotype, genome composition, and genetic plasticity.",
+        "png": "figures/p4.F2.png",
+        "png_pixels_sha256": "8a000d2d972950a8032607386008466f7b9764e60876ac82914e195544141e4a",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Fig. 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "μ = 59.74%",
+      "source": {
+        "atom": "p4.F2.k28",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel C, the mean genome GC content is annotated as μ = 59.74%.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "μ = 59.74%"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'μ = 59.74%'"
+      },
+      "strength": "model-read",
+      "n": 2,
+      "rendered": "μ = 59.74%"
+    },
+    {
+      "kind": "quote",
+      "quote": "r = 0.57",
+      "source": {
+        "atom": "p4.F2.k34",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel D, the correlation between intergenic GC and coding GC is reported as r = 0.57.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "r = 0.57"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'r = 0.57'"
+      },
+      "strength": "model-read",
+      "n": 3,
+      "rendered": "r = 0.57"
+    },
+    {
+      "kind": "quote",
+      "quote": "p < 0.001",
+      "source": {
+        "atom": "p4.F2.k35",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel D, the correlation is reported as statistically significant with p < 0.001.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "p < 0.001"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'p < 0.001'"
+      },
+      "strength": "model-read",
+      "n": 4,
+      "rendered": "p < 0.001"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T11:58:57+00:00",
+  "paper": "p3",
+  "probe": "G1",
+  "cat": "figure",
+  "expect": "mean mu = 59.74% (Fig. 2C); r = 0.57, p < 0.001 (Fig. 2D). Figure-only: the text says only '~59% GC'.",
+  "trap": "giving the text's ~59% as the mean, or inventing a correlation"
+}

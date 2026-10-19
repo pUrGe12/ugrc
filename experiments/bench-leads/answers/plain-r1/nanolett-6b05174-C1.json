@@ -1,0 +1,199 @@
+{
+  "question": "What voltage hysteresis did the carbon/Al electrode show at 4 mA/cm^2?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%hysteresis%' OR lower(text) LIKE '%4 mA%' OR lower(text) LIKE '%mV%' ORDER BY page, top",
+      "rows": 9
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit, condition, panel FROM figure_facts WHERE lower(statement) LIKE '%hysteresis%' OR lower(statement) LIKE '%4 mA%' OR lower(statement) LIKE '%mv%' OR lower(coalesce(condition,'')) LIKE '%4 mA%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page=3 AND kind IN ('line','L') OR (page=3 AND id LIKE 'p3.L%') ORDER BY top",
+      "rows": 57
+    },
+    {
+      "turn": 2,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F2"
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "carbon/Al electrode",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2a).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2a' is written exactly so in the document (e.g. p3.L16): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2a\", \"atom\": \"p3.L16\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "45 mV",
+      "atom": "p3.L17",
+      "of": "carbon/Al electrode",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1586,
+    "cache_read_input_tokens": 14641,
+    "cache_creation_input_tokens": 8592
+  },
+  "runs": [
+    {
+      "text": "The carbon/Al electrode showed a voltage hysteresis of "
+    },
+    {
+      "quote": "45 mV",
+      "atom": "p3.L17",
+      "of": "carbon/Al electrode"
+    },
+    {
+      "text": " hysteresis at "
+    },
+    {
+      "quote": "4 mA/cm^2",
+      "atom": "p3.L18"
+    },
+    {
+      "text": ", as stated in the text describing the current-rate tests (Figure "
+    },
+    {
+      "quote": "2a",
+      "atom": "p3.L16"
+    },
+    {
+      "text": "). For comparison, the same passage says that bare Al electrodes were prone to failure at these currents.\n"
+    }
+  ],
+  "rendered": "The carbon/Al electrode showed a voltage hysteresis of 45 mV[1] hysteresis at 4 mA/cm^2[2], as stated in the text describing the current-rate tests (Figure 2a[3]). For comparison, the same passage says that bare Al electrodes were prone to failure at these currents.\n",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "45 mV",
+      "source": {
+        "atom": "p3.L17",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "voltage hysteresis even at high currents, with a 45 mV hysteresis",
+        "bbox": [
+          60.5,
+          686.1,
+          300.4,
+          696.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "carbon/Al electrode",
+      "n": 1,
+      "rendered": "45 mV"
+    },
+    {
+      "kind": "quote",
+      "quote": "4 mA/cm^2",
+      "source": {
+        "atom": "p3.L18",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "at 4 mA/cm^2. In contrast, bare Al electrodes were prone to",
+        "bbox": [
+          60.5,
+          695.9,
+          300.5,
+          707.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "4 mA/cm^2"
+    },
+    {
+      "kind": "quote",
+      "quote": "2a",
+      "source": {
+        "atom": "p3.L16",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "shown in Figure 2a, the carbon nucleation layer enables a low",
+        "bbox": [
+          60.5,
+          674.9,
+          300.5,
+          684.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "2a"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-18T07:03:30+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "nanolett-6b05174",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "45 mV (p3.L16-18)",
+  "trap": "the 14 mV long-term average"
+}

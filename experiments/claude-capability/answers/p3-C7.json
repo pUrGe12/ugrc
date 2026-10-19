@@ -1,0 +1,412 @@
+{
+  "question": "How many S. marcescens strains does the ATCC hold, and how are they split between biosafety levels?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%atcc%' LIMIT 50",
+      "rows": 4
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%biosafety%' OR lower(text) LIKE '%BSL%' LIMIT 50",
+      "rows": 20
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, line_no, text FROM lines WHERE page=12 AND line_no BETWEEN 5 AND 30",
+      "rows": 26
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract((SELECT text FROM lines WHERE id='p12.L11'), '([0-9]+) S\\. marcescens', 1) AS INT) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p12.L12'), '([0-9]+) strains', 1) AS INT) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p12.L17'), 'Only ([0-9]+) strains', 1) AS INT) AS remainder",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:number",
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT SUM(CASE WHEN id='p12.L11' THEN CAST(regexp_extract(text,'([0-9]+) S\\. marcescens',1) AS INT) WHEN id='p12.L12' THEN -CAST(regexp_extract(text,'([0-9]+) strains',1) AS INT) WHEN id='p12.L17' THEN -CAST(regexp_extract(text,'Only ([0-9]+) strains',1) AS INT) END) AS remainder FROM lines WHERE id IN ('p12.L11','p12.L12','p12.L17')",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 8
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[5]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[6]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2903,
+    "cache_read_input_tokens": 30711,
+    "cache_creation_input_tokens": 8285
+  },
+  "runs": [
+    {
+      "text": "The review cites the American Type Culture Collection holdings when arguing that biosafety risk is strain-specific rather than species-wide:",
+      "support": [
+        {
+          "atom": "p12.L4",
+          "quote": "biosafety should not be assessed solely on the basis of species-"
+        }
+      ]
+    },
+    {
+      "quote": "the 235 S. marcescens strains available from the American Type Culture Collection (ATCC), 208 strains (88.5%) are designated as Biosafety Level 1 (BSL-1)",
+      "atom": "p12.L11"
+    },
+    {
+      "text": "That classification follows Biosafety in Microbiological and Biomedical Laboratories, a containment level meant for well-characterized agents not known to consistently cause disease in immunocompetent adults.",
+      "support": [
+        {
+          "atom": "p12.L13",
+          "quote": "according to Biosafety in Micro-"
+        },
+        {
+          "atom": "p12.L15",
+          "quote": "for well-characterized biological agents not known to consistently cause"
+        }
+      ]
+    },
+    {
+      "text": "The higher-containment minority is small:",
+      "support": [
+        {
+          "atom": "p12.L18",
+          "quote": "are designated as BSL-2, which is suitable for biological agents associ-"
+        }
+      ]
+    },
+    {
+      "quote": "Only 10 strains are designated as BSL-2",
+      "atom": "p12.L17"
+    },
+    {
+      "text": "The stated categories therefore leave a remainder of",
+      "support": [
+        {
+          "atom": "p12.L12",
+          "quote": "208 strains (88.5%) are"
+        }
+      ]
+    },
+    {
+      "sql": "SELECT SUM(CASE WHEN id='p12.L11' THEN CAST(regexp_extract(text,'([0-9]+) S\\. marcescens',1) AS INT) WHEN id='p12.L12' THEN -CAST(regexp_extract(text,'([0-9]+) strains',1) AS INT) WHEN id='p12.L17' THEN -CAST(regexp_extract(text,'Only ([0-9]+) strains',1) AS INT) END) AS remainder FROM lines WHERE id IN ('p12.L11','p12.L12','p12.L17')",
+      "column": "remainder",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": "strains whose assignment the text does not specify. The authors add that the species is not explicitly listed in the Risk Group classification of the NIH Guidelines, so risk should be judged from genetic background and virulence traits rather than species identity alone.",
+      "support": [
+        {
+          "atom": "p12.L22",
+          "quote": "S. marcescens is not explicitly listed in the Risk Group (RG) classification"
+        },
+        {
+          "atom": "p12.L29",
+          "quote": "basis of species identity alone, but should instead be evaluated"
+        }
+      ]
+    }
+  ],
+  "rendered": "The review cites the American Type Culture Collection holdings when arguing that biosafety risk is strain-specific rather than species-wide:[1]the 235 S. marcescens strains available from the American Type Culture Collection (ATCC), 208 strains (88.5%) are designated as Biosafety Level 1 (BSL-1)[2]That classification follows Biosafety in Microbiological and Biomedical Laboratories, a containment level meant for well-characterized agents not known to consistently cause disease in immunocompetent adults.[3][4]The higher-containment minority is small:[5]Only 10 strains are designated as BSL-2[6]The stated categories therefore leave a remainder of[7]17[8]strains whose assignment the text does not specify. The authors add that the species is not explicitly listed in the Risk Group classification of the NIH Guidelines, so risk should be judged from genetic background and virulence traits rather than species identity alone.[9][10]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "biosafety should not be assessed solely on the basis of species-",
+      "source": {
+        "atom": "p12.L4",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "chassis, biosafety should not be assessed solely on the basis of species-",
+        "bbox": [
+          37.6,
+          87.8,
+          288.6,
+          95.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "biosafety should not be assessed solely on the basis of species-"
+    },
+    {
+      "kind": "quote",
+      "quote": "the 235 S. marcescens strains available from the American Type Culture Collection (ATCC), 208 strains (88.5%) are designated as Biosafety Level 1 (BSL-1)",
+      "source": {
+        "atom": "p12.L11",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "[42,44,136]. Among the 235 S. marcescens strains available from the American Type Culture Collection (ATCC), 208 strains (88.5%) are designated as Biosafety Level 1 (BSL-1) according to Biosafety in Micro-",
+        "bbox": [
+          37.6,
+          161.0,
+          288.7,
+          189.8
+        ],
+        "atoms": [
+          "p12.L11",
+          "p12.L12",
+          "p12.L13"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "the 235 S. marcescens strains available from the American Type Culture Collection (ATCC), 208 strains (88.5%) are designated as Biosafety Level 1 (BSL-1)"
+    },
+    {
+      "kind": "support",
+      "quote": "according to Biosafety in Micro-",
+      "source": {
+        "atom": "p12.L13",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "designated as Biosafety Level 1 (BSL-1) according to Biosafety in Micro-",
+        "bbox": [
+          37.6,
+          181.9,
+          288.7,
+          189.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "according to Biosafety in Micro-"
+    },
+    {
+      "kind": "support",
+      "quote": "for well-characterized biological agents not known to consistently cause",
+      "source": {
+        "atom": "p12.L15",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "for well-characterized biological agents not known to consistently cause",
+        "bbox": [
+          37.6,
+          202.8,
+          288.7,
+          210.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "for well-characterized biological agents not known to consistently cause"
+    },
+    {
+      "kind": "support",
+      "quote": "are designated as BSL-2, which is suitable for biological agents associ-",
+      "source": {
+        "atom": "p12.L18",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "are designated as BSL-2, which is suitable for biological agents associ-",
+        "bbox": [
+          37.6,
+          234.2,
+          288.7,
+          242.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "are designated as BSL-2, which is suitable for biological agents associ-"
+    },
+    {
+      "kind": "quote",
+      "quote": "Only 10 strains are designated as BSL-2",
+      "source": {
+        "atom": "p12.L17",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "microbiological practices are generally sufficient [137]. Only 10 strains are designated as BSL-2, which is suitable for biological agents associ-",
+        "bbox": [
+          37.6,
+          223.7,
+          288.7,
+          242.2
+        ],
+        "atoms": [
+          "p12.L17",
+          "p12.L18"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Only 10 strains are designated as BSL-2"
+    },
+    {
+      "kind": "support",
+      "quote": "208 strains (88.5%) are",
+      "source": {
+        "atom": "p12.L12",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "American Type Culture Collection (ATCC), 208 strains (88.5%) are",
+        "bbox": [
+          37.6,
+          171.4,
+          288.6,
+          179.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "208 strains (88.5%) are"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT SUM(CASE WHEN id='p12.L11' THEN CAST(regexp_extract(text,'([0-9]+) S\\. marcescens',1) AS INT) WHEN id='p12.L12' THEN -CAST(regexp_extract(text,'([0-9]+) strains',1) AS INT) WHEN id='p12.L17' THEN -CAST(regexp_extract(text,'Only ([0-9]+) strains',1) AS INT) END) AS remainder FROM lines WHERE id IN ('p12.L11','p12.L12','p12.L17')",
+      "column": "remainder",
+      "row": 0,
+      "fmt": "int",
+      "value": 17,
+      "strength": "computed from verbatim",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p12.L11",
+          "kind": "line",
+          "page": 12,
+          "strength": "verbatim",
+          "text": "[42,44,136]. Among the 235 S. marcescens strains available from the",
+          "bbox": [
+            37.6,
+            161.0,
+            288.6,
+            168.9
+          ]
+        },
+        {
+          "atom": "p12.L12",
+          "kind": "line",
+          "page": 12,
+          "strength": "verbatim",
+          "text": "American Type Culture Collection (ATCC), 208 strains (88.5%) are",
+          "bbox": [
+            37.6,
+            171.4,
+            288.6,
+            179.4
+          ]
+        },
+        {
+          "atom": "p12.L17",
+          "kind": "line",
+          "page": 12,
+          "strength": "verbatim",
+          "text": "microbiological practices are generally sufficient [137]. Only 10 strains",
+          "bbox": [
+            37.6,
+            223.7,
+            288.7,
+            231.7
+          ]
+        }
+      ],
+      "n": 8,
+      "rendered": "17"
+    },
+    {
+      "kind": "support",
+      "quote": "S. marcescens is not explicitly listed in the Risk Group (RG) classification",
+      "source": {
+        "atom": "p12.L22",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "S. marcescens is not explicitly listed in the Risk Group (RG) classification",
+        "bbox": [
+          37.6,
+          276.0,
+          288.7,
+          284.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "S. marcescens is not explicitly listed in the Risk Group (RG) classification"
+    },
+    {
+      "kind": "support",
+      "quote": "basis of species identity alone, but should instead be evaluated",
+      "source": {
+        "atom": "p12.L29",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "basis of species identity alone, but should instead be evaluated",
+        "bbox": [
+          37.6,
+          349.3,
+          288.7,
+          357.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "basis of species identity alone, but should instead be evaluated"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:42:30+00:00",
+  "paper": "p3",
+  "probe": "C7",
+  "cat": "control",
+  "expect": "235 strains; 208 (88.5%) BSL-1; only 10 BSL-2 (p12.L11-17)",
+  "trap": "inventing a BSL-2 percentage the paper does not give"
+}

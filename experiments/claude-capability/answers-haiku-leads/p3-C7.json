@@ -1,0 +1,269 @@
+{
+  "question": "How many S. marcescens strains does the ATCC hold, and how are they split between biosafety levels?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 12 AND line_no BETWEEN 9 AND 20 ORDER BY line_no; ",
+      "rows": 12
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%biosafety%' OR text ILIKE '%BSL%' OR text ILIKE '%ATCC%' OR text ILIKE '%Culture Collection%'",
+      "rows": 22
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 12 AND line_no BETWEEN 17 AND 22 ORDER BY line_no; ",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit FROM measures WHERE text IN ('235','208','10','88.5%') OR sentence ILIKE '%BSL-2%'",
+      "rows": 3
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%BSL-3%' OR text ILIKE '%BSL-4%' OR text ILIKE '%Level 3%' OR text ILIKE '%Level 2%' OR text ILIKE '%remaining%strain%'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 12
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L31): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L31\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[9]",
+        "why": "your own words contain number(s) ['(235', '208', '10,', '17'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'235' is written exactly so in the document (e.g. p12.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"235\", \"atom\": \"p12.L11\"} — never shorten it",
+          "'208' is written exactly so in the document (e.g. p12.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"208\", \"atom\": \"p12.L12\"} — never shorten it",
+          "'10' is written exactly so in the document (e.g. p2.L17): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p2.L17\"} — never shorten it",
+          "'17' is written exactly so in the document (e.g. p10.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"17\", \"atom\": \"p10.L5\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "1de23c224e803ccf854cfe47619baaefd28a1ef2cfef2a6728d2953fd336d207",
+  "leads": {
+    "sentences": [
+      "p12.L11:13",
+      "p8.L79:32"
+    ],
+    "measures": [
+      "p12.L11:13#10",
+      "p12.L11:13#96",
+      "p12.L11:13#109",
+      "p12.L11:13#150",
+      "p8.L79:32#226",
+      "p8.L79:32#258"
+    ],
+    "matched": 175
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1693,
+    "cache_read_input_tokens": 28319,
+    "cache_creation_input_tokens": 8988
+  },
+  "runs": [
+    {
+      "text": "The document says the ATCC holds "
+    },
+    {
+      "quote": "235",
+      "atom": "p12.L11"
+    },
+    {
+      "text": " S. marcescens strains. Of these, "
+    },
+    {
+      "quote": "208",
+      "atom": "p12.L12"
+    },
+    {
+      "text": " ("
+    },
+    {
+      "quote": "88.5%",
+      "atom": "p12.L12"
+    },
+    {
+      "text": ") are designated as "
+    },
+    {
+      "quote": "Biosafety Level 1 (BSL-1)",
+      "atom": "p12.L13"
+    },
+    {
+      "text": ", and "
+    },
+    {
+      "quote": "Only 10 strains",
+      "atom": "p12.L17"
+    },
+    {
+      "text": " are designated as BSL-2. "
+    },
+    {
+      "text": "The document gives no BSL-3 or other level, and does not state the biosafety level of the remaining strains, so the split is only partly reported."
+    }
+  ],
+  "rendered": "The document says the ATCC holds 235[1] S. marcescens strains. Of these, 208[2] (88.5%[3]) are designated as Biosafety Level 1 (BSL-1)[4], and Only 10 strains[5] are designated as BSL-2. The document gives no BSL-3 or other level, and does not state the biosafety level of the remaining strains, so the split is only partly reported.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "235",
+      "source": {
+        "atom": "p12.L11",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "[42,44,136]. Among the 235 S. marcescens strains available from the",
+        "bbox": [
+          37.6,
+          161.0,
+          288.6,
+          168.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "235"
+    },
+    {
+      "kind": "quote",
+      "quote": "208",
+      "source": {
+        "atom": "p12.L12",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "American Type Culture Collection (ATCC), 208 strains (88.5%) are",
+        "bbox": [
+          37.6,
+          171.4,
+          288.6,
+          179.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "208"
+    },
+    {
+      "kind": "quote",
+      "quote": "88.5%",
+      "source": {
+        "atom": "p12.L12",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "American Type Culture Collection (ATCC), 208 strains (88.5%) are",
+        "bbox": [
+          37.6,
+          171.4,
+          288.6,
+          179.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "88.5%"
+    },
+    {
+      "kind": "quote",
+      "quote": "Biosafety Level 1 (BSL-1)",
+      "source": {
+        "atom": "p12.L13",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "designated as Biosafety Level 1 (BSL-1) according to Biosafety in Micro-",
+        "bbox": [
+          37.6,
+          181.9,
+          288.7,
+          189.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Biosafety Level 1 (BSL-1)"
+    },
+    {
+      "kind": "quote",
+      "quote": "Only 10 strains",
+      "source": {
+        "atom": "p12.L17",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "microbiological practices are generally sufficient [137]. Only 10 strains",
+        "bbox": [
+          37.6,
+          223.7,
+          288.7,
+          231.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Only 10 strains"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-18T06:47:21+00:00",
+  "paper": "p3",
+  "probe": "C7",
+  "cat": "control",
+  "expect": "235 strains; 208 (88.5%) BSL-1; only 10 BSL-2 (p12.L11-17)",
+  "trap": "inventing a BSL-2 percentage the paper does not give"
+}

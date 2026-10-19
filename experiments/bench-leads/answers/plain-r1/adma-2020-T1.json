@@ -1,0 +1,164 @@
+{
+  "question": "What c lattice parameter does Table 1 give for the Al-rich NFA?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 3,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, is_header FROM cells WHERE table_id='p5.T1' ORDER BY row_no, col_no",
+      "rows": 99
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "run:kind"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "Al-rich NFA",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "run:kind",
+        "where": "runs[1]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'of', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 539,
+    "cache_read_input_tokens": 9519,
+    "cache_creation_input_tokens": 6114
+  },
+  "runs": [
+    {
+      "text": "Table "
+    },
+    {
+      "table": "p5.T1"
+    },
+    {
+      "text": " gives the c lattice parameter of the Al-rich NFA as "
+    },
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA"
+    },
+    {
+      "text": " (standard error in parentheses)."
+    }
+  ],
+  "rendered": "Table Table 1[1] gives the c lattice parameter of the Al-rich NFA as 14.2232(4)[2] (standard error in parentheses).",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p5.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 5,
+        "caption": "Table 1. Structural parameters of the NFA variants determined through the Rietveld refinement using the neutron diffraction data (standard error provided in parenthesis).",
+        "bbox": [
+          51.0,
+          95.0,
+          547.6,
+          276.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "14.2232(4)",
+      "source": {
+        "atom": "p5.T1.r5c4",
+        "kind": "cell",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "14.2232(4)",
+        "bbox": [
+          253.5,
+          147.7,
+          283.1,
+          154.7
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 4,
+        "column_header": "c"
+      },
+      "strength": "verbatim",
+      "of": "Al-rich NFA",
+      "n": 2,
+      "rendered": "14.2232(4)"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T07:04:01+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "adma-2020",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "14.2232(4) (p5.T1 r5)",
+  "trap": "14.227(3) of NFA 811 or 14.23(1) of Fe-rich"
+}

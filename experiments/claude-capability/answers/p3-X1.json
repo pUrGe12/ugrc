@@ -1,0 +1,721 @@
+{
+  "question": "Do the pan-genome gene counts in Fig. 2E agree with the total stated in the text?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%pan%genome%' OR text ILIKE '%core gene%' OR text ILIKE '%accessory%' OR text ILIKE '%gene families%'",
+      "rows": 5
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=2 AND line_no BETWEEN 100 AND 116 ORDER BY line_no",
+      "rows": 17
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, value, printed_text FROM figure_facts WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43','p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47','p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "rows": 10
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT SUM(value) FILTER (WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')) AS eduardo,\nSUM(value) FILTER (WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')) AS danesh,\nSUM(value) FILTER (WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')) AS filipe,\n100.0*MAX(value) FILTER (WHERE id='p4.F2.k41')/SUM(value) FILTER (WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')) AS core_pct\nFROM figure_facts WHERE figure_id='p4.F2'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 23,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 25
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['(>95%)'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'>95%' is written exactly so in the document (e.g. p4.F2.k0): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \">95%\", \"atom\": \"p4.F2.k0\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2695,
+    "cache_read_input_tokens": 53758,
+    "cache_creation_input_tokens": 14339
+  },
+  "runs": [
+    {
+      "text": "Yes, they agree. The text says a pan-genome analysis of "
+    },
+    {
+      "quote": "45 isolates",
+      "atom": "p2.L106"
+    },
+    {
+      "text": " found "
+    },
+    {
+      "quote": "19,469 total genes, of which only 3155 (~16.2%) are core",
+      "atom": "p2.L107"
+    },
+    {
+      "text": " genes. This analysis matches the Eduardo et al. group in "
+    },
+    {
+      "figure": "p4.F2"
+    },
+    {
+      "text": "E, which shows core ("
+    },
+    {
+      "quote": ">95%",
+      "atom": "p4.F2.k0"
+    },
+    {
+      "text": ") "
+    },
+    {
+      "quote": "3155",
+      "atom": "p4.F2.k41"
+    },
+    {
+      "text": ", dispensable "
+    },
+    {
+      "quote": "7847",
+      "atom": "p4.F2.k42"
+    },
+    {
+      "text": " and unique "
+    },
+    {
+      "quote": "8467",
+      "atom": "p4.F2.k43"
+    },
+    {
+      "text": " genes. Added up, these come to "
+    },
+    {
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": ", the same as the stated total. The core genes make up "
+    },
+    {
+      "sql": "SELECT 100.0*MAX(value) FILTER (WHERE id='p4.F2.k41')/SUM(value) AS p FROM figure_facts WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "p",
+      "row": 0,
+      "fmt": "pct1"
+    },
+    {
+      "text": " of that total, which matches the percentage in the text."
+    },
+    {
+      "text": "\n\nThe other groups in the panel come from separate studies, which the text only describes as showing extensive genomic diversity. Their totals don't match the stated figure, and they aren't meant to. Danesh et al. adds up to "
+    },
+    {
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " and Filipe et al. to "
+    },
+    {
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": "."
+    },
+    {
+      "text": " The bar values come from a vision model's reading of the figure, not from printed text."
+    }
+  ],
+  "rendered": "Yes, they agree. The text says a pan-genome analysis of 45 isolates[1] found 19,469 total genes, of which only 3155 (~16.2%) are core[2] genes. This analysis matches the Eduardo et al. group in Fig. 2[3]E, which shows core (>95%[4]) 3155[5], dispensable 7847[6] and unique 8467[7] genes. Added up, these come to 19,469[8], the same as the stated total. The core genes make up 1,620.5%[9] of that total, which matches the percentage in the text.\n\nThe other groups in the panel come from separate studies, which the text only describes as showing extensive genomic diversity. Their totals don't match the stated figure, and they aren't meant to. Danesh et al. adds up to 13,587[10] and Filipe et al. to 16,456[11]. The bar values come from a vision model's reading of the figure, not from printed text.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "45 isolates",
+      "source": {
+        "atom": "p2.L106",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "plasticity (Fig. 2C, D) [42,43]. A pan-genome analysis of 45 isolates",
+        "bbox": [
+          306.6,
+          517.0,
+          557.7,
+          525.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "45 isolates"
+    },
+    {
+      "kind": "quote",
+      "quote": "19,469 total genes, of which only 3155 (~16.2%) are core",
+      "source": {
+        "atom": "p2.L107",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "revealed 19,469 total genes, of which only 3155 (~16.2%) are core",
+        "bbox": [
+          306.6,
+          527.5,
+          557.7,
+          535.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "19,469 total genes, of which only 3155 (~16.2%) are core"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 4,
+        "caption": "Fig. 2. Phenotypic characteristics and genomic diversity of S. marcescens. (A) Temperature-dependent prodigiosin pigmentation phenotype; (B) distribution of the prodigiosin biosynthetic gene cluster among different biogroups; (C–D) GC content and genomic compositional characteristics; (E) pangenome composition and genomic variability; and (F) predicted host range of plasmids identified in S. marcescens. The figure summarizes the multi-level diversity of S. marcescens in phenotype, genome composition, and genetic plasticity.",
+        "png": "figures/p4.F2.png",
+        "png_pixels_sha256": "8a000d2d972950a8032607386008466f7b9764e60876ac82914e195544141e4a",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Fig. 2"
+    },
+    {
+      "kind": "quote",
+      "quote": ">95%",
+      "source": {
+        "atom": "p4.F2.k0",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "Fig. 2 is a composite six-panel figure describing Serratia marcescens phenotype and genomics, organized under two headers: a purple 'Pigmented phenotype' banner covering panels A and B, and a dark blue 'Genomic features' banner covering panels C–F. (A) A schematic with a thermometer and colour gradient bar (Low to High) shows a deeply pigmented agar plate with colonies at 25–28 °C versus a pale/nonpigmented plate at ≥37 °C. (B) A table combining the classification of David et al. 2022 (phylogeny, biotype, phenotype) with the percentage of isolates from each habitat (Grimont et al. 2006) for water (107 isolates), plants and rodents (37 isolates), and hospital patients (1066 isolates); L15 biotypes A1 and A2/6 are pigmented (red text), while L13/A3, L14/A4, L9/A5/8 and L12/TCT are nonpigmented. (C) A histogram with kernel density curve of genome GC content (%) with mean μ = 59.74% marked by a dashed vertical line; the distribution is left-skewed with a major peak near 60.0%. (D) A scatter plot with marginal density plots of coding GC (%) versus intergenic GC (%) with a fitted regression line, r = 0.57, p < 0.001. (E) A grouped bar chart of pangenome gene numbers under three definitions: Eduardo et al. 2019 (core >95% = 3155, dispensable = 7847, unique = 8467), Danesh et al. 2016 (core >99% = 3372, soft core 95–99% = 342, shell 15–95% = 1526, cloud <15% = 8347), and Filipe et al. 2018 (core 100% = 2107, accessory = 7656, unique = 6693). (F) A bar chart of plasmid proportion (%) by predicted host range: genus 23.9%, family 11.3%, order 30.2%, class 2.7%, phylum 9.0%, multi-phyla 22.9%.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "visual",
+        "printed_text": [],
+        "ocr_confirmed": false,
+        "check_note": "the reader's summary of the whole figure"
+      },
+      "strength": "model-read",
+      "n": 4,
+      "rendered": ">95%"
+    },
+    {
+      "kind": "quote",
+      "quote": "3155",
+      "source": {
+        "atom": "p4.F2.k41",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "3155",
+          "Core (>95%)"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Core (>95%)'"
+      },
+      "strength": "model-read",
+      "n": 5,
+      "rendered": "3155"
+    },
+    {
+      "kind": "quote",
+      "quote": "7847",
+      "source": {
+        "atom": "p4.F2.k42",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "7847",
+          "Dispensable"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find '7847'; 'Dispensable'"
+      },
+      "strength": "model-read",
+      "n": 6,
+      "rendered": "7847"
+    },
+    {
+      "kind": "quote",
+      "quote": "8467",
+      "source": {
+        "atom": "p4.F2.k43",
+        "kind": "figure_fact",
+        "page": 4,
+        "strength": "model-read",
+        "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+        "bbox": [
+          41.6,
+          56.3,
+          552.7,
+          493.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p4.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "8467",
+          "Unique"
+        ],
+        "ocr_confirmed": false,
+        "check_note": "OCR did not find 'Unique'"
+      },
+      "strength": "model-read",
+      "n": 7,
+      "rendered": "8467"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int",
+      "value": 19469.0,
+      "strength": "computed from model-read",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p4.F2.k41",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3155",
+            "Core (>95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>95%)'"
+        },
+        {
+          "atom": "p4.F2.k42",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "7847",
+            "Dispensable"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '7847'; 'Dispensable'"
+        },
+        {
+          "atom": "p4.F2.k43",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "8467",
+            "Unique"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Unique'"
+        }
+      ],
+      "n": 8,
+      "rendered": "19,469"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT 100.0*MAX(value) FILTER (WHERE id='p4.F2.k41')/SUM(value) AS p FROM figure_facts WHERE id IN ('p4.F2.k41','p4.F2.k42','p4.F2.k43')",
+      "column": "p",
+      "row": 0,
+      "fmt": "pct1",
+      "value": 16.205249370794597,
+      "strength": "computed from model-read",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p4.F2.k41",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the core genome (>95%) contains 3155 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3155",
+            "Core (>95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>95%)'"
+        },
+        {
+          "atom": "p4.F2.k42",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the dispensable genome contains 7847 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "7847",
+            "Dispensable"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '7847'; 'Dispensable'"
+        },
+        {
+          "atom": "p4.F2.k43",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Eduardo et al. 2019 definition, the unique genome contains 8467 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "8467",
+            "Unique"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Unique'"
+        }
+      ],
+      "n": 9,
+      "rendered": "1,620.5%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k44','p4.F2.k45','p4.F2.k46','p4.F2.k47')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int",
+      "value": 13587.0,
+      "strength": "computed from model-read",
+      "n_sources": 4,
+      "sources": [
+        {
+          "atom": "p4.F2.k44",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the core genome (>99%) contains 3372 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "3372",
+            "Core (>99%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Core (>99%)'"
+        },
+        {
+          "atom": "p4.F2.k45",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the soft core (95–99%) contains 342 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "342",
+            "Soft core (95–99%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '342'; 'Soft core (95–99%)'"
+        },
+        {
+          "atom": "p4.F2.k46",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the shell (15–95%) contains 1526 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "1526",
+            "Shell (15–95%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Shell (15–95%)'"
+        },
+        {
+          "atom": "p4.F2.k47",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Danesh et al. 2016 definition, the cloud (<15%) contains 8347 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "8347",
+            "Cloud (<15%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find 'Cloud (<15%)'"
+        }
+      ],
+      "n": 10,
+      "rendered": "13,587"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT SUM(value) AS s FROM figure_facts WHERE id IN ('p4.F2.k48','p4.F2.k49','p4.F2.k50')",
+      "column": "s",
+      "row": 0,
+      "fmt": "int",
+      "value": 16456.0,
+      "strength": "computed from model-read",
+      "n_sources": 3,
+      "sources": [
+        {
+          "atom": "p4.F2.k48",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the core genome (100%) contains 2107 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "2107",
+            "Core (100%)"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '2107'; 'Core (100%)'"
+        },
+        {
+          "atom": "p4.F2.k49",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the accessory genome contains 7656 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "7656",
+            "Accessory"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '7656'; 'Accessory'"
+        },
+        {
+          "atom": "p4.F2.k50",
+          "kind": "figure_fact",
+          "page": 4,
+          "strength": "model-read",
+          "text": "In panel E, under the Filipe et al. 2018 definition, the unique genome contains 6693 genes.",
+          "bbox": [
+            41.6,
+            56.3,
+            552.7,
+            493.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p4.F2.png",
+          "reader": "claude-opus-5-5",
+          "basis": "printed",
+          "printed_text": [
+            "6693",
+            "Unique"
+          ],
+          "ocr_confirmed": false,
+          "check_note": "OCR did not find '6693'; 'Unique'"
+        }
+      ],
+      "n": 11,
+      "rendered": "16,456"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:44:25+00:00",
+  "paper": "p3",
+  "probe": "X1",
+  "cat": "cross-source",
+  "expect": "yes for the Eduardo et al. 2019 definition: core 3155 + dispensable 7847 + unique 8467 = 19,469, which is the text's total (p2.L107). The other two definitions in Fig. 2E (Danesh 2016, Filipe 2018) give different splits.",
+  "trap": "asserting agreement without the arithmetic, or comparing the wrong definition"
+}

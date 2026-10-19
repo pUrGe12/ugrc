@@ -1,0 +1,756 @@
+{
+  "question": "How does S. marcescens compare with Pseudomonas putida as a non-model chassis?",
+  "model": "claude-opus-5-5",
+  "tool_calls": 10,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE lower(text) LIKE '%putida%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE lower(text) LIKE '%pseudomonas%' OR lower(text) LIKE '%chassis%' OR lower(text) LIKE '%non-model%' OR lower(text) LIKE '%nonmodel%'",
+      "rows": 49
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE kind='line' AND (text LIKE '%E. coli%' OR lower(text) LIKE '%cerevisiae%' OR lower(text) LIKE '%bacillus%' OR lower(text) LIKE '%corynebacterium%' OR lower(text) LIKE '%halomonas%' OR lower(text) LIKE '%yarrowia%' OR lower(text) LIKE '%vibrio%') AND page < 14",
+      "rows": 13
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (1,2,3) AND line_no BETWEEN 1 AND 130 AND page=1",
+      "rows": 70
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=2 AND line_no BETWEEN 1 AND 12) OR (page=3 AND line_no BETWEEN 33 AND 70) OR (page=13 AND line_no BETWEEN 20 AND 60)",
+      "rows": 86
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page=11 AND line_no BETWEEN 5 AND 45) OR (page=13 AND line_no BETWEEN 70 AND 100)",
+      "rows": 72
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page<14 AND (lower(text) LIKE '%rhodococcus%' OR lower(text) LIKE '%zymomonas%' OR lower(text) LIKE '%clostridium%' OR lower(text) LIKE '%natriegens%' OR lower(text) LIKE '%pichia%' OR lower(text) LIKE '%komagataella%' OR lower(text) LIKE '%streptomyces%')",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT count(*) AS n FROM atoms WHERE lower(text) LIKE '%putida%' OR lower(text) LIKE '%pseudomonas%'",
+      "rows": 1
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 34,
+      "rules": [
+        "lineage:unsourced",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 32
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:unsourced",
+        "where": "runs[2]",
+        "why": "the cited value was computed from no atom",
+        "moves": [
+          "compute the value from the atoms that hold its inputs"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 7097,
+    "cache_read_input_tokens": 85718,
+    "cache_creation_input_tokens": 20802
+  },
+  "runs": [
+    {
+      "text": "This review never mentions that organism, so it offers no comparison with it. A search of every line, cell, caption, OCR line and figure fact finds neither the genus nor the species name anywhere in the document.",
+      "absent": [
+        "Pseudomonas putida",
+        "P. putida",
+        "putida",
+        "Pseudomonas"
+      ]
+    },
+    {
+      "text": "\n\nWhat the document does benchmark S. marcescens against are the mature model hosts. The introduction frames metabolic engineering as having relied on"
+    },
+    {
+      "quote": "microorganisms such as Escherichia coli and Saccharomyces cerevisiae",
+      "atom": "p1.L44"
+    },
+    {
+      "text": ", whose limits it lists as",
+      "support": [
+        {
+          "atom": "p1.L46",
+          "quote": "several inherent limitations in practical applications"
+        }
+      ]
+    },
+    {
+      "quote": "restricted substrate utilization spectra, insufficient adaptability to complex environmental conditions, and the lack of native pathways required for the biosynthesis of certain complex natural products",
+      "atom": "p1.L48"
+    },
+    {
+      "text": ". The only other non-model host named as an illustration of ecological advantage is a halophile genus:"
+    },
+    {
+      "quote": "Halomonas exhibit high salt and alkali tolerance and strong resistance to microbial contamination, enabling open and non-sterile fermentation",
+      "atom": "p2.L1"
+    },
+    {
+      "text": ".\n\nAgainst the model hosts, S. marcescens is argued to win on tolerance and on product compatibility rather than on genetic maturity. Strain HBQA7 grows in geraniol concentrations that strongly inhibit the enterobacterial model host, and",
+      "support": [
+        {
+          "atom": "p3.L60",
+          "quote": "inhibits E. coli) and tolerates up to 2 M methanol"
+        }
+      ]
+    },
+    {
+      "quote": "tolerates up to 2 M methanol",
+      "atom": "p3.L60"
+    },
+    {
+      "text": ". In terpenoid work the comparison is quantitative: for cineole the authors report",
+      "support": [
+        {
+          "atom": "p11.L16",
+          "quote": "cineole reached 10.2 g L"
+        }
+      ]
+    },
+    {
+      "quote": "with space–time yields exceeding E. coli and S. cerevisiae",
+      "atom": "p11.L17"
+    },
+    {
+      "text": ", and for a polyamine the engineered strain gave",
+      "support": [
+        {
+          "atom": "p11.L36",
+          "quote": "the strain produced 5.8"
+        }
+      ]
+    },
+    {
+      "quote": "outperforming E. coli BL21(DE3)",
+      "atom": "p11.L37"
+    },
+    {
+      "text": ". The positioning section generalizes this: hydrophobic terpenoids",
+      "support": [
+        {
+          "atom": "p13.L51",
+          "quote": "hydrophobic terpenoids often"
+        }
+      ]
+    },
+    {
+      "quote": "cause membrane toxicity in E. coli and S. cerevisiae, whereas S. marcescens exhibits superior host-product compatibility",
+      "atom": "p13.L52"
+    },
+    {
+      "text": ".\n\nOn the deficit side, the review is explicit that"
+    },
+    {
+      "quote": "compared to mature industrial chassis, S. marcescens remains in the early stages of development",
+      "atom": "p13.L92"
+    },
+    {
+      "text": ", constrained by",
+      "support": [
+        {
+          "atom": "p13.L94",
+          "quote": "biosafety concerns, scalability"
+        }
+      ]
+    },
+    {
+      "quote": "biosafety concerns, scalability and fermentation compatibility, and product economics",
+      "atom": "p13.L94"
+    },
+    {
+      "text": ". Hence the strategic conclusion is complementarity, not substitution:"
+    },
+    {
+      "quote": "Rather than directly competing with highly optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens must leverage its unique physiological traits to establish differentiated competitiveness",
+      "atom": "p13.L25"
+    },
+    {
+      "text": ", and in the abstract,"
+    },
+    {
+      "quote": "S. marcescens is positioned not to replace traditional model hosts, but to serve as a specialized, ecologically robust platform",
+      "atom": "p1.L28"
+    },
+    {
+      "text": ".\n\nThe criteria the review uses to judge any chassis are stated generally, so they could in principle be applied to other non-model hosts even though none beyond those named above are evaluated here:"
+    },
+    {
+      "quote": "An effective industrial chassis must satisfy four key criteria: (i) robust growth and stress tolerance (e.g., temperature, pH, osmotic pressure, product toxicity) under industrial conditions; (ii) utilization of inexpensive, renewable feedstocks; (iii) metabolic versatility for native or heterologous biosynthesis; and (iv) a mature genetic toolbox for precise engineering",
+      "atom": "p3.L33"
+    },
+    {
+      "text": ". Evidence for S. marcescens under these headings is collected in its substrate profile,"
+    },
+    {
+      "table": "p6.T1"
+    },
+    {
+      "text": ", its engineered product portfolio,"
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ", and its tool set,"
+    },
+    {
+      "figure": "p8.F6"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "This review never mentions that organism, so it offers no comparison with it. A search of every line, cell, caption, OCR line and figure fact finds neither the genus nor the species name anywhere in the document.[1]\n\nWhat the document does benchmark S. marcescens against are the mature model hosts. The introduction frames metabolic engineering as having relied onmicroorganisms such as Escherichia coli and Saccharomyces cerevisiae[2], whose limits it lists as[3]restricted substrate utilization spectra, insufficient adaptability to complex environmental conditions, and the lack of native pathways required for the biosynthesis of certain complex natural products[4]. The only other non-model host named as an illustration of ecological advantage is a halophile genus:Halomonas exhibit high salt and alkali tolerance and strong resistance to microbial contamination, enabling open and non-sterile fermentation[5].\n\nAgainst the model hosts, S. marcescens is argued to win on tolerance and on product compatibility rather than on genetic maturity. Strain HBQA7 grows in geraniol concentrations that strongly inhibit the enterobacterial model host, and[6]tolerates up to 2 M methanol[7]. In terpenoid work the comparison is quantitative: for cineole the authors report[8]with space–time yields exceeding E. coli and S. cerevisiae[9], and for a polyamine the engineered strain gave[10]outperforming E. coli BL21(DE3)[11]. The positioning section generalizes this: hydrophobic terpenoids[12]cause membrane toxicity in E. coli and S. cerevisiae, whereas S. marcescens exhibits superior host-product compatibility[13].\n\nOn the deficit side, the review is explicit thatcompared to mature industrial chassis, S. marcescens remains in the early stages of development[14], constrained by[15]biosafety concerns, scalability and fermentation compatibility, and product economics[16]. Hence the strategic conclusion is complementarity, not substitution:Rather than directly competing with highly optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens must leverage its unique physiological traits to establish differentiated competitiveness[17], and in the abstract,S. marcescens is positioned not to replace traditional model hosts, but to serve as a specialized, ecologically robust platform[18].\n\nThe criteria the review uses to judge any chassis are stated generally, so they could in principle be applied to other non-model hosts even though none beyond those named above are evaluated here:An effective industrial chassis must satisfy four key criteria: (i) robust growth and stress tolerance (e.g., temperature, pH, osmotic pressure, product toxicity) under industrial conditions; (ii) utilization of inexpensive, renewable feedstocks; (iii) metabolic versatility for native or heterologous biosynthesis; and (iv) a mature genetic toolbox for precise engineering[19]. Evidence for S. marcescens under these headings is collected in its substrate profile,Table 1[20], its engineered product portfolio,Table 2[21], and its tool set,Fig. 6[22].",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "Pseudomonas putida",
+        "P. putida",
+        "putida",
+        "Pseudomonas"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 2446,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    },
+    {
+      "kind": "quote",
+      "quote": "microorganisms such as Escherichia coli and Saccharomyces cerevisiae",
+      "source": {
+        "atom": "p1.L44",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "microorganisms such as Escherichia coli and Saccharomyces cerevisiae.",
+        "bbox": [
+          37.6,
+          628.6,
+          288.7,
+          636.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "microorganisms such as Escherichia coli and Saccharomyces cerevisiae"
+    },
+    {
+      "kind": "support",
+      "quote": "several inherent limitations in practical applications",
+      "source": {
+        "atom": "p1.L47",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "several inherent limitations in practical applications, including",
+        "bbox": [
+          306.6,
+          503.1,
+          557.7,
+          511.1
+        ],
+        "relocated_from": "p1.L46"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "several inherent limitations in practical applications"
+    },
+    {
+      "kind": "quote",
+      "quote": "restricted substrate utilization spectra, insufficient adaptability to complex environmental conditions, and the lack of native pathways required for the biosynthesis of certain complex natural products",
+      "source": {
+        "atom": "p1.L48",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "restricted substrate utilization spectra, insufficient adaptability to complex environmental conditions, and the lack of native pathways required for the biosynthesis of certain complex natural products. These",
+        "bbox": [
+          306.6,
+          513.5,
+          557.7,
+          542.4
+        ],
+        "atoms": [
+          "p1.L48",
+          "p1.L49",
+          "p1.L50"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "restricted substrate utilization spectra, insufficient adaptability to complex environmental conditions, and the lack of native pathways required for the biosynthesis of certain complex natural products"
+    },
+    {
+      "kind": "quote",
+      "quote": "Halomonas exhibit high salt and alkali tolerance and strong resistance to microbial contamination, enabling open and non-sterile fermentation",
+      "source": {
+        "atom": "p2.L1",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Halomonas exhibit high salt and alkali tolerance and strong resistance to microbial contamination, enabling open and non-sterile fermentation",
+        "bbox": [
+          37.6,
+          56.4,
+          288.7,
+          74.8
+        ],
+        "atoms": [
+          "p2.L1",
+          "p2.L2"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Halomonas exhibit high salt and alkali tolerance and strong resistance to microbial contamination, enabling open and non-sterile fermentation"
+    },
+    {
+      "kind": "support",
+      "quote": "inhibits E. coli) and tolerates up to 2 M methanol",
+      "source": {
+        "atom": "p3.L60",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "inhibits E. coli) and tolerates up to 2 M methanol, surpassing many",
+        "bbox": [
+          306.6,
+          737.0,
+          557.6,
+          744.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "inhibits E. coli) and tolerates up to 2 M methanol"
+    },
+    {
+      "kind": "quote",
+      "quote": "tolerates up to 2 M methanol",
+      "source": {
+        "atom": "p3.L60",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "inhibits E. coli) and tolerates up to 2 M methanol, surpassing many",
+        "bbox": [
+          306.6,
+          737.0,
+          557.6,
+          744.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "tolerates up to 2 M methanol"
+    },
+    {
+      "kind": "support",
+      "quote": "cineole reached 10.2 g L",
+      "source": {
+        "atom": "p11.L17",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "cineole reached 10.2 g L^(cid:0) 1, with space–time yields exceeding E. coli",
+        "bbox": [
+          306.6,
+          157.0,
+          557.7,
+          168.9
+        ],
+        "relocated_from": "p11.L16"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "cineole reached 10.2 g L"
+    },
+    {
+      "kind": "quote",
+      "quote": "with space–time yields exceeding E. coli and S. cerevisiae",
+      "source": {
+        "atom": "p11.L17",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "cineole reached 10.2 g L^(cid:0) 1, with space–time yields exceeding E. coli and S. cerevisiae [19].",
+        "bbox": [
+          306.6,
+          157.0,
+          557.7,
+          179.4
+        ],
+        "atoms": [
+          "p11.L17",
+          "p11.L18"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "with space–time yields exceeding E. coli and S. cerevisiae"
+    },
+    {
+      "kind": "support",
+      "quote": "the strain produced 5.8",
+      "source": {
+        "atom": "p11.L36",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "competing pathways, and optimizing transport, the strain produced 5.8",
+        "bbox": [
+          306.6,
+          359.7,
+          557.7,
+          367.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "the strain produced 5.8"
+    },
+    {
+      "kind": "quote",
+      "quote": "outperforming E. coli BL21(DE3)",
+      "source": {
+        "atom": "p11.L37",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "g L^(cid:0) 1 spermidine in a 5-L bioreactor, outperforming E. coli BL21(DE3)",
+        "bbox": [
+          306.6,
+          366.2,
+          557.7,
+          378.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "outperforming E. coli BL21(DE3)"
+    },
+    {
+      "kind": "support",
+      "quote": "hydrophobic terpenoids often",
+      "source": {
+        "atom": "p13.L51",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "severely inhibit model hosts. For instance, hydrophobic terpenoids often",
+        "bbox": [
+          37.6,
+          600.9,
+          288.7,
+          608.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "hydrophobic terpenoids often"
+    },
+    {
+      "kind": "quote",
+      "quote": "cause membrane toxicity in E. coli and S. cerevisiae, whereas S. marcescens exhibits superior host-product compatibility",
+      "source": {
+        "atom": "p13.L52",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "cause membrane toxicity in E. coli and S. cerevisiae, whereas S. marcescens exhibits superior host-product compatibility. Thus, it is",
+        "bbox": [
+          37.6,
+          611.4,
+          288.7,
+          629.8
+        ],
+        "atoms": [
+          "p13.L52",
+          "p13.L53"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 13,
+      "rendered": "cause membrane toxicity in E. coli and S. cerevisiae, whereas S. marcescens exhibits superior host-product compatibility"
+    },
+    {
+      "kind": "quote",
+      "quote": "compared to mature industrial chassis, S. marcescens remains in the early stages of development",
+      "source": {
+        "atom": "p13.L92",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "neered strains. However, compared to mature industrial chassis, S. marcescens remains in the early stages of development; its industrial",
+        "bbox": [
+          306.6,
+          359.7,
+          557.7,
+          378.2
+        ],
+        "atoms": [
+          "p13.L92",
+          "p13.L93"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 14,
+      "rendered": "compared to mature industrial chassis, S. marcescens remains in the early stages of development"
+    },
+    {
+      "kind": "support",
+      "quote": "biosafety concerns, scalability",
+      "source": {
+        "atom": "p13.L94",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "application is collectively constrained by biosafety concerns, scalability",
+        "bbox": [
+          306.6,
+          380.6,
+          557.7,
+          388.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 15,
+      "rendered": "biosafety concerns, scalability"
+    },
+    {
+      "kind": "quote",
+      "quote": "biosafety concerns, scalability and fermentation compatibility, and product economics",
+      "source": {
+        "atom": "p13.L94",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "application is collectively constrained by biosafety concerns, scalability and fermentation compatibility, and product economics.",
+        "bbox": [
+          306.6,
+          380.6,
+          557.7,
+          399.1
+        ],
+        "atoms": [
+          "p13.L94",
+          "p13.L95"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 16,
+      "rendered": "biosafety concerns, scalability and fermentation compatibility, and product economics"
+    },
+    {
+      "kind": "quote",
+      "quote": "Rather than directly competing with highly optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens must leverage its unique physiological traits to establish differentiated competitiveness",
+      "source": {
+        "atom": "p13.L25",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "economic justification. Rather than directly competing with highly optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens must leverage its unique physiological traits to establish differentiated competitiveness. Target product selection should therefore integrate",
+        "bbox": [
+          37.6,
+          329.0,
+          288.7,
+          368.3
+        ],
+        "atoms": [
+          "p13.L25",
+          "p13.L26",
+          "p13.L27",
+          "p13.L28"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 17,
+      "rendered": "Rather than directly competing with highly optimized traditional chassis like E. coli and S. cerevisiae, S. marcescens must leverage its unique physiological traits to establish differentiated competitiveness"
+    },
+    {
+      "kind": "quote",
+      "quote": "S. marcescens is positioned not to replace traditional model hosts, but to serve as a specialized, ecologically robust platform",
+      "source": {
+        "atom": "p1.L28",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "scalability, and economic viability. Ultimately, S. marcescens is positioned not to replace traditional model hosts, but to serve as a specialized, ecologically robust platform, complementing the existing toolkit for next-generation",
+        "bbox": [
+          202.0,
+          423.8,
+          557.7,
+          440.5
+        ],
+        "atoms": [
+          "p1.L28",
+          "p1.L29"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 18,
+      "rendered": "S. marcescens is positioned not to replace traditional model hosts, but to serve as a specialized, ecologically robust platform"
+    },
+    {
+      "kind": "quote",
+      "quote": "An effective industrial chassis must satisfy four key criteria: (i) robust growth and stress tolerance (e.g., temperature, pH, osmotic pressure, product toxicity) under industrial conditions; (ii) utilization of inexpensive, renewable feedstocks; (iii) metabolic versatility for native or heterologous biosynthesis; and (iv) a mature genetic toolbox for precise engineering",
+      "source": {
+        "atom": "p3.L33",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "An effective industrial chassis must satisfy four key criteria: (i) robust growth and stress tolerance (e.g., temperature, pH, osmotic pressure, product toxicity) under industrial conditions; (ii) utilization of inex- pensive, renewable feedstocks; (iii) metabolic versatility for native or heterologous biosynthesis; and (iv) a mature genetic toolbox for precise engineering [60]. Accordingly, this section evaluates the functional",
+        "bbox": [
+          306.6,
+          433.0,
+          557.7,
+          493.3
+        ],
+        "atoms": [
+          "p3.L33",
+          "p3.L34",
+          "p3.L35",
+          "p3.L36",
+          "p3.L37",
+          "p3.L38"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 19,
+      "rendered": "An effective industrial chassis must satisfy four key criteria: (i) robust growth and stress tolerance (e.g., temperature, pH, osmotic pressure, product toxicity) under industrial conditions; (ii) utilization of inexpensive, renewable feedstocks; (iii) metabolic versatility for native or heterologous biosynthesis; and (iv) a mature genetic toolbox for precise engineering"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 6,
+        "caption": "Table 1 Carbon source utilization profile of S. marcescens.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          195.2
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 20,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 21,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p8.F6",
+        "kind": "figure",
+        "label": "Fig. 6",
+        "page": 8,
+        "caption": "Fig. 6. Overview of the major genetic engineering and synthetic biology tools available for S. marcescens, including λ-Red recombination, CRISPR-Cas9 genome editing, regulatory elements, genomic integration sites, and current technical challenges affecting genetic manipulation. (For interpretation of the references to colour in this figure legend, the reader is referred to the web version of this article.)",
+        "png": "figures/p8.F6.png",
+        "png_pixels_sha256": "d2bbba7f81bf0ba0b30a72e497fd85d8786de952a1db948fb61d8094b32a10f9",
+        "bbox": [
+          41.6,
+          533.0,
+          552.7,
+          707.1
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 22,
+      "rendered": "Fig. 6"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-10T06:44:57+00:00",
+  "paper": "p3",
+  "probe": "A2",
+  "cat": "absence",
+  "expect": "not reported. P. putida is never mentioned. The comparators used are E. coli, S. cerevisiae and Halomonas.",
+  "trap": "inventing a comparison"
+}

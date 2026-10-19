@@ -1,0 +1,519 @@
+{
+  "question": "The text says strain PG yielded 5.83 g/L prodigiosin. Which Table 2 row is that, and do the strain names match?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%5.83%' OR text ILIKE '%PG%' ORDER BY page, id",
+      "rows": 14
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p9.T2' AND (text ILIKE '%5.83%' OR text ILIKE '%PG%' OR text ILIKE '%prodigiosin%' OR text ILIKE '%5,83%') ORDER BY row_no, col_no",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, is_header FROM cells WHERE table_id='p9.T2' AND row_no BETWEEN 1 AND 12 ORDER BY row_no, col_no",
+      "rows": 62
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=8 AND line_no BETWEEN 78 AND 88 ORDER BY line_no",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 21,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 23,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 25
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2', '5.83', 'one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'5.83' is written exactly so in the document (e.g. p8.L82): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5.83\", \"atom\": \"p8.L82\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[14]",
+        "why": "your own words contain number(s) ['2', '5.83', '2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'5.83' is written exactly so in the document (e.g. p8.L82): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5.83\", \"atom\": \"p8.L82\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[20]",
+        "why": "your own words contain number(s) ['5.83'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5.83' is written exactly so in the document (e.g. p8.L82): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5.83\", \"atom\": \"p8.L82\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[16]",
+        "why": "your own words contain number(s) ['2', '2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p2.L69): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p2.L69\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[22]",
+        "why": "your own words contain number(s) ['5.83'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5.83' is written exactly so in the document (e.g. p8.L82): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5.83\", \"atom\": \"p8.L82\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 5187,
+    "cache_read_input_tokens": 28344,
+    "cache_creation_input_tokens": 12690
+  },
+  "runs": [
+    {
+      "text": "Yes, the value matches. The row with that titer is shown below (its titer is in mg/L, the same amount as the text's "
+    },
+    {
+      "quote": "5.83",
+      "atom": "p8.L82"
+    },
+    {
+      "text": " g/L after unit conversion): "
+    },
+    {
+      "quote": "5830",
+      "atom": "p9.T2.r5c6"
+    },
+    {
+      "text": " in "
+    },
+    {
+      "table": "p9.T2"
+    },
+    {
+      "text": ". Its product is "
+    },
+    {
+      "quote": "prodigiosin",
+      "atom": "p9.T2.r5c1"
+    },
+    {
+      "text": ", its strain is "
+    },
+    {
+      "quote": "JNB5–1 → SMCH",
+      "atom": "p9.T2.r5c2"
+    },
+    {
+      "text": ", its strategy is "
+    },
+    {
+      "quote": "Integration of proC, serC, and metH to enhance precursor supply",
+      "atom": "p9.T2.r5c3"
+    },
+    {
+      "text": ", and its reference is "
+    },
+    {
+      "quote": "[101]",
+      "atom": "p9.T2.r5c7"
+    },
+    {
+      "text": ". This is the same work the text cites for the PG result: "
+    },
+    {
+      "quote": "[101,117]",
+      "atom": "p8.L83"
+    },
+    {
+      "text": ".\n\nThe strain names do not match. The text calls the engineered strain PG, but the row with the matching titer is named JNB5–1 → SMCH. The only entry in that table containing PG is "
+    },
+    {
+      "quote": "JNB5–1 → PG-6",
+      "atom": "p9.T2.r8c2"
+    },
+    {
+      "text": ", with titer "
+    },
+    {
+      "quote": "10,250",
+      "atom": "p9.T2.r8c6"
+    },
+    {
+      "text": " mg/L and reference "
+    },
+    {
+      "quote": "[14]",
+      "atom": "p9.T2.r8c7"
+    },
+    {
+      "text": ". That is a different value and reference, so it is not the "
+    },
+    {
+      "quote": "5.83",
+      "atom": "p8.L82"
+    },
+    {
+      "text": " g/L result."
+    }
+  ],
+  "rendered": "Yes, the value matches. The row with that titer is shown below (its titer is in mg/L, the same amount as the text's 5.83[1] g/L after unit conversion): 5830[2] in Table 2[3]. Its product is prodigiosin[4], its strain is JNB5–1 → SMCH[5], its strategy is Integration of proC, serC, and metH to enhance precursor supply[6], and its reference is [101][7]. This is the same work the text cites for the PG result: [101,117][8].\n\nThe strain names do not match. The text calls the engineered strain PG, but the row with the matching titer is named JNB5–1 → SMCH. The only entry in that table containing PG is JNB5–1 → PG-6[9], with titer 10,250[10] mg/L and reference [14][11]. That is a different value and reference, so it is not the 5.83[12] g/L result.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "5.83",
+      "source": {
+        "atom": "p8.L82",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "the pig cluster; the engineered strain PG yielded 5.83 g L^(cid:0) 1 prodigiosin",
+        "bbox": [
+          306.6,
+          485.8,
+          557.6,
+          497.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "5.83"
+    },
+    {
+      "kind": "quote",
+      "quote": "5830",
+      "source": {
+        "atom": "p9.T2.r5c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "5830",
+        "bbox": [
+          496.8,
+          119.1,
+          511.2,
+          125.5
+        ],
+        "table": "Table 2",
+        "row": 5,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "5830"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p9.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 9,
+        "caption": "Table 2 Production of value-added products by engineered S. marcescens strains.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          503.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "prodigiosin",
+      "source": {
+        "atom": "p9.T2.r5c1",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "prodigiosin",
+        "bbox": [
+          43.6,
+          119.1,
+          75.5,
+          125.5
+        ],
+        "table": "Table 2",
+        "row": 5,
+        "col": 1,
+        "column_header": "Product"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "prodigiosin"
+    },
+    {
+      "kind": "quote",
+      "quote": "JNB5–1 → SMCH",
+      "source": {
+        "atom": "p9.T2.r5c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "JNB5–1 → SMCH",
+        "bbox": [
+          114.6,
+          117.9,
+          164.0,
+          125.5
+        ],
+        "table": "Table 2",
+        "row": 5,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "JNB5–1 → SMCH"
+    },
+    {
+      "kind": "quote",
+      "quote": "Integration of proC, serC, and metH to enhance precursor supply",
+      "source": {
+        "atom": "p9.T2.r5c3",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "Integration of proC, serC, and metH to enhance precursor supply",
+        "bbox": [
+          195.4,
+          119.1,
+          376.4,
+          125.5
+        ],
+        "table": "Table 2",
+        "row": 5,
+        "col": 3,
+        "column_header": "Strategy"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Integration of proC, serC, and metH to enhance precursor supply"
+    },
+    {
+      "kind": "quote",
+      "quote": "[101]",
+      "source": {
+        "atom": "p9.T2.r5c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[101]",
+        "bbox": [
+          523.9,
+          119.1,
+          540.1,
+          125.5
+        ],
+        "table": "Table 2",
+        "row": 5,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "[101]"
+    },
+    {
+      "kind": "quote",
+      "quote": "[101,117]",
+      "source": {
+        "atom": "p8.L83",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "(~42% higher than wild-type) [101,117]. Pan et al. used the strong",
+        "bbox": [
+          306.6,
+          500.2,
+          557.7,
+          508.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "[101,117]"
+    },
+    {
+      "kind": "quote",
+      "quote": "JNB5–1 → PG-6",
+      "source": {
+        "atom": "p9.T2.r8c2",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "JNB5–1 → PG-6",
+        "bbox": [
+          114.6,
+          143.6,
+          160.1,
+          151.2
+        ],
+        "table": "Table 2",
+        "row": 8,
+        "col": 2,
+        "column_header": "Strain"
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "JNB5–1 → PG-6"
+    },
+    {
+      "kind": "quote",
+      "quote": "10,250",
+      "source": {
+        "atom": "p9.T2.r8c6",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "10,250",
+        "bbox": [
+          491.4,
+          144.8,
+          511.1,
+          151.2
+        ],
+        "table": "Table 2",
+        "row": 8,
+        "col": 6,
+        "column_header": "Titer (mg L^(cid:0) 1)"
+      },
+      "strength": "verbatim",
+      "n": 10,
+      "rendered": "10,250"
+    },
+    {
+      "kind": "quote",
+      "quote": "[14]",
+      "source": {
+        "atom": "p9.T2.r8c7",
+        "kind": "cell",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "[14]",
+        "bbox": [
+          523.9,
+          144.8,
+          536.5,
+          151.2
+        ],
+        "table": "Table 2",
+        "row": 8,
+        "col": 7,
+        "column_header": "Reference"
+      },
+      "strength": "verbatim",
+      "n": 11,
+      "rendered": "[14]"
+    },
+    {
+      "kind": "quote",
+      "quote": "5.83",
+      "source": {
+        "atom": "p8.L82",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "the pig cluster; the engineered strain PG yielded 5.83 g L^(cid:0) 1 prodigiosin",
+        "bbox": [
+          306.6,
+          485.8,
+          557.6,
+          497.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 12,
+      "rendered": "5.83"
+    }
+  ],
+  "seals": {
+    "extraction": "45746da92e6c22df9e95425e3164192b8d3da775c12ea7f404be2f6a8694a22b",
+    "readings": "b6117d1937c1263264e6386eaca74796b37088aaad1de84cb1dab3907babc392"
+  },
+  "created_at": "2026-10-13T08:55:25+00:00",
+  "paper": "p3",
+  "probe": "X3",
+  "cat": "cross-source",
+  "expect": "Table 2 row: prodigiosin, JNB5-1 -> SMCH, shake flask, 96 h, 5830 mg/L, ref [101] - the same study and value (5.83 g/L = 5830 mg/L), but the text calls the strain PG (p8.L82) while the table calls it SMCH. A genuine naming mismatch in the paper.",
+  "trap": "claiming the numbers disagree, or not noticing the name difference"
+}

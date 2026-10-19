@@ -1,0 +1,152 @@
+{
+  "question": "What does 'BA' stand for in this paper?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 3,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%BA)%' OR text ILIKE '%(BA%' OR text ILIKE '%BA %' OR text ILIKE '%BA,%' OR text ILIKE '%BA@%' OR text ILIKE '%bovine%' OR text ILIKE '%acid%' LIMIT 60",
+      "rows": 60
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['4-mercaptophenylboronic', '(4-MPBA),'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4-mercaptophenylboronic' is written exactly so in the document (e.g. p1.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4-mercaptophenylboronic\", \"atom\": \"p1.L21\"} — never shorten it",
+          "'4-MPBA' is written exactly so in the document (e.g. p2.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4-MPBA\", \"atom\": \"p2.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "3",
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 1066,
+    "cache_read_input_tokens": 10818,
+    "cache_creation_input_tokens": 7971
+  },
+  "runs": [
+    {
+      "text": "In this paper, BA is an abbreviation for boronic acid. Specifically, it refers to "
+    },
+    {
+      "quote": "4-mercaptophenylboronic acid",
+      "atom": "p1.L21"
+    },
+    {
+      "text": " (abbreviated "
+    },
+    {
+      "quote": "4-MPBA",
+      "atom": "p2.L37"
+    },
+    {
+      "text": "), which is attached to the gold nanorods to form the BA@L-HGNRs recognition probes. The paper defines it as "
+    },
+    {
+      "quote": "boronic acid (4-MPBA, BA)",
+      "atom": "p2.L37"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In this paper, BA is an abbreviation for boronic acid. Specifically, it refers to 4-mercaptophenylboronic acid[1] (abbreviated 4-MPBA[2]), which is attached to the gold nanorods to form the BA@L-HGNRs recognition probes. The paper defines it as boronic acid (4-MPBA, BA)[3].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "4-mercaptophenylboronic acid",
+      "source": {
+        "atom": "p1.L21",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "based on 4-mercaptophenylboronic acid-functionalized L-type intrinsically helical gold nanorods (BA@L-",
+        "bbox": [
+          202.0,
+          360.1,
+          557.7,
+          367.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "4-mercaptophenylboronic acid"
+    },
+    {
+      "kind": "quote",
+      "quote": "4-MPBA",
+      "source": {
+        "atom": "p2.L37",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "boronic acid (4-MPBA, BA) to form BA@L-HGNRs recognition probes",
+        "bbox": [
+          306.6,
+          77.3,
+          557.7,
+          85.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "4-MPBA"
+    },
+    {
+      "kind": "quote",
+      "quote": "boronic acid (4-MPBA, BA)",
+      "source": {
+        "atom": "p2.L37",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "boronic acid (4-MPBA, BA) to form BA@L-HGNRs recognition probes",
+        "bbox": [
+          306.6,
+          77.3,
+          557.7,
+          85.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "boronic acid (4-MPBA, BA)"
+    }
+  ],
+  "seals": {
+    "extraction": "7ac3d678c4a0478ee781d62a7582a8f9f709eaf2374c6a9d8f60bde58ba85415",
+    "readings": "98c98825c6138fd8d07fd75dcb65986a153cfea06d86b677bcb581f776b82375"
+  },
+  "created_at": "2026-10-13T08:53:41+00:00",
+  "paper": "p2",
+  "probe": "G1",
+  "cat": "bad-reading",
+  "expect": "4-mercaptophenylboronic acid (4-MPBA, BA)",
+  "trap": "berberine (the vision model's wrong summary of Fig. 1)"
+}

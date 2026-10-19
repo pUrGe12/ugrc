@@ -1,0 +1,317 @@
+{
+  "question": "What c lattice parameter does Table 1 give for the Al-rich NFA?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, is_header, text FROM cells WHERE table_id='p5.T1' ORDER BY row_no, col_no",
+      "rows": 99
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE id='p5.T1.r5c4'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%LiNi0.8Fe0.05Al0.15O2%' OR text ILIKE '%NFA-A%' LIMIT 10",
+      "rows": 10
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "Al-rich NFA",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "NFA-A",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.98
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['15%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'15%' is written exactly so in the document (e.g. p4.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"15%\", \"atom\": \"p4.L18\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "4",
+  "pairings": [
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 3
+    },
+    {
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "atom": "p10.L31",
+      "of": "NFA-A",
+      "sentence": "p10.L30:58",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.98,
+      "clause_about": [],
+      "request": {
+        "state": "The NFA-A ([[LiNi0.8Fe0.05Al0.15O2]]) and NFA 811 (LiNi0.8Fe0.1Al0.1O2) variants with 15% and 10% aluminum in their compositions displayed good rate capability when compared with the NFA-F (LiNi0.8Fe0.15Al0.05O2, 5% Al) variant.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[LiNi0.8Fe0.05Al0.15O2]] a value of “NFA-A”?",
+            "criteria": {
+              "true": "the passage gives [[LiNi0.8Fe0.05Al0.15O2]] for “NFA-A”, or for something “NFA-A” has, makes or contains",
+              "false": "[[LiNi0.8Fe0.05Al0.15O2]] is given for something else, or the passage does not connect it to “NFA-A”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.98
+          }
+        },
+        "usage": {
+          "input_tokens": 488,
+          "output_tokens": 21
+        }
+      },
+      "run": 5
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "e2fbab0cd6d21365933e78a120875cee9dc4ea8fd681513fdd7f999d41f5c878",
+  "leads": {
+    "sentences": [
+      "p3.L26:13",
+      "p2.L47:0",
+      "p6.L17:23",
+      "p8.L20:54",
+      "p12.L16:10",
+      "p10.L49:0",
+      "p2.L69:0",
+      "p5.L43:56",
+      "p10.L30:58",
+      "p2.L107:0",
+      "p5.L80:7",
+      "p3.L20:11"
+    ],
+    "measures": [
+      "p3.L26:13#298",
+      "p3.L26:13#307",
+      "p3.L26:13#312",
+      "p3.L26:13#351",
+      "p3.L26:13#675",
+      "p2.L47:0#102",
+      "p2.L47:0#124",
+      "p2.L47:0#154",
+      "p2.L47:0#391",
+      "p2.L47:0#410",
+      "p8.L20:54#59",
+      "p8.L20:54#92",
+      "p8.L20:54#125",
+      "p10.L49:0#23",
+      "p10.L49:0#41",
+      "p10.L49:0#61",
+      "p10.L49:0#104",
+      "p10.L49:0#120",
+      "p10.L49:0#129",
+      "p10.L49:0#135",
+      "p10.L49:0#140",
+      "p10.L30:58#42",
+      "p10.L30:58#82",
+      "p10.L30:58#90",
+      "p10.L30:58#209",
+      "p2.L107:0#164",
+      "p5.L80:7#147"
+    ],
+    "matched": 102
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1645,
+    "cache_read_input_tokens": 52741,
+    "cache_creation_input_tokens": 3877
+  },
+  "runs": [
+    {
+      "text": "The c lattice parameter that "
+    },
+    {
+      "table": "p5.T1"
+    },
+    {
+      "text": " gives for the Al-rich NFA is "
+    },
+    {
+      "quote": "14.2232(4)",
+      "atom": "p5.T1.r5c4",
+      "of": "Al-rich NFA"
+    },
+    {
+      "text": ". The Al-rich NFA row is the NFA-A variant, "
+    },
+    {
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "atom": "p10.L31",
+      "of": "NFA-A"
+    },
+    {
+      "text": ", as the paper's composition sentence identifies it."
+    }
+  ],
+  "rendered": "The c lattice parameter that Table 1[1] gives for the Al-rich NFA is 14.2232(4)[2]. The Al-rich NFA row is the NFA-A variant, LiNi0.8Fe0.05Al0.15O2[3], as the paper's composition sentence identifies it.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p5.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 5,
+        "caption": "Table 1. Structural parameters of the NFA variants determined through the Rietveld refinement using the neutron diffraction data (standard error provided in parenthesis).",
+        "bbox": [
+          51.0,
+          95.0,
+          547.6,
+          276.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "14.2232(4)",
+      "source": {
+        "atom": "p5.T1.r5c4",
+        "kind": "cell",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "14.2232(4)",
+        "bbox": [
+          253.5,
+          147.7,
+          283.1,
+          154.7
+        ],
+        "table": "Table 1",
+        "row": 5,
+        "col": 4,
+        "column_header": "c"
+      },
+      "strength": "verbatim",
+      "of": "Al-rich NFA",
+      "n": 2,
+      "rendered": "14.2232(4)"
+    },
+    {
+      "kind": "quote",
+      "quote": "LiNi0.8Fe0.05Al0.15O2",
+      "source": {
+        "atom": "p10.L31",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "NFA-A (LiNi0.8Fe0.05Al0.15O2) and NFA 811 (LiNi0.8Fe0.1Al0.1O2)",
+        "bbox": [
+          303.3,
+          103.9,
+          544.3,
+          114.0
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 3,
+      "rendered": "LiNi0.8Fe0.05Al0.15O2"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-18T07:14:17+00:00",
+  "arm": "leads",
+  "run": 3,
+  "paper": "adma-2020",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "14.2232(4) (p5.T1 r5)",
+  "trap": "14.227(3) of NFA 811 or 14.23(1) of Fe-rich"
+}

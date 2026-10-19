@@ -1,0 +1,454 @@
+{
+  "question": "How much residual moisture did the water-processed NMC532 cathode lose between 20 °C and drying at 120 °C, and how does its final value compare with the NMP-processed cathode dried at 100 °C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%moisture%' OR lower(text) LIKE '%water content%' OR lower(text) LIKE '%ppm%' OR lower(text) LIKE '%karl%' OR lower(text) LIKE '%120 %' OR lower(text) LIKE '%120°%' OR lower(text) LIKE '%100 °c%' OR lower(text) LIKE '%100°c%' ORDER BY page, id",
+      "rows": 25
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (8,9) AND id IN ('p8.L50','p8.L51','p8.L52','p8.L53','p8.L54','p8.L55','p8.L56','p8.L57','p8.L58','p8.L59','p8.L60','p8.L61','p9.L1','p9.L2','p9.L3','p9.L4','p9.L5','p9.L6','p9.L7','p9.L8') ORDER BY id",
+      "rows": 20
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 0 AS x, (SELECT CAST(regexp_extract(text, '([0-9]+) ppm of residual', 1) AS INTEGER) FROM atoms WHERE id='p8.L54') - (SELECT CAST(regexp_extract(text, 'reduced to ([0-9]+) ppm and 47', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS loss_ppm",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (SELECT CAST(regexp_extract(text, '([0-9]+) ppm of residual', 1) AS INTEGER) FROM atoms WHERE id='p8.L54') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS loss_ppm, (SELECT CAST(regexp_extract(text, '([0-9]+) ppm after', 1) AS INTEGER) FROM atoms WHERE id='p8.L56') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS nmp_minus_water_final",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 19,
+      "rules": [
+        "lineage:no-source",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 19,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "water-based NMC532 cathode",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "water-based NMC532 cathode",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 11,
+          "of": "NMP-processed NMC532 cathode",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[1]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[15]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[16]",
+        "why": "your own words contain number(s) ['100'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p6.L42): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p6.L42\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "5",
+  "pairings": [
+    {
+      "quote": "625 ppm",
+      "atom": "p8.L54",
+      "of": "water-based NMC532 cathode",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "47 ppm",
+      "atom": "p8.L59",
+      "of": "water-based NMC532 cathode",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    },
+    {
+      "quote": "87 ppm",
+      "atom": "p8.L56",
+      "of": "NMP-processed NMC532 cathode",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 11
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 6786,
+    "cache_read_input_tokens": 34240,
+    "cache_creation_input_tokens": 12687
+  },
+  "runs": [
+    {
+      "text": "The water-based NMC532 cathode lost "
+    },
+    {
+      "sql": "SELECT (SELECT CAST(regexp_extract(text, '([0-9]+) ppm of residual', 1) AS INTEGER) FROM atoms WHERE id='p8.L54') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS loss_ppm FROM atoms WHERE id='p8.L54'",
+      "column": "loss_ppm",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " ppm of residual moisture. It started at "
+    },
+    {
+      "quote": "625 ppm",
+      "atom": "p8.L54",
+      "of": "water-based NMC532 cathode"
+    },
+    {
+      "text": " (measured "
+    },
+    {
+      "quote": "at 20",
+      "atom": "p8.L54"
+    },
+    {
+      "text": " °C) and ended at "
+    },
+    {
+      "quote": "47 ppm",
+      "atom": "p8.L59",
+      "of": "water-based NMC532 cathode"
+    },
+    {
+      "text": " after drying at "
+    },
+    {
+      "quote": "110-120",
+      "atom": "p8.L60"
+    },
+    {
+      "text": " °C. The NMP-processed cathode reached "
+    },
+    {
+      "quote": "87 ppm",
+      "atom": "p8.L56",
+      "of": "NMP-processed NMC532 cathode"
+    },
+    {
+      "text": " after "
+    },
+    {
+      "quote": "drying at 100",
+      "atom": "p8.L56"
+    },
+    {
+      "text": " °C under vacuum. So the water-based cathode's final value was "
+    },
+    {
+      "sql": "SELECT (SELECT CAST(regexp_extract(text, '([0-9]+) ppm after', 1) AS INTEGER) FROM atoms WHERE id='p8.L56') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS nmp_minus_water_final FROM atoms WHERE id='p8.L56'",
+      "column": "nmp_minus_water_final",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " ppm lower than the NMP-processed value. Dried under the same conditions, the water-based cathode still held "
+    },
+    {
+      "quote": "160 ppm",
+      "atom": "p8.L57"
+    },
+    {
+      "text": " of moisture."
+    }
+  ],
+  "rendered": "The water-based NMC532 cathode lost 578[1] ppm of residual moisture. It started at 625 ppm[2] (measured at 20[3] °C) and ended at 47 ppm[4] after drying at 110-120[5] °C. The NMP-processed cathode reached 87 ppm[6] after drying at 100[7] °C under vacuum. So the water-based cathode's final value was 40[8] ppm lower than the NMP-processed value. Dried under the same conditions, the water-based cathode still held 160 ppm[9] of moisture.",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT (SELECT CAST(regexp_extract(text, '([0-9]+) ppm of residual', 1) AS INTEGER) FROM atoms WHERE id='p8.L54') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS loss_ppm FROM atoms WHERE id='p8.L54'",
+      "column": "loss_ppm",
+      "row": 0,
+      "fmt": "int",
+      "value": 578,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p8.L54",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "with NMP and water contain 200 and 625 ppm of residual moisture at 20",
+          "bbox": [
+            306.6,
+            667.8,
+            557.7,
+            675.8
+          ]
+        },
+        {
+          "atom": "p8.L59",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "reduced to 112 ppm and 47 ppm by increasing the drying temperature to",
+          "bbox": [
+            306.6,
+            720.1,
+            557.7,
+            728.1
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "578"
+    },
+    {
+      "kind": "quote",
+      "quote": "625 ppm",
+      "source": {
+        "atom": "p8.L54",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "with NMP and water contain 200 and 625 ppm of residual moisture at 20",
+        "bbox": [
+          306.6,
+          667.8,
+          557.7,
+          675.8
+        ]
+      },
+      "strength": "verbatim",
+      "of": "water-based NMC532 cathode",
+      "n": 2,
+      "rendered": "625 ppm"
+    },
+    {
+      "kind": "quote",
+      "quote": "at 20",
+      "source": {
+        "atom": "p8.L54",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "with NMP and water contain 200 and 625 ppm of residual moisture at 20",
+        "bbox": [
+          306.6,
+          667.8,
+          557.7,
+          675.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "at 20"
+    },
+    {
+      "kind": "quote",
+      "quote": "47 ppm",
+      "source": {
+        "atom": "p8.L59",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "reduced to 112 ppm and 47 ppm by increasing the drying temperature to",
+        "bbox": [
+          306.6,
+          720.1,
+          557.7,
+          728.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "water-based NMC532 cathode",
+      "n": 4,
+      "rendered": "47 ppm"
+    },
+    {
+      "kind": "quote",
+      "quote": "110-120",
+      "source": {
+        "atom": "p8.L60",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "110-120 (cid:2)C, respectively. These findings indicate that a comparable",
+        "bbox": [
+          306.6,
+          728.3,
+          557.7,
+          738.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "110-120"
+    },
+    {
+      "kind": "quote",
+      "quote": "87 ppm",
+      "source": {
+        "atom": "p8.L56",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "532 cathode was reduced to 87 ppm after drying at 100 (cid:2)C under vacuum",
+        "bbox": [
+          306.6,
+          686.4,
+          557.7,
+          696.7
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NMP-processed NMC532 cathode",
+      "n": 6,
+      "rendered": "87 ppm"
+    },
+    {
+      "kind": "quote",
+      "quote": "drying at 100",
+      "source": {
+        "atom": "p8.L56",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "532 cathode was reduced to 87 ppm after drying at 100 (cid:2)C under vacuum",
+        "bbox": [
+          306.6,
+          686.4,
+          557.7,
+          696.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "drying at 100"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (SELECT CAST(regexp_extract(text, '([0-9]+) ppm after', 1) AS INTEGER) FROM atoms WHERE id='p8.L56') - (SELECT CAST(regexp_extract(text, ' and ([0-9]+) ppm', 1) AS INTEGER) FROM atoms WHERE id='p8.L59') AS nmp_minus_water_final FROM atoms WHERE id='p8.L56'",
+      "column": "nmp_minus_water_final",
+      "row": 0,
+      "fmt": "int",
+      "value": 40,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p8.L56",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "532 cathode was reduced to 87 ppm after drying at 100 (cid:2)C under vacuum",
+          "bbox": [
+            306.6,
+            686.4,
+            557.7,
+            696.7
+          ]
+        },
+        {
+          "atom": "p8.L59",
+          "kind": "line",
+          "page": 8,
+          "strength": "verbatim",
+          "text": "reduced to 112 ppm and 47 ppm by increasing the drying temperature to",
+          "bbox": [
+            306.6,
+            720.1,
+            557.7,
+            728.1
+          ]
+        }
+      ],
+      "n": 8,
+      "rendered": "40"
+    },
+    {
+      "kind": "quote",
+      "quote": "160 ppm",
+      "source": {
+        "atom": "p8.L57",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "for 2 h. In comparison, the residual moisture was 160 ppm for the",
+        "bbox": [
+          306.6,
+          699.2,
+          557.7,
+          707.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 9,
+      "rendered": "160 ppm"
+    }
+  ],
+  "seals": {
+    "extraction": "798c9152e3015554d859f821680ae76eaea235c416203732eb68bf19e18beb03",
+    "readings": "bfc1129563d595d4ee1be5d3b0b21fc2dc56f77cece2a024ce81d2f8a8a84892"
+  },
+  "created_at": "2026-10-18T08:46:06+00:00",
+  "arm": "plain",
+  "run": 1,
+  "paper": "ensm-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "625 to 47 ppm: 578 ppm removed; NMP-processed at 100 °C: 87 ppm, so the water-based cathode ends lower (p8.L53-59)",
+  "trap": "112 ppm (at 110 °C), 160 ppm (water-based at 100 °C)"
+}
