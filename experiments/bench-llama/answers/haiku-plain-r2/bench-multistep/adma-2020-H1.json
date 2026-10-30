@@ -1,0 +1,299 @@
+{
+  "question": "Which NFA variant has the highest iron content, and what capacity did it keep at 1C in the rate test?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%1C%' OR text ILIKE '%Fe0%' OR text ILIKE '%x = %' OR text ILIKE '%rate%' OR text ILIKE '%mAh%g%' ORDER BY page, id LIMIT 150",
+      "rows": 57
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (3,4,5,10) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p4.L17','p4.L18','p10.L31','p10.L32','p10.L33','p10.L34','p10.L35','p10.L36','p10.L40','p10.L41','p10.L42','p2.L109','p2.L110') ORDER BY id",
+      "rows": 13
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 7,
+          "of": "NFA-F",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['10%', '811', '5%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'10%' is written exactly so in the document (e.g. p10.L32): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10%\", \"atom\": \"p10.L32\"} — never shorten it",
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "'5%' is written exactly so in the document (e.g. p5.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5%\", \"atom\": \"p5.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['1C', '116', '≈138', '0.1C,', '1C.', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p2.L118\"} — never shorten it",
+          "'≈138' is written exactly so in the document (e.g. p10.L41): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"≈138\", \"atom\": \"p10.L41\"} — never shorten it",
+          "'0.1C' is written exactly so in the document (e.g. p10.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p10.L37\"} — never shorten it",
+          "'1C' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['1C'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "≈81 mAh g^− 1",
+      "atom": "p10.L36",
+      "of": "NFA-F",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3485,
+    "cache_read_input_tokens": 44779,
+    "cache_creation_input_tokens": 16793
+  },
+  "runs": [
+    {
+      "text": "The highest-iron variant is NFA-F, "
+    },
+    {
+      "quote": "LiNi0.8Fe0.15Al0.05O2",
+      "atom": "p2.L109"
+    },
+    {
+      "text": ", whose iron content is given as "
+    },
+    {
+      "quote": "15% iron",
+      "atom": "p4.L18"
+    },
+    {
+      "text": ", the largest of the variants. At the rate test's "
+    },
+    {
+      "quote": "1C",
+      "atom": "p10.L35"
+    },
+    {
+      "text": " rate, NFA-F kept a capacity of "
+    },
+    {
+      "quote": "≈81 mAh g^− 1",
+      "atom": "p10.L36",
+      "of": "NFA-F"
+    },
+    {
+      "text": ". The other NFA-F capacity figure in that passage is the value reached after the rate was lowered back to "
+    },
+    {
+      "quote": "0.1C",
+      "atom": "p10.L37"
+    },
+    {
+      "text": ", so it is not the rate-test capacity."
+    }
+  ],
+  "rendered": "The highest-iron variant is NFA-F, LiNi0.8Fe0.15Al0.05O2[1], whose iron content is given as 15% iron[2], the largest of the variants. At the rate test's 1C[3] rate, NFA-F kept a capacity of ≈81 mAh g^− 1[4]. The other NFA-F capacity figure in that passage is the value reached after the rate was lowered back to 0.1C[5], so it is not the rate-test capacity.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "LiNi0.8Fe0.15Al0.05O2",
+      "source": {
+        "atom": "p2.L109",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "compositions: LiNi0.8Fe0.1Al0.1O2 (NFA 811), LiNi0.8Fe0.15Al0.05O2",
+        "bbox": [
+          303.3,
+          565.8,
+          544.3,
+          576.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "LiNi0.8Fe0.15Al0.05O2"
+    },
+    {
+      "kind": "quote",
+      "quote": "15% iron",
+      "source": {
+        "atom": "p4.L18",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "10, and 15% iron, respectively—the room-temperature spectra",
+        "bbox": [
+          303.3,
+          708.9,
+          544.2,
+          717.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "15% iron"
+    },
+    {
+      "kind": "quote",
+      "quote": "1C",
+      "source": {
+        "atom": "p10.L35",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "tained a capacity of ≈116 mAh g^− 1 at high C-rates of 1C when",
+        "bbox": [
+          303.3,
+          146.7,
+          544.3,
+          157.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈81 mAh g^− 1",
+      "source": {
+        "atom": "p10.L36",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "compared with the NFA-F variant (≈81 mAh g^− 1) at the same",
+        "bbox": [
+          303.3,
+          157.7,
+          544.3,
+          168.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-F",
+      "n": 4,
+      "rendered": "≈81 mAh g^− 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.1C",
+      "source": {
+        "atom": "p10.L37",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "rate. Finally, upon lowering the C-rate from 1C to 0.1C, the",
+        "bbox": [
+          303.3,
+          169.9,
+          544.3,
+          178.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "0.1C"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:31:57+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "adma-2020",
+  "probe": "H1",
+  "cat": "H",
+  "expect": "NFA-F (LiNi0.8Fe0.15Al0.05O2, 15% Fe); ~81 mAh/g at 1C (p10.L36)",
+  "trap": "NFA-A's ~116 mAh/g",
+  "seconds": 19.3
+}

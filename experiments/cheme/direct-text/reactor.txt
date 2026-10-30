@@ -1,0 +1,2332 @@
+This article is licensed under CC-BY-NC-ND 4.0
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Ammonia Co-Firing in a Staged-Air Pulverized-Coal Boiler: ReactorNetwork Prediction of Carbon Reduction and Nitrogen-Oxide
+Emissions
+Zhongyuan Hu, Qing Wang,* Zefeng Sun, Yuan Wang, Dongyang Wu, and Shuang Wu
+Cite This: ACS Omega 2026, 11, 63973−63994
+
+ACCESS
+
+Read Online
+
+Metrics & More
+
+Article Recommendations
+
+ABSTRACT: As power systems pursue deep decarbonization while retaining dispatchable capacity, retrofitting the existing coalfired boiler fleet with carbon-free fuels such as ammonia is a pragmatic option, but practical implementation is constrained by the
+coupled behavior of combustion stability, char burnout, and NO formation. In this work, a Chemkin-based chemical reactor network
+(CRN) is developed for a 350 MW pulverized-coal boiler with staged air, combining perfectly stirred reactors for the main furnace
+zones with detailed gas-phase kinetics and heterogeneous NO-char/soot reactions. The CRN is validated against staged drop-tubefurnace measurements for pure coal and 20% ammonia cofiring (dry 6%O2), predicting outlet O2, CO2 and CO within ∼10% and
+capturing the measured NO rise. With ammonia introduced in the flame zone, simulations for 0−80% blending (20% step) show
+near-linear reductions in CO2 and CO (−21%/−73% at 20%; −84%/−98% at 80%), while char consumption is delayed and the
+NO/burnout peaks shift downstream. NO varies nonlinearly, increasing from 20% to 60% but decreasing at 80%. Reaction analysis
+attributes this trend to competition for H/OH radicals: at high ammonia fractions, NH3 dehydrogenation depletes H/OH, promotes
+N2 formation via NHi, and suppresses NO production. At 20% cofiring, injection location is critical: postflame injection minimizes
+CO2/CO (−33%/−80%) but increases NO (∼+88%), whereas burnout-zone injection causes a much larger NO penalty (about
++571%). Among the 20% cofiring cases, flame-zone injection yields the lowest predicted NO emission. The outlet NH3 values are
+conditional on the ideal-mixing assumptions of the CRN and are not interpreted as quantitative predictions of ammonia slip under
+practical high-ratio operation. The results provide a chemical-kinetic interpretation of the effects of blending ratio and injection
+location within the modeled conditions. The results relate the predicted outlet species concentrations to nitrogen-conversion
+pathways under the prescribed network and operating conditions.
+
+1. INTRODUCTION
+With global greenhouse-gas emissions at record highs and the
+emissions gap still unclosed, immediate, unprecedented and
+sustained mitigation is now essential to limit climate risks and
+keep returning to 1.5 °C by 2100 within the realm of
+possibility.1 Coal still supplies just over one-third of global
+electricity generation, so decarbonizing existing coal boilers
+remains a near-term priority.2−4 Ammonia cofiring offers a
+potential route to reduce direct CO2 emissions from existing
+pulverized-coal boilers by replacing part of the coal-derived
+thermal input with a carbon-free fuel.5−7 Its application,
+however, requires attention to both fuel conversion and
+© 2026 The Authors. Published by
+American Chemical Society
+
+nitrogen-oxide emissions. Ammonia has relatively low
+combustion reactivity and introduces additional fuel-bound
+nitrogen, which can alter the combustion process and NO
+formation.8 Moreover, ammonia-derived intermediates can
+participate in both NO formation and reduction. The resulting
+Received: July 24, 2026
+Revised: October 2, 2026
+Accepted: October 2, 2026
+Published: October 9, 2026
+
+63973
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+NO emissions therefore depend on the conditions under which
+ammonia reacts with coal-derived species, rather than on the
+ammonia blending ratio alone.9−12 Understanding this
+dependence is necessary for evaluating ammonia cofiring in
+boilers operated with staged air.
+At the mechanistic level, NO production in NH3-containing
+flames is governed by a radical-sensitive oxidation network in
+which NH3 is converted through NH2/NH/N intermediates,
+and the competition between N2-forming and NO-forming
+channels depends strongly on the local H/O radical pool and
+the flame structure.9 Detailed-mechanism analyses identify the
+HNO route as a major contributor to NO formation over wide
+condition ranges, which makes OH-related reactions and
+residence time in high-temperature zones high-leverage
+sensitivities for NO prediction and control.9−11,13,14
+Previous studies have examined ammonia−coal cofiring
+under different blending ratios and air-staging conditions.
+Experiments in staged drop-tube furnaces have investigated
+combustion characteristics and fuel-nitrogen conversion,
+demonstrating the importance of considering ammonia
+addition together with the local combustion environment.15−17
+Boiler-scale numerical studies have also examined the effects of
+ammonia blending ratio and air distribution on combustion
+and NO emissions.16−18 These studies provide a basis for
+assessing the overall effects of ammonia substitution. At
+constant total thermal input, however, increasing the ammonia
+share also reduces the supply of coal-derived volatiles and char.
+Interpretation of the resulting NO response therefore requires
+consideration of both ammonia conversion and the accompanying changes in coal conversion. This motivates an
+examination of the temperature, species evolution, and
+nitrogen-reaction pathways in individual furnace zones as the
+ammonia blending ratio changes.15,19,20
+Recent high-fidelity numerical studies have further clarified
+the roles of multistream mixing and species transport in
+pulverized-coal/ammonia flames. Wen et al. developed a fourfuel-stream flamelet model for large-eddy simulation that
+separately represents coal volatiles, char off-gases, ammonia,
+and the pilot stream.21 Their subsequent carrier-phase direct
+numerical simulation identified distinct coal- and ammoniadominated reaction regions and showed that, for the flame
+investigated, NO was formed mainly in the coal-dominated
+region, with volatile-N species making an important contribution.22 Later flamelet-based large-eddy simulations and
+carrier-phase direct numerical simulations further showed that
+differential diffusion can affect local thermochemical quantities
+and NOx distributions, while its inclusion improves the
+prediction of temperature and NOx mass fractions in the
+flamelet framework.23,24 These findings provide a flame-scale
+basis for interpreting why changes in ammonia blending ratio
+and injection location can alter nitrogen-conversion behavior
+in the present zonal model.
+Ammonia injection location is another important variable
+because it determines the reaction environment encountered
+by the injected fuel. Experimental studies using pulverized-coal
+furnaces and swirl burners have examined the influence of
+ammonia injection modes on combustion and pollutant
+emissions.8,25−27 Numerical investigations have likewise
+considered different ammonia introduction methods in utility
+boilers.8,28,29 Under staged-air operation, shifting ammonia
+injection between furnace zones changes its exposure to
+temperature and oxygen, its interaction with coal-derived
+species, and the available downstream reaction sequence.
+
+Article
+
+Consequently, outlet NO concentrations need to be
+interpreted together with ammonia consumption and NO
+formation and reduction within the network. Comparing
+injection into the flame zone, postflame zone, and burnout
+zone provides a means of examining these relationships under
+the prescribed air-staging arrangement.15,19,20
+Explaining these effects requires a description of the
+reactions responsible for nitrogen conversion. Ammoniaderived nitrogen can proceed through competing NO-forming
+and N2-forming pathways, while reactions involving char and
+soot provide additional routes for NO consumption.25,30,31
+Chemical reactor networks offer a tractable approach for
+incorporating detailed chemistry into a zonal representation of
+boiler combustion.25,32−34 By representing furnace regions as
+interconnected ideal reactors, a CRN allows the evolution of
+temperature and species to be examined along a prescribed
+reaction sequence. Rate-of-production and reaction-path
+analyses can then relate changes in NO to the elementary
+reactions and nitrogen-conversion routes within selected
+zones. This approach is suited to the present comparison of
+ammonia blending ratios and injection zones, although spatial
+mixing is represented through the prescribed network rather
+than resolved directly.
+The question addressed here is how changes in ammonia
+blending ratio and injection zone alter the balance between
+NO formation and removal within a prescribed staged-air
+reactor network. Outlet concentrations alone do not identify
+the furnace zones or reaction pathways responsible for an
+emission change. A consistent comparison of zonal temperature, fuel conversion, and nitrogen chemistry is therefore
+needed to connect the overall NO response with the
+underlying reactions. The present study focuses on this
+relationship for a selected coal and boiler configuration,
+considering ammonia blending ratio and injection zone as the
+principal variables.
+In this study, a CHEMKIN-based CRN is developed for a
+350 MW pulverized-coal boiler with staged air, incorporating
+detailed gas-phase chemistry and heterogeneous reactions
+involving char and soot. At constant total fuel thermal input
+and with a prescribed air-staging arrangement, ammonia
+thermal shares of 0%, 20%, 40%, 60%, and 80% are first
+investigated with ammonia supplied to the flame zone.
+Ammonia injection into the flame zone, postflame zone, and
+burnout zone is then compared at a thermal share of 20%. The
+analysis examines zonal temperatures, char consumption, O2
+and NH3 evolution, and outlet CO2, CO, NO, and NH3
+concentrations. Rate-of-production and reaction-path analyses
+are used to identify the principal reactions governing NH3
+consumption and NO formation and reduction, and to explain
+their changes with blending ratio and injection zone. The
+results provide a kinetic interpretation of the predicted
+emission trends under the modeled operating conditions.
+
+2. NUMERICAL SIMULATION METHODS
+2.1. CHEMKIN Based Kinetic Computation Method
+CHEMKIN provides numerical solvers for detailed chemical kinetics,
+formulating the reacting system through “mechanism + conservation
+equations” and organizing species, reactions, and property data in
+modular files. At boiler scale, it is commonly coupled with a reactor
+network (CRN) to resolve key pathways and radical pool evolution
+within a tractable computational budget. The overall workflow is
+summarized as mechanism/data input → reactor network modeling
+→ solution → post processing, as shown in Figure 1.
+63974
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 2. Perfectly Stirred Reactor, PSR.
+within each reactor, and the outlet composition equals that inside the
+reactor. The reactor state is determined by chemical kinetics together
+with residence time and the mass and energy balances. A network of
+PSRs can represent differences between prescribed reaction zones, but
+does not resolve spatial gradients within an individual zone.
+
+2.2. Reactor Network Model and Chemical Reaction Model
+for Coal-Fired Boilers
+2.2.1. Reactor Network Model for Coal-Fired Boilers. When
+simulating boiler combustion with CHEMKIN, the three-dimensional
+furnace is reduced to a reactor network composed of multiple zerodimensional units based on the thermo-flow field and reaction
+features, thereby enabling a tractable 0-D computation.35 A 350 MW
+cogeneration boiler is used as the reference unit. The furnace adopts a
+π type arrangement, with wall fired tangential main firing and four
+corner tangential overfire/burnout air. The total coal feed rate is
+166.14 t·h−1; the primary and secondary air temperatures are 343 and
+603 K, respectively. Pulverized coal jets are entrained by the primary
+air into the main combustion zone. With its lower temperature, the
+primary air primarily supplies oxygen for volatile combustion during
+the initial firing stage. Air staging is implemented by delivering 30%
+and 70% of the secondary air to the flame and post flame zones,
+respectively, thereby producing a fuel-rich (oxygen-lean) stage
+followed by a fuel lean (oxygen rich) stage-an effective strategy for
+NOx reduction. The recirculation branch shown in Figure 3 is
+included as part of the prescribed reactor-network configuration. This
+study examines ammonia blending ratio and injection location within
+this configuration; it does not independently evaluate the effects of
+introducing or removing recirculation. Of the total recirculated
+stream, 20% is directed to the mixing zone and the remaining 80% to
+the flame zone. These percentages describe the allocation of the
+returned stream between the two zones, rather than the overall
+recirculation ratio. In the burnout zone, the remaining unburned fuel
+undergoes further oxidation after the addition of overfire air. The gas
+composition at the outlet of the downstream section is taken to
+represent the flue gas composition at the boiler back end. The
+composition of the recirculated flue gas is not prescribed as a fixed
+inlet composition but is obtained from the converged outlet of the
+recirculation reactor for each case. Consequently, changes in oxygen
+consumption downstream of the NH3 injection point can modify the
+composition of the recycled stream and feed back to the mixing-zone
+reactor. Accordingly, the boiler is partitioned into three principal
+sections the main combustion zone, the burnout zone, and the
+downstream section and the corresponding reactor network is shown
+in Figure 3.
+To simplify the computation, we assume that once injected, coal
+volatiles undergo instantaneous devolatilization to the gas-phase; the
+devolatilized gases mix homogeneously with the oxidizer. Effects of
+ash and gas-phase preheating transients are neglected, so the boiler
+combustion is treated as a continuous flow process. Reactors are
+assigned according to the boiler zoning; the resulting reactor network
+layout is summarized in Table 1. The main combustion section is
+represented by five PSRs: C1-R1 (mixing zone), C1-R2 (flame zone),
+C1-R3 (post flame zone), C1-R4 (reducing zone), and C1-R7
+(recirculation zone). Two additional PSRs are used for the
+downstream section, where the second downstream node, C1-R8,
+represents the furnace exit. The use of a PSR network follows previous
+studies of ammonia cofiring in pulverized-coal boilers, in which
+interconnected PSRs were used to investigate the effects of ammonia
+injection location and blending ratio on NO emissions.25,35 In the
+present study, this representation is adopted to examine detailed
+nitrogen chemistry within prescribed reaction zones. A PFR can
+describe continuous streamwise evolution under a negligible-axialbackmixing assumption, whereas each PSR represents an idealized
+
+Figure 1. Schematic of the CHEMKIN computational framework.
+2.1.1. Mechanism and Data Input. Gas-phase mechanism:
+provides elementary reactions and thermochemical data (THERMO
+polynomials) to evaluate reaction rates and equilibrium properties
+both are prerequisites for any calculation. CHEMKIN prescribes strict
+formats for mechanism, thermodynamic, and transport data to ensure
+consistent coupling with its solvers.
+Surface/multiphase mechanism: describes heterogeneous reactions
+involving condensed phases such as char/soot (e.g., char/soot NO
+reduction, gasification). Required inputs include site density, surface
+coverage relations, and rate expressions for surface reactions.
+Transport properties (Transport): include diffusion coefficients,
+viscosity, and thermal conductivity, which close the energy and
+species transport terms; typical databases are based on Chapman
+Enskog fits and are supported by CHEMKIN parsers.
+2.1.2. Reactor Network Modeling (CRN). Using perfectly
+stirred reactors (PSRs) and plug flow reactors (PFRs) as basic
+modules, the network is assembled in series/parallel according to
+functional zones (mixing, main flame, post flame, downstream, etc.).
+Each node is parametrized by volume/residence time and by inlet
+composition and temperature, providing an equivalent representation
+of “thermochemical subdomains” within the complex furnace. The
+advantage of a CRN is that it retains detailed chemistry while
+dramatically reducing the burden of flow/radiation solving, making it
+well suited for mechanistic attribution and parameter sweeps; this
+paradigm has been repeatedly adopted in combustion devices and
+boiler studies.30
+2.1.3. Solution and Postprocessing. The solver integrates the
+steady/transient forms of the mass, energy, species, and equation of
+state relations to obtain temperature and species fields for each node.
+Rate-of-production (ROP) analysis is used to identify the elementary
+reactions contributing to NH3 consumption and NO formation and
+reduction, while reaction-path analysis is used to examine nitrogen
+conversion among the participating species. In this work,
+interconnected PSRs represent the prescribed reaction zones of the
+boiler. The network describes the transfer of reacting streams between
+these zones and the associated changes in their average
+thermochemical states. These analyses are applied to selected reaction
+zones to compare the competing pathways leading to NO and N2
+under different ammonia blending ratios and injection locations.
+The ideal perfectly stirred reactor (PSR) is illustrated in Figure 2.
+Temperature and composition are assumed to be spatially uniform
+63975
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 3. Reactor network of the 350 MW pulverized coal boiler.
+
+Table 1. Reactor Network of the 350 MW Pulverized Coal Boiler
+PSR-id
+
+zone
+
+role
+
+inlets
+
+remarks
+
+C1-R1
+C1-R2
+C1-R3
+C1-R4
+C1-R5
+C1-R6
+C1-R7
+C1-R8
+
+Mixing Zone
+Flame Zone
+Post Flame Zone
+Reduction Zone
+Burnout Zone (OFA)
+Downstream Section-1
+Recirculation Zone
+Downstream Section-2(Exit)
+
+Primary air + coal + 20% FGR mixing
+Main ignition/heat release
+Further oxidation and heat release
+NO reduction/char reactions
+Further oxidation with overfire air
+Gas cooling/cleanup
+Low T flue gas recirculation
+Furnace exit composition
+
+Primary air (343 K, Coal, FGR (from R7))
+From R1 + 30% Secondary air
+From R2 + 70% Secondary air
+From R3
+From R4 + OFA
+From R5
+From downstream
+From R6
+
+Entrance of main combustion
+High T, fuel-rich early stage
+Air staging transition
+Oxygen-lean (reducing)
+Char burnout
+Convective pass
+Provides FGR to R1/R2
+Furnace outlet/stack inlet
+
+Table 2. Principal Reactions and Selected Kinetic Parameters for NH3 Co-Firing with Pulverized Coal
+A (s−1)
+
+β (−)
+
+Ea (J·kmol−1)
+
+4.4 × 1011
+
+0
+
+1.26 × 108
+
+3.0 × 108
+
+Reaction
+
+CmH n + (m/2)O2
+
+mCO + (n/2)H 2
+
+CmH n + mH 2O
+
+mCO + (n/2 + m)H 2
+
+Cx H y O2 + 0.5(z
+
+x)O2
+
+xCO + (y/2)H 2
+
+H 2 + 0.5 O2
+
+H 2O
+
+CO + H 2O
+
+CO2 + H 2
+
+CO + 0.5 O2
+
+CO2
+
+(7)
+
+(9)
+
+NH3 + NO
+
+N2 + H 2O + 0.5 H 2
+
+0
+
+1.26 × 108
+
+5
+
+6.57 × 10
+
+1
+
+8.02 × 107
+
+5.69 × 1011
+
+0
+
+1.47 × 108
+
+2.75 × 109
+
+0
+
+8.36 × 107
+
+1.93 × 10
+
+−2
+
+1.26 × 108
+
+3.5 × 102
+
+7.65
+
+5.24 × 108
+
+4.24 × 10
+
+5.3
+
+3.5 × 108
+
+0.185
+
+1.25
+
+6.9 × 107
+
+13
+
+(10)
+
+NO + H 2O + 0.5 H 2
+
+0.5 N2 + 1.5 H 2
+
+(6)
+
+(8)
+
+NH3 + O2
+NH3
+
+(5)
+
+(11)
+(12)
+
+(13)
+
+5
+
+well-mixed zone. The present network therefore provides a zonal
+kinetic interpretation rather than a spatially resolved description of
+boiler combustion. The cited studies support the use of this modeling
+approach, but do not independently validate its application to the
+present boiler.
+2.2.2. Chemical Reaction Model. NH3-coal cofiring involves
+complex chemistry among hydrocarbons, nitrogenous species, and a
+variety of radicals. Reaction models specifically tailored for NH3
+cofiring with pulverized coal are still under development. Beyond gasphase oxidation, gas−solid heterogeneous reactions must be
+incorporated for realistic emission predictions. In particular, under
+the high-temperature, oxygen -lean zone of coal boilers, the
+heterogeneous reaction pathways of NO with NH3, coal char, and
+soot remain an active research topic. Because NO abatement is
+governed not only by reactions with hydrocarbon derived radicals but
+
+also by heterogeneous reduction on soot/char, these solid−gas
+reactions should be explicitly included in the kinetic model.
+The calculations employed the detailed nitrogen-chemistry model
+developed by Hashemi et al.36 for pulverized-coal combustion. Its gasphase subset, originally assembled from the detailed kinetic
+mechanisms of Glarborg and coworkers, contains 97 gaseous species
+participating in 778 gas-phase reactions. It integrates hydrocarbon
+combustion chemistry, NOx formation chemistry, and heterogeneous
+reactions involving coal char and soot, enabling simulation of both
+NOx formation and reduction during coal combustion. Hashemi et al.
+formulated and compared submodels for char + NO and soot + NO.
+They showed that omitting soot/char chemistry leads to overprediction relative to experiments; hence, heterogeneous NO
+reactions with char or soot are essential for credible emission
+predictions. Wen et al.37 coupled a flamelet model with a quadrature63976
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+based moment method in LES to describe soot nucleation,
+condensation, coagulation, surface growth, and oxidation in
+pulverized-coal combustion. More recently, Wen et al.38 incorporated
+coal-pyrolysis-derived PAH formation into a flamelet/QMOM
+framework, enabling the prediction of soot volume fraction, number
+density, and particle size. In contrast, the present reactor-network
+model represents soot as the lumped pseudospecies C166 to account
+for its oxidation and heterogeneous reduction of NO, without
+resolving soot formation or particle-size evolution.
+In this mechanism, char and soot are represented as C412N5 and
+C166, respectively. The soot NO reaction is given as
+Soot(C166) + NO
+
+0.994 Soot(C166) + 0.5 N2 + CO
+
+Article
+
+and fixed carbon; the ultimate analysis quantifies C, H, O, N,
+and S. The proximate and ultimate analyses and the lower
+heating value (LHV) are summarized in Table 3, while
+selected parameters for NH3 are listed in Table 4.
+Table 4. Selected Parameters of Ammonia (NH3)
+
+(1)
+
+Parameter
+
+Unit
+
+Numerical
+
+Low heat generation
+Density
+Ammonia temperature
+Low calorific value per unit volume
+
+kJ·kg−1
+kg·m−3
+K
+kJ·m−3
+
+18603.1
+0.771
+313.15
+14516.388
+
+The oxidation reaction of char is
+Char(C412N5) + 208.5 O2
+
+412 CO + 5 NO
+
+(2)
+
+The volatile gas composition from pulverized coal pyrolysis
+is computed using the David Merrick volatiles model.39 The
+Merrick framework comprises three parts final yields of
+individual volatile species, a pyrolysis kinetics submodel and
+prediction of char composition formulated as a system of
+equations constrained by elemental balance. To better capture
+the devolatilization characteristics of pulverized coal, calibration parameters are tuned, including the fraction of total
+hydrogen assigned to CH4 and the fraction of total oxygen
+assigned to CO in the volatile yield partition. Hydrocarbons
+are limited to light species up to C2, and nitrogen containing
+volatiles are restricted to HCN and NH3. More advanced coalconversion models capable of describing the coupled evolution
+of devolatilization, char conversion, and the resulting gaseous
+products have been systematically reviewed by Hasse et al.40
+Applying the Merrick model in conjunction with the furnace
+temperature profile yields the mass fractions of the fuel’s
+constituent species, as summarized in Table 5.
+
+The NO reduction reaction of char is
+
+Char(C412N5) + NO
+
+Char(C412N5) + 0.5 N2 + 0.5 O2
+
+(3)
+
+Selected reactions that are particularly relevant to NH3 conversion
+and NO formation or reduction are summarized in Table 2. These
+reactions are presented to support the subsequent kinetic analysis and
+do not constitute a reduced reaction mechanism; the complete gasphase and heterogeneous reaction model described above was used in
+all calculations. The Arrhenius expression describes the temperature
+dependence of the rate constant and is given by
+i Ea zy
+zz
+k f = AT expjjj
+k RT {
+
+(4)
+
+where A is the pre-exponential (units depend on reaction order; s−1
+for first order reactions), β is the Arrhenius temperature exponent, Ea
+is the activation energy (J·mol−1), kf is the forward rate constant, T is
+the absolute temperature (K), and R is the universal gas constant (J·
+mol−1·K−1).
+
+3.1. Theoretical Analysis and Calculation
+
+3. INITIAL CONDITIONS AND THEORETICAL
+ANALYSIS
+The computational workflow is shown in Figure 4.
+
+3.1.1. Blending Ratio Calculation. For NH3-coal
+cofiring, the NH3 consumption is determined via an energy
+(heat) balance. Furnace parameters are then evaluated under
+the constraint of constant thermal input to the furnace.
+Accordingly, the total fuel heat input for pure coal firing is
+taken as the reference, and the cofiring cases are constrained to
+the same total heat input across different NH3 blending ratios.
+The total thermal input to the boiler is
+Q = Bcoal × Q net , ar
+
+(14)
+
+Where Q is the total thermal input to the furnace, kJ·s−1;
+Bcoal is the coal mass flow rate, kg·s−1; Q net,ar is the coal lower
+heating value on an as received basis, kJ·kg−1.
+Total heat input contributed by NH3 under cofiring:
+Q NH = Q × RNH3
+
+(15)
+
+3
+
+where RNH3 denotes the NH3 blending ratio (%), taken on an
+energy basis unless otherwise stated.
+Fuel specification under NH3-coal cofiring:
+
+Figure 4. Flowchart of the theoretical computational workflow.
+
+The coal selected in this study is the boiler design coal
+(Ordos lignite). Coal fed to the mixing zone is represented by
+two pseudo components: char and volatiles. The proximate
+analysis reports mass fractions of moisture, ash, volatile matter,
+
+B0 =
+
+Q × (1
+
+RNH3)
+
+Q net , ar
+
+(16)
+
+Table 3. Proximate and Ultimate Analysis and LHV of the Selected Ordos Lignite
+Proximate Analysis (%)
+
+Ultimate Analysis (%)
+
+Mar
+
+Var
+
+FCar
+
+Aar
+
+Car
+
+Har
+
+Oar
+
+Nar
+
+Sar
+
+Qnet,ar (MJ·kg−1)
+
+18.60
+
+25.05
+
+24.74
+
+31.61
+
+41.38
+
+3.61
+
+3.18
+
+0.82
+
+0.80
+
+14.7
+
+63977
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Table 5. Mass Fractions of Pulverized Coal Components
+Components
+
+Char
+
+Soot
+
+CH4
+
+C2H4
+
+C2H6
+
+H2
+
+CO
+
+CO2
+
+H2O
+
+HCN
+
+NH3
+
+Quality score
+
+0.51
+
+0.35
+
+0.0039
+
+0.003
+
+0.034
+
+0.031
+
+0.024
+
+0.0096
+
+0.014
+
+0.019
+
+0.0015
+
+where B0 denotes the coal mass flow rate required under
+cofiring (kg·s−1).
+VNH3 =
+
+(3) Coal preheating, moisture evaporation, and devolatilization occur instantaneously upon entry into the furnace.
+(4) Mineral ash in the raw coal is treated as inert and
+nonreactive during gasification.
+(5) Only dominant heterogeneous gas−solid reactions
+between char and O2/H2O/H2/CO2, together with
+homogeneous gas-phase reactions, are considered. O2,
+H2O, and CO2 are included as species in the reaction
+network; their inlet fractions are not independently
+varied to isolate atmosphere effects in the present study.
+(6) The principal stable gas species reported in the present
+analysis include O2, H2O, H2, CO2, CO, CH4, C2H4,
+HCN, NH3, and N2. The detailed mechanism additionally solves the radical and nitrogen-containing intermediates involved in ammonia conversion, including H,
+O, OH, NH2, NH, N, HNO, and NNH. Soot is
+represented separately by the condensed pseudospecies
+C166. All gas-phase species obey the ideal-gas equation of
+state. N2 participates in the nitrogen-conversion
+mechanism and is therefore not treated as chemically
+inert.
+(7) The overall furnace heat loss is assumed identical to that
+under pure coal firing.
+
+Q × RNH3
+Q
+
+(17)
+
+where VNH3 is the required NH3 volumetric flow rate under
+cofiring (m3·s−1), and QV is the volumetric lower heating value
+of NH3 (kJ·m−3)
+Given the specified parameters, the coal and NH3 flow rates
+for different blending ratios are determined as summarized in
+Table 6.
+Table 6. Coal and NH3 Flow Rates at Different NH3
+Blending Ratios
+Mixing ratio
+(%)
+
+Pulverized coal flow rate
+(t·h−1)
+
+Ammonia flow rate
+(m3·s−1)
+
+0
+20
+40
+60
+80
+
+183
+146.4
+109.8
+73.2
+36.6
+
+0
+10.29
+20.59
+30.88
+41.18
+
+3.3. Experimental Validation of the Numerical Simulation
+
+3.1.2. Calculation of Required Air for Combustion.
+Theoretical air requirement per unit mass of pulverized coal:
+C
+H
+S
+i
+1
+× jjj1.866 ar + 5.56 ar + 0.7 ar
+0.21 k
+100
+100
+100
+Oar yz
+zz
+0.7
+100 {
+
+(18)
+
+Theoretical air requirement for NH3 combustion:
+1
+3
+V k0 =
+× VNH3
+0.21
+4
+
+(19)
+
+V0 =
+
+To assess the accuracy and reliability of the 0-D numerical framework
+for NH3-coal cofiring, we validate against experimental data obtained
+on a staged combustion drop tube furnace (DTF) constructed at
+Zhejiang University,16,17 ensuring strict consistency in coal properties
+and operating conditions between simulation and experiment. For
+direct comparison with the combustion tests, simulated mole fractions
+are converted to dry flue gas compositions normalized to 6% O2. The
+simulation results and measurements for pure coal firing and for an
+NH3 blending ratio of 20% are summarized in Table 7.
+
+Table 7. Comparison between Simulation and Experiment
+for Pure Coal Firing and 20% NH3 Blending
+
+Actual air mass flow rate supplied to the boiler:
+mair = ( 1B0V 0 +
+
+0
+2V k ) air
+
+Pure coal powder
+combustion
+
+(20)
+
+where α1 and α2 are the excess air coefficients for coal and
+NH3, respectively; B0 is the coal mass flow rate under cofiring
+(kg·s−1); V0 is the theoretical air per unit mass of coal, m3·kg−1;
+V k0 is the theoretical volumetric air flow rate required for NH3
+combustion, m3·s−1; ρair is the air density at the specified state
+(kg·m−3).
+
+Ammonia blending ratio
+20%
+
+Flue gas components
+
+Test
+
+Simulation
+
+Test
+
+Simulation
+
+O2 (%)
+N2 (%)
+CO2 (%, 6%O2)
+CO (ppm, 6%O2)
+NO (ppm, 6%O2)
+
+5.37
+80.14
+13.69
+62.05
+277.44
+
+4.74
+81.94
+11.86
+58.58
+302.52
+
+9.92
+81.58
+11.31
+880.09
+579.68
+
+8.03
+84.34
+10.21
+719.55
+603.21
+
+Comparing the simulation results with the experimental results: the
+oxygen content, N2 concentration, and CO2 concentration at the
+furnace outlet shows good agreement with the experimental data, with
+relative errors all within 10%. These differences are within a
+reasonable range. Coal combustion with ammonia cofiring can
+effectively reduce CO and CO2 emissions, but at an ammonia
+blending ratio of 20%, the NO concentration increases significantly.
+The comparison assesses the predicted outlet species concentrations
+under the selected experimental conditions. It does not independently
+validate the recirculation setting or the spatial mixing assumptions of
+the 350 MW boiler network. Predictions for the boiler are therefore
+interpreted within the limitations of the prescribed zonal model.
+Overall, the model captures the main variations in the measured
+outlet species and NO emissions under pure-coal firing and 20% NH3
+
+3.2. Simplifying Assumptions for the NH3−Coal Co-Firing
+Process
+
+Owing to the complexity of furnace combustion, the following
+assumptions are adopted for the combustion gasification
+process:
+(1) Reactor pressure is held constant with negligible
+pressure drop; temperature is taken as the zone averaged
+value for each computational section.
+(2) The network topology and the ideal-mixing assumption
+for each reactor are retained across the simulated cases.
+Changes in the local flow structure caused by ammonia
+addition are not resolved.
+63978
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+cofiring. However, the validation is limited to these two conditions,
+and the experimental data set in Table 7 does not include an outlet
+NH3 measurement. Therefore, the validation supports qualitative
+analysis of combustion and nitrogen-conversion trends under the
+tested conditions, but it does not establish the quantitative accuracy of
+the predicted NH3 slip, particularly for the 40−80% cofiring cases.
+These higher-ratio cases are consequently treated as idealized
+parametric conditions rather than experimentally validated industrial
+operating conditions.
+
+Article
+
+Figure 5 shows the normalized ratios of CO and CO2
+emission concentrations at different NH3 blending ratios. As
+
+4. RESULTS AND DISCUSSION
+4.1. Effects of NH3 Blending Ratio on Boiler Combustion
+
+4.1.1. Case Description. Changing the NH3 blending ratio
+at constant total thermal input alters the relative supply of
+ammonia, coal-derived volatiles, and char. This section
+examines the resulting changes in zonal combustion characteristics and outlet species concentrations under the prescribed
+air-staging arrangement. The air staging configuration for the
+baseline case is summarized in Table 8.
+Table 8. Air Staging Configuration for the Baseline Case
+Load
+
+Primary air
+rate
+
+Secondary air
+rate
+
+Burnout air
+rate
+
+Excess air
+coefficient
+
+100%
+
+20%
+
+45%
+
+35%
+
+1.2
+
+Figure 5. Normalized ratios of CO2 and CO emission concentrations
+under different ammonia blending ratios.
+
+the NH3 blending ratio increases, the emissions of both CO
+and CO2 decrease approximately linearly. At a 20% NH3 blend,
+the CO2 emission decreases by 21% relative to pure coal firing,
+indicating source level decarbonization via reduced coal
+consumption in NH3-coal cofiring. Under NH3-coal cofiring,
+the higher hydrogen content of the overall fuel and the facile
+oxidation of NH3 to H2O increase the H2O concentration in
+the flue gas compared with pure coal firing. CO more readily
+reacts with H2O (eq 12), thereby lowering CO emissions.
+Figure 6 presents the normalized NO concentration at the
+furnace exit for different NH3 blending ratios. As the NH3
+
+The air staging scheme under NH3-coal cofiring is kept
+identical to the baseline. Table 9 reports the coal feed rate,
+Table 9. Coal Feed Rate, NH3 Flow Rate, Total Air Flow,
+Primary and Secondary Air Temperatures, and NH3
+Temperature at Different NH3 Blending Ratios
+Item
+Ammonia blending
+ratio (%)
+Coal feeding rate (
+kg·s−1)
+Ammonia flow rate (
+m3·s−1)
+Primary air
+temperature (K)
+Secondary air
+temperature (K)
+Ammonia
+temperature (K)
+
+Pure coal
+combustion
+
+Case 1
+
+Case 2
+
+Case 3
+
+Case 4
+
+0
+
+20
+
+40
+
+60
+
+80
+
+50.83
+
+40.67
+
+30.5
+
+20.33
+
+10.17
+
+0
+
+10.29
+
+20.59
+
+30.88
+
+41.18
+
+343
+
+343
+
+343
+
+343
+
+343
+
+603
+
+603
+
+603
+
+603
+
+603
+
+-
+
+313
+
+313
+
+313
+
+313
+
+NH3 flow rate, and total air flow for different NH3 blending
+ratios. NH3 is injected in the flame zone. Variable cofiring cases
+are organized in 20% increments on an energy basis, i.e., NH3
+blending ratios of 0%, 20%, 40%, 60%, and 80% are simulated;
+0% corresponds to pure coal firing. The temperatures of
+primary air, secondary air, and NH3 are 343, 603, and 313 K,
+respectively.
+4.1.2. Analysis of Emission Characteristics. Using the
+flue gas emissions at the boiler back end (i.e., the reactor
+network outlet) under pure coal firing as the baseline, the CO,
+CO2, and NO emissions are normalized. Normalization
+converts dimensional quantities into a dimensionless form,
+expressing absolute values as relative measures to facilitate
+computation and comparison. The calculation is given by eq
+12, where Y is the normalized value, X is the original value, and
+Z is the baseline value.
+Y = X /Z
+
+Figure 6. Normalized ratios of NO emission concentrations and mole
+fractions of NH3 emissions under different ammonia blending ratios.
+
+fraction increases, the NO emission exhibits a decreaseincrease-decrease trend. At a 20% NH3 blend, NO decreases
+by about 40% relative to pure coal firing, likely due to the
+combined effects of selective noncatalytic reactions of NH3 (eq
+12) and heterogeneous NO reduction by char (eq 5). When
+the NH3 blending ratio lies between 20% and 60%, NO
+
+(21)
+63979
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+emissions increase monotonically with NH3 loading. However,
+when the NH3 fraction is further raised to 80%, NO declines
+again, plausibly because excessive NH3 decomposition
+consumes thermal energy and perturbs the conversion
+pathways from elemental combined nitrogen to NO. The
+predicted outlet NH3 mole fraction increases with the NH3
+blending ratio but remains below 6 × 10−8 in the present CRN,
+reaching approximately 5.5 × 10−8 (0.055 ppm) at an NH3
+blending ratio of 80%. This extremely low value should not be
+interpreted as evidence that ammonia slip would remain
+negligible in an industrial boiler at such a high cofiring ratio.
+The 40 MWth experiments of Zhang et al.41 covered NH3
+cofiring ratios of 0−25% and achieved near-zero ammonia slip
+under their specific injection and air-staging conditions;
+therefore, those results do not directly validate the present
+predictions at 40−80%. The drop-tube-furnace experiments of
+Chen et al.17 further demonstrated that residual NH3 depends
+strongly on temperature, excess-air ratio, injection mode, and
+cofiring ratio, with greater NH3 residue observed under lowtemperature conditions. In addition, the spatially resolved
+simulation of Zhang et al.42 reported a rapid increase in
+unreacted NH3 above 40% cofiring when the high-momentum
+NH3 jet penetrated the internal recirculation zone. In the
+present 80% case, NH3 reacts only slightly in the flame-zone
+PSR at approximately 394 K but is subsequently mixed
+instantaneously and homogeneously with the oxidizer in the
+postflame PSR, where the calculated zone-averaged temperature exceeds 2000 K. The combination of ideal mixing and
+high temperature favors rapid kinetic conversion. Because the
+CRN does not resolve finite-rate mixing, jet penetration, local
+cold or oxygen-deficient regions, wall quenching, or flow
+bypass, it may underestimate practical ammonia slip at high
+cofiring ratios. Accordingly, the 80% result is interpreted only
+as a model-specific chemical-kinetic prediction under the
+prescribed CRN assumptions, rather than evidence of the
+industrial feasibility of 80% ammonia cofiring.
+4.1.3. Analysis of in-Furnace Combustion Characteristics. The distributions of NH3, NO, and char, together with
+heterogeneous reduction, govern NO emissions, leading to a
+nonlinear dependence of exit NO on the NH3 blending ratio.
+We therefore examine, across the reactor network, the spatial
+trends of char inventory, temperature, NO, O2, and NH3, to
+elucidate intervariable couplings and the controlling factors
+under different blending ratios.
+Taking the inlet char under each NH3 blending ratio as the
+reference, the normalized char fraction in each reactor network
+zone is shown in Figure 7. The residual char at the outlet of the
+main combustion section (i.e., at the entrance to the reducing
+zone) increases with NH3 loading, indicating reduced char
+consumption in the flame zone; most of the supplied char is
+ultimately consumed in the burnout zone. Under pure coal
+firing, the char inventory drops to 93.8% at the end of the
+flame zone and further to 49.5% at the end of the post flame
+zone, remaining unchanged through the reducing zone. The
+primary reason is air staging: early in the main combustion
+region the mixture is oxygen-lean, whereas oxygen availability
+rises downstream in the post flame zone, where fuel lean
+conditions intensify char consumption. At a 20% NH3 blend,
+the residual char at the flame zone outlet decreases to 60.2%.
+When the NH3 fraction is raised to 40% and 60%, the residual
+char increases to 77.8% and 83%, respectively. At 80% NH3,
+char reacts negligibly in the flame zone, and the burnout zone
+accounts for 76.6% of total char consumption.
+
+Article
+
+Figure 7. Normalized char fractions in each boiler zone at different
+NH3 blending ratios.
+
+Figure 7 shows the temperature distribution across reactor
+network zones at different NH3 blending ratios. In all five
+cases, the temperature peak occurs in the post flame zone, and
+its magnitude decreases as the NH3 blending ratio increases.
+The main combustion section features high-temperatures due
+to intense heat release, while additional heat is liberated in the
+burnout zone by the remaining fuel. For pure coal firing and
+for 20%, 40%, and 60% NH3 blends, the overall in-furnace
+temperature profiles are broadly similar. Comparing the cases
+reveals that adding NH3 lowers the overall temperature field as
+the blend increases, consistent with NH3’s lower laminar
+burning velocity, lower heating value, and higher ignition
+energy requirement. When the NH3 fraction is raised to 80%,
+the required ignition energy becomes sufficiently high that no
+combustion is observed in the flame zone (temperature ≈ 394
+K); instead, the main heat release shifts downstream to the
+post flame zone, in contrast to the other cases Figure 8.
+The variation of NH3 mole fraction across the boiler reactor
+network zones is shown in Figure 9. At 20%, 40%, and 60%
+NH3 blends, most of the injected NH3 reacts in the flame zone,
+where its mole fraction remains below 0.1; it decreases further
+in the post flame zone, where NH3 is nearly completely
+consumed. At an 80% NH3 blend, the model predicts little
+NH3 conversion in the flame-zone reactor because its
+calculated temperature is approximately 394 K. The NH3
+mole fraction then decreases sharply in the postflame reactor,
+indicating that the principal NH3-conversion zone shifts
+downstream within the CRN. This downstream decrease is
+promoted by the homogeneous-mixing assumption and the
+high zone-averaged temperature of the postflame reactor. It
+should therefore not be interpreted as experimental evidence
+of complete NH3 burnout in a practical boiler. Instead, the
+downstream shift indicates that high-ratio cofiring would
+become increasingly sensitive to local mixing, temperature,
+oxygen availability, and residence time, which are not spatially
+resolved in the present model.
+Figure 10 shows normalized O2 concentrations in each zone,
+referenced to the boiler back end O2 level under pure coal
+firing. For pure coal and for 20%, 40%, and 60% NH3 blends,
+63980
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Figure 8. Temperature distributions across boiler zones at different
+NH3 blending ratios.
+
+Article
+
+Figure 10. Normalized ratio of O2 concentration in each zone of the
+boiler under different ammonia blending ratios.
+
+environment; O2 is consumed both by char oxidation and by
+reactions of NH3 in the main section.
+Figure 11 presents normalized NO concentrations across the
+reactor network for different blends, referenced to the boiler
+
+Figure 9. Mole fraction profiles of NH3 across boiler zones at
+different NH3 blending ratios.
+
+O2 is largely consumed in the flame zone and remains low
+through the post flame and reducing zones; fluctuations arise
+primarily from overfire air addition. At 80% NH3, the flame
+zone O2 level is markedly higher than in other cases because
+the large NH3 loading raises ignition requirements, yielding a
+low flame zone temperature and no combustion there;
+substantial O2 consumption occurs instead in the post flame
+zone, whose temperature exceeds 2000 K (Figure 8). Thus,
+heavy NH3 blending shifts the main heat release region
+downstream. The boiler exit O2 decreases with increasing NH3
+blending. Hence, even though char consumption is reduced,
+overall O2 demand increases because NH3 engages in
+additional reactions (including heterogeneous interactions),
+enlarging rates and interfacial zone with the oxidizing
+
+Figure 11. Normalized ratio of NO concentration in each zone of the
+boiler under different ammonia blending ratios.
+
+back-end NO under pure coal firing (NO0). For pure coal and
+20% NH3, the NO peak appears in the flame zone. Given the
+modest char consumption (Figure 7), fuel-NO from char is not
+the principal cause. With flame zone temperatures >2000 K
+(Figure 8), the peak is attributed mainly to thermal-NO and
+fuel-NO from NH3 oxidation. As the NH3 fraction increases,
+the NO peak shifts; at 40% and 60% blends it occurs in the
+post flame zone. At 80% NH3, a minor NO peak appears in the
+post flame zone, but the maximum shifts to the burnout zone.
+63981
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Because NH3 is consumed primarily in the post flame zone at
+80% (Figure 9), the small NO peak there likely reflects
+contributions from thermal-NO and fuel-NO originating from
+NH3 oxidation; the burnout zone maximum arises from
+thermal-NO plus fuel-NO associated with char burnout. As the
+NH3 blending ratio increases, the locus of NH3 reaction shifts
+downstream, driving a corresponding downstream migration of
+the NO peak across the reactor network.
+
+Article
+
+whereas at 40% and 60% both reactions (23) and (24), in
+addition to (22), contribute appreciably to NH3 conversion.
+Because NH3 serves as a fuel in the flame zone, most
+contributions in Figure 12 appear as negative ROP values, i.e.,
+they promote NH3 destruction.
+NH3 + H
+NH 2 + H 2
+(22)
+NH3 + OH
+
+4.2. Elemental Nitrogen Kinetic Analysis at Different NH3
+Blending Ratios
+
+NH3 + O
+
+4.2.1. Rate of Production (ROP) Analysis. We employ
+the rate of production (ROP) analysis to interrogate the
+chemistry occurring during combustion. ROP analysis resolves
+the net contribution of each elementary reaction to a target
+species: positive values indicate production, whereas negative
+values indicate consumption. These contributions identify the
+elementary reactions responsible for the local production or
+consumption of a species. They do not directly distinguish the
+original fuel source of nitrogen atoms once nitrogen-containing
+species from different sources enter the same reaction pool.
+Taking NH3-coal cofiring cases across blending ratios as the
+study set, we evaluate, in the region where NH3 concentration
+attains its maximum (i.e., the flame zone for 20−60% NH3 and
+the post flame zone for 80% NH3), how elementary reactions
+affect NH3 production or destruction. For comparison, the
+elementary reactions were ranked according to the absolute
+magnitude of their ROP contributions to the target species. A
+common reaction set was then used for all compared cases to
+avoid changing the selected reactions from one operating
+condition to another. Figure 12 presents the ROP analysis of
+
+NH 2 + H 2O
+NH 2 + OH
+
+(23)
+(24)
+
+Figure 13 examines, for 20−60% NH3 blends, the effects of
+individual elementary steps on NO production/consumption
+
+Figure 13. Analysis of ROP generation rate of NO at 20%−60%
+ammonia blending ratio.
+
+at the NO concentration peak (located in the flame zone at
+20% and in the post flame zone at 40% and 60%). Because two
+NO peaks are observed at 80% NH3 (one in the postflame
+zone and the other in the burnout zone), Figure 14a and 14b
+present the corresponding NO ROP analyses for the two
+regions. The figures show that, within the positive (NO
+producing) region, reaction (25) exhibits the largest rate and is
+the primary source of NO; reactions (26) and (27) also
+contribute to NO formation. Nitrogen bearing intermediates
+HNO and N arise mainly from dehydrogenation of NHi
+radicals by OH and H; NH3 first yields NH2 and NH, and
+NH subsequently forms HNO and N. Reactions (28) (NO +
+NH) and (29) (N + NO) indicate that NO can also be
+reduced to N2 by ammonia derived species; the N and NHi act
+both as precursors to NO and as reductants of NO. At the
+reaction zones examined in Figures 13 and 14, the reported
+ROP results indicate a smaller contribution from reaction (3)
+to local NO consumption than from the principal gas-phase
+reactions. This comparison concerns the selected reactions and
+locations; it does not quantify the overall contribution of charderived nitrogen to NO or the cumulative removal of NO by
+char throughout the network.
+
+Figure 12. Analysis of ROP generation rate of NH3 at different
+ammonia blending ratios.
+
+NH3 at different blending ratios. For Figure 12, the five
+reactions with the largest maximum absolute NH3 ROP
+contributions across the investigated blending-ratio cases were
+retained. Because the selected diagnostic zones differ among
+blending ratios, the ROP results describe local reaction
+behavior at the specified locations rather than nitrogen-source
+contributions integrated over the entire network.
+According to Figure 12, the principal elementary reactions
+responsible for NH3 consumption are (22)-(24). Reaction
+(22) dominates at NH3 blending ratios of 20% and 80%,
+
+N + OH
+HNO + H
+HNO + OH
+63982
+
+NO + H
+H 2 + NO
+H 2O + NO
+
+(25)
+(26)
+(27)
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 14. Analysis of ROP generation rate of NO at 80% ammonia injection ratio. (a) Post flame Zone; (b) Burnout Zone.
+
+Figure 15. Analysis of reaction pathways of ammonia at different ammonia injection ratios.
+
+Figure 16. Schematic of fuel-nitrogen entry routes and interconnected nitrogen-conversion pathways during NH3−coal cofiring. Ammonia-N
+denotes externally supplied NH3 nitrogen, volatile-N denotes coal-derived volatile nitrogen, and char-N denotes char-bound nitrogen. The diagram
+indicates pathway connectivity rather than quantitative contributions from individual nitrogen sources.
+
+NO + NH
+NO + N
+
+N2 + OH
+N2 + O
+
+small char consumption there; the NH3 reaction rate surpasses
+that of char oxidation, so NH3 dissociates and converts to NO
+prior to extensive char oxidation. By contrast, in the post flame
+zone at 40% and 60%, vigorous char oxidation together with
+NH3 decomposition suppresses NH3 dehydrogenation and the
+NO formation/reduction reactions, yielding smaller rates
+overall. At 80% NH3, NO formation rates in both the post
+
+(28)
+(29)
+
+At a 20% NH3 blend, both NO formation and NO reduction
+rates in the flame zone exceed the NO reaction rates observed
+in the post flame zone at 40% and 60%. This is attributable to
+the higher flame zone temperature at 20% and the relatively
+63983
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+flame and burnout zones are far lower than in other cases. The
+dominant NO producing steps involve reactions of N-bearing
+intermediates (HNO/N) with H/OH radicals; at 80%
+blending, abundant NHi formed via NH3 dehydrogenation
+scavenges H/OH, lowering their concentrations and thereby
+inhibiting NO formation from these intermediates. This radical
+depletion is the primary reason for the reduced NO emissions
+at 80% NH3.
+4.2.2. Reaction Path Analysis. Figure 15 summarizes the
+NH3-related reaction routes considered in the analysis of
+different blending ratios. The dashed lines highlight the routes
+discussed for the 80% NH3 case; they should not be
+interpreted as reactions that are absent from the mechanism
+at lower blending ratios. In all cases, the first step of NH3
+oxidation is reaction with O/H/OH radicals to form NH2.
+Subsequently, NH2 and NH react with O/H/OH to yield Nbearing intermediates (HNO and N), which are further
+oxidized to NO. Concurrently, NO reacts with N and NH to
+form N2, and with NH2 to form NNH, which is subsequently
+converted to N2. Thus, NH3 oxidation comprises two
+intertwined branches: NO formation and NO reduction.
+The effect of blending ratio should be considered in terms of
+both nitrogen input and the location of fuel conversion. At
+constant total thermal input, increasing the NH3 share
+increases the input of externally supplied ammonia-N while
+reducing the inputs of coal-derived volatile-N and char-N for
+the same coal. These changes in nitrogen supply do not
+directly determine their respective contributions to outlet NO,
+because the nitrogen-containing intermediates participate in
+coupled formation and reduction reactions. Moreover, the
+NH3 thermal share is not equivalent to its share of the total
+fuel-nitrogen input.
+The existing results show that the reaction environment also
+changes with blending ratio. At 20% NH 3 , the NO
+concentration maximum occurs in the flame zone, whereas at
+40% and 60% it occurs in the postflame zone. At 80%, NH3
+conversion shifts predominantly to the postflame zone, while
+the highest NO concentration occurs in the burnout zone.
+Figures 13−15 relate these changes to reactions involving
+HNO, N, and NHx species and to competing routes leading to
+NO and N2. The lower NO concentration at 80% is consistent
+with the reported decrease in local NO-forming rates and the
+N2-forming routes discussed for this case. These results
+support a qualitative interpretation of the changing nitrogen
+chemistry, but do not establish source-specific conversion
+efficiencies or quantitative pathway shares for the three fuelnitrogen sources.
+Figure 16 summarizes the entry routes of fuel nitrogen and
+their connections to the nitrogen-reaction network. Here,
+ammonia-N refers specifically to nitrogen introduced with the
+externally supplied NH3; volatile-N denotes coal-derived
+nitrogen represented by HCN and NH3 in the volatile input;
+and char-N denotes nitrogen retained in the char component.
+These categories distinguish nitrogen sources at the fuel-input
+stage.
+After entering the gas-phase mechanism, externally supplied
+NH3 and NH3 released with coal volatiles are represented by
+the same chemical species. The HCN-related and NH3-related
+routes also connect through shared nitrogen-containing
+intermediates. Consequently, a reaction involving NH3, NHx,
+HNO, or NO cannot be assigned exclusively to one original
+nitrogen source using the present unlabeled mechanism. Figure
+16 therefore indicates how the fuel-nitrogen sources enter and
+
+Article
+
+interact with the reaction network, rather than providing a
+quantitative partition of the resulting NO or N2 among these
+sources.
+Char requires a further distinction between the conversion
+of its bound nitrogen and its participation in heterogeneous
+NO reduction. The presence of char in an NO-consuming
+reaction does not mean that all nitrogen in the products
+originates from char; nitrogen is also supplied by the reacting
+NO. Char oxidation and char-mediated NO reduction are
+therefore discussed separately. Their inclusion in Figure 16
+describes the coupling between solid conversion and gas-phase
+nitrogen chemistry, but does not establish the net contribution
+of char-N to outlet NO.
+Quantitative attribution of product nitrogen to ammonia-N,
+volatile-N, and char-N would require an explicit nitrogensource tracking method, which is not included in the present
+analysis. The discussion is therefore limited to source entry
+routes, local reaction contributions, and their qualitative
+changes with blending ratio.
+The present reaction-pathway analysis was further compared
+with the recent CP-DNS study of Wang et al.43 By
+conditioning nitrogen-atom fluxes on the flame index and a
+coal/ammonia mixing coordinate, Wang et al. identified
+HNO→NO and HONO→NO as important NO-forming
+branches, whereas NO consumption proceeded mainly
+through N2-, N2O-, and NNH-forming pathways. In particular,
+HNO + H → H2 + NO and HNO + O2 → HO2+ NO
+contributed substantially to NO formation, while NO + NH2
+→ H2O + N2, NO + NH → H + N2O, and NO + NH2 → OH
++ NNH promoted NO consumption. The present ROP results
+are qualitatively consistent with this gas-phase reaction picture:
+HNO- and N-related reactions make important contributions
+to NO formation, whereas reactions involving NH and NH2
+provide major gas-phase NO-reduction routes.
+Nevertheless, the conclusions of the two studies are
+complementary rather than identical. Wang et al. examined a
+single early stage turbulent mixing layer and reported larger net
+NOx contributions from the nonpremixed and coal-combustion-dominated regions. Char-N conversion and char-surface
+reactions were not included in their analysis. In contrast, the
+present CRN model covers successive furnace zones under
+different NH3 blending ratios and injection locations and
+includes heterogeneous char−NO reduction, although its
+contribution is smaller than those of the leading gas-phase
+reactions. Moreover, the nitrogen fluxes reported by Wang et
+al. were conditioned on local combustion regimes and
+normalized by the net NH3 consumption, whereas the present
+results are based on zone-averaged species-specific ROP values.
+Therefore, the pathway percentages cannot be compared
+directly. Because nitrogen-source tagging was not applied in
+the present model, Figure 16 distinguishes the entry routes and
+reaction connectivity of ammonia-N, volatile-N, and char-N
+but does not quantify their individual contributions.
+4.3. Effects of NH3 Injection Location on Boiler
+Combustion
+
+4.3.1. Case Description. The entry location of injected
+NH3 strongly affects boiler combustion: changing the injection
+point alters the residence time of fuel within the furnace and
+thereby the overall combustion performance. If the NH3
+injector is too close to the main fuel injectors, combustion in
+the main section can be incomplete due to oxygen undersupply, which in turn shifts the gas composition toward a more
+63984
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 17. Normalized ratio of CO2 and CO emission concentration at different ammonia injection locations.
+
+Figure 18. Normalized ratio of NO emission concentration and mole fraction of NH3 emissions at different ammonia injection locations.
+
+reducing environment across the flame zone. Conversely, if the
+NH3 injector is too far from the main fuel injectors with
+secondary and overfire air unchanged the combustion path
+becomes excessively long; the upper furnace gases then dwell
+too long under oxidizing conditions, which can substantially
+increase pollutant emissions. With appropriately chosen
+injection location, NO emissions can be reduced to levels
+comparable to those at the boiler exit under pure coal firing.18
+This section simulates a set of NH3-coal cofiring cases with
+varied injection locations to quantify the impacts on in-furnace
+combustion and emission characteristics. To isolate the effect
+of NH3 injection location, all injection-location cases were
+based on the 20% NH3 cofiring condition listed in Table 9.
+
+NH3 was introduced separately into the flame zone, postflame
+zone, and burnout zone, corresponding to Cases 1−3,
+respectively. The pure-coal case in Table 9 was retained as
+the reference. Except for the NH3 injection location, the fuel
+and air flow rates, inlet temperatures, air-staging arrangement,
+and total thermal input were kept unchanged.
+4.3.2. Analysis of Emission Characteristics. Figures 17
+and 18 compare the normalized outlet concentrations of CO2,
+CO, NO, and NH3 at different NH3 injection locations.
+Relative to pure-coal firing, both CO2 and CO decrease in all
+cofiring cases. Postflame injection produces the lowest
+normalized CO2 and CO concentrations, corresponding to
+reductions of 33.0% and 80.47%, respectively. The outlet NO
+63985
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 19. Normalized ratio of NO concentration in different zones of the boiler at different NH3 injection locations.
+
+concentration, however, responds differently: flame-zone
+injection decreases NO below the pure-coal baseline, whereas
+postflame injection increases NO by 87.88%.
+Because the coal feed rate and NH3 thermal share are
+identical among the injection-location cases, the carbon input
+and nominal carbon-substitution level remain unchanged. The
+lower normalized CO2 concentration obtained with postflame
+injection should therefore not be interpreted as a greater
+source-level reduction in carbon emissions. Moreover, Figure
+21 shows that flame-zone injection produces the highest
+residual char fraction, indicating that the variation in outlet
+CO2 cannot be explained solely by the extent of char burnout.
+The injection location changes the temperature and radical
+environment in which NH3 reacts and consequently affects the
+partitioning of carbon among CO2, CO, char, soot, and other
+carbon-containing species. In particular, postflame injection
+introduces NH3 directly into the region of maximum
+temperature, where NH3 conversion interacts strongly with
+gas-phase CO−CO2 chemistry and solid-carbon reactions. The
+present results support this qualitative interpretation but do
+not quantify the individual carbon-conversion pathways.
+Accordingly, the differences in Figure 17 are discussed as
+changes in normalized outlet concentrations rather than
+differences in the extent of carbon substitution.
+The difference in NO is governed by the balance between its
+formation and subsequent reduction. With flame-zone
+injection, NH3 enters an oxygen-lean region and establishes
+an NH3-rich reaction environment. The lower flame-zone
+temperature shown in Figure 20 suppresses the thermal-NO
+contribution, while NHx and N intermediates promote NO
+reduction to N2. Although NH3 oxidation produces a local NO
+peak in the flame zone, the NO formed at this early stage
+subsequently passes through the postflame and reducing zones,
+
+where gas-phase reduction and heterogeneous reduction by the
+remaining char can continue. In contrast, postflame injection
+introduces NH3 near the temperature maximum, resulting in
+rapid NH3 dehydrogenation and the formation of NHx, HNO,
+and N intermediates. The resulting NO is formed farther
+downstream and therefore undergoes a shorter subsequent
+reduction sequence, with less residual char available for
+heterogeneous removal. Consequently, postflame injection
+produces a higher outlet NO concentration than flame-zone
+injection.
+From an operational safety standpoint, unburned NH3 in the
+tail flue must be avoided. Figure 18 shows the NH3 mole
+fraction at the reactor network outlet for different injection
+locations; injecting NH3 in the burnout zone yields markedly
+higher tail-end NH3 than the other cases. In this configuration,
+intense coal combustion in the main section consumes
+substantial O2, and the overfire air admitted to the burnout
+zone is insufficient for the large NH3 load; consequently,
+incomplete combustion products increase and CO, CO2, and
+NO concentrations exceed those of the other injection cases.
+4.3.3. Analysis of in-Furnace Combustion Characteristics. Taking the reactor network outlet NO under pure coal
+firing as the baseline, Figure 19 presents the normalized NO
+concentrations across boiler zones for different NH3 injection
+locations. In Case 1, with NH3 injected in the flame zone, the
+overall NO distribution resembles that of pure coal firing: the
+NO peak occurs in the flame zone. The peak normalized value
+is 5.52, slightly above the pure coal value of 5.21. Because coal
+combustion in the main section consumes much of the oxygen,
+the latter half becomes oxygen deficient, leading to a sharp NO
+decrease at the outlet of the main section. As OFA is
+introduced in the burnout zone, O2 rises, additional fuel burns,
+and NO increases correspondingly. In Case 2 and Case 3, NH3
+63986
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 20. Temperature distribution in each zone of the boiler at different NH3 injection locations.
+
+Figure 21. Normalized ratio of coal coke in each zone of the boiler at different NH3 injection locations.
+
+is injected in the post flame and burnout zones, respectively,
+and the NO peaks are observed near the corresponding
+injection locations. For Case 3, the burnout zone NO peak
+reaches a normalized value of 6.79 much higher than in other
+cases and remains elevated downstream to the furnace exit. In
+this case, the high NO peak in the burnout zone is attributed
+
+primarily to fuel-NO from NH3 oxidation, because NH3
+concentration there is high while most char has already been
+consumed in the main section.
+Figure 20 depicts the temperature distribution across reactor
+network zones for different NH3 injection locations. The infurnace temperature profiles are broadly similar among cases,
+63987
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 22. Mole fraction of NH3 in different zones of the boiler at different NH3 injection locations.
+
+Figure 23. Normalized ratio of O2 concentration in different zones of the boiler at different NH3 injection locations.
+
+with the temperature peak consistently occurring in the post
+flame zone. In the flame zone, the temperature in Case 1 is
+2010 K, lower than that under pure coal firing (2133 K) and
+Case 2 and Case 3 (2101 K). This indicates that NH3 injection
+depresses the flame zone temperature and hence the thermalNOx yield. Although Case 1 exhibits a slightly higher local NO
+
+maximum in the flame zone than pure-coal firing, its outlet NO
+concentration is lower. The local maximum is mainly
+associated with gas-phase conversion of the injected NH3,
+whereas the final outlet concentration is determined by the
+subsequent balance between NO formation and reduction in
+the downstream reactor zones. The furnace-exit temperatures
+63988
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+4.4. Elemental-N Kinetics at Different NH3 Injection
+Locations
+
+for the pure coal case and for Cases 1−3 are 674, 630, 612, and
+608 K, respectively. As the NH3 injection location shifts
+downstream, the reactor network outlet temperature decreases
+slightly, implying a minor overall influence of injection location
+on the in-furnace temperature field.
+Figure 21 presents the residual char fraction in each reactor
+zone, normalized by the char input for the corresponding case.
+Approximately 90% of the inlet char remains at the flame-zone
+outlet in all cases, indicating limited char conversion in this
+zone. Clear differences appear after the postflame zone. The
+residual char fraction is approximately 0.60 for flame-zone
+injection, compared with approximately 0.53 for postflame
+injection and 0.52 for burnout-zone injection. After overfire air
+is introduced, the residual char fraction decreases sharply and
+reaches approximately 1−2% at the reactor-network outlet.
+The injection location therefore mainly affects the distribution
+of char conversion among the reactor zones, while its influence
+on the final char burnout level is relatively limited.
+The higher residual char fraction obtained with flame-zone
+injection indicates that early NH3 conversion delays net char
+conversion across the main combustion section. NH3 injection
+lowers the flame-zone temperature and changes the allocation
+of O, OH, and other reactive species between NH3 conversion
+and carbon oxidation. When NH3 is injected into the postflame
+zone, coal conversion in the flame zone proceeds with less
+direct interference from the externally supplied NH3, resulting
+in an intermediate residual-char level. With burnout-zone
+injection, most char conversion in the main combustion
+section has occurred before NH3 is introduced, and the char
+profile therefore remains closer to that under pure-coal firing.
+The larger downstream char inventory in the flame-zone
+injection case also provides more available surface for
+heterogeneous NO reduction.
+Figure 22 presents NH3 mole fractions by zone for different
+injection locations. In the flame zone, Case 1 shows higher
+NH3 than the other cases. Under air staging, the flame zone is
+oxygen-lean, so injected NH3 cannot fully burn and a NH3 rich
+state develops. In such an environment, N-bearing intermediates (HNO/N) preferentially react with NHi to form N2,
+suppressing NO formation; hence Case 1 yields the lowest NO
+emissions. In all cases, NH3 remains at low levels downstream
+of the post flame zone, and its mole fraction at the furnace exit
+is below 3.5 × 10−5; thus, tail-end NH3 can be regarded as
+negligible for all injection locations.
+Figure 23 shows the normalized O2 concentration in each
+reactor for the different NH3 injection locations. Because the
+fresh-air input and air-staging arrangement are identical in
+Cases 1−3, the lower O2 concentration predicted for Case 3 in
+the mixing zone cannot be attributed to a direct reaction
+involving NH3, which is introduced only in the burnout zone.
+Instead, this difference results from the closed FGR loop
+employed in the reactor network. When NH3 is injected into
+the burnout zone, its downstream oxidation changes the O2
+concentration of the flue gas entering the recirculation reactor.
+Part of this oxygen-depleted flue gas is subsequently returned
+to the mixing-zone reactor, resulting in a lower converged O2
+concentration in Case 3. Therefore, the difference in the
+mixing zone represents an upstream feedback caused by the
+case-dependent FGR composition rather than the direct
+influence of burnout-zone NH3 injection on an upstream
+reactor. After the staged secondary air and overfire air are
+introduced, the O2 concentrations recover, and the furnace-exit
+values remain relatively close among the three cases.
+
+4.4.1. Rate of Production (ROP) Analysis. For each
+injection case, the ROP analysis was performed in the reactor
+into which NH3 was introduced, namely the flame-zone reactor
+for Case 1, the postflame-zone reactor for Case 2, and the
+burnout-zone reactor for Case 3. These reactors were selected
+because they represent the initial local interaction between the
+injected NH3 and the surrounding combustion products and
+oxidizer. They also correspond approximately to the regions in
+which the strongest NH3 conversion and the local NO peaks
+occur. For a target species s, the contribution of elementary
+reaction k was evaluated from its species-specific rate of
+production, ROPs,k = νs,kqk, where νs,k is the net stoichiometric
+coefficient of species s and qk is the net rate of progress of
+reaction k. Positive and negative values denote the production
+and consumption of the target species, respectively. All
+elementary reactions directly contributing to NH3 or NO
+were first extracted and ranked according to the absolute
+magnitude of their ROP contributions. For each reaction, the
+maximum absolute ROP among Cases 1−3 was used as the
+ranking index. A common set of reactions was subsequently
+plotted for all three cases so that the differences shown in
+Figures 24 and 25 arise from the injection conditions rather
+than from using different reaction sets.
+
+Figure 24. ROP contributions of the selected NH3-forming and NH3consuming reactions in the corresponding NH3 injection-zone
+reactors for Cases 1−3.
+
+Based on this procedure, the five highest-ranking reactions
+directly associated with NH3 formation or consumption were
+retained in Figure 24. For NO, ten reactions were retained in
+Figure 25 because its net formation is governed by a broader
+set of competing production and reduction pathways. The
+selected NO reactions include the principal HNO-, N-, NH-,
+NH2-, and NNH-related gas-phase routes. The heterogeneous
+char−NO reaction was also retained to compare its
+contribution with those of the dominant gas-phase pathways.
+Reactions with comparatively small absolute ROP values in all
+three cases were omitted only to maintain the readability of the
+figures.
+As shown in Figure 24, negative ROP contributions
+dominate in all three cases, indicating that NH3 is consumed
+63989
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+20. In Case 2, NH3 dehydrogenation rates peak in the post
+flame zone. As indicated by Figure 20, the temperature
+maximum occurs there, and the high-temperature accelerates
+NH3 decomposition and conversion toward NO. Figure 25
+compares the same set of NO-producing and NO-consuming
+reactions for the three injection cases. Positive ROP values are
+mainly associated with the oxidation of HNO and N by OH,
+H, or O-containing species, whereas the negative values
+primarily represent NO reduction through reactions with N,
+NH, and NH2. The heterogeneous char−NO reaction provides
+an additional NO-consumption pathway, although its
+magnitude is smaller than those of the leading gas-phase
+reactions under the selected conditions. Changing the NH3
+injection position alters the local temperature, oxidizer
+availability, radical pool, and char inventory, thereby changing
+the relative strengths of these competing NO formation and
+reduction pathways. Under hot, strongly reducing conditions,
+the NO formed is subsequently reduced; because the NH3
+injection location reshapes where and how strongly such
+reducing environments develop, the resulting exit-NO levels
+differ substantially across cases. The enhanced NO-reduction
+branch observed for flame-zone NH3 injection is therefore
+consistent with the NH/NH2-mediated NO-consuming
+chemistry identified by Wang et al.43 However, their locally
+conditioned premixed, nonpremixed, coal-dominated, and
+ammonia-dominated regions should not be directly equated
+with the flame-, postflame-, and burnout-zone reactors
+employed in the present CRN.
+4.4.2. Reaction Path Analysis. Reaction pathways
+involving elemental nitrogen can be grouped into two
+branches: NOx formation and NOx reduction. Figures
+26−27,28 summarizes, for each NH3 injection location, the
+formation/decomposition model of NOx within the local
+reaction region. Comparative inspection reveals the primary
+factors controlling NO formation and reduction. In all cases,
+
+Figure 25. ROP contributions of the selected NO-forming and NOconsuming reactions in the corresponding NH3 injection-zone
+reactors for Cases 1−3.
+
+primarily through dehydrogenation reactions involving H, OH,
+and O radicals. Reactions (22) and (23), involving NH3 with
+H and OH, respectively, generally make larger contributions to
+NH3 consumption than reaction (24), which involves O
+radicals. The positive ROP contributions associated with NH3
+regeneration are comparatively small under the selected local
+conditions. Among the three cases, Case 2 exhibits the highest
+overall NH3-consumption rates in the postflame zone,
+consistent with the temperature maximum observed in Figure
+
+Figure 26. Reaction pathway map for NOx formation and reduction at different NH3 injection locations. Case 1: Flame Zone.
+63990
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 27. Reaction pathway map for NOx formation and reduction at different NH3 injection locations. Case 2: Post flame Zone.
+
+Figure 28. Reaction pathway map for NOx formation and reduction at different NH3 injection locations. Case 3: Burnout Zone.
+
+the first step of NH3 oxidation is dehydrogenation with OH/
+H/O radicals to form NH2. Downstream pathways of NH2 and
+NH and their branching fractions vary with injection location
+because the available air, temperature, and related conditions
+differ.
+As shown in Figures 26−28, the dominant branch in all
+three cases is NH2 → NH → N. Oxidation of the intermediate
+N by OH/O2 is the principal source of NO, with branching
+
+fractions of 48.3%, 44.2%, and 40.9% for the three cases,
+respectively. In addition, a fraction of NHi reacts with trace
+OH/O to form HNO, which also contributes to NO
+formation. Along the NO reduction branch, NO is converted
+to N2 via reactions with N atoms, NHi radicals, and char; NHi
+can also react with N to yield N2. Figure 24a indicates that
+when NH3 is injected in the flame zone, the NOx-reduction
+branch attains its largest share; the branch involving NHi
+63991
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+reacting with atomic N is also higher than in the other two
+cases. This behavior follows from air staging: the flame zone is
+oxygen-lean, so O/OH/H radical levels are low, and NH3
+injection establishes an NH3 rich environment. Under these
+conditions, more NHi reacts with atomic N to form N2,
+effectively reducing the NHi → NO branch share. Consequently, injecting NH3 in the flame zone yields the lowest
+NO emissions.
+
+Article
+
+observed near the point of injection, consistent with
+fuel-NOx originating from NH3 oxidation. The lower
+mixing-zone O2 concentration predicted for Case 3 does
+not indicate NH3 reaction upstream of its injection
+point. It results from the feedback of the case-dependent
+recirculated-flue-gas composition through the closed
+FGR loop.
+(e) Injecting NH3 in the flame zone yields the lowest NO
+emissions. Mechanistically: (1) NH3 depresses the flame
+zone temperature and thus thermal-NOx; (2) under air
+staging the flame zone is oxygen-lean, and NH3 injection
+creates an NH3-rich environment in which N-intermediates preferentially react with NHi to form N2,
+suppressing NO formation; and (3) with initial flame
+zone temperatures >2000 K, NH3 can convert to NO
+prior to significant char oxidation, after which this NO is
+reduced heterogeneously by char.
+
+5. CONCLUSIONS
+The results are conditional on the prescribed reactor-network
+structure, recirculation setting, and ideal-mixing assumptions.
+Because recirculation was not independently varied, its
+contribution to the predicted temperatures, species concentrations, and nitrogen-conversion pathways cannot be isolated
+from the present calculations. No direct comparison with a
+PFR-based representation was performed, and the sensitivity of
+the conclusions to reactor type therefore remains unquantified.
+The findings should be interpreted as kinetic trends within the
+selected network rather than as fully resolved predictions of
+boiler flow and combustion.
+(a) Holding other conditions fixed, increasing the NH3
+blending ratio yields an approximately linear decrease
+in CO and CO2 at the reactor network outlet. Relative to
+pure coal firing, CO2 falls by 21% and CO by 73% at
+20% NH3, and by 84% (CO2) and 98% (CO) at 80%
+NH3. These trends indicate source level decarbonization
+via reduced coal consumption under NH3-coal cofiring.
+(b) NH3 addition alters coal combustion. With higher NH3
+fractions, the ignition energy requirement increases and
+the overall temperature field declines, suppressing char
+consumption and shifting the NO peak, the principal
+NH3-conversion region, and the char-consumption
+region downstream. At 80% NH3, heat release occurs
+in the post flame rather than the flame zone, and the NO
+peak moves to the burnout zone. The near-zero outlet
+NH3 concentration predicted at the 80% blending ratio
+has not been experimentally validated. This result is
+conditional on homogeneous mixing and the high zoneaveraged temperature calculated for the postflame
+reactor and may underestimate practical ammonia slip
+because transport-related limitations are not resolved.
+Therefore, the 40−80% cases should be interpreted as
+parametric chemical-kinetic results within the CRN
+rather than as evidence supporting industrial operation
+at these cofiring ratios.
+(c) The ROP and reaction-path analyses identify reactions
+involving HNO, N, and NHx species as important
+contributors to local NO formation and consumption.
+Outlet NO increases as the NH3 thermal share rises
+from 20% to 60%, but decreases at 80%, accompanied by
+changes in the principal reaction zones and competing
+NO- and N2-forming routes. These results describe the
+coupled nitrogen chemistry of the mixed fuel; they do
+not separately quantify the contributions of externally
+supplied ammonia-N, volatile-N, and char-N to outlet
+NO.
+(d) Across injection locations, the spatial trends of temperature, O2, and char are broadly similar; NH3 remains at
+extremely low levels at the furnace exit, implying
+essentially complete NH3 burnout. The NO peak
+correlates with the NH3 injection location and is
+
+■
+
+AUTHOR INFORMATION
+
+Corresponding Author
+
+Qing Wang − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China;
+orcid.org/0000-0002-9840-6492; Email: rlx888@
+126.com
+Authors
+
+Zhongyuan Hu − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China
+Zefeng Sun − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China
+Yuan Wang − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China
+Dongyang Wu − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China
+Shuang Wu − Engineering Research Centre of Oil Shale
+Comprehensive Utilization, Ministry of Education, Northeast
+Electric Power University, Jilin, Jilin 132012, China
+Complete contact information is available at:
+https://pubs.acs.org/10.1021/acsomega.6c08330
+Notes
+
+The authors declare no competing financial interest.
+
+■
+■
+
+ACKNOWLEDGMENTS
+
+The authors are grateful to the support provided by the
+National Natural Science Foundation of China 52476106.
+
+REFERENCES
+
+(1) United Nations Environment Programme (UNEP). Emissions
+Gap Report 2025: Off Target - Continued Collective inaction puts Global
+Temperature Goal at Risk; United Nations Environment Programme
+(UNEP), 2025.
+(2) Valera-Medina, A.; Vigueras-Zuniga, M. O.; Shi, H.; Mashruk, S.;
+Alnajideen, M.; Alnasif, A.; et al. Ammonia combustion in furnaces: A
+review. Int. J. Hydrogen Energy 2024, 49, 1597−1618.
+(3) Sun, F.; Ji, J.; Zeng, G.; Li, J.; Wei, G. Employment of molten salt
+thermal energy storage coupled to coal-fired power unit for power
+
+63992
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+grid peak shaving: A thermodynamic study. J. Energy Storage 2025,
+131, 117503.
+(4) Li, Z.; Zhang, Y.; Zhang, H. Kinetics modeling of NOx emission
+of oxygen-enriched and rich-lean-staged ammonia combustion under
+gas turbine conditions. Fuel 2024, 355, 129509.
+(5) Wang, Q.; Hu, Z.; Shao, W.; Wang, Z.; Liu, H.; Li, X.; Cui, D.
+The present situation, challenges, and prospects of the application of
+ammonia−coal co-firing technology in power plant boilers. J. Energy
+Inst. 2024, 113, 101531.
+(6) Wang, G.; Zhao, J.; Zhang, H.; Wang, X.; Qin, H.; Wu, K.; et al.
+Ammonia Co-firing with Coal: A Review of the Status and Prospects.
+Energy Fuels 2024, 38 (17), 15861−15886.
+(7) Lee, B.-H.; Bae, Y.-H.; Cho, S.-H.; Kim, G.-M.; Jeon, C.-H.
+Comprehensive technical review for fundamental characteristics and
+application of NH3 co-firing with coal. Chem. Eng. J. 2023, 474,
+145587.
+(8) Tamura, M.; Gotou, T.; Ishii, H.; Riechelmann, D. Experimental
+investigation of ammonia combustion in a bench scale 1.2 MWthermal pulverised coal firing furnace. Appl. Energy 2020, 277,
+115580.
+(9) Mashruk, S.; Shi, H.; Mazzotta, L.; Ustun, C. E.; Aravind, B.;
+Meloni, R.; et al. Perspectives on NOX Emissions and Impacts from
+Ammonia Combustion Processes. Energy Fuels 2024, 38 (20),
+19253−19292.
+(10) Xing, J.; An, Z.; Liang, X.; Wang, R.; Kurose, R. A
+comprehensive assessment of reaction mechanisms for NO formation
+in ammonia/hydrogen/air flames. Int. J. Hydrogen Energy 2025, 180,
+151598.
+(11) Alnajideen, M.; Shi, H.; Northrop, W.; Emberson, D.; Kane, S.;
+Czyzewski, P.; Alnaeli, M.; Mashruk, S.; Rouwenhorst, K.; Yu, C.;
+et al. Ammonia combustion and emissions in practical applications: a
+review. Carbon Neutrality 2024, 3 (1), 13.
+(12) Yan, B.; Wu, Z.; Zhou, S.; Lv, J.; Liu, X.; Wu, W.; et al. A
+critical review of NH3−H2 combustion mechanisms. Renewable
+Sustainable Energy Rev. 2024, 196, 114363.
+(13) Gao, Y.; Li, Y.; Wei, X.; Zheng, Y.; Yang, S.; Yang, Q.; et al. A
+kinetic study of CO2 and H2O addition on NO formation for
+ammonia-methanol combustion. Fuel 2025, 381, 133283.
+(14) Tamaoki, K.; Kanayama, K.; Tezuka, T.; Nakamura, H. Selfinduced radical sensitization in ammonia oxidation at intermediate
+temperatures and elevated pressures. Combust. Flame 2024, 269,
+113658.
+(15) Jin, W.; Si, F.; Cao, Y.; Yu, C.; Wang, J. Numerical research on
+ammonia-coal co-firing in a 1050 MW coal-fired utility boiler under
+ultra-low load: Effects of ammonia ratio and air staging condition.
+Appl. Therm. Eng. 2023, 233, 121100.
+(16) Tan, J.; He, Y.; Zhu, R.; Zhu, Y.; Wang, Z. Experimental study
+on co-firing characteristics of ammonia with pulverized coal in a
+staged combustion drop tube furnace. Proc. Combust. Inst. 2023, 39
+(3), 3217−3225.
+(17) Chen, C.; Wang, Z.; Zhu, R.; Tan, J.; He, Y.; Cen, K. Co-firing
+characteristics and fuel-N transformation of ammonia/pulverized coal
+binary fuel. Fuel 2023, 337, 126857.
+(18) Liu, J.; Wu, Q.; He, K.; Kang, X.; Shi, X.; Zhou, H.
+Experimental study on pollutant emissions and fly ash characteristics
+in ammonia-bituminous coal co-firing under different ammonia
+injection modes in a swirl burner. J. Energy Inst. 2025, 123, 102265.
+(19) Sun, W.; Lin, Q.; Li, H.; Fang, S.; Chen, Y.; Cheng, Y.; Ya, H.;
+Feng, H.; et al. Simulation study on coal and ammonia co-firing in a
+tangential firing boiler under different ammonia injection methods.
+Sci. Rep. 2025, 15 (1), 15768.
+(20) Wang, Y.; He, Y.; Weng, W.; Wang, Z. Numerical simulation of
+ammonia combustion with coal in a 135 MW tangentially fired boiler.
+Fuel 2024, 370, 131831.
+(21) Wen, X.; Shamooni, A.; Stein, O. T.; Tainaka, K.; Meller, D.;
+Kronenburg, A.; Kempf, A. M.; Hasse, C. A four-fuel-stream flamelet
+model for large-eddy simulation of piloted pulverized coal/ammonia
+co-combustion. Proc. Combust. Inst. 2024, 40 (1−4), 105470.
+
+Article
+
+(22) Wen, X.; Shamooni, A.; Zirwes, T.; Stein, O. T.; Kronenburg,
+A.; Hasse, C. Carrier-phase direct numerical simulation and flamelet
+modeling of NOx formation in a pulverized coal/ammonia co-firing
+flame. Combust. Flame 2024, 269, 113722.
+(23) Wen, X.; Wang, Z.; Shamooni, A.; Zirwes, T.; Stein, O. T.;
+Hasse, C. The importance of differential diffusion in solid fuel/
+ammonia co-combustion with NOx formation. Combust. Flame 2026,
+288, 114943.
+(24) Wen, X.; Shamooni, A.; Zirwes, T.; Hasse, C. Flamelet LES of
+solid fuel/ammonia co-combustion with differential diffusion. Appl.
+Energy Combust. Sci. 2025, 24, 100387.
+(25) Ishihara, S.; Zhang, J. W.; Ito, T. Numerical calculation with
+detailed chemistry on ammonia co-firing in a coal-fired boiler: Effect
+of ammonia co-firing ratio on NO emissions. Fuel 2020, 274, 117742.
+(26) Ge, C.; Li, S. NO reduction over biomass char and coal char
+blends in CO2/H2O atmospheres: Mechanism and potassium effects.
+Fuel 2026, 404, 136244.
+(27) Wang, Y.; Xu, Y.; Quan, Y.; Hong, D.; Wang, H.; Zhang, A.;
+et al. Effects of char on ammonia−nitrogen conversion and NOx
+formation in ammonia-coal co-firing: Experimental and molecular
+dynamics simulation study based on ash-free model char. Fuel 2026,
+408, 137685.
+(28) Chae, T.; Sim, W.; Lee, J. W.; Yang, W.; Baek, S.; Park, K. An
+experimental study on optimization of ammonia co-firing in an
+80kWth pulverized coal combustion system. Fuel 2025, 380, 132740.
+(29) Ma, C.; Cui, B.; Du, Y.; Yu, Z.; Du, J.; Wang, Y. NOx formation
+in pulverized coal co-firing with ammonia and hydrogen: effects of
+fuel properties and air-staging. J. Energy Inst. 2026, 124, 102409.
+(30) Grimm, F. Low-Order Reactor-Network-Based Prediction of
+Pollutant Emissions Applied to FLOX® Combustion. Energies 2022,
+15 (5), 1740.
+(31) Dübal, S.; Berkel, L. L.; Debiagi, P.; Nicolai, H.; Faravelli, T.;
+Hasse, C.; et al. Chemical reactor network modeling in the context of
+solid fuel combustion under oxy-fuel atmospheres. Fuel 2024, 364,
+131096.
+(32) Li, T.; Li, L.; Liu, C.; Liu, H.; Sun, G.; Ding, N.; Lu, D.; Duan,
+L. Investigating combustion efficiency and NOx emission reduction in
+fluidized bed ammonia-coal co-firing. Combust. Flame 2024, 270,
+113735.
+(33) Kim, K.-H.; Lee, B.-H.; Jeon, C.-H. Carbon-Free Ammonia Cofiring in Fluidized Bed Combustion: Analysis of Advanced Chemical
+Modeling and Detailed Mechanism. ACS Omega 2025, 10 (30),
+32712−32727.
+(34) Lin, Q.; Sun, W.; Li, H.; Liu, Y.; Chen, Y.; Liu, C.; Jiang, Y.;
+Cheng, Y.; Ma, N.; Ya, H.; et al. Experimental Study on Ammonia CoFiring with Coal for Carbon Reduction in the Boiler of a 300-MW
+Coal-Fired Power Station. Engineering 2024, 40, 247−259.
+(35) Ishihara, S.; Zhang, J.; Ito, T. Numerical calculation with
+detailed chemistry of effect of ammonia co-firing on NO emissions in
+a coal-fired boiler. Fuel 2020, 266, 116924.
+(36) Hashemi, H.; Hansen, S.; Toftegaard, M. B.; Pedersen, K. H.;
+Jensen, A. D.; Dam-Johansen, K.; et al. A Model for Nitrogen
+Chemistry in Oxy-Fuel Combustion of Pulverized Coal. Energy Fuels
+2011, 25 (10), 4280−4289.
+(37) Wen, X.; Ferraro, F.; Nicolai, H.; Hashimoto, N.; Hayashi, J.;
+Nakatsuka, N.; Tainaka, K.; Hasse, C. Flamelet LES of a turbulent
+pulverized solid fuel flame using a detailed phenomenological soot
+model. Proc. Combust. Inst. 2023, 39 (3), 3429−3438.
+(38) Wen, X. Flamelet/quadrature-based moment method for
+modeling laminar sooting pulverized solid fuel flames. Phys. Fluids
+2025, 37 (8), 085112.
+(39) Merrick, D. Mathematical models of the thermal decomposition of coal: 1. The evolution of volatile matter. Fuel 1983, 62 (5),
+534−539.
+(40) Hasse, C.; Debiagi, P.; Wen, X.; Hildebrandt, K.; Vascellari, M.;
+Faravelli, T. Advanced modeling approaches for CFD simulations of
+coal combustion and gasification. Prog. Energy Combust. Sci. 2021, 86,
+100938.
+63993
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+(41) Zhang, W.; Liu, X.; Zhang, C.; Li, M.; Niu, T.; Xie, Y.; Wang,
+H.; et al. Industrial scale testing on the combustion and NO emission
+characteristics of ammonia cofiring in a 40 MWth coal-fired boiler.
+Fuel 2024, 359, 130471.
+(42) Zhang, J. W.; Ito, T.; Ishii, H.; Ishihara, S.; Fujimori, T.
+Numerical investigation on ammonia co-firing in a pulverized coal
+combustion facility: Effect of ammonia co-firing ratio. Fuel 2020, 267,
+117166.
+(43) Wang, Z.; Shamooni, A.; Zirwes, T.; Stein, O. T.; Hasse, C.;
+Wen, X. Detailed analysis and flamelet modeling of early-stage NOx
+formation in a turbulent pulverized coal/ammonia co-combustion
+flame with differential diffusion. Proc. Combust. Inst. 2026, 42, 106374.
+
+63994
+
+https://doi.org/10.1021/acsomega.6c08330
+ACS Omega 2026, 11, 63973−63994
+
+

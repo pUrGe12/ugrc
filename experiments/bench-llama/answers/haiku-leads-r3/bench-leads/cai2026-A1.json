@@ -1,0 +1,309 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 12,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%Gao%' ORDER BY page, line_no",
+      "rows": 13
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%si-FOXM1%' OR text ILIKE '%FOXM1%' OR text ILIKE '%CL4H6%' ORDER BY page, line_no",
+      "rows": 4
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 6 AND line_no BETWEEN 1 AND 20 OR (page=6 AND id IN ('p6.L3','p6.L4','p6.L5','p6.L6','p6.L7','p6.L8','p6.L9')) ORDER BY page, line_no",
+      "rows": 20
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 6 AND text ILIKE '%mg%' OR text ILIKE '%dose%' OR text ILIKE '%nM%' OR text ILIKE '%mg/kg%'",
+      "rows": 56
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE text ILIKE '%55%' OR text ILIKE '%Gao%' OR text ILIKE '%FOXM1%' ORDER BY table_id, row_no",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%FOXM1%' OR text ILIKE '%BT549%' OR text ILIKE '%tert-butanol%' OR text ILIKE '%CL4H6%' OR text ILIKE '%CL4H6%'",
+      "rows": 4
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 3 AND 6 ORDER BY row_no, col_no",
+      "rows": 23
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE (text ILIKE '%mg/kg%' OR text ILIKE '%nmol%' OR text ILIKE '%µg%' OR text ILIKE '%ug/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%dose%') AND page IN (6,7,8,22,23) ",
+      "rows": 2
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%μg%' OR text ILIKE '%µg%' OR text ILIKE '%pmol%' OR text ILIKE '%nmol%' OR text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%mg/mL%' OR text ILIKE '%nM%'",
+      "rows": 50
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['60:40:1)', '55).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'60:40:1' is written exactly so in the document (e.g. p6.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"60:40:1\", \"atom\": \"p6.L5\"} — never shorten it",
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['[55]used', '60:40:1)'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'55]used' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55]used\", \"atom\": \"p6.L4\"} — never shorten it",
+          "'60:40:1' is written exactly so in the document (e.g. p6.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"60:40:1\", \"atom\": \"p6.L5\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[7]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L20:92",
+      "p6.L3:61",
+      "p13.L121:18",
+      "p15.L28:38",
+      "p19.L35:0",
+      "p5.L76:57",
+      "p7.L93:33",
+      "p10.L5:32",
+      "p11.L8:67",
+      "p12.L106:28",
+      "p13.L35:46",
+      "p13.L41:43"
+    ],
+    "measures": [
+      "p6.L3:61#115",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p19.L35:0#115",
+      "p5.L76:57#142",
+      "p7.L93:33#261"
+    ],
+    "matched": 213
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 4487,
+    "cache_read_input_tokens": 82870,
+    "cache_creation_input_tokens": 17955
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for Gao et al.'s study. The review only describes their formulation: Gao et al. used a novel CL4H6-ionizable lipid, cholesterol, and DMG-PEG2000 (molar ratio "
+    },
+    {
+      "quote": "60:40:1",
+      "atom": "p6.L5"
+    },
+    {
+      "text": ") to make LNPs encapsulating si-FOXM1 via the tert-butanol dilution method. "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " lists this work's si-FOXM1 with a particle size of "
+    },
+    {
+      "quote": "90–100 nm",
+      "atom": "p6.T2.r4c6"
+    },
+    {
+      "text": ", and gives no dose. No dose is given in the text or the tables, and no dose unit such as mg/kg, nmol or pmol appears anywhere in the document.",
+      "absent": [
+        "mg/kg",
+        "nmol",
+        "pmol"
+      ]
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for Gao et al.'s study. The review only describes their formulation: Gao et al. used a novel CL4H6-ionizable lipid, cholesterol, and DMG-PEG2000 (molar ratio 60:40:1[1]) to make LNPs encapsulating si-FOXM1 via the tert-butanol dilution method. Table 2[2] lists this work's si-FOXM1 with a particle size of 90–100 nm[3], and gives no dose. No dose is given in the text or the tables, and no dose unit such as mg/kg, nmol or pmol appears anywhere in the document.[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "60:40:1"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "90–100 nm",
+      "source": {
+        "atom": "p6.T2.r4c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "90–100 nm",
+        "bbox": [
+          357.9,
+          109.3,
+          390.0,
+          116.9
+        ],
+        "table": "Table 2",
+        "row": 4,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "90–100 nm"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg",
+        "nmol",
+        "pmol"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 4,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:39:42+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 23.8
+}

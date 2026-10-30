@@ -136,3 +136,18 @@ def test_an_answer_of_door_v3_still_rechecks(synth_root, con):
     path.write_text(json.dumps({"runs": runs, "rendered": checked.text, "citations": checked.citations,
                                 "seals": seals, "door_version": "2"}))
     assert not all(ok for ok, _ in verify.verify_answer(path, synth_root))
+
+
+def test_the_small_prompt_keeps_the_same_door_in_fewer_words(synth_root):
+    # style "small" (for a small open model): every placeholder filled, the measure run and leads only with a
+    # clause base, made-up examples only, and shorter than the full prompt
+    con = store.connect_question(synth_root)
+    plain = ask.system_prompt(con, "small")
+    assert "@" not in plain and '{"measure"' not in plain and "## Leads" not in plain
+    assert "you never type a number yourself" in plain and "1,250 m^2/g" in plain
+    clause_base(synth_root)
+    con = store.connect_question(synth_root)
+    small, full = ask.system_prompt(con, "small"), ask.system_prompt(con)
+    assert "@" not in small and '{"measure": "<id>"}' in small and "## Leads" in small
+    assert len(small.split()) < 0.75 * len(full.split())
+    assert ask.system_prompt(con, "full") == full

@@ -1,0 +1,335 @@
+{
+  "question": "What definition of 1C is used, and what share of theoretical capacity is reached on the first discharge at 0.1C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%1C%' OR text ILIKE '%1675%' OR text ILIKE '%theoretical%' ORDER BY page, line_no",
+      "rows": 14
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE id IN ('p3.L5','p3.L6','p3.L7','p3.L8','p5.L60','p5.L61','p5.L62','p5.L63','p5.L64') OR (page=5 AND line_no BETWEEN 58 AND 66) ORDER BY id",
+      "rows": 13
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, quantity, about FROM measures WHERE sentence ILIKE '%1675%' OR text IN ('91%','1675 mA') OR id LIKE 'p5.L61%'",
+      "rows": 2
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 5,
+          "of": "theoretical capacity",
+          "verdict": "refused",
+          "by": "judge",
+          "p": 0.44
+        }
+      ],
+      "rules": [
+        "pairing:judge"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1C'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['0.1C', '1675', '0.1C,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'0.1C' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p1.L11\"} — never shorten it",
+          "'1675' is written exactly so in the document (e.g. p5.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1675\", \"atom\": \"p5.L62\"} — never shorten it",
+          "'0.1C' is written exactly so in the document (e.g. p1.L11): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.1C\", \"atom\": \"p1.L11\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1C'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1C' is written exactly so in the document (e.g. p1.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1C\", \"atom\": \"p1.L12\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "pairing:judge",
+        "where": "runs[5]",
+        "why": "the judge reads p5.L61:44 as not giving '91%' for 'theoretical capacity' (yes 0.44)",
+        "moves": [
+          "set `of` to what the sentence gives this value for",
+          "or quote the value the document gives for theoretical capacity",
+          "or leave `of` out when the value is not given for one particular thing"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "7252fbc6f6f58c60ac11a47792890c1d50ff3ac8df3123c9d413b3094645c2cf",
+  "leads": {
+    "sentences": [
+      "p5.L61:44",
+      "p6.L25:7",
+      "p5.L104:28",
+      "p5.L99:29",
+      "p1.L12:26",
+      "p1.L9:0",
+      "p5.L86:0"
+    ],
+    "measures": [
+      "p5.L61:44#49",
+      "p5.L61:44#83",
+      "p6.L25:7#227",
+      "p6.L25:7#276",
+      "p6.L25:7#364",
+      "p5.L104:28#71",
+      "p5.L104:28#86",
+      "p5.L104:28#101",
+      "p5.L104:28#221",
+      "p5.L99:29#57",
+      "p5.L99:29#126",
+      "p1.L12:26#46",
+      "p1.L12:26#73",
+      "p1.L12:26#111",
+      "p1.L9:0#177",
+      "p1.L9:0#215",
+      "p1.L9:0#229",
+      "p5.L86:0#86",
+      "p5.L86:0#140",
+      "p5.L86:0#169"
+    ],
+    "matched": 36
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 1823,
+    "cache_read_input_tokens": 44189,
+    "cache_creation_input_tokens": 9346
+  },
+  "runs": [
+    {
+      "text": "The rate unit is defined by a theoretical capacity C of "
+    },
+    {
+      "quote": "1675 mA",
+      "atom": "p5.L62"
+    },
+    {
+      "text": " per gram of sulfur (mA/gS). On first discharge at the slow rate of "
+    },
+    {
+      "quote": "0.1C",
+      "atom": "p5.L62"
+    },
+    {
+      "text": ", the material reaches "
+    },
+    {
+      "measure": "p5.L61:44#83"
+    },
+    {
+      "text": " of its theoretical capacity.",
+      "support": [
+        {
+          "atom": "p5.L62",
+          "quote": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches"
+        },
+        {
+          "atom": "p5.L63",
+          "quote": "91% of theoretical capacity"
+        }
+      ]
+    }
+  ],
+  "rendered": "The rate unit is defined by a theoretical capacity C of 1675 mA[1] per gram of sulfur (mA/gS). On first discharge at the slow rate of 0.1C[2], the material reaches 91%[3] of its theoretical capacity.[4][5]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1675 mA",
+      "source": {
+        "atom": "p5.L62",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+        "bbox": [
+          60.5,
+          742.3,
+          300.4,
+          753.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1675 mA"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.1C",
+      "source": {
+        "atom": "p5.L62",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+        "bbox": [
+          60.5,
+          742.3,
+          300.4,
+          753.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "0.1C"
+    },
+    {
+      "kind": "quote",
+      "quote": "91%",
+      "source": {
+        "atom": "p5.L63",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "91% of theoretical capacity and visual distinction between the",
+        "bbox": [
+          60.5,
+          753.4,
+          300.5,
+          763.4
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p5.L61:44#83",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "share",
+        "property_p": 0.99,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "theoretical capacity"
+        ],
+        "sentence": "p5.L61:44",
+        "read_by": "judge"
+      },
+      "n": 3,
+      "rendered": "91%"
+    },
+    {
+      "kind": "support",
+      "quote": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+      "source": {
+        "atom": "p5.L62",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches",
+        "bbox": [
+          60.5,
+          742.3,
+          300.4,
+          753.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "the slow rate of 0.1C (C = 1675 mA/gS), the material reaches"
+    },
+    {
+      "kind": "support",
+      "quote": "91% of theoretical capacity",
+      "source": {
+        "atom": "p5.L63",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "91% of theoretical capacity and visual distinction between the",
+        "bbox": [
+          60.5,
+          753.4,
+          300.5,
+          763.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "91% of theoretical capacity"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-19T09:26:29+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05172",
+  "probe": "C3",
+  "cat": "C",
+  "expect": "C = 1675 mA/gS; 91% (p5.L62-63)",
+  "trap": "the 35 wt% sulfur",
+  "seconds": 12.9
+}

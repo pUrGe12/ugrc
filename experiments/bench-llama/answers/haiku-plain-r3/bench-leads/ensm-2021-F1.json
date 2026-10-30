@@ -1,0 +1,152 @@
+{
+  "question": "In which year was the first commercial Li-ion battery with a TiS2 cathode deployed?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE lower(text) LIKE '%tis2%' OR lower(text) LIKE '%tis%2%' OR lower(text) LIKE '%titanium disulfide%' OR lower(text) LIKE '%disulfide%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%tis2%' OR lower(text) LIKE '%first commercial%' OR lower(text) LIKE '%commercial%'",
+      "rows": 14
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 1 OR (page=2 AND line_no < 20) ORDER BY page, line_no",
+      "rows": 94
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['1990'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1990' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1990\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1293,
+    "cache_read_input_tokens": 16869,
+    "cache_creation_input_tokens": 9089
+  },
+  "runs": [
+    {
+      "text": "The document does not give a year for a commercial Li-ion battery with a TiS2 cathode. It says TiS2 was the earliest positive electrode in the first lithium-based battery, but that it proved incapable of handling growing battery demand. The first commercial Li-ion battery it mentions was deployed in the year "
+    },
+    {
+      "quote": "1990",
+      "atom": "p1.L45"
+    },
+    {
+      "text": ", and that battery used LiCoO2, not TiS2, as the cathode. "
+    },
+    {
+      "text": "The earliest positive electrode employed in the first Li-based battery was TiS2, which proved to be incapable of handling the rapidly growing battery demand.",
+      "support": [
+        {
+          "atom": "p1.L40",
+          "quote": "ample, the earliest positive electrode employed in the first Li-based bat-"
+        }
+      ]
+    }
+  ],
+  "rendered": "The document does not give a year for a commercial Li-ion battery with a TiS2 cathode. It says TiS2 was the earliest positive electrode in the first lithium-based battery, but that it proved incapable of handling growing battery demand. The first commercial Li-ion battery it mentions was deployed in the year 1990[1], and that battery used LiCoO2, not TiS2, as the cathode. The earliest positive electrode employed in the first Li-based battery was TiS2, which proved to be incapable of handling the rapidly growing battery demand.[2]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1990",
+      "source": {
+        "atom": "p1.L45",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode",
+        "bbox": [
+          37.9,
+          574.4,
+          289.3,
+          583.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1990"
+    },
+    {
+      "kind": "support",
+      "quote": "ample, the earliest positive electrode employed in the first Li-based bat-",
+      "source": {
+        "atom": "p1.L40",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "ample, the earliest positive electrode employed in the first Li-based bat-",
+        "bbox": [
+          37.9,
+          522.1,
+          289.3,
+          530.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "ample, the earliest positive electrode employed in the first Li-based bat-"
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:38:55+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "ensm-2021",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "premise false: TiS2 was the earliest positive electrode of the first Li-based battery; the first commercial LIB (1990) used LiCoO2 (p1.L40-46)",
+  "trap": "giving 1990 for TiS2",
+  "seconds": 9.1
+}

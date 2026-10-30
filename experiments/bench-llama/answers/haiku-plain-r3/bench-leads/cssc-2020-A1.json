@@ -1,0 +1,201 @@
+{
+  "question": "What cost per kilogram of recovered cathode material does the EG process have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'cost|\\$|usd|price|per kg|/kg|economic|dollar|kg\\)') ORDER BY page, top",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE regexp_matches(lower(text), 'kg|kilo|gram|yuan|cent|€|£|value|economic|expens|pric|recycl.*cost') ORDER BY page, top",
+      "rows": 21
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE id IN ('p6.L93','p6.L94','p6.L95','p6.L96','p6.L115','p6.L116','p6.L117','p7.L76','p7.L77') OR (page=6 AND id LIKE 'p6.L1%') ORDER BY id",
+      "rows": 50
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'write that the process is' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'write that the process is[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[5]",
+        "why": "the words before citation [3] end in 'rms found no such figure:' and lead into its absence search, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'rms found no such figure:[3]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1852,
+    "cache_read_input_tokens": 29048,
+    "cache_creation_input_tokens": 8544
+  },
+  "runs": [
+    {
+      "text": "The document does not give a cost per kilogram of recovered cathode material for the EG process. It only describes the process qualitatively, as a process that is reported to lower cost: "
+    },
+    {
+      "quote": "believed to substantially reduce the cost and environmental",
+      "atom": "p6.L93"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "impact, making it an economically and environmentally sustain-",
+      "atom": "p6.L94"
+    },
+    {
+      "text": " No price, cost figure, or per-kilogram economic value appears in the text, tables, or figures. Searches for per-kilogram and currency forms found none."
+    },
+    {
+      "text": "",
+      "absent": [
+        "per kilogram",
+        "per kg",
+        "USD"
+      ]
+    }
+  ],
+  "rendered": "The document does not give a cost per kilogram of recovered cathode material for the EG process. It only describes the process qualitatively, as a process that is reported to lower cost: believed to substantially reduce the cost and environmental[1] impact, making it an economically and environmentally sustain-[2] No price, cost figure, or per-kilogram economic value appears in the text, tables, or figures. Searches for per-kilogram and currency forms found none.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "believed to substantially reduce the cost and environmental",
+      "source": {
+        "atom": "p6.L93",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "believed to substantially reduce the cost and environmental",
+        "bbox": [
+          304.7,
+          101.9,
+          548.5,
+          110.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "believed to substantially reduce the cost and environmental"
+    },
+    {
+      "kind": "quote",
+      "quote": "impact, making it an economically and environmentally sustain-",
+      "source": {
+        "atom": "p6.L94",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "impact, making it an economically and environmentally sustain-",
+        "bbox": [
+          304.7,
+          113.9,
+          548.5,
+          122.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "impact, making it an economically and environmentally sustain-"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "per kilogram",
+        "per kg",
+        "USD"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1118,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "6b070d4f372ad360ee3c4866e36f3d1b67d1e0ae809608709c04ef0fb109d310",
+    "readings": "5b727b40e250b1a853ac5c550975589ead58b2ee2800d1cd6729b45d4b8323e4"
+  },
+  "created_at": "2026-10-19T09:37:35+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "cssc-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a cost",
+  "seconds": 14.2
+}

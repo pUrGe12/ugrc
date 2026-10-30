@@ -1,0 +1,116 @@
+{
+  "question": "Below what share of rated capacity does an EV battery reach the end of its usable life under the USABC standard?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%usabc%' OR lower(text) LIKE '%end of life%' OR lower(text) LIKE '%end-of-life%' OR lower(text) LIKE '%80%' ORDER BY page, id",
+      "rows": 29
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page=2 AND id IN ('p2.L8','p2.L9','p2.L10','p2.L11','p2.L12') OR (page=2 AND id LIKE 'p2.L%' AND id IN ('p2.L7','p2.L13')) ORDER BY id",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['80%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'80%' is written exactly so in the document (e.g. p2.L10): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"80%\", \"atom\": \"p2.L10\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 840,
+    "cache_read_input_tokens": 13000,
+    "cache_creation_input_tokens": 5673
+  },
+  "runs": [
+    {
+      "text": "Under the US Advanced Battery Consortium (USABC) standards, an EV battery reaches the end of its usable life when its current "
+    },
+    {
+      "quote": "cell capacity is less than 80% of the rated capacity",
+      "atom": "p2.L10"
+    },
+    {
+      "text": ". So the threshold is that share of rated capacity: the battery is at end of life once its capacity falls below it."
+    }
+  ],
+  "rendered": "Under the US Advanced Battery Consortium (USABC) standards, an EV battery reaches the end of its usable life when its current cell capacity is less than 80% of the rated capacity[1]. So the threshold is that share of rated capacity: the battery is at end of life once its capacity falls below it.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "cell capacity is less than 80% of the rated capacity",
+      "source": {
+        "atom": "p2.L10",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cell capacity is less than 80% of the rated capacity [11]. Those",
+        "bbox": [
+          42.5,
+          335.8,
+          300.5,
+          344.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "cell capacity is less than 80% of the rated capacity"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:09:47+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "mattod-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "less than 80% of rated capacity (p2.L8-10)",
+  "trap": "another percentage",
+  "seconds": 7.9
+}

@@ -1,0 +1,241 @@
+{
+  "question": "What tap density did the NFA powders have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tap%' OR text ILIKE '%density%' ORDER BY page, line_no",
+      "rows": 3
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, page, row_no, col_no, text FROM cells WHERE text ILIKE '%tap%' OR text ILIKE '%g cm%' OR text ILIKE '%g/cm%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, printed_text FROM figure_facts WHERE statement ILIKE '%tap%' OR statement ILIKE '%density%' OR printed_text ILIKE '%tap%'",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE text ILIKE '%tap d%' OR text ILIKE '%tapped%' OR text ILIKE '%tap-d%' OR text ILIKE '%packing%' OR text ILIKE '%bulk density%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%tap%' OR statement ILIKE '%density%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM sentences WHERE text ILIKE '%tap%' OR text ILIKE '%powder%density%' OR text ILIKE '%g cm%'",
+      "rows": 3
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tap%' OR text ILIKE '%g cm%' OR text ILIKE '%g cm−3%' OR text ILIKE '%g cm-3%' OR text ILIKE '%powder%' ORDER BY page, line_no",
+      "rows": 18
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%tap%' OR text ILIKE '%dens%' OR text ILIKE '%g/cc%' OR text ILIKE '%g cm%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%tapp%' OR text ILIKE '%vibrat%' OR text ILIKE '%compact%' OR text ILIKE '%packed%' OR text ILIKE '%bulk%'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 1,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1–2', '54'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1–2' is written exactly so in the document (e.g. p11.L103): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1–2\", \"atom\": \"p11.L103\"} — never shorten it",
+          "'54' is written exactly so in the document (e.g. p12.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"54\", \"atom\": \"p12.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "e2fbab0cd6d21365933e78a120875cee9dc4ea8fd681513fdd7f999d41f5c878",
+  "leads": {
+    "sentences": [
+      "p11.L102:42",
+      "p12.L20:55",
+      "p5.L66:0",
+      "p1.L22:0",
+      "p12.L27:44",
+      "p6.L35:0",
+      "p11.L90:17",
+      "p11.L74:55",
+      "p2.L118:20",
+      "p2.L121:0",
+      "p11.L103:60",
+      "p11.L104:51"
+    ],
+    "measures": [
+      "p11.L102:42#48",
+      "p11.L102:42#72",
+      "p12.L20:55#21",
+      "p12.L27:44#238",
+      "p12.L27:44#264",
+      "p12.L27:44#287",
+      "p6.L35:0#88",
+      "p6.L35:0#175",
+      "p11.L74:55#115",
+      "p11.L74:55#126",
+      "p2.L118:20#114",
+      "p2.L121:0#121",
+      "p2.L121:0#130",
+      "p2.L121:0#135",
+      "p2.L121:0#157"
+    ],
+    "matched": 99
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1737,
+    "cache_read_input_tokens": 32912,
+    "cache_creation_input_tokens": 9978
+  },
+  "runs": [
+    {
+      "text": "The document does not report a tap density for the NFA powders. I searched the text lines, table cells, figure facts and figure OCR for \"tap\", \"tapped\", \"bulk density\", \"packing\", \"compaction\" and g cm density units, and none of them give a tap density value for any NFA powder. The powder-related values it does give are sample-handling and loading figures, such as the powder sample mass for neutron diffraction ("
+    },
+    {
+      "quote": "1–2",
+      "atom": "p11.L103"
+    },
+    {
+      "text": " g) and the powder loading for Mössbauer spectra ("
+    },
+    {
+      "quote": "54",
+      "atom": "p12.L21"
+    },
+    {
+      "text": " mg cm^−2), not tap density.",
+      "absent": [
+        "tap density",
+        "tapped density",
+        "tap-density"
+      ]
+    }
+  ],
+  "rendered": "The document does not report a tap density for the NFA powders. I searched the text lines, table cells, figure facts and figure OCR for \"tap\", \"tapped\", \"bulk density\", \"packing\", \"compaction\" and g cm density units, and none of them give a tap density value for any NFA powder. The powder-related values it does give are sample-handling and loading figures, such as the powder sample mass for neutron diffraction (1–2[1] g) and the powder loading for Mössbauer spectra (54[2] mg cm^−2), not tap density.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1–2",
+      "source": {
+        "atom": "p11.L103",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "powder samples (1–2 g) were loaded into 6 mm vanadium cans. Four-",
+        "bbox": [
+          306.2,
+          662.7,
+          547.1,
+          670.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1–2"
+    },
+    {
+      "kind": "quote",
+      "quote": "54",
+      "source": {
+        "atom": "p12.L21",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "with 54 mg cm^−2 loading and mixed with boron nitride were used and the",
+        "bbox": [
+          48.2,
+          221.4,
+          289.1,
+          230.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "54"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "tap density",
+        "tapped density",
+        "tap-density"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1342,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:27:24+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "adma-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a tap density",
+  "seconds": 11.7
+}

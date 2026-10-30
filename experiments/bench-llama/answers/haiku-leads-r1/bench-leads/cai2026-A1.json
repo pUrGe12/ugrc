@@ -1,0 +1,173 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%Gao%' ORDER BY page, line_no",
+      "rows": 13
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%dose%' OR text ILIKE '%mg/kg%' OR text ILIKE '%nmol%' OR text ILIKE '%pmol%' ORDER BY page, line_no",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=6 OR (page=7 AND line_no<10) ORDER BY page, line_no",
+      "rows": 38
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE text ILIKE '%Gao%' OR (text ILIKE '%FOXM1%') OR (text ILIKE '%[55]%') OR text ILIKE '%55]%' OR text ILIKE '%CL4H6%'",
+      "rows": 3
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 3 AND 6 ORDER BY row_no, col_no",
+      "rows": 23
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L20:92",
+      "p6.L3:61",
+      "p13.L121:18",
+      "p15.L28:38",
+      "p19.L35:0",
+      "p5.L76:57",
+      "p7.L93:33",
+      "p10.L5:32",
+      "p11.L8:67",
+      "p12.L106:28",
+      "p13.L35:46",
+      "p13.L41:43"
+    ],
+    "measures": [
+      "p6.L3:61#115",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p19.L35:0#115",
+      "p5.L76:57#142",
+      "p7.L93:33#261"
+    ],
+    "matched": 213
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1959,
+    "cache_read_input_tokens": 24603,
+    "cache_creation_input_tokens": 10427
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for Gao et al.'s study. It mentions Gao et al. only once, describing their formulation: they used a novel CL4H6-ionizable lipid, cholesterol and DMG-PEG2000 to build LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, with the lipids in a molar ratio of ",
+      "support": [
+        {
+          "atom": "p6.L4",
+          "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+        }
+      ]
+    },
+    {
+      "measure": "p6.L3:61#115"
+    },
+    {
+      "text": " (the lipid molar ratio, not a dose). Their LNPs are listed in the nanocarrier table with the si-FOXM1 siRNA and FOXM1 target, but no dose is given there either."
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for Gao et al.'s study. It mentions Gao et al. only once, describing their formulation: they used a novel CL4H6-ionizable lipid, cholesterol and DMG-PEG2000 to build LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, with the lipids in a molar ratio of[1] 60:40:1[2] (the lipid molar ratio, not a dose). Their LNPs are listed in the nanocarrier table with the si-FOXM1 siRNA and FOXM1 target, but no dose is given there either.",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+    },
+    {
+      "kind": "quote",
+      "quote": "60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p6.L3:61#115",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.8,
+        "property": "ratio",
+        "property_p": null,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "molar ratio"
+        ],
+        "sentence": "p6.L3:61",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "60:40:1"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:22:44+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 12.1
+}

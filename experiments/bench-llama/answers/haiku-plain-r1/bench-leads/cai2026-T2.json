@@ -1,0 +1,352 @@
+{
+  "question": "Which delivery system in Table 2 has a particle size of 139.83 nm, and how is its release triggered?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND text LIKE '%139.83%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%139.83%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 8 AND 14 ORDER BY row_no, col_no",
+      "rows": 34
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 15 AND 17 ORDER BY row_no, col_no; SELECT id, page, text FROM atoms WHERE text LIKE '%US-EV%' OR text LIKE '%ultrasound%' OR text LIKE '%Ultrasonic%' OR text LIKE '%YTHDF1%'",
+      "rows": null
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%US-EV%' OR text ILIKE '%ultrasound%' OR text ILIKE '%ultrasonic%' OR text LIKE '%YTHDF1%' OR text ILIKE '%proton sponge%'",
+      "rows": 24
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE id IN ('p7.L90','p7.L91','p7.L92','p7.L93','p7.L94','p7.L95','p7.L96','p7.L97','p7.L98','p7.L99','p7.L100','p7.L101','p7.L102') OR id LIKE 'p6.T2.r1_c%' AND page=6 AND false ORDER BY id",
+      "rows": 13
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, top, text FROM atoms WHERE id IN ('p6.T2.r11c7','p6.T2.r12c7','p6.T2.r11c6','p6.T2.r11c2') ",
+      "rows": 4
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "US-EV",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['[81]).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'81' is written exactly so in the document (e.g. p7.L93): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"81\", \"atom\": \"p7.L93\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[7]",
+        "why": "'Ultrasonic Triggering' stops where its table cell goes on to the printed row below it: the cell continues with p6.T2.r12c7 'Proton Sponge Effect' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Ultrasonic Triggering Proton Sponge Effect\", \"atom\": \"p6.T2.r11c7\"}",
+          "or show p6.T2.r12c7 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6",
+      "of": "US-EV",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 4153,
+    "cache_read_input_tokens": 53058,
+    "cache_creation_input_tokens": 10973
+  },
+  "runs": [
+    {
+      "text": "The delivery system with a particle size of "
+    },
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6",
+      "of": "US-EV"
+    },
+    {
+      "text": " in the Nanocarrier-based siRNA delivery table is the "
+    },
+    {
+      "quote": "US-EV",
+      "atom": "p6.T2.r11c2"
+    },
+    {
+      "text": " system, which co-delivers HMME and YTHDF1 siRNA (reference "
+    },
+    {
+      "quote": "[81]",
+      "atom": "p6.T2.r11c8"
+    },
+    {
+      "text": "). Its release is triggered by ultrasound: the table lists the release mechanism as "
+    },
+    {
+      "quote": "Ultrasonic Triggering Proton Sponge Effect",
+      "atom": "p6.T2.r11c7"
+    },
+    {
+      "text": ". The text describes this as Wen et al. using "
+    },
+    {
+      "quote": "used low-frequency",
+      "atom": "p7.L93"
+    },
+    {
+      "text": " ultrasound to stimulate tumor cells to produce ultrasound-engineered tumor-derived exosomes (US-EV)."
+    }
+  ],
+  "rendered": "The delivery system with a particle size of 139.83 nm[1] in the Nanocarrier-based siRNA delivery table is the US-EV[2] system, which co-delivers HMME and YTHDF1 siRNA (reference [81][3]). Its release is triggered by ultrasound: the table lists the release mechanism as Ultrasonic Triggering Proton Sponge Effect[4]. The text describes this as Wen et al. using used low-frequency[5] ultrasound to stimulate tumor cells to produce ultrasound-engineered tumor-derived exosomes (US-EV).",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "139.83 nm",
+      "source": {
+        "atom": "p6.T2.r11c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "139.83 nm",
+        "bbox": [
+          357.9,
+          170.5,
+          388.5,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "of": "US-EV",
+      "n": 1,
+      "rendered": "139.83 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "US-EV",
+      "source": {
+        "atom": "p6.T2.r11c2",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "US-EV",
+        "bbox": [
+          110.8,
+          170.5,
+          128.7,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 2,
+        "column_header": "Materials"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "US-EV"
+    },
+    {
+      "kind": "quote",
+      "quote": "[81]",
+      "source": {
+        "atom": "p6.T2.r11c8",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "[81]",
+        "bbox": [
+          535.5,
+          170.5,
+          548.1,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 8,
+        "column_header": "Ref."
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "[81]"
+    },
+    {
+      "kind": "quote",
+      "quote": "Ultrasonic Triggering Proton Sponge Effect",
+      "source": {
+        "atom": "p6.T2.r11c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Ultrasonic Triggering Proton Sponge Effect",
+        "bbox": [
+          412.9,
+          170.5,
+          473.2,
+          185.5
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 7,
+        "column_header": "Release mechanism",
+        "atoms": [
+          "p6.T2.r11c7",
+          "p6.T2.r12c7"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Ultrasonic Triggering Proton Sponge Effect"
+    },
+    {
+      "kind": "quote",
+      "quote": "used low-frequency",
+      "source": {
+        "atom": "p7.L93",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "therapy (sunitinib +everolimus). Wen et al. [81]used low-frequency",
+        "bbox": [
+          306.6,
+          347.2,
+          557.7,
+          357.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "used low-frequency"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:10:37+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "US-EV (HMME siYTHDF1, target YTHDF1): Ultrasonic Triggering, with Proton Sponge Effect (p6.T2 r11-12)",
+  "trap": "a neighbouring EV row",
+  "seconds": 25.7
+}

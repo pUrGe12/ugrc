@@ -139,8 +139,9 @@ def explore(con, sql: str, max_rows: int = 150, width: int = 400) -> str:
         if name not in allowed:
             raise Refusal("sql:unknown-relation", f"there is no relation {name!r}",
                           [f"DESCRIBE one of: {', '.join(allowed)}"])
-        cols, rows, _ = _execute(con, f'DESCRIBE "{name}"', 200)
-        return "\n".join(f"{r[0]} {r[1]}" for r in rows)
+        # not DuckDB's DESCRIBE: it reads `DESCRIBE tables` as SHOW TABLES, even quoted
+        cols, rows, _ = _execute(con, f"PRAGMA table_info('{name}')", 200)
+        return "\n".join(f"{r[1]} {r[2]}" for r in rows)
     tree = _parse(sql)
     _check_relations(tree, clauses=has_clauses(con))
     cols, rows, more = _execute(con, sql, max_rows)

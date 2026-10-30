@@ -1,0 +1,204 @@
+{
+  "question": "What price per kilogram does the review give for ZrO2 coating precursors?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%per kg%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%kilogram%' OR lower(text) LIKE '%price%' OR lower(text) LIKE '%cost%' OR lower(text) LIKE '%$%' OR lower(text) LIKE '%usd%'",
+      "rows": 15
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%kg%' OR lower(text) LIKE '%zirconium%' OR lower(text) LIKE '%zrocl%' OR lower(text) LIKE '%zr(%' OR lower(text) LIKE '%precursor%price%' OR lower(text) LIKE '%price%'",
+      "rows": 2
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (5,6,7,8,9) AND (lower(text) LIKE '%precursor%' OR lower(text) LIKE '%expensive%' OR lower(text) LIKE '%zro%')",
+      "rows": 40
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT count(*) AS n FROM atoms WHERE kind <> 'canon' AND (lower(text) LIKE '%price%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%per kg%' OR lower(text) LIKE '% kg%' OR lower(text) LIKE '%usd%' OR lower(text) LIKE '%per kilogram%')",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE kind <> 'canon' AND (lower(text) LIKE '%price%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%per kg%' OR lower(text) LIKE '% kg%' OR lower(text) LIKE '%usd%' OR lower(text) LIKE '%per kilogram%')",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[0]",
+        "why": "the words before citation [1] end in 'nts and challenges says \"' and lead into its absence search, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'nts and challenges says \"[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [2] end in 'nts and challenges says \"' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'nts and challenges says \"[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2153,
+    "cache_read_input_tokens": 35356,
+    "cache_creation_input_tokens": 8381
+  },
+  "runs": [
+    {
+      "text": "The review gives no price per kilogram for ZrO2 coating precursors. It treats cost only qualitatively: its table of coating requirements and challenges describes the coating precursor as costly."
+    },
+    {
+      "text": " ",
+      "support": [
+        {
+          "atom": "p7.T1.r6c2",
+          "quote": "Expensive coating precursor, increase cathode material cost"
+        }
+      ]
+    },
+    {
+      "text": " Elsewhere it refers generally to the \"high cost of precursors\" for coating processes.",
+      "support": [
+        {
+          "atom": "p5.L90",
+          "quote": "high cost of precursors"
+        }
+      ]
+    },
+    {
+      "text": " No currency amount or per-kilogram figure appears in the document.",
+      "absent": [
+        "price",
+        "per kg",
+        "/kg",
+        "USD"
+      ]
+    }
+  ],
+  "rendered": "The review gives no price per kilogram for ZrO2 coating precursors. It treats cost only qualitatively: its table of coating requirements and challenges describes the coating precursor as costly.[1]  Elsewhere it refers generally to the \"high cost of precursors\" for coating processes.[2] No currency amount or per-kilogram figure appears in the document.[3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Expensive coating precursor, increase cathode material cost",
+      "source": {
+        "atom": "p7.T1.r6c2",
+        "kind": "cell",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "Expensive coating precursor, increase cathode material cost",
+        "bbox": [
+          238.1,
+          613.5,
+          407.0,
+          619.8
+        ],
+        "table": "Table 1",
+        "row": 6,
+        "col": 2,
+        "column_header": "Challenges"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Expensive coating precursor, increase cathode material cost"
+    },
+    {
+      "kind": "support",
+      "quote": "high cost of precursors",
+      "source": {
+        "atom": "p5.L90",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "process times, high cost of precursors, difficulties in handling the precur-",
+        "bbox": [
+          306.9,
+          340.3,
+          558.2,
+          348.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "high cost of precursors"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "price",
+        "per kg",
+        "/kg",
+        "USD"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 2288,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:39:07+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "ensm-2021",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a price",
+  "seconds": 16.7
+}

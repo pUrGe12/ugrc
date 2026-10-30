@@ -1,0 +1,200 @@
+{
+  "question": "What energy density does the anode-free full cell reach, and how does it compare with the theoretical maximum of LiCoO2/graphite cells?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%Wh/kg%' ORDER BY page, line_no",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=5 AND line_no BETWEEN 46 AND 64 ORDER BY line_no",
+      "rows": 19
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['400', '3%', '50%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "'50%' is written exactly so in the document (e.g. p5.L54): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50%\", \"atom\": \"p5.L54\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "4ac64b3bb36f7e896c79ffff1490396834a66eb2d7a3f0b92167847693569b0d",
+  "leads": {
+    "sentences": [
+      "p1.L17:51",
+      "p4.L11:46",
+      "p1.L35:54",
+      "p2.L17:54"
+    ],
+    "measures": [
+      "p1.L17:51#241",
+      "p4.L11:46#48",
+      "p4.L11:46#73",
+      "p4.L11:46#135",
+      "p4.L11:46#147",
+      "p4.L11:46#166",
+      "p4.L11:46#230"
+    ],
+    "matched": 36
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1625,
+    "cache_read_input_tokens": 17282,
+    "cache_creation_input_tokens": 7122
+  },
+  "runs": [
+    {
+      "text": "The anode-free full cell, built with a pre-sodiated pyrite cathode, reaches an energy density of "
+    },
+    {
+      "quote": "∼400 Wh/kg",
+      "atom": "p1.L19"
+    },
+    {
+      "text": ", calculated on the mass of the presodiated pyrite and the carbon nucleation layer. The theoretical maximum for LIB technology, LiCoO2/graphite cells, is "
+    },
+    {
+      "measure": "p1.L17:51#241"
+    },
+    {
+      "text": ". So the full cell's energy density sits slightly above that LiCoO2/graphite ceiling. The authors add that, assuming a "
+    },
+    {
+      "quote": "50%",
+      "atom": "p5.L54"
+    },
+    {
+      "text": " packaging penalty, the cell exceeds current LIB technology."
+    }
+  ],
+  "rendered": "The anode-free full cell, built with a pre-sodiated pyrite cathode, reaches an energy density of ∼400 Wh/kg[1], calculated on the mass of the presodiated pyrite and the carbon nucleation layer. The theoretical maximum for LIB technology, LiCoO2/graphite cells, is 387 Wh/kg[2]. So the full cell's energy density sits slightly above that LiCoO2/graphite ceiling. The authors add that, assuming a 50%[3] packaging penalty, the cell exceeds current LIB technology.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "∼400 Wh/kg",
+      "source": {
+        "atom": "p1.L19",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "sodiated pyrite cathode to achieve energy densities of ∼400 Wh/kg,",
+        "bbox": [
+          69.4,
+          353.7,
+          329.2,
+          366.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "∼400 Wh/kg"
+    },
+    {
+      "kind": "quote",
+      "quote": "387 Wh/kg",
+      "source": {
+        "atom": "p1.L21",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and",
+        "bbox": [
+          69.4,
+          378.4,
+          555.5,
+          389.5
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p1.L17:51#241",
+      "reading": {
+        "role": "background",
+        "role_p": 1.0,
+        "property": "other",
+        "property_p": 0.97,
+        "about": [
+          "LiCoO2/graphite cells",
+          "LIB technology"
+        ],
+        "method": [],
+        "quantity": [
+          "theoretical maximum"
+        ],
+        "sentence": "p1.L17:51",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "387 Wh/kg"
+    },
+    {
+      "kind": "quote",
+      "quote": "50%",
+      "source": {
+        "atom": "p5.L54",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "exceeds all previous reports for SIBs and, assuming a 50%",
+        "bbox": [
+          60.5,
+          653.9,
+          300.4,
+          663.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "50%"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:20:46+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05174",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "~400 Wh/kg vs 387 Wh/kg for LiCoO2/graphite (p1.L19-21)",
+  "trap": "the ~200 Wh/kg of earlier SIB full cells",
+  "seconds": 11.6
+}

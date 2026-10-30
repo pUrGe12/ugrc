@@ -478,7 +478,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m ugrc recheck runs/paper-old/answers/X.json --db runs/paper
 .venv/bin/python -m ugrc sql "SELECT id, text FROM atoms WHERE text ILIKE '%EPR%'" --db runs/paper
 .venv/bin/python -m ugrc clauses --db runs/paper --out runs/paper/clauses     # Jev reads the paper once (section 13)
-.venv/bin/python -m pytest -q                                                # 225 tests, no model calls
+.venv/bin/python -m pytest -q                                                # 231 tests, no model calls
 ```
 
 **Credentials:**
@@ -499,6 +499,23 @@ not change. Figures reach a text-only model as their caption and facts, not pixe
 models (an array argument sent as a string, of JSON or a Python literal) is decoded and listed in the answer record
 (`adapter_repairs`). Sampling: `UGRC_TEMPERATURE` 0.6, `UGRC_TOP_P` 0.9. `experiments/bench-llama/serve.sh`
 starts Llama 3.1 8B this way.
+
+A hosted endpoint works the same way (e.g. OpenRouter, `https://openrouter.ai/api/v1`). A busy host (429, 5xx,
+a dropped connection, an error inside a 200) is retried with backoff (`UGRC_LLM_RETRIES`, 6); one that keeps
+failing raises `llm.ServerError`, so a bench run stops instead of recording the failure as the model's answer.
+The host that served each turn is recorded (`served_by`). One host bug is undone and counted as
+`host:doubled-arguments` / `host:leaked-call-text`: CoreWeave (via OpenRouter, Llama 3.1 8B, 2026-10-19) sends
+every tool call's arguments twice (`{X}{X}`) and the raw call, cut short, as text. Only an exact repeat is
+undone; anything else goes to the door as it came. `experiments/bench-llama/run.py` pins one host with
+`LLAMA_HOST` (no fallback, so precision cannot change mid-run).
+
+Our own server works too: `experiments/bench-llama/modal_vllm.py` serves Llama 3.1 8B at bf16 with vLLM on
+Modal (an L40S, scales to zero), behind an API key. Llama 3.1's chat template refuses an assistant message
+with two tool calls, which the model sometimes makes; `OpenAIChat(one_call_per_turn=True)` sends such a turn
+back as one call per message, each followed by its result.
+
+A small model does better with a shorter system prompt: `ask(..., prompt="small")` (`ask.SYSTEM_SMALL`, with a
+corpus form) keeps the same rules and door in fewer words. It is not on the command line; the bench scripts use it.
 
 ## 12. Results on the test papers
 
@@ -627,6 +644,31 @@ Graded by hand against an answer key written before running. Full write-up in
 
 Under door v3, 47 of the 48 answers re-check identically. The 48th is F6, whose "detection limit" search is
 now refused, as intended. The 13 stored answers of both papers were re-checked and all resolve identically.
+
+### An 8B open model instead of Claude (2026-10-21)
+
+Llama 3.1 8B on the 154 frozen bench questions, every answer graded by hand: through ugrc with Jev's leads and a
+short prompt it gets 34 right; given the PDF's text in its prompt, with no ugrc, 107. The protocol (searching by
+SQL, writing runs the door accepts) is too much for it. A **hybrid** does better than both: code and Jev's leads pick
+pages rendered from ugrc's atoms, Llama answers in its own words, and code points each number at the atom that
+prints it (119 of 154; 20 to 24 of 33 cross-paper questions, against 10 with the papers pasted). The hybrid is
+an experiment script (`experiments/bench-cross/hybrid.py`), not a ugrc mode, and the door does not check it. Jev's
+leads do not help it pick pages: in a frozen, blind-graded test over the 10-paper corpus (114 questions, 3 runs each),
+leads then BM25 got 245 of 342 answers right and BM25 alone 249 (p = 0.76; `experiments/bench-cross/jev-pick/`).
+Given the paper's whole clause base and answering freely, Llama gets 117 of 154 right with Jev's readings and 122 with
+the bare sentences (p = 0.47; `experiments/clause-reasoning/`): what held it back was the protocol, and the readings
+add nothing to the sentences they were read from. Used as a checker after the answer, Jev cuts the wrong answers that
+get through from 19% to 8% of 838 held-out hybrid answers, holding back 27% of the right ones (`experiments/jev-check/`).
+As the library grows from 1 to 10 papers, a condensed clause base loses less than PDF text: 109 to 95 of 140 right,
+against 103 to 74 (p = 0.006 at 10 papers; `experiments/scaling/`). The condensed form is the sentences that state a
+value plus the tables row by row, 32k tokens for 10 papers. Jev's readings without the sentences get 24.
+What makes that form work is Jev's one decision about each value, quantity or label: dropping the sentences whose values
+are all labels takes it from 83 to 95 right (p = 0.017; `experiments/scaling-nojev/`).
+At 40 papers the picture reverses (`experiments/scaling-more/`): condensing every paper falls to 67, while picking 24k
+tokens of ugrc's PDF pages by keyword search gets 103, as many as the paper's own text alone. What limits an 8B model is
+prompt length, so the pipeline to build on picks pages, lets the model answer freely, and checks afterwards.
+Method and numbers: the methodology doc (https://claude.ai/code/artifact/efe49cff-4c52-4f7f-9eb9-180920121aa6);
+how to pick the work up: `experiments/bench-llama/HANDOFF.md`.
 
 ## 13. Clauses read by a classifier (experimental)
 
@@ -774,12 +816,12 @@ the SQL-to-terms compiler, the 13-kind provenance kernel, and scoring.
 | `ugrc/leads.py` | a question's leads: the clause-base sentences and values whose words match it, found by code |
 | `ugrc/pairing.py` | the pairing gate: a quoted value said to be `of` something, checked by the clause base or the judge |
 | `ugrc/clauses.py` | clauses: sentences, quantities, candidates, layout rules, Jev's decisions, the clause door, replay and receipt |
+| `ugrc/__main__.py` | the command line |
 
 `docs/jev-worked-examples.md` holds the two reference cases for the clause base: the question it answers
 with no model at answer time, and the question it cannot answer, with the one-line cause.
-| `ugrc/__main__.py` | the command line |
 
-`tests/` holds 225 tests, none of which calls a model:
+`tests/` holds 231 tests, none of which calls a model:
 - **Synthetic paper** (`tests/synth.py`): a small hand-built substrate with a hyphenated line break, a
   wrapped cell and a Greek mu.
 - **Scripted fake model client** (`tests/fakes.py`): drives the question loop and the figure reader.
@@ -798,4 +840,11 @@ with no model at answer time, and the question it cannot answer, with the one-li
   a fraction with `pct`, or a percent with `fixed`, passes; door v5 answers still re-check.
 - **Open-model adapter** (`tests/test_llm_openai.py`): a conversation translated to chat completions and back,
   empty turns left out, an array argument sent as a string (JSON or a Python literal) decoded and counted, and
-  the door saying so when `runs` arrives as a string, and a reply the server cannot parse taken as a bad turn.
+  the door saying so when `runs` arrives as a string, and a reply the server cannot parse taken as a bad turn;
+  a pinned host sent and the serving host recorded; a busy host (429, 5xx, dropped connection, an error inside
+  a 200) retried, and one that keeps failing, or a 402, raised as a server failure; a host's doubled arguments
+  and leaked call text undone and counted, two different objects left for the door; a turn with two tool calls
+  sent back one call per message, each followed by its result.
+- **Short prompt** (`tests/test_leads.py`, `tests/test_corpus.py`): the small model's prompt keeps the same door
+  rules in fewer words, alone and in its corpus form; `explore` describes a table by `PRAGMA table_info`
+  (`tests/test_lineage.py`), since DuckDB reads `DESCRIBE tables` as SHOW TABLES.

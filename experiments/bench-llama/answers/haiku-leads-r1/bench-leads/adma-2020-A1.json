@@ -1,0 +1,201 @@
+{
+  "question": "What tap density did the NFA powders have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tap%' OR text ILIKE '%density%' OR text ILIKE '%g cm%' OR text ILIKE '%g cm−3%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%tap%' OR text ILIKE '%packing%' OR text ILIKE '%tapped%' OR text ILIKE '%bulk density%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 'fact' src, id, statement FROM figure_facts WHERE statement ILIKE '%tap%' OR statement ILIKE '%density%' UNION ALL SELECT 'ocr', id, text FROM figure_ocr WHERE text ILIKE '%tap%' OR text ILIKE '%density%' UNION ALL SELECT 'cell', id, text FROM cells WHERE text ILIKE '%tap%' OR text ILIKE '%density%' UNION ALL SELECT 'line', id, text FROM lines WHERE text ILIKE '%powder%' AND (text ILIKE '%g%cm%' OR text ILIKE '%mass%' OR text ILIKE '%volume%')",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%densit%' OR text ILIKE '%BET%' OR text ILIKE '%surface area%' OR text ILIKE '%particle size%' ORDER BY page",
+      "rows": 15
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "run:kind",
+        "absent:shape"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'50' is written exactly so in the document (e.g. p11.L95): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50\", \"atom\": \"p11.L95\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "run:kind",
+        "where": "runs[1]",
+        "why": "a run must carry exactly one of ['text', 'quote', 'measure', 'sql', 'figure', 'table'], got ['atom', 'quote', 'text']",
+        "moves": [
+          "split it into separate runs"
+        ]
+      },
+      {
+        "rule": "absent:shape",
+        "where": "runs[2].absent",
+        "why": "absent must be a non-empty list of search terms",
+        "moves": [
+          "list the words the document would use if it said this, e.g. [\"mg/kg\", \"dose\"]"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "e2fbab0cd6d21365933e78a120875cee9dc4ea8fd681513fdd7f999d41f5c878",
+  "leads": {
+    "sentences": [
+      "p11.L102:42",
+      "p12.L20:55",
+      "p5.L66:0",
+      "p1.L22:0",
+      "p12.L27:44",
+      "p6.L35:0",
+      "p11.L90:17",
+      "p11.L74:55",
+      "p2.L118:20",
+      "p2.L121:0",
+      "p11.L103:60",
+      "p11.L104:51"
+    ],
+    "measures": [
+      "p11.L102:42#48",
+      "p11.L102:42#72",
+      "p12.L20:55#21",
+      "p12.L27:44#238",
+      "p12.L27:44#264",
+      "p12.L27:44#287",
+      "p6.L35:0#88",
+      "p6.L35:0#175",
+      "p11.L74:55#115",
+      "p11.L74:55#126",
+      "p2.L118:20#114",
+      "p2.L121:0#121",
+      "p2.L121:0#130",
+      "p2.L121:0#135",
+      "p2.L121:0#157"
+    ],
+    "matched": 99
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1709,
+    "cache_read_input_tokens": 30392,
+    "cache_creation_input_tokens": 9495
+  },
+  "runs": [
+    {
+      "text": "The document does not report a tap density for the NFA powders. Searches of the text, tables, figure text and figure facts found no tap or tapped density, and no bulk or packing density for the powders. The nearest powder characterization it gives is the size of the primary particles, which is ",
+      "absent": [
+        "tap density",
+        "tapped density",
+        "bulk density",
+        "packing density",
+        "tap-density"
+      ]
+    },
+    {
+      "quote": "<50 nm",
+      "atom": "p2.L121:0"
+    },
+    {
+      "text": ", as seen by SEM."
+    }
+  ],
+  "rendered": "The document does not report a tap density for the NFA powders. Searches of the text, tables, figure text and figure facts found no tap or tapped density, and no bulk or packing density for the powders. The nearest powder characterization it gives is the size of the primary particles, which is[1] <50 nm[2], as seen by SEM.",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "tap density",
+        "tapped density",
+        "bulk density",
+        "packing density",
+        "tap-density"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1342,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    },
+    {
+      "kind": "quote",
+      "quote": "<50 nm",
+      "source": {
+        "atom": "p3.L5",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "primary particles <50 nm aggregated to form secondary parti-",
+        "bbox": [
+          51.0,
+          576.9,
+          292.0,
+          586.2
+        ],
+        "relocated_from": "p2.L121:0"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "<50 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:21:26+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "adma-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a tap density",
+  "seconds": 13.0
+}

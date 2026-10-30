@@ -1,0 +1,109 @@
+{
+  "question": "In Table 1, what carrier does NCP-CD47 siRNA use, which institution runs its trial, and what is the trial's status?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text ILIKE '%CD47%') ORDER BY row_no, col_no",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 19 AND 23 ORDER BY row_no, col_no",
+      "rows": 24
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, x0, top FROM lines WHERE page=2 AND (text ILIKE '%non-%' OR text ILIKE '%cationic%' OR text ILIKE '%peptide%' OR text ILIKE '%CD47%' OR text ILIKE '%West China%' OR text ILIKE '%recruiting%') ORDER BY top",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE page=2 AND (text ILIKE '%non-%' OR text ILIKE '%cationic%' OR text ILIKE '%peptide%' OR text ILIKE '%CD47%' OR text ILIKE '%West China%' OR text ILIKE '%recruiting%' OR text ILIKE '%NCT07583914%') ORDER BY top",
+      "rows": 14
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 14 AND 26 ORDER BY row_no, col_no",
+      "rows": 57
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 1
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[14]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3349,
+    "cache_read_input_tokens": 26172,
+    "cache_creation_input_tokens": 8366
+  },
+  "runs": [
+    {
+      "text": "placeholder"
+    }
+  ],
+  "rendered": "placeholder",
+  "citations": [],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:13:08+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "non-cationic peptide (a cell wrapped over three printed rows: 'non-' / 'cationic' / 'peptide'); West China Hospital; Phase 1, Not yet recruiting (NCT07583914)",
+  "trap": "",
+  "seconds": 23.2
+}

@@ -1,0 +1,1266 @@
+                                                                                            This article is licensed under CC-BY-NC-ND 4.0
+
+http://pubs.acs.org/journal/acsodf                                                                                                                   Article
+
+
+
+Rigorous Modeling and Industrial-Scalable Optimization of
+Hydroquinone−Catechol Vacuum Distillation: Aspen Plus-RSM
+Integration for Thermally Labile Systems
+Chenglei Wang, Yihong Zeng, Mingwu Yi, Mengqi Yang, Shusheng Qiu, Yuanjian Xie,*
+and Pingxiong Cai*
+
+       Cite This: ACS Omega 2026, 11, 38065−38084                                      Read Online
+
+
+ACCESS                                  Metrics & More                                                    Article Recommendations
+
+
+ABSTRACT: To address the critical challenges of high energy
+consumption and low efficiency in conventional hydroquinone
+(HQ)−catechol (CAT) purification, this study presents a
+systematic computational investigation of vacuum distillation via
+Aspen Plus. Leveraging HQ and CAT’s thermal sensitivity and
+nonazeotropic behavior (40.0 °C boiling point difference at
+101.325 kPa), an accurate thermodynamic framework is built using
+the NRTL (non-random two-liquid) activity coefficient model,
+with parameters calibrated via UNIFAC and the Aspen database. A
+vacuum distillation configuration (column, condenser, reboiler) is
+initialized with 100 kg·h−1 feed flow, 100 °C inlet temperature, and
+50 kPa system pressure, with rigorous vapor−liquid equilibrium
+and mass transfer simulations conducted via the RadFrac module.
+Systematic single-factor analysis of core variables (pressure, theoretical plates, feed stage, reflux ratio) is performed, with purity,
+recovery, and specific energy consumption as metrics. Integrating sensitivity analysis, response surface methodology (RSM), and
+multiobjective optimization, a predictive model identifies optimal operating conditions: 10 kPa operating pressure, 16 theoretical
+plates, 11th-tray feed position, 3.143 mass reflux ratio, and an optimized distillate-to-feed (D/F) ratio of 0.092 (reduced from the
+industrial baseline D/F ratio of 0.121). These optimal conditions yield 99.2% hydroquinone (HQ) purity, 99% catechol (CAT)
+purity, 98.5% HQ recovery, and 97.8% CAT recovery, with core distillation energy consumption reduced by 23.7% (23.2% for the
+full process, including vacuum pumps) versus the industrial baseline operating condition.
+
+
+1. INTRODUCTION
+Hydroquinone (HQ, 1,4-dihydroxybenzene) and catechol
+(CAT, 1,2-dihydroxybenzene) are essential organic chemical
+feedstocks utilized extensively in pharmaceuticals, dyes, rubber
+additives, and other industrial applications.1 Hydroquinone is a
+crucial precursor in the development of photographic
+developers and polymer antioxidants,2,3 while catechol serves
+as a vital intermediate in the synthesis of fragrances, pesticides,
+and bioactive molecules.4 As phenolic isomers, the two
+compounds share highly similar molecular structures, as                          Figure 1. Molecular structural formulas of hydroquinone and catechol
+shown in Figure 1, which leads to nearly identical
+physicochemical properties and poses significant challenges for
+their efficient separation. However, industrial processes
+frequently produce these compounds as mixed products,
+necessitating efficient separation methodologies to improve                      Received: March 30, 2026
+product quality and cost-effectiveness. Conventional separation                  Revised: May 21, 2026
+techniques, such as solvent extraction5−7 and crystallization8 are               Accepted: May 26, 2026
+hindered by inherent limitations, including suboptimal separa-                   Published: June 19, 2026
+tion efficiency, excessive energy consumption, and environ-
+mental concerns associated with solvent usage. Consequently,
+                                      © 2026 The Authors. Published by
+                                            American Chemical Society                                                   https://doi.org/10.1021/acsomega.6c03492
+                                                                         38065                                                  ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                      Article
+
+the development of sustainable, energy-efficient separation                     to address the complex interactions inherent in thermally
+technologies for these thermally sensitive isomers has become                   sensitive separation processes.30
+an urgent industrial requirement.                                                  While previous studies have explored individual separation
+   Extensive research has been conducted worldwide on the                       techniques for hydroquinone (HQ) and catechol (CAT),
+separation of hydroquinone and catechol, with initial efforts                   systematic investigations combining Aspen Plus-based vacuum
+concentrating on solvent extraction techniques. Zhu et al.                      distillation modeling with response surface methodology
+demonstrated the application of ionic liquids for the separation                (RSM) optimization are scarce. Furthermore, existing single-
+of phenolic compounds, achieving component discrimination                       tower simulation studies have largely overlooked the operational
+through the design of selective extractants; however, challenges                constraints of multitower cascaded industrial processes�such
+related to extractant recovery and regeneration impede its                      as feed stability tied to upstream units�and the critical role of
+industrial scalability. Although melt crystallization can produce               small-scale distillation columns for laboratory research, new
+high-purity products, its complex operation and significant                     product development, and specialty chemical production. This
+energy requirements limit its practical application in continuous               work addresses these gaps by delivering three key novel
+processes.9,10                                                                  contributions: (1) the first rigorous simulation of a single
+   In recent decades, distillation technology has gained                        tower (within a multitower cascaded vacuum distillation
+prominence due to its broad applicability, high separation                      process) for HQ-CAT separation from mixed phenol extraction
+efficiency, and compatibility with continuous operation.11                      raffinate, incorporating industrial cascaded constraints; (2) the
+Nevertheless, the high boiling points, similar physicochemical                  first integration of the NRTL thermodynamic model and RSM
+properties, and thermal lability of hydroquinone and catechol                   to optimize this cascaded single tower, aligned with upstream
+present significant challenges for conventional distillation, which             feed stability requirements; and (3) a cascaded-process-
+often necessitates elevated temperatures that risk material                     constrained optimization framework that enhances industrial
+decomposition and coking.12,13 Vacuum distillation has                          applicability. Specifically, the core methodological design and
+emerged as an effective solution by reducing operating                          evaluation the basis of this study are as follows: (1) optimized
+temperatures through pressure adjustment.14,15 Despite its                      variables, three key operational variables with the highest
+potential, systematic computational optimization of vacuum                      sensitivity, including overhead operating pressure, reflux ratio,
+distillation processes for these isomers�particularly using                     and feed tray position, were selected as the core optimization
+Aspen Plus�remains limited. Most existing designs rely heavily                  variables through presensitivity analysis; (2) simulated column,
+on empirical engineering knowledge, resulting in suboptimal                     wherein the research object is a vacuum packed distillation
+time and cost efficiency. Despite its promise, systematic                       column for industrial multitower cascaded process, which is
+computational optimization of vacuum distillation processes                     rigorously modeled via the RadFrac module of Aspen Plus, with
+for these isomers�particularly using Aspen Plus�remains                         a final optimized number of 16 theoretical plates; (3) validation
+limited. Most existing designs rely heavily on empirical                        approach, in which the accuracy of the simulation model is
+engineering knowledge, leading to suboptimal time and cost                      verified by comparing with laboratory-scale test data, with the
+efficiency.                                                                     relative error of key performance indicators less than 1.5%; (4)
+   In terms of optimization methods, while emerging AI-driven                   energy comparison baseline for which the mature operating
+approaches16−18 (e.g., AutoML, meta-learning19,20) and basic                    parameters of the current industrial continuous production of
+grid search18,21,22 have been applied to simple distillation                    the target HQ-CAT separation system are used as the baseline,
+problems, they face critical limitations in this study’s scenario: AI           to ensure the industrial reference value and practical significance
+methods require massive labeled data sets that are impractical to               of the energy-saving effect comparison.
+generate with high-cost Aspen Plus simulations, while grid
+search suffers from the “curse of dimensionality” for multi-                    2. THEORETICAL BASIS
+variable optimization. Specifically, Design of Experiments
+(DoE) combined with Response Surface Methodology (RSM)                          2.1. Principle of Vacuum Distillation
+has been widely recognized as a powerful systematic                             Vacuum distillation is a separation technique conducted under
+optimization tool in various industrial and scientific fields for               subatmospheric pressures, utilizing reduced system pressure to
+process parameter screening and multiobjective optimization.                    lower the boiling point of mixtures, thereby facilitating gas−
+However, the application of such systematic optimization tools                  liquid separation at elevated temperatures. For thermally labile
+(including DoE-RSM combined with process simulation                             compounds such as hydroquinone and catechol, this method
+software) in the vacuum distillation separation of hydroquinone                 mitigates high-temperature side reactions�such as decom-
+and catechol is still scarce, which further highlights the necessity            position and polymerization�thereby enhancing product
+of filling this research gap.23−25                                              quality and yield.31 Additionally, decreased operating pressure
+   Aspen Plus, a leading process simulation platform in chemical                increases the relative volatility between components, improving
+engineering, enables rigorous modeling of distillation systems                  the thermodynamic driving force for distillation-based separa-
+through its advanced thermodynamic databases and detailed                       tion. According to Raoult’s32 and Dalton’s law,33 under the gas−
+unit operation modules (e.g., RadFrac).26,27 Complementing                      liquid equilibrium, the partial pressure of component (i) in the
+this, Response Surface Methodology (RSM) provides a                             vapor phase (pi) equals the product of its liquid-phase mole
+statistical framework to establish nonlinear relationships                      fraction (xi) and its saturated vapor pressurepartial:
+between operational variables and performance metrics (e.g.,
+purity, recovery, energy consumption), facilitating efficient                      (pisat ):   pi = xipisat (T )                                       (1)
+optimization with minimal experimental trials.28,29 The
+integration of Aspen Plus’ process simulation capabilities with                   Total system pressure (P) is the sum of all component partial
+RSM’s mathematical optimization creates a synergistic approach                  pressures:
+                                                                        38066                                       https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                            ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                                        http://pubs.acs.org/journal/acsodf                                                                Article
+
+Table 1. NRTL Binary Interaction Parameters for Hydroquinone (HQ)−Catechol (CT) System
+ Component Pair            Source            Temp Unit             Aij             Bij            Cij       Dij       Eij         Aji      Bji         Cji          Dji      Eji       αij
+     HQ−CT                 R-PCES                     °C              0          128.834          0.3        0        0           0     −114.781        0               0    0         0.3
+
+            n
+                                                                                                         and ∝ij is the nonrandomness parameter.
+   P=            pi                                                                                        In Aspen Plus, binary interaction parameters were regressed
+           i=1                                                                             (2)           against available literature data38−40 and validated with
+  As P decreases, the relationship between psat
+                                            i and P shifts,
+                                                                                                         experimental VLE results, ensuring the simulation accurately
+altering the relative volatility                                                                         captures the complex phase behavior of the hydroquinone−
+                                                                                                         catechol system.
+   ij        psat yzz
+    jj
+     jj ij = isat zzz                                                                                             Eutectic temperature: 365.8 K.
+      jj     pj zz                                                                                                Eutectic composition: The mole fraction of catechol x
+       k            {                                                                      (3)
+                                                                                                                  catechol = 0.7879; that is, the mole fraction of hydroquinone
+�a key parameter governing separation efficiency. This shift                                                      x hydroquinone = 0.2121.
+enhances the distinguishability of vapor−liquid phase compo-
+                                                                                                            This eutectic point indicates that when the ratio of catechol to
+sitions, facilitating more effective component partitioning in the
+                                                                                                         hydroquinone in the system is 78.79:21.21 (mol/mol), the
+distillation column.
+                                                                                                         freezing point of the mixture drops to the lowest (365.8 K),
+2.2. Introduction to Aspen Plus Software Aspen Plus                                                      which is lower than the melting points of the pure components
+Aspen Plus, a leading process simulation software in chemical                                            (the melting point of catechol is approximately 378 K, and the
+engineering, is renowned for its robust computational                                                    melting point of hydroquinone is approximately 433 K).
+capabilities and extensive thermodynamic database.34 This                                                   This calibration step is critical for enhancing the reliability of
+platform enables detailed modeling of diverse unit oper-                                                 process modeling, especially in thermally sensitive separations
+ations�including distillation, absorption, and extraction�by                                             where small deviations in VLE predictions can significantly
+integrating advanced algorithms and customizable physical                                                impact design and optimization outcomes.
+property methods (e.g., UNIFAC, NRTL). For distillation                                                     To accurately describe the nonideal phase behavior of the
+process modeling, Aspen Plus offers a suite of column                                                    hydroquinone (HQ)−catechol (CT) system, this study adopted
+configurations (e.g., RadFrac for rigorous simulation) and                                               the NRTL activity coefficient model, and the binary interaction
+phase equilibrium models, allowing precise prediction of                                                 parameters were obtained from the recommended Process
+separation performance under specified conditions. Through                                               Chemicals Engineering System (PCES) database (marked as
+input of material compositions, operating pressures, and feed                                            “R-PCES”) built into Aspen Plus. In the NRTL model, the
+conditions, the software generates comprehensive profiles of                                             expressions for the interaction energies (τij, τji), and the
+temperature, pressure, and component distribution along the                                              nonrandomness parameter ∝ij are
+column.35 These outputs provide critical insights for optimizing
+                                                                                                                            Bij                              Eij
+process parameters�such as reflux ratio, theoretical plates, and
+                                                                                                             ij = A ij +           + Cij ln T + DijT +             ji
+feed stage�to achieve desired separation efficiency and energy                                                              T                                T2
+performance. By bridging fundamental thermodynamics with                                                                    Bji                              Eji
+practical engineering design, Aspen Plus serves as an                                                             = Aji +          + Cji ln T + DjiT +              ij =    ji = Cij
+indispensable tool for both conceptual process development
+                                                                                                                            T                                T2
+                                                                                                                                                                                        (6)
+and detailed optimization in chemical engineering applications.
+2.3. Selection of Physical Property Methods                                                              where the unit of temperature T is °C. The NRTL binary
+                                                                                                         interaction parameters for the HQ−CT system are presented in
+The choice of thermodynamic model is pivotal for achieving                                               Table 1.
+accurate distillation simulations, particularly for nonideal                                                The above parameters are derived from the recommended
+systems like hydroquinone-catechol mixtures. In this study,                                              database in Aspen Plus, verified by industrial-scale thermophys-
+the Non-Random Two-Liquid (NRTL) model was selected due                                                  ical data, and suitable for vapor−liquid equilibrium (VLE) and
+to its robust capability to describe intermolecular interactions in                                      liquid−liquid equilibrium (LLE) calculations of phenolic
+solutions with strong nonideal behavior.36,37 Grounded in the                                            systems with hydrogen bonds, enabling reliable capture of the
+local composition concept, the NRTL approach accounts for                                                nonideal interactions in the HQ−CT system.
+short-range molecular interactions by incorporating binary
+interaction parameters (τij,τji) which quantify the energy                                               2.4. Overview of Distillation Process Optimization Methods
+difference between unlike molecular pairs. This methodology                                              To clarify the methodological selection logic of this study, this
+enables precise prediction of vapor−liquid equilibrium (VLE)                                             section systematically introduces the principles, advantages and
+by integrating these parameters into activity coefficient                                                limitations of typical optimization methods for distillation
+calculations:                                                                                            processes, including the grid search method, AI-driven
+                                                               n
+                                                                                                         optimization methods, and the RSM method adopted in this
+
+   ln i=
+                 n
+                    x G
+                 j 1 j ji ji
+                               +
+                                    n     xiGij   (   ij         n
+                                                                   x G
+                                                               k 1 k ki ki
+                                                                    xG
+                                                                 k 1 k kk
+                                                                             )                           study.
+                                                                                                            2.4.1. Grid Search Optimization Method. Grid search,
+                 n                                         n
+                     xG
+                 k 1 k ki          j =1
+                                                              xG
+                                                           k 1 k ik                        (4)           also known as full factorial traversal method, is the most basic
+                                                                                                         global optimization method. Its core principle is to divide the
+where                                                                                                    value interval of each optimization variable into several equal
+                                                                                                         gradient levels, and then combine all levels of all variables to
+   Gij = exp(           ij ij)                                                             (5)           form a complete variable space traversal scheme. The optimal
+                                                                                                 38067                                             https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                                           ACS Omega 2026, 11, 38065−38084
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                       Article
+
+solution is obtained by simulating all combined working                        advantages for the research scenario of this study: (1) high
+conditions and comparing the response values. The advantage                    computational efficiency, where only a small number of
+of grid search is that the principle is simple, there is no need for           simulation trials are required to construct a high-precision
+complex mathematical modeling, and there is no risk of falling                 response surface model, which greatly reduces the total
+into a local optimal solution; however, its core limitation is the             computational cost; (2) strong interpretability, where the fitted
+“curse of dimensionality”: for an optimization problem with n                  quadratic polynomial model has an explicit mathematical
+variables, if each variable is divided into m levels, mn simulation            expression, which can clearly explain the interaction between
+trials are required. For the five continuous optimization variables            different operating variables, rather than a “black box” model;
+in this study, even if only 10 levels are set for each variable, 105           (3) suitable for thermally labile systems, where reducing the
+rigorous process simulations are required, which will bring                    number of simulation iterations can avoid the cumulative error
+extremely high computational cost and long calculation time. In                of simulation caused by repeated high-temperature residence
+addition, grid search can only obtain the optimal solution within              time calculation of thermally sensitive materials. Based on the
+the set gradient interval, and cannot accurately locate the                    above advantages, this study selects Box−Behnken Design
+extreme point of the continuous response surface, resulting in                 (BBD) combined with RSM as the core optimization method.
+limited optimization accuracy.
+    2.4.2. AI-Driven Optimization Methods. In recent years,                    3. ESTABLISHMENT OF SIMULATION PROCESS
+AI-driven16,41 optimization methods have been widely devel-                    3.1. Component and Property Method Definition
+oped in the field of complex chemical process optimization,
+among which AutoML, gene expression programming and meta-                      The hydroquinone/catechol (HQ/CT) mass ratio of 9:1 used in
+learning are the most representative methods:                                  this simulation was determined from industrial measurements,
+   AutoML (Automated Machine Learning): AutoML realizes                        representing the typical feed composition entering the final
+the automatic selection of machine learning models, automatic                  vacuum distillation column following impurity removal in
+tuning of hyperparameters, and automatic optimization of                       upstream multitower cascade distillation, thereby ensuring the
+feature engineering, which avoids the bias caused by manual                    results are directly applicable to industrial operation.
+experience in traditional machine learning modeling. For high-                    In Aspen Plus, the thermodynamic model setup began with
+dimensional and ultracomplex distillation systems, AutoML can                  component definition: hydroquinone and catechol were
+construct high-precision proxy models with strong general-                     imported from the software’s built-in database via the
+ization ability; however, its model training requires a large                  Components tab, utilizing the search function to retrieve their
+number of labeled sample data, which is not suitable for the                   standardized chemical entries.34 This step leveraged Aspen Plus’
+scenario in this study where the single simulation cost is high and            comprehensive molecular library, ensuring accurate pure-
+it is difficult to generate massive samples.                                   component property data (e.g., vapor pressure, heat capacity)
+   Gene Expression Programming (GEP): GEP is an evolu-                         were automatically assigned without manual input. The relevant
+tionary algorithm that combines the advantages of genetic                      data supporting the subsequent optimization analysis of the
+algorithm and genetic programming, which can automatically                     distillation process are shown in Table 2 below.
+identify the structural relationship between input variables and
+output responses, and construct an explicit mechanism model.                   Table 2. Mass Fraction, Molecular Weight, and Normal
+GEP has significant advantages in the modeling of complex                      Boiling Point of Each Component in the Feedstock
+nonlinear systems with unknown mechanism, but in this study,                            Component               Hydroquinon (HQ)         Catechol (CT)
+we have completed the rigorous mechanism modeling of the                        Mass fraction                        90%                      10%
+distillation process through Aspen Plus, and there is no need for               Molecular weight (M)                 110.11                   110.11
+additional model structure identification, so the application of                Normal boiling point (Tb, °C)        287.0                    245.0
+GEP will bring unnecessary computational complexity.                            Boiling point at 10 kPa              208.8                    167.8
+   Meta-Learning: Meta-learning, also known as ″learning to                     Boiling point at 30 kPa              241.5                    201.4
+learn″, realizes fast optimization of new tasks by learning the
+common laws of a large number of similar tasks. For the
+optimization of multiseries distillation processes, meta-learning
+can greatly reduce the number of samples required for                             Subsequently, the NRTL (Non-Random Two-Liquid)
+optimization; however, this study focuses on the optimization                  activity coefficient model selected in the Properties tab to
+of a specific hydroquinone-catechol vacuum distillation system,                account for the nonideal behavior of the binary mixture. As a
+and there is a lack of a large number of similar pretrained tasks,             local composition model, NRTL requires binary interaction
+so the advantages of meta-learning cannot be fully utilized.                   parameters (τ12,τ21) and a nonrandomness factor (α12) to
+    2.4.3. Response Surface Methodology (RSM). Response                        describe intermolecular interactions in nonideal solutions.36,37
+Surface Methodology (RSM) is a statistical optimization                        In this study, these parameters were derived using Aspen Plus’
+method that combines experimental design and mathematical                      integrated Parameter Estimation tool, which combines theoreti-
+modeling. Its core principle is to select representative variable              cal predictions with database-driven regression:
+combination working conditions through reasonable exper-                         (1) Initial parameter estimation employed the UNIFAC
+imental design, obtain the response values corresponding to                           group-contribution method, decomposing molecular
+each working condition through simulation or experiment, and                          structures into functional groups (e.g., phenol, hydroxyl)
+then use multiple regression fitting to construct a quantitative                      to predict missing interaction values.38
+nonlinear relationship between the optimization variables and                    (2) Iterative refinement utilized the software’s built-in
+the response values, and finally obtain the optimal process                           thermodynamic database, regressing against literature-
+parameters through the response surface model. Compared with                          reported vapor−liquid equilibrium (VLE) data for
+grid search and AI-driven methods, RSM has the following core                         phenolic isomer systems to minimize prediction errors.36
+                                                                       38068                                        https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                            ACS Omega 2026, 11, 38065−38084
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                        Article
+
+
+
+
+Figure 2. Schematic diagram of the separation process flow of catechol and hydroquinone.
+
+  This automated workflow generated temperature-dependent                      Table 3. Shortcut Design Input Parameters for Distillation
+NRTL parameters that accurately represented the hydrogen                       Column
+bonding and structural effects governing the hydroquinone-
+                                                                                                   Parameter                                  Value
+catechol system. The resulting model enabled precise
+                                                                                    Feed temperature (°C)                                    100
+calculation of activity coefficients, critical for predicting phase
+                                                                                    Feed pressure (kPa)                                      50
+behavior in vacuum distillation simulations. By adhering to
+                                                                                    Feed rate (kg/h)                                         100
+Aspen Plus’ standardized protocol for component setup and
+                                                                                    Recovery rate of light key component (%)                 0.90882
+property method calibration, the thermodynamic framework                            Recovery rate of heavy key component (%)                 0.00102
+was rigorously validated, ensuring reliable simulation results
+across the targeted operating conditions (5−20 kPa pressure
+                                                                                  Results from the preliminary DSTWU simulation�including
+range).                                                                        stage compositions, temperature profiles, and reflux ratio
+3.2. Process Flow Construction                                                 estimates�served as initial inputs for subsequent rigorous
+Within the Aspen Plus “Simulation” interface, the RadFrac                      simulations using the RadFrac module. This iterative approach
+distillation column module and Material Stream components                      leveraged shortcut calculations to establish a feasible design
+were systematically selected from the model library. The feed                  space, minimizing computational complexity while ensuring the
+stream was then linked to the column’s designated feed port,                   initial parameters accurately reflected the target separation
+                                                                               requirements. The resulting baseline configuration provided a
+while the overhead product stream was routed to the top outlet
+                                                                               robust foundation for detailed process optimization, enabling
+and the bottom product stream directed to the column’s base
+                                                                               systematic exploration of operational variables (e.g., reflux ratio,
+outlet. This configuration established a closed-loop process flow              feed stage location) in subsequent analyses. The simulation
+for the vacuum distillation system, facilitating the simulation of             results are shown in Table 4.
+intracolumn mass and energy transfer dynamics under specified
+                                                                               3.4. RadFrac Simulation
+operating parameters. The separation process is shown in Figure
+2.                                                                             Within the Simulation workspace of Aspen Plus, the RadFrac
+                                                                               distillation column module and Material Stream objects were
+3.3. DSTWU Simulation
+                                                                               retrieved from the model library. The feed stream was
+In the Aspen Plus Simulation environment, the DSTWU                            configured with the following parameters: a mass flow rate of
+Shortcut Distillation Column module and Material Stream
+components were systematically selected from the unit                          Table 4. Calculation Results of the Shortcut Column
+operations library. The feed stream was specified with the
+following parameters: a mass flow rate of 100 kg·h−1,                                          Parameter                                  Value
+temperature of 100 °C, pressure of 50 kPa, and mass fractions                           Minimum reflux ratio                             1.325
+of hydroquinone (0.9) and catechol (0.1). For the shortcut                              Actual reflux ratio                              1.455
+distillation setup, the total number of theoretical trays was set to                    Minimum number of trays                          7
+20. The column operating pressure, defined as the condenser                             Actual number of trays                           20
+pressure, was 10 kPa to align with the vacuum distillation                              Feed tray                                        15
+requirements, while the reboiler pressure was 30 kPa, accounting                        Feed tray (°C)                                   168.07
+for the total pressure drop across the 20 trays. The simulation                         Bottoms temperature (°C)                         240.88
+results are shown in Table 3.                                                           Distillate feed ratio                            0.092
+
+                                                                       38069                                         https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                             ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                    http://pubs.acs.org/journal/acsodf                                                      Article
+
+100 kg·h−1, temperature of 100 °C, pressure of 50 kPa, and mass                      Comparison of Table 5 and Table 6 reveals that increasing the
+fractions of hydroquinone (0.9) and catechol (0.1). The                           reflux ratio from 1.454 to 3.143 resulted in a decrease in
+distillation column was specified with 20 theoretical trays, a                    overhead temperature and an increase in bottom temperature.
+feed tray location of 15, a total condenser configuration, a mass                 Table 7 further compares the mass fractions of catechol and
+reflux ratio of 1.455, and a distillate-to-feed mass ratio (D/F) of
+0.092.                                                                            Table 7. Product Mass Fraction before and after Adding
+   The selection of a D/F ratio of 0.092 was primarily based on                   Tower Regulations
+preliminary material balance calculations and target separation
+                                                                                      Mass Fraction        Feed       Top Product          Bottom Product
+requirements: Given the feed composition (10% catechol, the                           Component           Stream        Stream                 Stream
+lighter component with a lower boiling point), this ratio was
+                                                                                      Catechol              0.1       0.831416376            0.025891733
+initially estimated to ensure effective enrichment of catechol in
+                                                                                      Hydroquinone          0.9       1.69 × 10−01           0.974108267
+the distillate while maintaining high-purity hydroquinone in the
+                                                                                      Catechol              0.1       0.989999971            0.009823791
+bottoms. Specifically, a D/F of 0.092 aligns with the
+                                                                                      Hydroquinone          0.9       0.010000029            0.990176209
+stoichiometric need to recover ∼92% of the feed catechol in
+the distillate (verified by preliminary Aspen Plus trials), avoiding
+excessive loss of catechol to the bottoms or unnecessary                          hydroquinone in the overhead and bottoms streams, respec-
+carryover of hydroquinone to the distillate.                                      tively. These data confirm that implementing the column
+   Notably, this D/F ratio was set as an initial baseline value for               specification successfully achieved the targeted purity for both
+the simulation. In subsequent optimization via Response Surface                   components.
+Methodology (RSM), it was treated as an adjustable variable                          Figure 3 illustrates the intracolumn temperature profiles
+alongside reflux ratio and operating pressure, allowing system-                   before and after specification adjustment. Notable changes
+atic exploration of its coupling effects with other parameters to                 include
+minimize energy consumption while achieving the target
+separation efficiency (>99.5% hydroquinone recovery) and
+avoiding thermal decomposition of sensitive components.
+   Simulation results, summarized in Table 5, indicated that the
+initial design. The top product exhibited a catechol mass fraction
+
+Table 5. Preliminary Calculation Results
+             Condenser                            Reboiler
+Temperature (°C)         171.975   Temperature (°C)             206.895
+                                   Heat load (kw)               10.066
+Heat load (kw)           −3.527    Bottoms flow rate (kg/h)     90.8
+Distillate flow rate     9.2       Reboiler steam flow rate     56.542
+ (kg/h)                             (kg/h)
+Reflux rate (kg/h)       13.377    Reboiler ratio               0.623
+Reflux ratio             1.454     Ratio of bottom product to   0.908
+                                    feed
+
+                                                                                  Figure 3. Comparison of the temperatures of each tray before and after
+                                                                                  adding the tower regulations.
+of 0.8314, while the bottom product contained 0.9741
+hydroquinone by mass. These outcomes underscored the need                             • Condenser outlet temperature (tray 1), 171.98 °C →
+for further optimization of column design parameters to achieve                          168.07 °C;
+the desired separation efficiency.                                                    • Overhead temperature (tray 2), 181.89 °C → 169.03 °C;
+3.5. Add Tower Design Regulations                                                     • Bottom temperature, 205.13 °C → 207.24 °C;
+Specification 1 was implemented to target a catechol purity of                        • Reboiler outlet temperature, 206.89 °C → 208.06 °C.
+0.99 in the overhead stream. The reflux ratio was designated as                      These temperature shifts reflect enhanced separation
+the adjustable variable, constrained between 1.455 (initial value)                efficiency, as the increased reflux ratio provides additional
+and 5.0. Following parameter adjustment, the simulation was                       mass transfer driving force, leading to higher catechol
+rerun, and results are summarized in Table 6.                                     concentration in the distillate and hydroquinone purity in the
+                                                                                  bottoms. The consistency between simulated outcomes and
+Table 6. Calculation Results after Adding Tower Regulations                       theoretical expectations validates the robustness of the Aspen
+                                                                                  Plus model and the effectiveness of the applied optimization
+             Condenser                            Reboiler                        strategy.
+Temperature (°C)         168.071   Temperature (°C)             208.060
+                                   Heat load (kw)               12.171            4. SIMULATION RESULTS AND ANALYSIS
+Heat load (kw)           −5.575    Bottoms flow rate (kg/h)     90.8
+                                                                                  4.1. Influence of Operating Pressure on Separation Effect
+Distillate flow rate     9.2       Reboiler steam flow rate     68.366
+ (kg/h)                             (kg/h)                                        A series of simulations were conducted to investigate the impact
+Reflux rate (kg/h)       28.911    Reboiler ratio               0.7523            of operating pressure on separation efficiency, with pressure
+Reflux ratio             3.143     Ratio of bottom product to   0.908             systematically varied from 5 to 20 kPa. Analysis of the results
+                                    feed                                          revealed a direct correlation between decreasing pressure and
+                                                                          38070                                         https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                   http://pubs.acs.org/journal/acsodf                                                     Article
+
+
+
+
+Figure 4. Relationship between product purity and operating pressure: (a) mass fractions of catechol (CT) in the overhead stream and hydroquinone
+(HQ) in the bottoms stream; (b) hydroquinone (HQ) impurity content in the overhead stream.
+
+
+
+
+Figure 5. Effects of theoretical plate number and feed stage position on process performance: (a) reboiler heat duty (QREB) as a function of feed plate
+location for different theoretical plate counts (16−20); (b) overhead catechol mass fraction vs feed plate location; (c) bottoms hydroquinone mass
+fraction vs feed plate location.
+
+increasing relative volatility (α) of hydroquinone and catechol.                                sat
+                                                                                               PHQ
+This phenomenon arises from the differential response of their                      HQ/CT =       sat
+                                                                                                 PCT                                                     (7)
+saturated vapor pressures to pressure reduction: as total pressure
+decreases, the disparity between the vapor pressures of the two                 where Psat         sat
+                                                                                         HQ and PCT denote the saturated vapor pressures of
+                                                                                hydroquinone and catechol, respectively. At 10 kPa, for example,
+components widens, enhancing their separability according to
+                                                                                α increases from 1.85 at 20 kPa to 2.30 at 5 kPa, reflecting a 24%
+Raoult’s Law.                                                                   improvement in separation potential. This trend, specifically for
+  The relationship between pressure and relative volatility can                 the hydroquinone−catechol binary system, is consistent with
+be mathematically expressed as                                                  thermodynamic principles governing vacuum distillation, where
+                                                                        38071                                         https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                              ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                                 Article
+
+Table 8. Bottom Heat Load of the Column with Different Numbers of Theoretical Trays and Feed Positions
+                                                                 Bottom Heat Load of the Column (kw) per Tray Count
+     Theoretical Feed Position              16                     17                        18                          19                            20
+                11                       12.14442               12.14459                   12.14466                 12.14469                         12.14475
+                12                       12.26008               12.17146                   12.14468                 12.14467                         12.14466
+                13                       12.3664                12.26003                   12.17125                 12.14466                         12.14466
+                14                       12.49641               12.36644                   12.26004                 12.17129                         12.14466
+                15                       12.65774               12.49642                   12.3664                  12.26003                         12.17124
+
+reduced pressures mitigate thermal degradation risks while                      trap heavy components (hydroquinone) in the stripping section,
+enhancing component volatility differences.                                     compromising bottom product purity, as illustrated in Figure 5.
+   Figure 4a illustrates the direct correlation between decreasing                 To identify the optimal theoretical tray count and feed stage, a
+pressure and increasing purity of catechol in the overhead                      factorial simulation design employed with tray count (10−30)
+stream. At 20 kPa, the catechol purity was 0.94377, while                       and feed location (5−20th tray) as manipulated variables.
+hydroquinone purity in the bottoms reached 0.985492.                            Reboiler heat duty (QREB), overhead catechol purity, and
+Reducing the pressure to 5 kPa enhanced both metrics, with                      bottoms hydroquinone purity were defined as response
+catechol purity rising to 0.99996 and hydroquinone purity to                    variables, with results tabulated in Table 8, Table 9, and Table
+0.991189. This improvement arises from the amplified relative                   10.
+volatility (α) at lower pressures, which facilitates the preferential
+vaporization of catechol (the lighter component) into the gas                   Table 9. Mass Fraction of Catechol at the Top of the Column
+phase.                                                                          under Different Numbers of Theoretical Plates and Feed
+   Figure 4b, depicting hydroquinone impurity in the distillate,                Positions
+identifies a critical threshold: at 10 kPa, its content in the
+                                                                                                           Mass Fraction of Catechol Per Tray Count
+overhead stream falls below 0.01 (1 wt %), meeting industrial
+purity requirements. Balancing these results with practical                       Theoretical
+                                                                                 Feed Position        16          17              18            19              20
+considerations, 10 kPa was selected as the optimal operating
+pressure.                                                                             11          0.98981      0.99996         0.99997       0.99998        0.99999
+   Recovery rate analysis further supports this choice. While                         12          0.95316      0.98995         0.99669       0.99782        0.99998
+                                                                                      13          0.90203      0.95317         0.98999       0.99677        0.99988
+catechol recovery increases monotonically with decreasing
+                                                                                      14          0.82928      0.90203         0.95317       0.99001        0.99996
+pressure, excessively low pressures (e.g., < 5 kPa) risk inducing
+                                                                                      15          0.72176      0.82928         0.90203       0.95317        0.99001
+flooding�a hydrodynamic instability caused by high vapor
+velocities that disrupts mass transfer efficiency. This trade-off
+highlights the importance of selecting a pressure that maximizes                Table 10. Mass Fraction of Hydroquinone at the Bottom of
+separation while maintaining stable column operation.                           the Column for Different Numbers of Theoretical Plates and
+                                                                                Feed Positions
+4.2. Influence of Operating Temperature on Separation
+Effect                                                                                                 Mass Fraction of Hydroquinone Per Tray Count
+
+The temperature profile within the distillation column exerts a                   Theoretical
+                                                                                 Feed Position        16          17              18            19              20
+pronounced influence on product composition. At the column
+                                                                                      11          0.99016      0.99018         0.99100       0.99112        0.99121
+top, elevated temperatures enhance the volatility of heavy
+                                                                                      12          0.98644      0.99017         0.99018       0.99022        0.99098
+components (hydroquinone), leading to their increased
+                                                                                      13          0.98126      0.98644         0.98721       0.98922        0.98971
+presence in the overhead product and a corresponding decrease
+                                                                                      14          0.97389      0.98126         0.98644       0.99018        0.99112
+in catechol purity. Conversely, bottom temperatures dictate the                       15          0.96300      0.97389         0.98126       0.98644        0.98722
+residual light component (catechol) concentration in the
+bottoms stream; higher bottom temperatures reduce catechol
+carryover but may induce thermal decomposition of hydro-
+quinone�a thermally labile compound�introducing impur-                             Figure 5a depicts (QREB) trends across different tray counts
+ities that compromise bottom product purity.                                    and feed locations. As tray count increased, the minimum
+   Given the thermal sensitivity of hydroquinone, this study                    (QREB) decreased monotonically, reflecting improved thermal
+focuses on temperature effects relevant to purity optimization                  efficiency; however, this trend was balanced against increasing
+rather than exploring yield fluctuations caused by potential                    capital costs from additional trays. Theoretical analysis indicated
+decomposition. By prioritizing operational temperatures that                    that the optimal feed stage should coincide with the minimum
+balance component volatility with thermal stability, the                        (QREB) to minimize operational expenses.
+proposed framework ensures reliable prediction of separation                       Panels b and c of Figure 5, alongside Tables 9 and 10, reveal
+performance without exacerbating degradation risks.                             that higher tray counts enhanced both catechol and hydro-
+                                                                                quinone purities, with the purity curves reaching asymptotic
+4.3. Influence of Other Operating Parameters
+                                                                                values beyond 16 trays. This plateau indicated diminishing
+   4.3.1. Feed Position and Number of Trays. The feed tray                      returns from further tray additions. Through integrated
+location exerted a substantial influence on separation efficiency,              thermodynamic and economic analysis, the optimal config-
+as misalignment with the optimal vapor−liquid equilibrium                       uration was determined to be 16 theoretical trays with a feed
+profile could either prolong light component (catechol)                         stage at the 11th tray. Under these conditions, (QREB) was 12.14
+residence time in the column�reducing overhead yield�or                         kW, achieving a catechol overhead purity of 0.9898 and
+                                                                        38072                                                 https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                      ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                   http://pubs.acs.org/journal/acsodf                                                     Article
+
+
+
+
+Figure 6. Effects of reflux ratio and theoretical plate number on hydroquinone-catechol vacuum distillation performance and energy consumption: (a)
+required reflux ratio (R) as a function of theoretical plate number (NT); (b) overhead catechol (CT) mass fraction versus reflux ratio (R); (c) bottoms
+hydroquinone (HQ) mass fraction versus reflux ratio (R); (d) energy consumption (power, kW) for CT and HQ streams versus reflux ratio (R).
+
+hydroquinone bottoms purity of 0.9902�balancing separation                            improvement in CT purity (a higher reflux ratio means
+efficiency with energy and capital costs.                                             more liquid reflux participates in mass transfer, favoring
+   4.3.2. Reflux Ratio. Increasing the reflux ratio (R) and                           the enrichment of high-purity components).
+theoretical tray count enhanced overhead product purity but                         • Figure 6c: Relationship between Reflux Ratio (R) and
+concomitantly elevated energy consumption, as illustrated in                          Hydroquinone (HQ) Purity. With R on the horizontal
+Figure 6.                                                                             axis and the mass fraction (w%) of HQ on the vertical axis,
+   Specifically:                                                                      the purity of HQ increases from ∼0.974 to 0.991 as R
+    • Figure 6a: Relationship between Theoretical Plate                               rises�consistent with the trend of CT. This further
+       Number (NT) and Reflux Ratio (R). The horizontal                               confirms that the reflux ratio is a core operating parameter
+       axis represents the theoretical plate number (NT), and                         for regulating the purity of both products, and increasing
+       the vertical axis represents the reflux ratio (R). The curve                   R can simultaneously improve the separation purities of
+       shows that as NT increases from ∼5 to 15, R decreases                          CT and HQ.
+       sharply; when NT continues to increase (>15), R                              • Figure 6d: Relationship between Reflux Ratio (R) and
+       gradually stabilizes (maintained at ∼1.5). This indicates                      Energy Consumption (Power, kW). The horizontal axis is
+       the following: Increasing the theoretical plate number can                     R, and the vertical axis is power (kW), where the red curve
+       significantly reduce the required reflux ratio (with                           represents energy consumption related to CT and the
+       potential to lower distillation energy consumption), but                       gray curve represents that related to HQ. The energy
+       when the number of plates is sufficiently large, the                           consumption of CT increases slightly with R (from ∼10
+       reduction in R tends to saturate (at this point, further                       kW to 12 kW), while the energy consumption of HQ
+       increasing the plate number contributes little to reducing                     decreases gradually with R (from ∼−3 to − 7 kW; the
+       R, requiring a trade-off between equipment cost and                            negative power here may indicate energy recovery or a
+       energy consumption).                                                           relative energy index). This result reveals that adjusting
+    • Figure 6b: Relationship between Reflux Ratio (R) and                            the reflux ratio has differentiated effects on the separation
+       Catechol (CT) Purity. The horizontal axis is the reflux                        energy consumption of the two products, requiring
+       ratio (R), and the vertical axis is the mass fraction (w%) of                  multiobjective optimization considering purity require-
+       CT. As R increases from 1.4 to 3.2, the purity of CT rises                     ments and energy characteristics.
+       continuously from ∼0.84 to nearly 0.99. This demon-                        These trends align with distillation theory, where higher R
+       strates that increasing the reflux ratio enhances the                    increases liquid-phase reflux, augmenting mass transfer driving
+       distillation separation efficiency, leading to a significant             force but requiring greater thermal input. The observed 22%
+                                                                        38073                                         https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                              ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                 http://pubs.acs.org/journal/acsodf                                                       Article
+
+increase in (QREB) underscores the critical need to balance                      duty; while when the pressure is reduced to 3 kPa, a 0.5 increase
+purity targets with energy efficiency. In summary, this set of                   in reflux ratio leads to a 32% sharp increase in reboiler heat duty,
+figures clearly illustrates the coupling relationships among                     showing an unexpected nonlinear surge in energy consumption.
+theoretical plate number, reflux ratio, product purity, and energy               Meanwhile, under the pressure below 5 kPa, the improvement
+consumption, providing key visual evidence for subsequently                      rate of catechol purity with the decrease of pressure also deviates
+determining “high-purity, low-energy-consumption” distillation                   from the linear growth trend, showing an obvious plateau effect:
+operating conditions.                                                            when the pressure is reduced from 10 to 5 kPa, the catechol
+4.4. Energy Consumption Analysis                                                 purity increases from 0.9898 to 0.99996; while when the
+                                                                                 pressure is further reduced from 5 to 3 kPa, the catechol purity
+To evaluate the energy efficiency and industrial scalability of the
+                                                                                 only increases by 0.00002, with almost no improvement, but the
+optimized vacuum distillation process, we first clarify the scope
+                                                                                 energy consumption increases sharply.
+of the 23.7% specific energy consumption reduction reported in
+                                                                                    Through in-depth mechanism analysis, the core reasons for
+the abstract: this value initially reflects energy savings in the core
+                                                                                 the above unexpected deviation phenomenon are clarified as
+distillation unit (reboiler thermal duty + condenser cooling
+                                                                                 follows:
+duty), excluding the power consumption of vacuum pumps.
+                                                                                    Nonideal vapor−liquid equilibrium behavior of the system:
+   For a realistic industrial assessment, we supplemented the
+                                                                                 The hydroquinone-catechol system has strong intermolecular
+calculation of vacuum pump power using the following formula
+                                                                                 hydrogen bond interaction, and the activity coefficient of the
+for liquid ring vacuum pumps (the industrial standard for
+                                                                                 system changes sharply under extremely low pressure and low
+corrosive phenol separation systems):
+                                                                                 temperature conditions, leading to the deviation of the vapor−
+                                                                                 liquid equilibrium ratio from the ideal linear trend. This change
+   P=
+            QPs ln ()Pa
+                     Ps                                                          amplifies the influence of reflux ratio on the vapor−liquid
+           × 3600 × 103                                           (8)            circulating load in the column, resulting in a nonlinear increase
+                                                                                 in energy consumption.
+where                                                                               Pressure drop effect in the packed column: Under extremely
+    • P, vacuum pump power consumption (kW);                                     low vacuum conditions, the proportion of pressure drop in the
+    • Q, volumetric flow rate of noncondensable gas at suction                   packed column to the overhead operating pressure increases
+       pressure (m3/h), derived from Aspen Plus RadFrac                          significantly (from 8% under 10 kPa to 22% under 3 kPa),
+       simulations (12.8 m3/h for the optimized process);                        leading to a significant increase in the pressure difference
+    • Ps, suction pressure (kPa), equal to the system operating                  between the top and bottom of the column. The bubble point
+       pressure (10 kPa);                                                        temperature of the column bottom rises sharply with the
+    • Pa, atmospheric pressure (101.325 kPa);                                    increase of pressure, which directly leads to a nonlinear surge in
+    • η, total efficiency of the vacuum pump (0.75, typical                      the reboiler heat duty.
+       industrial value for liquid ring pumps in phenol systems);                   Physical property change of the thermally labile system:
+    • conversion factor, 3600 × 103 converts units from m3·                      Under extremely low pressure, the density difference between
+       kPa/h to kW·h.                                                            the vapor and liquid phases in the column decreases
+                                                                                 significantly, leading to the distortion of the vapor−liquid load
+The full-process specific energy consumption was then                            distribution in the column, and the mass transfer efficiency of the
+calculated as                                                                    structured packing decreases. To achieve the same separation
+   Etotal = Ecore + Epump                                         (9)            effect, a higher reflux ratio is required, which forms a positive
+                                                                                 feedback of energy consumption increase, leading to the
+                        ji      Eopt,total yzz                                   unexpected sharp rise of energy consumption.
+   Reduction Ratio = jjjj1                    zz × 100%                             This deviation phenomenon also has important guiding
+                         k      E base,total z{                  (10)            significance for industrial operation: the optimal operating
+                                                                                 pressure range of this system is 5−10 kPa. This pressure range
+   Key Results.                                                                  not only avoids the nonlinear sharp increase of energy
+    • Baseline process: Ecore = 896.4 kJ/kg, Epump = 18.6 kJ/kg,                 consumption under ultrahigh vacuum (<5 kPa), but also
+       and Etotal = 915.0 kJ/kg.                                                 controls the maximum temperature in the column below 180
+    • Optimized process: Ecore = 687.2 kJ/kg, Epump = 15.12 kJ/                  °C, which effectively reduces the risk of polymerization and
+       kg, and Etotal = 702.32 kJ/kg.                                            deterioration of the thermally labile hydroquinone and catechol
+    • Full-process energy reduction ratio: 23.2%.                                system.
+   This analysis confirms that even when accounting for vacuum
+pump power consumption, the optimized process delivers                           5. RESEARCH AND OPTIMIZATION BY RESPONSE
+significant energy savings, supporting its industrial scalability                   SURFACE METHODOLOGY
+and economic potential.
+   4.4.1. Analysis of Unexpected Results and Deviation                           5.1. Optimization Objectives and Methods
+Mechanism. In the single-factor analysis of operating pressure                   To minimize energy consumption while maintaining product
+and reflux ratio, we found an obvious nonlinear deviation                        purity and recovery rate, an integrated optimization strategy
+phenomenon that deviates from the ideal linear trend: when the                   combining sensitivity analysis (SA) and response surface
+overhead operating pressure is lower than 5 kPa, the influence                   methodology (RSM) was employed. Considering alternative
+amplitude of reflux ratio on the reboiler heat duty significantly                optimization approaches widely reported in chemical process
+deviates from the linear increasing trend under conventional                     optimization, basic grid search, AutoML, gene expression
+pressure (10−20 kPa). Specifically, under 10 kPa pressure, a 0.5                 programming and meta-learning were also carefully evaluated
+increase in reflux ratio leads to an 8% increase in reboiler heat                in this work. Grid search suffers from the curse of dimensionality
+                                                                         38074                                        https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                              ACS Omega 2026, 11, 38065−38084
+ACS Omega                                              http://pubs.acs.org/journal/acsodf                                                                      Article
+
+for multivariable continuous optimization, requiring massive                 reflux ratio, and feed location designated as independent
+simulation runs and extremely high computational cost. AI-                   variables. A simulation-based experimental design matrix was
+based methods such as AutoML and meta-learning rely on a                     constructed to systematically explore the parameter space,
+large number of labeled data sets for model training, which is               facilitating the development of a quadratic regression model that
+impractical for this thermally labile system with high single                correlates the independent variables with the response (product
+Aspen Plus simulation cost. Gene expression programming is                   purity).
+more suitable for mechanism model structure identification,                  5.3. Response Surface Methodology
+while rigorous thermodynamic and process modeling has                        Response Surface Methodology (RSM) was employed to model
+already been completed in this study, making those alternative               and optimize the distillation process, with reflux ratio (X1),
+methods less applicable. Therefore, SA-RSM was finally selected              overhead pressure (X2), and feed tray number (X3) as
+to balance calculation accuracy and computational efficiency.                independent variables, and mass fractions of catechol (Y1) and
+   SA was first conducted to quantify the impact of each                     hydroquinone (Y2) as dependent variables. A quadratic
+operating parameter (e.g., reflux ratio, feed stage, pressure) on            polynomial model was fitted to describe the relationship
+the objective function, identifying key variables with the highest           between these variables:
+sensitivity indices. Subsequently, RSM was applied to construct
+                                                                                                                                          2                2
+a quadratic regression model linking these critical factors to the              Y=       0 +    1X1 +          2X 2 +   3X3 +      11X1       +   22 X 2
+response variables (energy consumption, purity, recovery). The                                     2
+model was validated using ANOVA (F-value = 12.8; p < 0.001)                             +     X
+                                                                                            33 3
+                                                                                                       +         XX +
+                                                                                                               12 1 2
+                                                                                                                               XX +
+                                                                                                                             13 1 3
+                                                                                                                                                XX +
+                                                                                                                                              23 2 3               (11)
+and optimized via numerical search, yielding a 15.3% reduction
+                                                                                   • β0 is the intercept term.
+in specific energy consumption (from 0.124 to 0.105 kwh/kg)
+                                                                                   • βi represents linear coefficients.
+while meeting purity targets (catechol ≥ 0.99; hydroquinone ≥
+                                                                                   • βii denotes quadratic coefficients.
+0.99). This synergistic approach efficiently balances thermody-
+                                                                                   • βij signifies interaction coefficients.
+namic rigor with practical process economics.
+   All simulation and optimization calculations in this work were                  • ϵ accounts for random error.
+performed on a workstation with Intel Core i7-14700K CPU                     5.4. Data Fitting Results
+(3.4 GHz, 20 threads) and 64 GB DDR5 memory. The single                      Using Design Expert statistical software, the data in Table 11
+steady-state simulation convergence time of the distillation                 were fitted to derive the model coefficient estimates.
+column is about 12−18 s; the total computational time for
+sensitivity analysis and RSM experimental design runs is                     Table 11. Experimental Scheme for Hydroquinone
+approximately 14 min; model regression, ANOVA and                            Separation Simulation Based on Response Surface Central
+numerical optimization consume around 45 s; the whole                        Composite Experimental Design
+modeling-to-optimization workflow takes about 2.5 h in total.
+By contrast, grid search with equivalent optimization accuracy                         Reflux          Feed      Top Pressure        Catechol        Hydroquinone
+                                                                             Std       Ratio           Plate        (kPa)             Yield             Yield
+would require over 100 h of computational time, further
+demonstrating the efficiency advantage of the adopted SA-RSM                  1        1.45             11              9            0.911232              0.982195
+strategy.                                                                     2        3.2              11              9            0.999997              0.991189
+                                                                              3        1.45             15              9            0.838891              0.974866
+5.2. Optimization Plan                                                        4        3.2              15              9            0.998686              0.991056
+A preliminary sensitivity analysis was conducted with the tray                5        1.45             13              7            0.903648              0.981427
+count held constant at 16, for the purpose of screening potential             6        3.2              13              7            1                     0.991189
+operating parameters influencing separation performance. Key                  7        1.45             13              11           0.870985              0.978117
+operating parameters (pressure, reflux ratio, feed location, and              8        3.2              13              11           0.999999              0.991189
+feed temperature) were initially assessed.                                    9        2.325            11              7            0.99999               0.991188
+   Feed temperature was ultimately excluded from the RSM                      10       2.325            15              7            0.958961              0.987031
+optimization framework, as the feed stream to this column is                  11       2.325            11              11           0.999901              0.991179
+sourced from the effluent of the preceding tower in the                       12       2.325            15              11           0.927803              0.983874
+multitower cascaded process and is maintained at a constant                   13       2.325            13              9            0.995324              0.990716
+temperature via intertower heat exchangers�an industrial                      14       2.325            13              9            0.995324              0.990716
+configuration implemented to ensure process continuity and                    15       2.325            13              9            0.995324              0.990716
+consistent feed characteristics. A supplementary sensitivity                  16       2.325            13              9            0.995324              0.990716
+check was performed, confirming that minor fluctuations (±2                   17       2.325            13              9            0.995324              0.990716
+°C) in the stabilized feed temperature exert negligible impacts               18       2.325            13              9            0.995324              0.990716
+on both separation performance and energy consumption, thus                   19       2.325            13              9            0.995324              0.990716
+validating its designation as a fixed process parameter.                      20       2.325            13              9            0.995324              0.990716
+   Subsequently, pressure, reflux ratio, and feed location were
+systematically varied, with corresponding changes in product
+purity monitored. This analysis confirmed that these three                     The model coefficient estimates are presented in Table 12.
+parameters represent the primary drivers of separation perform-              5.5. Model Fitting and Analysis of Variance (ANOVA)
+ance, thereby justifying their selection as independent variables               5.5.1. Analysis of Variance. ANOVA results (Table 13 and
+for RSM implementation.                                                      Table 14 validate the robustness of the quadratic polynomial
+   Response surface methodology (RSM) was subsequently                       models for predicting catechol and hydroquinone mass
+implemented to optimize separation performance, with product                 fractions. Both models exhibit high significance (P < 0.0001),
+purity defined as the primary objective function and pressure,               indicating a strong correlation between the independent
+                                                                     38075                                                    https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                      ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                     http://pubs.acs.org/journal/acsodf                                                        Article
+
+Table 12. Coding Values of Response Surface Simulation                                These results establish the models as robust tools for
+Experiment                                                                         predicting separation performance and identifying optimal
+                                                                                   operating conditions, aligning with established statistical best
+            Final Equation Represented by the Coding Factor
+                                                                                   practices.42−44
+   Hydroquinone Yield          =          Catechol Yield           =                  5.5.2. Development of Statistical Models. Subsequently,
+         0.9907               β0               0.9953              β0              rigorous significance testing of the regression model was
+         0.006                β1               0.0592              β1              conducted.
+        −0.0024               β2              −0.0233              β2                 Through the statistical analysis software, the fitted equation is
+        −0.0008               β3              −0.008               β3              as follows. For the mass fraction of catechol (Y1) and
+         0.0018               β12              0.0178              β12             hydroquinone (Y2), the quadratic polynomial models incorpo-
+         0.0008               β13              0.0082              β13             rating the independent variables�reflux ratio (X1), overhead
+        −0.0008               β23             −0.0078              β23             pressure (X2), and feed tray number (X3)�are expressed as
+        −0.0044               β11             −0.0431              β11
+        −0.0015               β22             −0.0151              β22                Y1 = 0.9953 + 0.0592X1          0.0233X 2         0.0080X3
+        −0.0009               β33             −0.0086              β33
+                                                                                              0.0431X12        0.0154X 2 2      0.0086X32
+                                                                                            + 0.0178X1X 2 + 0.0082X1X3             0.0078X 2X3               (12)
+variables (reflux ratio, pressure, feed tray) and the responses.
+Coefficients of determination (R2) of 0.9944 for both models                          Y2 = 0.9907 + 0.0060X1          0.0024X 2         0.0008X3
+confirm excellent goodness-of-fit, explaining over 99% of the                                              2               2
+observed variance. These values align closely with adjusted R2                                 0.0044X1        0.0015X 2        0.0009X32
+(AdjR2 = 0.9894), further substantiating the models’ predictive                             + 0.0018X1X 2 + 0.0008X1X3              0.0008X 2X3              (13)
+accuracy.
+                                                                                      According to Table 15, for the catechol yield model, the R2
+                                                                                   value is 0.9944, indicating that the model explains approximately
+  (1) Figure 7 (Residual Distribution): Residuals cluster tightly
+                                                                                   99.44% of the variability in catechol yield. The adjusted R2 is
+       around the zero line, exhibiting a normal distribution with
+                                                                                   0.9894, suggesting that the model is not overfitted and is robust,
+       minimal outliers, validating model assumptions.
+                                                                                   as the adjusted R2 remains very close to the R2 value. The
+  (2) Figure 8 (Residuals vs Predicted Values): Random scatter
+                                                                                   predicted R2 is 0.9110, which, while lower than the adjusted R2,
+       without discernible patterns confirms homoscedasticity
+       and absence of systematic bias.                                             still indicates that the model performs very well in predicting
+  (3) Figure 9 (Predicted vs Actual Values): Data points align                     new, unseen data. The Adeq Precision value of 45.8991 is far
+       closely with the diagonal line, demonstrating strong                        greater than the generally accepted threshold of 4, confirming
+       agreement between predicted and experimental values.                        that the model has an excellent signal-to-noise ratio and can be
+                                                                                   reliably used to navigate the experimental design space.
+  Model Significance.                                                              Additionally, the low coefficient of variation (CV%) of
+  The F-value (198.67) and P-value (5 × 10−10) indicate                            0.5287% reflects excellent repeatability and consistency in the
+negligible lack-of-fit, affirming the model’s adequacy for process                 model’s predictions.
+optimization. Key findings include the following.                                     Similarly, the metrics for the hydroquinone yield model
+  (a) Hydroquinone Model: Dominant factors influencing                             demonstrate comparable accuracy and robustness. The R2 and
+       purity are reflux ratio (A) and overhead pressure (C),                      adjusted R2 values of 0.9944 and 0.9894, respectively, indicate
+       with interaction term AB (reflux ratio × feed tray)                         that the model explains over 99% of the variability in
+       exhibiting the highest significance (P < 0.0001).                           hydroquinone yield and is free from overfitting. The predicted
+ (b) Variance Coefficient: A low coefficient of variation                          R2 of 0.9110 further validates the model’s strong predictive
+       (0.5287%) underscores the model’s reliability and                           capability. The Adeq Precision value of 45.8990 and CV% of
+       reproducibility.                                                            0.0525% also confirm the model’s high signal reliability and
+
+Table 13. ANOVA for Quadratic Model�Response 2: Hydroquinone Yield
+
+        Source               Sum of Squares             df             Mean Square               F-value                 P-value
+    model                      4.81 × 10−4              9              5.35 × 10−5            198.67                  4.47 × 10−10                significant
+    A�Reflux ratio             2.88 × 10−4              1              2.88 × 10−4           1070.40                  1.68 × 10−11
+    B�Feed plate               4.48 × 10−5              1              4.48 × 10−5            166.26                  1.48 × 10−7
+    C�Top pressure             5.24 × 10−6              1              5.24 × 10−6             19.47                  1.31 × 10−3
+    AB                         1.29 × 10−5              1              1.29 × 10−5             48.09                  4.02 × 10−5
+    AC                         2.74 × 10−6              1              2.73 × 10−6             10.17                  9.68 × 10−3
+    BC                         2.48 × 10−6              1              2.482 × 10−6             9.20                  1.26 × 10−2
+    A2                         8.70 × 10−5              1              8.70 × 10−5            323.22                  6.07 × 10−9
+    B2                         1.06 × 10−5              1              1.06 × 10−5             39.52                  9.06 × 10−5
+    C2                         3.47 × 10−6              1              3.47 × 10−6             12.90                  4.92 × 10−3
+    Residual                   2.69 × 10−6              10             2.69 × 10−7
+    Lack of fit                2.69 × 10−6              3              8.98 × 10−7               2.93 × 10+7          3.31 × 10−25                significant
+    Pure error                 2.14 × 10−13             7              3.06 × 10−14
+    Cor Total                  4.84 × 10−4              19
+
+                                                                           38076                                           https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                   ACS Omega 2026, 11, 38065−38084
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                 Article
+
+Table 14. ANOVA for Quadratic Model�Response 2: Catechol Yield
+         Source                Sum of Squares      df             Mean Square            F-value              .
+     Model                      4.69 × 10−2        9              5.21 × 10−3             198.67         4.47 × 10−10               significant
+     A�Reflux ratio             2.81 × 10−2        1              2.81 × 10−2            1070.40         1.68 × 10−11
+     B�Feed plate               4.36 × 10−3        1              4.36 × 10−3             166.26         1.48 × 10−7
+     C�Top pressure             5.11 × 10−4        1              5.11 × 10−4             19.47          1.31 × 10−3
+     AB                         1.26 × 10−3        1              1.26 × 10−3             48.09          4.02 × 10−5
+     AC                         2.67 × 10−4        1              2.67 × 10−4             10.17          9.68 × 10−3
+     BC                         2.41 × 10−4        1              2.41 × 10−4              9.20          1.26 × 10−2
+     A2                         8.48 × 10−3        1              8.48 × 10−3             323.22         6.07 × 10−9
+     B2                         1.04 × 10−3        1              1.04 × 10−3             39.52          9.07 × 10−5
+     C2                         3.38 × 10−4        1              3.38 × 10−4             12.90          4.92 × 10−3
+     Residual                   2.62 × 10−4        10             2.62 × 10−5
+     Lack of fit                2.62 × 10−4        3              8.74 × 10−5
+     Pure error                 9.53 × 10−14       7              1.36 × 10−14
+     Cor total                  4.72 × 10−2        19
+
+
+
+
+Figure 7. Normal Plot of Residuals.
+
+
+
+
+Figure 8. Residuals vs Predicted.
+
+repeatability. Collectively, these metrics demonstrate that both           5.6. Response Surface Analysis
+
+response surface models for catechol and hydroquinone yields               Three-dimensional (3D) response surface plots and contour
+                                                                           maps of hydroquinone mass fraction were generated using
+are highly accurate, robust, and reliable for guiding process              Design-Expert Version 13.0, as depicted in Figures 10 and 11.
+                                                                           These visualizations facilitate analysis of interactive effects
+optimization and making predictions.                                       between reflux ratio (X1), feed tray location (X3), and overhead
+                                                                   38077                                      https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                      ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                       Article
+
+
+
+
+Figure 9. Predicted vs Actual.
+
+Table 15. Model Accuracy Indicators for Catechol Yield and                             trays and driving more efficient mass transfer. This
+Hydroquinone Yield                                                                     elevates the liquid-phase concentration of hydroquinone
+                                                                                       (the heavy component) by providing greater driving force
+        Index              Catechol Yield       Hydroquinone Yield
+                                                                                       for its absorption from the vapor phase, analogous to
+    R2                            0.9944              0.9944                           increasing the effective number of theoretical trays.47 The
+    Adjusted R2                   0.9894              0.9894                           resulting longer residence time of liquid on trays facilitates
+    Predicted R2                  0.9110              0.9110                           finer separation, mirroring the effect of multiple
+    Adeq precision               45.8991             45.8990                           sequential distillations.
+    Std dev                       0.0051              0.0005
+                                                                                    2. Feed Tray Location Effect: A higher feed tray number
+    Mean                          0.9686              0.9880
+                                                                                       (closer to the column top) shortens the stripping section,
+    CV (%)                        0.5287              0.0525
+                                                                                       reducing the number of trays available for hydroquinone
+                                                                                       enrichment in the bottoms stream. In the rectifying
+pressure (X2) by correlating surface curvature and contour color                       section near the top, the vapor phase is enriched in light
+gradients with purity outcomes. In the 3D plots, orange, yellow,                       components (catechol), while the liquid phase contains
+and green regions denote high, moderate, and low hydro-                                lower heavy-component concentrations. Placing the feed
+quinone purity, respectively, while contour maps illustrate two-                       here disrupts the gas−liquid equilibrium necessary for
+factor interactions at the central level of the third variable (e.g.,                  hydroquinone separation, as the shortened stripping
+X2 fixed at 10 kPa for X1-X3 interactions).                                            section limits its concentration through successive
+   Contour geometry serves as a key indicator of interaction                           vapor−liquid exchanges.48 This misalignment reduces
+strength: elliptical contours signify significant factor interactions                  the efficiency of heavy-component recovery, directly
+(P < 0.05), whereas circular contours indicate negligible                              lowering hydroquinone purity.
+interaction.45,46 For example, the elongated contours in Figure
+10 highlight a strong synergistic effect between reflux ratio and                  The synergy between increased reflux and lower feed trays
+feed tray location on hydroquinone purity, consistent with                      (lower X3) optimizes both mass transfer intensity and column
+ANOVA results identifying the X1X3 interaction term as highly                   section utilization. The former boosts interphase contact, while
+significant (P < 0.0001). Conversely, the near-circular contours                the latter ensures an adequate stripping section length for
+in Figure 11 for pressure and feed tray location suggest minimal                hydroquinone concentration. Together, these adjustments
+interaction, aligning with the model’s low sensitivity to X2X3                  strengthen the gas−liquid equilibrium shift favoring heavy-
+effects.                                                                        component retention in the liquid phase, driving the observed
+   This graphical analysis complements statistical results,                     increase in hydroquinone purity. This interactive effect is critical
+providing a intuitive framework to interpret how operational                    for balancing separation efficiency and energy use, as higher
+adjustments�such as increasing reflux ratio at a lower feed                     reflux ratios�though energy-intensive�complement strategic
+tray�enhance hydroquinone concentration in the bottoms                          feed staging to achieve target purities within practical opera-
+stream. The color-coded surfaces and contour maps thus serve                    tional limits.
+as valuable tools for optimizing process parameters within the                  5.7. Optimization Results
+design space, ensuring alignment between theoretical predic-                    Regression analysis of simulation results yielded a quadratic
+tions and practical separability.                                               model relating objective functions (purity, recovery, energy
+   The response surfaces in Figure 10 and Figure 11 exhibit steep               consumption) to operating parameters. Solving this model
+gradients and semielliptical contour projections, indicating a                  identified optimal conditions: 10 kPa operating pressure, reflux
+significant interactive effect between reflux ratio (X1) and feed               ratio of 3.143, and feed stage at the 11th tray.
+tray location (X3) within the studied range. Hydroquinone                          Under these conditions, the overhead catechol purity reached
+purity increases with higher reflux ratios but decreases as the                 0.99, while bottoms hydroquinone purity achieved 0.992.
+feed tray number rises�a counterbalanced relationship where                     Corresponding recovery rates were 98.5% (catechol) and
+simultaneous increases in X1 and decreases in X3 synergistically                97.8% (hydroquinone), with a reboiler heat duty of 12.175
+enhance purity.                                                                 kW. Compared to initial simulation conditions, these results
+   This behavior is rooted in two key mechanisms.                               represent improvements of 16.8% in catechol purity, 1.8% in
+    1. Reflux Ratio Impact: A higher reflux ratio increases liquid-             hydroquinone purity, and 19.3% in energy efficiency (reduction
+       phase recirculation, enhancing gas−liquid contact on                     in specific energy consumption from 0.152 to 0.124 kWh/kg).
+                                                                        38078                                        https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                             ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                    http://pubs.acs.org/journal/acsodf                                                      Article
+
+
+
+
+Figure 10. Three-dimensional (3D) response surface plots and corresponding contour plots illustrating the interactive effects of operating variables on
+catechol (CT) yield: (a) response surface of reflux ratio vs feed plate location; (b) response surface of reflux ratio vs overhead pressure; (c) response
+surface of overhead pressure vs feed plate location; (d) contour plot of reflux ratio vs feed plate location; (e) contour plot of reflux ratio vs overhead
+pressure; (f) contour plot of overhead pressure vs feed plate location
+
+The simultaneous enhancement in product quality, recovery                           The simulation-lab test alignment confirms that key perform-
+efficiency, and energy savings validates the effectiveness of the                ance indicators (KPIs)�including product purity (catechol:
+RSM-based optimization strategy, providing a robust framework                    0.99 vs 0.987; hydroquinone: 0.992 vs 0.989) and reboiler duty
+for industrial-scale separation of thermally sensitive isomer                    (12.175 kW vs 12.320 kW)�match within a 1.5% error margin.
+systems.                                                                         This consistency validates the Aspen Plus model’s ability to
+                                                                                 predict separation behavior under controlled lab-scale con-
+5.8. Optimization Result Validation                                              ditions, providing a critical basis for subsequent process
+To validate the optimization results, simulated outcomes were                    amplification.
+first compared with data from the company’s lab-scale (bench-                       To further confirm industrial applicability, a pilot-scale test
+scale) tests (note: pilot-scale tests are currently in preparation               plan has been formulated: (1) Pilot-scale separation equipment
+                                                                                 will be commissioned within the next 9 months, focusing on
+and not yet completed). While full pilot-scale experimental                      replicating the optimized operating parameters (e.g., reflux ratio,
+verification is planned for future work, the current comparison                  column temperature gradient); (2) continuous operation tests
+between simulation and lab-scale results demonstrates close                      will be conducted to verify KPIs such as long-term product
+agreement, underscoring the initial reliability and preliminary                  purity stability and energy consumption under scaled-up
+practical utility of the optimized conditions.                                   conditions; (3) pilot-scale data will be used to refine the
+                                                                         38079                                          https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                    http://pubs.acs.org/journal/acsodf                                                      Article
+
+
+
+
+Figure 11. Three-dimensional (3D) response surface plots and corresponding contour plots illustrating the interactive effects of operating variables on
+hydroquinone (HQ) yield: (a) response surface of reflux ratio vs feed plate location; (b) response surface of reflux ratio vs overhead pressure; (c)
+response surface of overhead pressure vs feed plate location; (d) contour plot of reflux ratio vs feed plate location; (e) contour plot of reflux ratio vs
+overhead pressure; (f) contour plot of overhead pressure vs feed plate location
+
+model and confirm its scalability, with results to be                            production. The pilot run successfully met target separation
+supplemented in follow-up reports.                                               indices (HQ/CAT purity ≥ 99%; recovery yield ≥ 97%)�
+   Despite the absence of pilot-scale data at present, the lab-scale             consistent with simulation results. Note: Specific pilot data
+validation already supports the rationality of the optimized                     cannot be disclosed per corporate confidentiality agreements.
+parameters for preliminary industrial reference. Additionally,                   This pilot success confirms the optimization framework’s
+integrating lab-scale data with prepilot process simulation helps                reliability.
+mitigate technical risks in thermally sensitive separations (e.g.,
+                                                                                 6. CONCLUSIONS AND PROSPECTS
+avoiding overheating-induced product degradation during scale-
+up), highlighting the practical value of the current research                    6.1. Summary of Research Findings
+framework.                                                                       In this study, aiming at the vacuum distillation separation
+   5.8.1. Pilot-Scale Validation and Confidentiality                             process of the thermally labile catechol-hydroquinone isomer
+Constraints. To verify the practical feasibility of optimized                    system, a rigorous steady-state process model was constructed
+parameters, the scheme guided a corporate partner’s pilot-scale                  using Aspen Plus with the NRTL activity coefficient model as
+                                                                         38080                                          https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                ACS Omega 2026, 11, 38065−38084
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                      Article
+
+the thermodynamic framework. Combined with sensitivity                         limitations (e.g., flooding, entrainment), and nonideal flow
+analysis and response surface methodology (RSM), multi-                        patterns�factors critical to real-world column performance.
+variable collaborative optimization was completed with unit                       Future research will focus on three key directions.
+product energy consumption as the optimization objective and                    (1) Model Refinement: Enhancing the Aspen Plus model by
+product purity and recovery rate as the constraints. Finally, the                   incorporating experimentally determined interaction
+purity of both products reaches more than 99%, the recovery                         parameters and validated tray efficiency correlations
+rate of target products is over 97.8%, and the core distillation                    (e.g., O’Connell or Murphree efficiency models) to
+energy consumption is reduced by 23.7% compared with the                            improve prediction accuracy for complex vapor−liquid
+industrial baseline operating condition. This study demonstrates                    dynamics.
+the successful simulation of hydroquinone and catechol vacuum
+distillation using Aspen Plus, through a systematic analysis of                 (2) Experimental Validation: Collaborating with industrial
+                                                                                    partners to conduct pilot-scale distillation tests, compar-
+key process parameters�including operating pressure, reflux
+                                                                                    ing simulated outcomes with real-world data to quantify
+ratio, feed stage, and intracolumn temperature profiles�and
+                                                                                    model reliability and address discrepancies arising from
+their impacts on separation efficiency. Thermodynamic
+                                                                                    nonideal behavior.
+modeling with the NRTL activity coefficient model, coupled
+with rigorous RadFrac simulations, enabled detailed character-                  (3) Process Innovation: Exploring advanced separation
+ization of vapor−liquid equilibrium and mass transfer dynamics                      configurations (e.g., reactive distillation, divided-wall
+in the binary mixture.                                                              columns) and novel operating strategies (e.g., periodic
+   Operating pressure emerged as a critical parameter, with                         reflux manipulation) to enhance energy efficiency and
+reduced pressures (5−20 kPa) enhancing relative volatility                          separation sharpness for thermally sensitive isomer
+αHQ/CT by 24% at 5 kPa compared to 20 kPa, primarily due to                         systems.
+divergent responses in component vapor pressures. A reflux ratio                  These efforts aim to bridge the gap between theoretical
+of 3.143 and feed stage at the 11th tray�identified via response               simulation and industrial practice, ensuring the developed
+surface methodology (RSM)�optimized mass transfer, achiev-                     framework can be effectively translated into robust, scalable
+ing target purities of 0.99 (catechol, overhead) and 0.992                     processes for high-purity separation of structurally similar
+(hydroquinone, bottoms) while minimizing reboiler duty                         compounds.
+(12.175 kW). These conditions balanced the trade-off between                      6.2.1. Key Assumptions of the Proposed Method-
+separation efficiency and energy consumption, with recovery                    ology. The simulation and optimization methodology
+rates reaching 98.5% (catechol) and 97.8% (hydroquinone).                      proposed in this study is based on the following core
+   The study highlights the interactive effects of reflux ratio and            assumptions, which are the preconditions for the establishment
+feed stage on column section utilization: higher reflux ratios                 of the model and optimization results:
+enhanced liquid-phase enrichment in the rectifying section,                       6.2.1.1. Steady-State Operation Assumption. The simu-
+while lower feed stages prolonged contact in the stripping                     lation is based on the ideal steady-state operation of the
+section, improving heavy-component (hydroquinone) recovery.                    industrial process, without considering the dynamic disturban-
+Laboratory-scale test comparisons validated model predictions                  ces in actual industrial production, such as feed flow fluctuation,
+within a 1.5% error margin for key performance indicators,                     feed composition fluctuation, ambient temperature change, and
+underscoring the reliability of the Aspen Plus framework for                   equipment performance attenuation during long-term oper-
+thermally sensitive isomer separations.                                        ation.
+   Beyond these performance outcomes, this study delivers three                   6.2.1.2. Mass Transfer Efficiency Assumption. The mass
+key novel contributions that advance the field: (1) it represents              transfer efficiency of the structured packed column is calculated
+the first rigorous simulation of this specific single tower within a           by a constant height equivalent to a theoretical plate (HETP) of
+multitower cascaded industrial process, incorporating real-world               0.4 m, without considering the change of packing mass transfer
+cascaded constraints such as upstream feed stability; (2) it is the            efficiency under different vapor−liquid load conditions, and the
+first to integrate the NRTL thermodynamic model with RSM for                   influence of nonideal flow such as wall flow and entrainment on
+optimizing this cascaded single tower, ensuring alignment with                 mass transfer efficiency.
+industrial operational boundaries; and (3) it establishes a                       6.2.1.3. Adiabatic Operation Assumption. The distillation
+cascaded-process-constrained optimization framework that                       column is assumed to operate under adiabatic conditions,
+enhances the direct applicability of results to full-scale                     without considering the heat loss of the column body to the
+multitower production. This integrated approach provides a                     external environment during actual industrial operation.
+robust foundation for industrial process design, combining                        6.2.1.4. Phase Equilibrium Assumption. The vapor and
+thermodynamic rigor with practical optimization to address                     liquid phases on each theoretical plate are assumed to be fully
+challenges in high-purity separation of structurally similar                   mixed and reach complete thermodynamic phase equilibrium at
+compounds.                                                                     the outlet of the theoretical plate, without considering the mass
+                                                                               transfer resistance and nonequilibrium effect in the actual
+6.2. Research Deficiencies and Prospects
+                                                                               vapor−liquid mass transfer process.
+This study acknowledges inherent limitations stemming from                        6.2.1.5. Feed Stability Assumption. The feed stream is
+the reliance on Aspen Plus’ built-in thermophysical property                   assumed to be saturated liquid with stable composition and flow
+models and estimated binary interaction parameters, which may                  rate, without considering the influence of trace impurities in the
+introduce minor discrepancies compared to experimental values.                 actual industrial feed on the phase behavior and separation
+These uncertainties necessitate further validation through                     effect.
+targeted physical property measurements and empirical data                        6.2.2. Limitations of the Proposed Methodology.
+calibration. Additionally, the simulation framework omits                      6.2.2.1. Optimization Scope Limitation. This study only
+practical considerations such as tray efficiency, hydrodynamic                 optimizes the steady-state operation parameters of the single
+                                                                       38081                                       https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                           ACS Omega 2026, 11, 38065−38084
+ACS Omega                                              http://pubs.acs.org/journal/acsodf                                                     Article
+
+distillation column, and does not involve the collaborative                      • Run the property analysis to verify the vapor-liquid
+optimization of the upstream and downstream towers in the                          equilibrium data, ensure that the relative volatility of the
+multitower cascaded industrial process, nor does it involve the                    two components is consistent with the data in Section 4.1
+optimization of the dynamic control scheme and antidisturbance                     of the main text.
+ability of the process.
+                                                                              Step 3: Stream and Unit Operation Setup
+   6.2.2.2. Model Prediction Limitation. The optimization
+accuracy of the RSM model adopted in this study depends on                       • Enter the Simulation tab, create the feed stream FEED, set
+the variable interval of the experimental design. For extreme                      the parameters.
+operating conditions beyond the design interval (e.g., pressure <                • Mass flow rate: 100 kg·h−1.
+5 kPa or > 20 kPa), the prediction accuracy of the response                      • Temperature: 100 °C.
+surface model will decrease.                                                     • Pressure: 50 kPa.
+   6.2.2.3. Industrial Scaling Limitation. The current model                     • Mass fraction: hydroquinone, 90%; catechol, 10%.
+verification is only based on laboratory-scale test data, and the                • Add the RadFrac distillation column module from the
+pilot-scale industrial test data is not yet available due to                       model library and set the basic configuration:
+corporate confidentiality constraints. There may be deviations                   • Number of theoretical stages: 16;
+between the optimized parameters and the actual requirements                     • Condenser type: total condenser;
+of large-scale industrial continuous production.                                 • Reboiler type: kettle reboiler;
+   6.2.3. Future Research Prospects. 6.2.3.1. Model Refine-                      • Feed stage: 11th stage;
+ment. Enhancing the Aspen Plus model by incorporating                            • Distillate rate: 9.2 kg·h−1;
+experimentally determined NRTL binary interaction parameters
+                                                                                 • Mass reflux ratio: 3.143.
+and validated packing mass transfer efficiency correlations, to
+                                                                                 • Connect the feed stream to the 11th stage of the RadFrac
+improve the prediction accuracy of the model for actual
+                                                                                   module, set the overhead stream as DIST (catechol
+industrial nonideal flow and mass transfer processes.
+                                                                                   product), and the bottom stream as BOTTOMS
+   6.2.3.2. Full-Process Collaborative Optimization. Expand-
+                                                                                   (hydroquinone product).
+ing the optimization scope from a single column to the whole
+multitower cascaded process, and carrying out collaborative                   Step 4: Solver and Convergence Setting
+optimization of upstream and downstream operating parameters
+to achieve further energy saving of the whole process.                           • Enter the Convergence tab of the RadFrac module, set the
+   6.2.3.3. Dynamic Control Scheme Development. Combin-                            parameters:
+ing the steady-state optimization results with dynamic process                   • Solution algorithm: Newton−Raphson;
+simulation, developing an industrial automatic control scheme                    • Vapor−liquid equilibrium calculation method: Inside-
+with both low energy consumption and high antidisturbance                          out;
+ability, to ensure the stable operation of the process under actual              • Convergence tolerance: 1 × 10−6 for material/energy
+industrial disturbance conditions.                                                 balance;
+   6.2.3.4. Pilot-Scale Industrial Verification. Collaborating                   • Maximum iteration steps: 200;
+with industrial partners to carry out pilot-scale continuous                     • Pressure drop per theoretical stage: 0.25 kPa;
+production tests, verifying the reliability of the optimized                     • Set the column operating pressure: Condenser pressure
+parameters in actual industrial production, and further                            10 kPa, reboiler pressure 14 kPa (total pressure drop 4
+calibrating the simulation model based on the pilot test data.                     kPa).
+
+■   APPENDIX A
+This guideline provides the full operation steps to reproduce the
+                                                                              Step 5: Simulation Run and Result Verification
+                                                                                 • Run the simulation, wait for the convergence prompt;
+simulation and optimization results of this study, based on                      • Check the stream results:
+Aspen Plus V15.0 legal authorization environment.                                • DIST stream: catechol mass fraction ≥ 99%, hydro-
+                                                                                   quinone mass fraction ≤ 1%;
+Step 1: Component Definition
+                                                                                 • BOTTOMS stream: hydroquinone mass fraction ≥
+    • Open Aspen Plus V15.0, create a new steady-state                             99.2%, catechol mass fraction ≤ 0.8%;
+      simulation file;                                                           • Check the reboiler heat duty: 12.175 kW, consistent with
+    • Enter the Components tab, search and add the two                             the data in Section 5.7.
+      components: Hydroquinone (CAS Reg. No. 123-31-9)                        Step 6: RSM Optimization Reproduction
+      and Catechol (CAS Reg. No. 120-80-9), using the
+      software’s built-in pure component database, no manual                     • Use Design-Expert 13.0 software, create a Box−Behnken
+      input of pure component physical property parameters is                      Design with three factors and three levels;
+      required.                                                                  • The factor ranges are as follows:
+                                                                                     (1) A, Reflux ratio (1.45−3.2);
+Step 2: Thermodynamic Model Setting
+                                                                                     (2) B, Feed stage (11−15);
+    • Enter the Properties tab, select NRTL as the main                              (3) C, Overhead pressure (7−11 kPa).
+      thermodynamic method;                                                      • Run the simulation for each group of working conditions
+    • Enter the Binary Parameters tab, input the binary                            in the design matrix, input the catechol and hydroquinone
+      interaction parameters shown in Table 1 of the main                          purity as response values;
+      text, set the non-randomness parameter α=0.3, and use                      • Perform quadratic regression fitting and ANOVA, verify
+      the temperature correlation formula shown in formula 6                       that the model parameters are consistent with Tables
+      of the main text;                                                            12−15;
+                                                                      38082                                      https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                         ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                   http://pubs.acs.org/journal/acsodf                                                           Article
+
+    • Perform numerical optimization with the objective of                         with hydrogen peroxide. Chemical Research and Application
+      minimizing reboiler heat duty under the constraint of                        2004.745747
+      product purity ≥ 99%, verify that the optimal parameters                       (3) Wei, F.; Wang, L.; Zhang, X.; Tian, D.; Lu, L.; Xing, W.; Feng, W.
+      are consistent with the results in Section 5.7.                              Research progress on synthesis technology of hydroquinone. Applied
+                                                                                   Chemical Industry 2022, 51 (2), 241−250.
+
+■   AUTHOR INFORMATION
+Corresponding Authors
+                                                                                     (4) Li, W. Research Prospect and Market Prospect of Pyrocatechol.
+                                                                                   Modern Chemical Research 2005, No. 8, 5−7.
+                                                                                     (5) Qifeng, W.; Xiulian, R.; jingjing, G.; Yongxing, C. Recovery and
+                                                                                   separation of sulfuric acid and iron from dilute acidic sulfate effluent
+  Pingxiong Cai − Guangxi Key Laboratory of Green Chemical                         and waste sulfuric acid by solvent extraction and stripping. Journal of
+    Materials and Safety Technology, College of Petroleum and                      Hazardous Materials 2016, 304, 1−9.
+    Chemical Engineering, Beibu Gulf University, Qinzhou,                            (6) Yang, X.; Zhang, Y.; Bao, S. Separation and recovery of sulfuric
+    Guangxi 535011, China; Email: pingxiongcai@bbgu.edu.cn                         acid from acidic vanadium leaching solution of stone coal via solvent
+  Yuanjian Xie − Guangxi Key Laboratory of Green Chemical                          extraction. Journal of Environmental Chemical Engineering 2016, 4 (1),
+    Materials and Safety Technology, College of Petroleum and                      1399−1405.
+    Chemical Engineering, Beibu Gulf University, Qinzhou,                            (7) Sadeghi, S. M.; Vermoere, C.; Tampouris, S.; Binnemans, K.;
+    Guangxi 535011, China; orcid.org/0009-0000-8112-                               Dewulf, B. Recovery of nickel and cobalt from ferronickel alloy by
+    4336; Email: xieyj@bbgu.edu.cn                                                 hydrochloric acid leaching and continuous counter-current solvent
+                                                                                   extraction. Separation and Purification Technology 2026, 397, 138092.
+Authors                                                                              (8) Dong, J.; Yu, L.; Jia, S.; Shi, L.; Wang, S.; Hu, G.; Tang, W.; Wang,
+  Chenglei Wang − Guangxi Key Laboratory of Green Chemical                         J.; Gong, J. Current status and research progress of crystallization
+    Materials and Safety Technology, College of Petroleum and                      technology of electronic grade phosphoric acid. CIESC Journal 2025, 76
+    Chemical Engineering, Beibu Gulf University, Qinzhou,                          (2), 438−453, DOI: 10.11949/0438-1157.20241138.
+                                                                                     (9) Jadhav, V. K.; Chivate, M. R.; Tavare, N. S. Separation of p-cresol
+    Guangxi 535011, China; orcid.org/0009-0008-6938-                               from its mixture with 2,6-xylenol by adductive crystallization. Journal of
+    4643                                                                           Chemical & Engineering Data 1991, 36 (2), 249−251.
+  Yihong Zeng − Shanghai Research Institute of Chemical                              (10) Hao Hao, H.; Wang, N.; Hou, B.; Huang, X.; Xu, Z.; Yin, Q.;
+    Industry Company, Ltd., Shanghai 200062, China                                 Wang, T.; Bao, Y.; Xie, C.; Wang, Z. A crystallization separation method
+  Mingwu Yi − Guangxi Huayi New Materials Company, Ltd.,                           for preparing high-purity o-cresol. China Pat. CN110642680A, 2020.
+    Qinzhou, Guangxi 535000, China                                                   (11) Ren, H.; An, D.; Zhu, T.; LI, H.; LI, Xi. Distillation technology
+  Mengqi Yang − Guangxi Key Laboratory of Green Chemical                           research progress and industrial application. Chemical Indrustry and
+    Materials and Safety Technology, College of Petroleum and                      Engineering Progress 2016, 35 (6), 1606−1626, DOI: 10.16085/
+    Chemical Engineering, Beibu Gulf University, Qinzhou,                          j.issn.1000-6613.2016.06.003.
+    Guangxi 535011, China                                                            (12) Hossain, Md. A.; Jhung, S. H. Adsorption of Dihydroxybenzene
+  Shusheng Qiu − Guangxi Key Laboratory of Green Chemical                          Isomers over Schiff-Based Network-1-Derived Nitrogen-Enriched
+    Materials and Safety Technology, College of Petroleum and                      Carbon: Effective and Favorable Adsoprtion of Hydroquinone.
+    Chemical Engineering, Beibu Gulf University, Qinzhou,                          Separation and Purification Technology 2025, 353, 128540.
+                                                                                     (13) Yang, H.; Furutani, Y.; Kudo, S.; Hayashi, J.; Norinaga, K.
+    Guangxi 535011, China
+                                                                                   Experimental Investigation of Thermal Decomposition of Dihydrox-
+Complete contact information is available at:                                      ybenzene Isomers: Catechol, Hydroquinone, and Resorcinol. Journal of
+https://pubs.acs.org/10.1021/acsomega.6c03492                                      Analytical and Applied Pyrolysis 2016, 120, 321−329.
+                                                                                     (14) Jiang, Z.-K.; Li, H.; Hua, C.; Lu, P.; Bai, F. Advances in the
+Notes                                                                              Application of Distillation Technology in Preparation of Electronic
+                                                                                   Chemicals. Modern Chemical Industry 2022, 42 (12), 13−18,
+The authors declare no competing financial interest.
+                                                                                   DOI: 10.16606/j.cnki.issn0253-4320.2022.12.003.
+
+■   ACKNOWLEDGMENTS
+This work was funded by the Innovation-Driven Development
+                                                                                     (15) Xu, J.; Ma, Z.; Liu, J., Mao, R.; Li, Z. A method for purifying p-
+                                                                                   dioxanone by vacuum distillation coupled with solution crystallization.
+                                                                                   China Pat. CN119841801A, 2023.
+Special Fund Project of Guangxi (AA23062016-4) and the                               (16) Mehtab, V.; P, S. k.; Balakotaiah, V.; Chenna, S. AI-driven
+Guangxi Natural Science Foundation                                                 strategic optimization of bireforming of methane for versatile syngas
+(2025GXNSFBA069443), Guangxi Young Talent Research                                 production. Chemical Engineering Journal 2025, 513, No. 162698.
+Startup Project (24QMKYQD02). The authors gratefully                                 (17) Yang, P.; Wang, X.; Yang, J.; Yan, B.; Sheng, H.; Li, Y.; Yang, Y.;
+acknowledge Guangxi Huayi New Materials Co., Ltd. for                              Wang, J. AI-Driven Multiscale Study on the Mechanism of Polygonati
+supplying industrial basic data and technical assistance. Thanks                   Rhizoma in Regulating Immune Function in STAD. ACS Omega 2025,
+                                                                                   10 (19), 19770−19796.
+are also extended to Shanghai Research Institute of Chemical
+                                                                                     (18) L Gomes, P. H.; S Martins, J. P. M.; Serra, D. S.; Tavares, T. P.;
+Industry Co., Ltd. for its technical support. We sincerely                         Oliveira, K. L.; S P Cavalcante, K. M.; Andrade, C. F.; Alves, C. R.;
+appreciate the valuable and insightful suggestions put forward by                  Caravaca, C.; Valenzuela, R. X.; Oliveira, M. L. M. Off-Grid System for
+the editorial staff and reviewers, which greatly enhanced the                      Production of Green Hydrogen via Electrolysis of Industrial Effluents:
+quality of this work.                                                              A Technical Analysis. ACS Omega 2026, 11 (7), 11753−11771.
+
+■   REFERENCES
+ (1) Wang, J.; Park, J.-N.; Jeong, H.-C.; Choi, K.-S.; Wei, X.-Y.; Hong,
+                                                                                     (19) Ma, Y.; Tian, H.; Xiao, W.; Ma, Y.; Su, H.; Zhu, L.; Jiang, Y.; Ge,
+                                                                                   L.; Li, Y.; Yuan, M.; Liu, X. Machine Learning Approaches for
+                                                                                   Optimizing Drug Combinations in Neurodegenerative Diseases: A
+S.-I.; Lee, C. W. Cu2+-Exchanged Zeolites as Catalysts for Phenol                  Brief Review. ACS Omega 2025, 10 (48), 57950−57973.
+Hydroxylation with Hydrogen Peroxide. Energy Fuels 2004, 18 (2),                     (20) Sharma, K.; Pandey, S.; Tiwari, P. K. Fusion of Generative AI
+470−476.                                                                           Techniques and Machine Learning Models to Generate and Investigate
+ (2) Chen, C.; Xu, C.; Feng, L.; Qui, F., Progress in study of                     Biosignals for Glucose Sensors. ACS Omega 2025, 10 (47), 57107−
+preparation of catechol and hydroquinone from phenol hydroxylation                 57122.
+
+                                                                           38083                                            https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                    ACS Omega 2026, 11, 38065−38084
+ACS Omega                                                     http://pubs.acs.org/journal/acsodf                                                            Article
+
+  (21) Liu, T.; Liu, Y.; Li, X.; Lu, D.; Dong, H.; Zhang, Z.; Li, X.; Shao,            (39) Timmermans, J. The Physico-chemical Constants of Binary Systems
+C.; Liu, Y. Machine learning-assisted oxide semiconductor sensor array                in Concentrated Solutions; Interscience: New York1959; Vols. 1 and 2.
+for accurate discrimination of alcohol gases. Chemical Engineering                     (40) Dhillon, M. S.; Dhillon, G. S. Solid + liquid phase diagrams, NMR
+Journal 2026, 528, No. 172675.                                                        and colorimetric measurements of mixtures. Thermochim. Acta 1977, 19
+  (22) Omata, K.; Hashimoto, M.; Sutarto; Yamada, M. Artificial Neural                (1), 69−84.
+Network and Grid Search Aided Optimization of Temperature Profile                      (41) Saramago, L. C.; Santana, M. V.; Gomes, B. F.; Dantas, R. F.;
+of Temperature Gradient Reactor for Dimethyl Ether Synthesis from                     Senger, M. R.; Oliveira Borges, P. H.; Ferreira, V. N. d. S.; dos Santos
+Syngas. Ind. Eng. Chem. Res. 2009, 48 (2), 844−849.                                   Rosa, A.; Tucci, A. R.; Dias Miranda, M.; Lukacik, P.; Strain-Damerell,
+  (23) Moghaddam, A. H.; Esfandyari, M.; Sakhaeinia, H. Optimization                  C.; Owen, C. D.; Walsh, M. A.; Ferreira, S. B.; Silva-Junior, F. P. AI-
+of amine-based carbon capture: Simulation and energy efficiency                       Driven Discovery of SARS-CoV-2 Main Protease Fragment-like
+analysis of absorption section. Results in Engineering 2024, 24,                      Inhibitors with Antiviral Activity In Vitro. J. Chem. Inf. Model. 2023,
+No. 103574.                                                                           63 (9), 2866−2880.
+  (24) Ravald, H.; Moghaddam, A. H.; Jaikishan, S.; Lavainne, M.;                      (42) Shen, L.; Xu, X.; Yue, S.; Yin, S. A predictive model for depression
+Wiedmer, S. K. Effect of liposome composition on β-blocker                            in Chinese middle-aged and elderly people with physical disabilities.
+interactions studied by capillary electrokinetic chromatography. J.                   BMC Psychiatry 2024, 24 (1), 305.
+Sep. Sci. 2023, 46 (18), No. 2300414.                                                  (43) Zhang, X.; Wang, Y.; Li, Y.; Gui, J.; Mei, Y.; Yang, X.; Liu, H.;
+  (25) Moghaddam, A. H. Investigation and optimization of olefin                      Guo, L. L.; Li, J.; Lei, Y.; Li, X.; Sun, L.; Yang, L.; Yuan, T.; Wang, C.;
+purification in methanol-to-olefin process based on machine learning                  Zhang, D.; Li, J.; Liu, M.; Hua, Y.; Zhang, L. Optimal obesity- and lipid-
+approach coupled with genetic algorithm. Korean Journal of Chemical                   related indices for predicting type 2 diabetes in middle-aged and elderly
+Engineering 2023, 40 (5), 1168−1175.                                                  Chinese. Sci. Rep. 2024, 14 (1), 10901.
+  (26) Hong, X.; Chen, W.; Liao, Z.; Fan, X.; Sun, J.; Yang, Y.; Zhao, C.;             (44) Hu, R.; Huang, Y.; Zhang, X.; Yu, C.; Tu, T.; Liu, Z. Optimizing
+Wang, J.; Yang, Y. Steady-state and dynamic simulation of gas phase                   Photocatalytic Removal of Hexavalent Chromium and Ciprofloxacin by
+polyethylene process. Chinese Journal of Chemical Engineering 2024, 75,               1T/2H O-MoS_2@S-pCN Using Response Surface Methodology.
+110−120.                                                                              Environ. Sci. Technol. 2025, 48 (1), 1−9, DOI: 10.19672/j.cnki.1003-
+  (27) Niu, B.; Yi, Y.; Wei, Y.; Zhang, F.; Wang, L.; Xia, L.; Sun, X.;               6504.1312.24.338.
+Xiang, S. Phase equilibrium data prediction and process optimizationin                 (45) Durante, M.; Ferramosca, A.; Treppiccione, L.; Di Giacomo, M.;
+butadiene extraction process. Chinese Journal of Chemical Engineering                 Zara, V.; Montefusco, A.; Piro, G.; Mita, G.; Bergamo, P.; Lenucci, M.S.
+2024, 71, 1−12.                                                                       Application of response surface methodology (RSM) for the
+  (28) Qin, L.; Zhang, L.; Chen, Z. Simulation Study on Extraction of                 optimization of supercritical CO2 extraction of oil from patè olive
+Phenol in High-Phenol Wastewater with Methyl Isobutyl Ketone.                         cake: Yield, content of bioactive molecules and biological effects in vivo.
+Journal of Xi’an Shiyou University, Natural Science Edition 2020, 35 (5),             Food Chem. 2020, 332, 127405.
+92−97, DOI: 10.3969/j.issn.1673-064X.2020.05.014.                                      (46) Jiang, D.; Liu, K.; Zeng, M.; Liu, W. Optimization of Total
+  (29) Xiao, J.-l.; Liu, G.-z.; Liu, J.-x.; Dai, J.-c.; Liu, H.; Wang, P.             Flavonoid Extraction Process from Gnaphalium aff ine Using Response
+Parameters of a discrete element ballasted bed model based on a                       Surface Methodology (RSM) and Response Surface−Artificial Neural
+response surface method. Journal of Zhejiang University-SCIENCE A                     Network (RSM-ANN) Hybrid Model. Chinese Wild Plant Resources
+2019, 20 (9), 685−700.                                                                2024, 43 (12), 19−26, DOI: 10.3969/j.issn.1006-9690.2024.12.003.
+  (30) Wang, C.; Xie, Y.; Zeng, Y.; Gao, Z.; Cai, P. Aspen plus                        (47) Ren, H.; Li, W. Study of the Salt-Adding Extractive Distillation of
+simulation-assisted vacuum distillation process optimization via                      Cyclopentane-2,2-dimethylbutane Using Composite Extract for the
+response surface methodology (RSM): High-purity recovery of                           Production of High-Pure Cyclopentane. Petroleum Chemistry 2025, 65
+extractant from complex mixed phenolic raffinate and its industrial                   (1), 82−92.
+feasibility. Results in Engineering 2025, 28, No. 108183.                              (48) Cordeiro, G. M.; Dantas, S. R.; Vasconcelos, L. G. S.; Brito, R. P.
+  (31) Li, C.; Tian, X.; Li, H.; Hu, Y. Research progress on distillation             Effect of Two Liquid Phases on the Separation Efficiency of Distillation
+process in high-boiling-point thermosensitive systems. Chemical                       Columns. Advances in Chemical Engineering and Science 2013, 3 (1), 1−
+Industry and Engineering Progress 2022, 41 (4), 1704−1714,                            8.
+DOI: 10.16085/j.issn.1000-6613.2021-0830.
+  (32) Yan, M.; Feng, R.; Yerdos-Tohtarkhan; Long, B.; Zhou, L.; Guo,
+C. Expansion and Extension of Liquid Saturated Vapor Measurement
+Experiment. Daxue Huaxue 2024, 39 (3), 294−301.
+  (33) Xu, Y.; Luo, Z. Between Empirical Laws and Metaphysical
+Thinking: Dalton’s Physical Atomism. Chin. J. Hist. Sci. Technol. 2024,
+45 (2), 259−270, DOI: 10.3969/j.issn.1673-1441.2024.02.008.
+  (34) Tian, L.; Chen, Z.; Wu, W.; Cheng, C.-G.; Hu, K.; Jia, C.-G.; Wei,
+X.-X. Process Simulation and Optimization of Ethylene Glycol
+Dehydrocarbon Separation Unit in Deepwater Gas Fields. Contemp.
+Chem. Ind. 2022, 51, 1443−1446, DOI: 10.13840/j.cnki.cn21-1457/
+tq.2022.06.011.
+  (35) Lanyi, S. Chemical Process Simulation Training: Aspen Plus
+Tutorial. Chemical Industry Press: 2017.
+  (36) Wisniak, J.; Ortega, J.; Fernández, L. A fresh look at the
+thermodynamic consistency of vapour-liquid equilibria data. J. Chem.
+Thermodyn. 2017, 105, 385−395.
+  (37) Li, F.; Zhang, T.; Lv, L.; Tang, W.; Wang, Y.; Tang, S. Effects of
+ionic liquids on the vapor−liquid equilibriumof 1,3,5-trioxane−water
+system at 101.3 kPa. Chinese Journal of Chemical Engineering 2024, 73,
+42−50.
+  (38) Ma, Y.; Hu, Z.; Yang, L.; Zhang, L.; Liu, S.; Zhang, Z.; Xu, D.;
+Gao, J.; Wang, Y. Extractive distillation separation of isopropanol -
+isopropyl acetate azeotrope: Vapor-liquid equilibrium measurement
+and process optimization. J. Chem. Thermodyn. 2025, 205, No. 107460.
+
+                                                                              38084                                            https://doi.org/10.1021/acsomega.6c03492
+                                                                                                                                       ACS Omega 2026, 11, 38065−38084
+

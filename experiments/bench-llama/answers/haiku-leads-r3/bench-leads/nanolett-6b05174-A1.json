@@ -1,0 +1,340 @@
+{
+  "question": "What capacity retention did the anode-free full cell show after 1000 cycles?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%retention%' OR text ILIKE '%full cell%' OR (text ILIKE '%1000%' ) OR text ILIKE '%after%cycles%' ORDER BY page, line_no",
+      "rows": 17
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit, condition FROM figure_facts WHERE statement ILIKE '%retention%' OR statement ILIKE '%full cell%' OR statement ILIKE '%1000%' OR statement ILIKE '%anode-free%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (4,5) ORDER BY page, line_no",
+      "rows": 146
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text, conf FROM figure_ocr WHERE figure_id IN ('p4.F4','p2.F1') ORDER BY figure_id, line_no",
+      "rows": 55
+    },
+    {
+      "turn": 3,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F4"
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%capacity%' OR text ILIKE '%%%' OR text ILIKE '%stabil%' OR text ILIKE '%durab%' ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text LIKE '%\\%%' OR text ILIKE '%retain%' OR text ILIKE '%fade%' OR text ILIKE '%decay%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 13
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1000'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1000' is written exactly so in the document (e.g. p1.L17): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1000\", \"atom\": \"p1.L17\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['4c'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4c' is written exactly so in the document (e.g. p5.L48): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4c\", \"atom\": \"p5.L48\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1000-cycle'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "4ac64b3bb36f7e896c79ffff1490396834a66eb2d7a3f0b92167847693569b0d",
+  "leads": {
+    "sentences": [
+      "p4.L11:46",
+      "p1.L17:51",
+      "p2.L17:54",
+      "p2.L54:33",
+      "p5.L21:11",
+      "p3.L38:13",
+      "p1.L50:50",
+      "p1.L23:0",
+      "p1.L35:54",
+      "p5.L73:0",
+      "p1.L13:33",
+      "p3.L50:68"
+    ],
+    "measures": [
+      "p4.L11:46#48",
+      "p4.L11:46#73",
+      "p4.L11:46#135",
+      "p4.L11:46#147",
+      "p4.L11:46#166",
+      "p4.L11:46#230",
+      "p1.L17:51#241",
+      "p3.L38:13#180",
+      "p3.L38:13#183",
+      "p3.L38:13#232",
+      "p3.L38:13#268",
+      "p1.L50:50#101",
+      "p1.L50:50#325",
+      "p1.L50:50#371",
+      "p1.L13:33#156",
+      "p1.L13:33#188",
+      "p1.L13:33#241",
+      "p1.L13:33#269",
+      "p3.L50:68#58",
+      "p3.L50:68#101",
+      "p3.L50:68#118"
+    ],
+    "matched": 43
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 4251,
+    "cache_read_input_tokens": 73741,
+    "cache_creation_input_tokens": 25132
+  },
+  "runs": [
+    {
+      "text": "The document does not give a capacity retention value for the anode-free full cell after "
+    },
+    {
+      "quote": "1000",
+      "atom": "p1.L17"
+    },
+    {
+      "text": " cycles. No retention percentage is reported anywhere in the text, tables or figure readings. ",
+      "absent": [
+        "retention",
+        "capacity retention"
+      ]
+    },
+    {
+      "text": "The full cell (presodiated pyrite paired with carbon/Al current collectors) is shown only over a short run in "
+    },
+    {
+      "figure": "p4.F4"
+    },
+    {
+      "text": ", and the text says that the figure shows the stability of the "
+    },
+    {
+      "quote": "delivered energy density over 40 cycles",
+      "atom": "p5.L49"
+    },
+    {
+      "text": ". "
+    },
+    {
+      "text": "The long-term run is a plating/stripping test on carbon/Al electrodes, not a full-cell test; the text says \""
+    },
+    {
+      "quote": "we ran over 1000 plating/",
+      "atom": "p3.L41"
+    },
+    {
+      "text": "\". Full-cell cycling beyond the plotted run is referred to the "
+    },
+    {
+      "quote": "full cell cycling performance (PDF)",
+      "atom": "p5.L77"
+    },
+    {
+      "text": ", which is not part of this document."
+    }
+  ],
+  "rendered": "The document does not give a capacity retention value for the anode-free full cell after 1000[1] cycles. No retention percentage is reported anywhere in the text, tables or figure readings.[2] The full cell (presodiated pyrite paired with carbon/Al current collectors) is shown only over a short run in Fig. 4[3], and the text says that the figure shows the stability of the delivered energy density over 40 cycles[4]. The long-term run is a plating/stripping test on carbon/Al electrodes, not a full-cell test; the text says \"we ran over 1000 plating/[5]\". Full-cell cycling beyond the plotted run is referred to the full cell cycling performance (PDF)[6], which is not part of this document.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1000",
+      "source": {
+        "atom": "p1.L17",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "exceeding 1000 cycles at a current of 0.5 mA/cm^2. Building upon",
+        "bbox": [
+          69.4,
+          332.9,
+          329.3,
+          344.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1000"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "retention",
+        "capacity retention"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 537,
+      "strength": "search",
+      "n": 2,
+      "rendered": ""
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F4",
+        "kind": "figure",
+        "label": "Fig. 4",
+        "page": 4,
+        "caption": "Figure 4. (a) Illustration of the charged and discharged states of the anode-free sodium battery utilizing the carbon/Al electrode. (b) Galvanostatic",
+        "png": "figures/p4.F4.png",
+        "png_pixels_sha256": "c71ae4d4f1dd6dfda6e663543deb964cd9a7b0c752cc4f7fe2fa214d01795101",
+        "bbox": [
+          151.4,
+          401.2,
+          473.5,
+          673.1
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Fig. 4"
+    },
+    {
+      "kind": "quote",
+      "quote": "delivered energy density over 40 cycles",
+      "source": {
+        "atom": "p5.L49",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "delivered energy density over 40 cycles with the corresponding",
+        "bbox": [
+          60.5,
+          598.7,
+          300.4,
+          608.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "delivered energy density over 40 cycles"
+    },
+    {
+      "kind": "quote",
+      "quote": "we ran over 1000 plating/",
+      "source": {
+        "atom": "p3.L41",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "To test the long-term durability, we ran over 1000 plating/",
+        "bbox": [
+          333.5,
+          697.3,
+          564.4,
+          707.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "we ran over 1000 plating/"
+    },
+    {
+      "kind": "quote",
+      "quote": "full cell cycling performance (PDF)",
+      "source": {
+        "atom": "p5.L77",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "ance, and full cell cycling performance (PDF)",
+        "bbox": [
+          348.5,
+          223.9,
+          525.5,
+          233.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "full cell cycling performance (PDF)"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:36:05+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05174",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported: the full cell is shown over 40 cycles; 1000 cycles are plating/stripping tests (p4.L13-14, p5.L48-50)",
+  "trap": "reporting the 1000-cycle plating CE as full-cell retention",
+  "seconds": 25.3
+}

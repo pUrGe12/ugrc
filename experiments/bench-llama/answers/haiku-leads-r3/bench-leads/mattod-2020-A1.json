@@ -1,0 +1,135 @@
+{
+  "question": "What recycling cost per kilogram does the review give for direct recycling?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%per kg%' OR text ILIKE '%/kg%' OR text ILIKE '%kg%' OR text ILIKE '%cost%' ORDER BY page, line_no",
+      "rows": 32
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%direct recycling%' AND (text ILIKE '%$%' OR text ILIKE '%USD%' OR text ILIKE '%cost%' OR text ILIKE '%kg%')",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (6,9,10) AND (text ILIKE '%direct%' OR text ILIKE '%$%' OR text ILIKE '%USD%' OR text ILIKE '%kilogram%' OR text ILIKE '%kg%' OR text ILIKE '%price%') ORDER BY page, line_no",
+      "rows": 26
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit FROM figure_facts WHERE statement ILIKE '%cost%' OR statement ILIKE '%kg%' OR statement ILIKE '%direct%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=9 AND line_no BETWEEN 28 AND 45 OR page=10 AND line_no BETWEEN 20 AND 40 ORDER BY page, line_no",
+      "rows": 39
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%kg%' OR text ILIKE '%\\$%' OR text ILIKE '%USD%' OR text ILIKE '%per kilo%' OR text ILIKE '%dollar%' OR text ILIKE '%per ton%'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, sentence FROM measures WHERE (array_to_string(about, ' ') ILIKE '%cost%' OR sentence ILIKE '%cost%' OR unit ILIKE '%kg%' OR unit ILIKE '%$%') AND sentence ILIKE '%direct%'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 1
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "839bf151642fcfab90df674c235b2241068a2df3c3d4f8d8935148d5b0190a5d",
+  "leads": {
+    "sentences": [
+      "p6.L18:0",
+      "p2.L32:0",
+      "p2.L42:0",
+      "p3.L62:30",
+      "p3.L68:42",
+      "p6.L48:58",
+      "p1.L11:35",
+      "p10.L5:16",
+      "p2.L53:31",
+      "p2.L79:24",
+      "p2.L82:25",
+      "p2.L85:19"
+    ],
+    "measures": [],
+    "matched": 140
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1495,
+    "cache_read_input_tokens": 38264,
+    "cache_creation_input_tokens": 9681
+  },
+  "runs": [
+    {
+      "text": "The review does not give a recycling cost per kilogram for direct recycling. It mentions cost only qualitatively: it says that life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits and greenhouse gas emissions reductions over pyrometallurgical and hydrometallurgical processes, and that direct recycling could have the lowest environmental impacts, but it gives no dollar or per-kilogram figure for it. The document contains no per-kilogram cost figure at all.",
+      "absent": [
+        "$/kg",
+        "USD/kg",
+        "per kg",
+        "per kilogram"
+      ]
+    }
+  ],
+  "rendered": "The review does not give a recycling cost per kilogram for direct recycling. It mentions cost only qualitatively: it says that life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits and greenhouse gas emissions reductions over pyrometallurgical and hydrometallurgical processes, and that direct recycling could have the lowest environmental impacts, but it gives no dollar or per-kilogram figure for it. The document contains no per-kilogram cost figure at all.[1]",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "$/kg",
+        "USD/kg",
+        "per kg",
+        "per kilogram"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1234,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:38:16+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "mattod-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not given",
+  "trap": "inventing a cost",
+  "seconds": 12.7
+}

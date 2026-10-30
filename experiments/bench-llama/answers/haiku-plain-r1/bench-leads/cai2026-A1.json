@@ -1,0 +1,196 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%Gao%' ORDER BY page, id",
+      "rows": 13
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%dose%' ORDER BY page, id",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (6,7) AND kind IN ('line') ORDER BY page, id LIMIT 60",
+      "rows": 60
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE (text ILIKE '%CL4H6%' OR text ILIKE '%CL4%' OR text ILIKE '%[55]%' OR text ILIKE '%55]%') ORDER BY page, id",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 1 AND 12 ORDER BY row_no, col_no",
+      "rows": 58
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE (text ILIKE '%FOXM1%' OR text ILIKE '%μg%' OR text ILIKE '%µg%' OR text ILIKE '%nmol%' OR text ILIKE '%mg%' OR text ILIKE '%nM%' OR text ILIKE '%injected%' OR text ILIKE '%dosage%' OR text ILIKE '%per mouse%') ORDER BY page, id",
+      "rows": 99
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE (table_id IN ('p16.T3','p17.T3') AND col_no=7 AND text ILIKE '%55%') OR (text ILIKE '%FOXM1%') OR (text ILIKE '%PD-1%' AND table_id IN ('p16.T3','p17.T3')) ORDER BY table_id, row_no",
+      "rows": 3
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 3275,
+    "cache_read_input_tokens": 53190,
+    "cache_creation_input_tokens": 15019
+  },
+  "runs": [
+    {
+      "text": "The document does not give an siRNA dose for Gao et al. It mentions the study once in the text, where "
+    },
+    {
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "atom": "p6.L4"
+    },
+    {
+      "text": " and the LNPs encapsulate si-FOXM1. The study is also listed in the nanocarrier table as si-FOXM1 with FOXM1 as the target, under the reference shown there. "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " The text reports the BT549 lung metastasis result but no dose: no mg/kg, nmol, or μg amount is stated for this study. The paper gives no siRNA dose for Gao et al.",
+      "absent": [
+        "mg/kg",
+        "nmol",
+        "μg"
+      ]
+    }
+  ],
+  "rendered": "The document does not give an siRNA dose for Gao et al. It mentions the study once in the text, where Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,[1] and the LNPs encapsulate si-FOXM1. The study is also listed in the nanocarrier table as si-FOXM1 with FOXM1 as the target, under the reference shown there. Table 2[2] The text reports the BT549 lung metastasis result but no dose: no mg/kg, nmol, or μg amount is stated for this study. The paper gives no siRNA dose for Gao et al.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg",
+        "nmol",
+        "μg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:10:44+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 23.2
+}

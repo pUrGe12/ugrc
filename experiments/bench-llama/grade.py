@@ -99,9 +99,22 @@ def report():
                   f"{c['unreviewed']:>4} | {st.median([r['turns'] for r in rs]) if rs else 0:>5} "
                   f"{st.median([r['tool_calls'] for r in rs]) if rs else 0:>5} {sum(len(r['door_refusals']) for r in rs):>7} "
                   f"{gaps:>4} {st.median(secs) / 60 if secs else 0:>6.1f}")
-    # the two comparisons asked for: Haiku vs Llama without Jev, and Haiku alone vs Llama with Jev
+    # the two comparisons asked for: Haiku vs Llama without Jev, and Haiku alone vs Llama with Jev; then what Jev
+    # adds to each model, and the two models with Jev
     pairs = [(h, l) for h in ("haiku-plain-r1", "haiku-earlier-r1") for l in ("llama-plain-r1", "llama-leads-r1")]
-    for a, b in pairs + [("llama-plain-r1", "llama-leads-r1")]:
+    for a, b in pairs + [("llama-plain-r1", "llama-leads-r1"), ("haiku-plain-r1", "haiku-leads-r1"),
+                         ("haiku-leads-r1", "llama-leads-r1"),
+                         # the short prompt: what it does to each Llama arm, and Jev's effect under it
+                         ("llama-plain-r1", "llama-plain-sp-r1"), ("llama-leads-r1", "llama-leads-sp-r1"),
+                         ("llama-plain-sp-r1", "llama-leads-sp-r1"), ("haiku-plain-r1", "llama-leads-sp-r1"),
+                         # no ugrc at all: the PDF's text in the prompt, one reply (direct.py)
+                         ("llama-direct-r1", "llama-leads-sp-r1"), ("llama-direct-r1", "llama-plain-sp-r1"),
+                         ("haiku-plain-r1", "llama-direct-r1"),
+                         # the hybrid (bench-cross/hybrid.py): code and Jev's leads pick pages, Llama answers, code points
+                         ("llama-direct-r1", "llama-hybrid-r1"), ("llama-leads-sp-r1", "llama-hybrid-r1"),
+                         # the length test, and ugrc + Jev on the 10-paper corpus
+                         ("llama-direct-r1", "llama-direct-ctx120k-r1"), ("llama-direct-ctx120k-r1", "llama-corpus-leads-sp-r1"),
+                         ("llama-leads-sp-r1", "llama-corpus-leads-sp-r1")]:
         if not any(k.startswith(a + "/") for k in v) or not any(k.startswith(b + "/") for k in v):
             continue
         wins = losses = ties = 0
@@ -134,13 +147,14 @@ def modes():
         long_terms = [k for k, r in rs.items() if any(_words(t) >= 4 for run in r.get("runs") or []
                                                       for t in run.get("absent") or [])]
         no_look = [k for k, r in rs.items() if not any(s["tool"] in ("sql", "view_figure") for s in r.get("trace") or [])]
-        repairs = sum(len(r.get("adapter_repairs") or []) for r in rs.values())
+        repairs = collections.Counter("host bug: " + x[5:] if x.startswith("host:") else "array sent as a string"
+                                      if "." in x else x for r in rs.values() for x in r.get("adapter_repairs") or [])
         kinds = collections.Counter(e["error"].split(":")[0] + (" (turn cap)" if "model turns" in e["error"] else "")
                                     for e in es.values())
         print(f"{arm}: {len(rs)} accepted, {len(es)} with none ({dict(kinds)})")
         print(f"  accepted with an absence claim: {len(absent)}; of them, with a term of 4+ words: {len(long_terms)}")
         print(f"  accepted without one query or figure looked at: {len(no_look)}")
-        print(f"  adapter decodings (array sent as a string): {repairs}")
+        print(f"  adapter repairs: {dict(repairs)}")
         print(f"  refusals by rule: {dict(rules.most_common(12))}")
         if long_terms:
             for k in long_terms[:8]:

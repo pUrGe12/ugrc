@@ -15,8 +15,10 @@ is undone (decode_nested: an array argument sent as a string of JSON) and counte
 from __future__ import annotations
 
 import ast
+import http.client
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from types import SimpleNamespace
@@ -32,18 +34,32 @@ TIMEOUT_S = float(os.environ.get("UGRC_LLM_TIMEOUT_S", 1800))
 NO_IMAGE = "[an image was here; this model reads text only]"
 UNREADABLE = "does not match the expected"     # llama.cpp: the model's output fits neither text nor its tool-call format
 UNREADABLE_NOTE = "[this reply could not be read as text or as a tool call]"
+# A busy or briefly failing host (rate limit, 5xx, dropped connection, an error inside a 200) is retried with
+# backoff; one that keeps failing raises ServerError, which a run treats as "stop", never as the model's answer.
+RETRIES = int(os.environ.get("UGRC_LLM_RETRIES", 6))
+RETRY_CODES = {408, 429, 500, 502, 503, 504}
 
 
 class ModelRefused(Exception):
     pass
 
 
-class OpenAIChat:
-    """A chat-completions endpoint that speaks for the Messages API in create()."""
+class ServerError(RuntimeError):
+    """The model server failed, not the model: nothing it said may be recorded as an answer."""
 
-    def __init__(self, url: str, key: str | None = None):
+
+class OpenAIChat:
+    """A chat-completions endpoint that speaks for the Messages API in create(). `extra` is added to every
+    request body (e.g. OpenRouter's {"provider": {"only": [...], "allow_fallbacks": False}} to pin one host)."""
+
+    def __init__(self, url: str, key: str | None = None, extra: dict | None = None, one_call_per_turn: bool = False):
         self.url = url.rstrip("/") + "/chat/completions"
         self.key = key
+        self.extra = extra or {}
+        # Llama 3.1's chat template refuses an assistant message with more than one tool call ("This model only
+        # supports single tool-calls at once!"), though the model itself sometimes makes two: such a turn is sent
+        # back as one call per message, each followed by its own result, in the order made.
+        self.one_call_per_turn = one_call_per_turn
 
 
 def client():
@@ -125,23 +141,80 @@ def to_openai(system, messages, tools) -> tuple[list, list]:
     return out, fns
 
 
+def one_call_per_message(msgs: list) -> list:
+    """The same chat with every assistant message that holds several tool calls split into one message per call,
+    each followed by that call's result (the first keeps the text). Nothing is dropped or reordered otherwise."""
+    out, i = [], 0
+    while i < len(msgs):
+        m = msgs[i]
+        calls = m.get("tool_calls") or []
+        if m["role"] != "assistant" or len(calls) < 2:
+            out.append(m)
+            i += 1
+            continue
+        j, results = i + 1, {}
+        while j < len(msgs) and msgs[j]["role"] == "tool":
+            results[msgs[j]["tool_call_id"]] = msgs[j]
+            j += 1
+        for k, call in enumerate(calls):
+            out.append({"role": "assistant", "content": m.get("content") if k == 0 else None, "tool_calls": [call]})
+            if call["id"] in results:
+                out.append(results.pop(call["id"]))
+        out.extend(results.values())
+        i = j
+    return out
+
+
+def _doubled(args: str):
+    """The object an arguments string holds twice over ('{X}{X}', the same X both times), else None.
+    A host bug, not the model's: some hosts' tool-call parsers send the arguments again at the end of a call."""
+    dec, objs, i = json.JSONDecoder(), [], 0
+    try:
+        while i < len(args):
+            obj, i = dec.raw_decode(args, i)
+            objs.append(obj)
+            while i < len(args) and args[i].isspace():
+                i += 1
+    except json.JSONDecodeError:
+        return None
+    return objs[0] if len(objs) >= 2 and isinstance(objs[0], dict) and all(o == objs[0] for o in objs) else None
+
+
+def _leaked_call(text: str, calls: list) -> bool:
+    """The reply's text is only the start of one of its own tool calls, as the model wrote it
+    ('{"name": "sql", "parameters": {...'): the same host bug lets the raw call slip out as text."""
+    squeeze = lambda s: "".join(s.split())
+    t = squeeze(text)
+    return bool(t) and any(f'{{"name":"{name}","{key}":{squeeze(json.dumps(inp, ensure_ascii=False))}}}'.startswith(t)
+                           for name, inp in calls for key in ("parameters", "arguments"))
+
+
 def from_openai(data: dict):
-    """A Messages-API-shaped response (content blocks, stop_reason, usage) from a chat completion."""
+    """A Messages-API-shaped response (content blocks, stop_reason, usage) from a chat completion.
+    Host bugs undone here are listed in `repairs` as "host:<what>"."""
     choice = data["choices"][0]
     msg = choice.get("message") or {}
-    blocks = []
-    if msg.get("content"):
-        blocks.append(SimpleNamespace(type="text", text=msg["content"]))
+    blocks, repairs = [], []
     for k, call in enumerate(msg.get("tool_calls") or []):
         fn = call.get("function") or {}
         args = fn.get("arguments")
         try:
             inp = json.loads(args) if isinstance(args, str) else (args or {})
         except json.JSONDecodeError:
-            inp = {"_unparsed_arguments": args}        # the tool or the door refuses it, with what it needs
+            inp = _doubled(args)
+            if inp is None:
+                inp = {"_unparsed_arguments": args}    # the tool or the door refuses it, with what it needs
+            else:
+                repairs.append("host:doubled-arguments")
         if not isinstance(inp, dict):
             inp = {"_unparsed_arguments": args}
         blocks.append(SimpleNamespace(type="tool_use", id=call.get("id") or f"call_{k}", name=fn.get("name"), input=inp))
+    text = msg.get("content")
+    if text and blocks and _leaked_call(text, [(b.name, b.input) for b in blocks]):
+        repairs.append("host:leaked-call-text")
+        text = None
+    if text:
+        blocks.insert(0, SimpleNamespace(type="text", text=text))
     stop = {"tool_calls": "tool_use", "length": "max_tokens", "stop": "end_turn"}.get(choice.get("finish_reason"), "end_turn")
     if any(b.type == "tool_use" for b in blocks):
         stop = "tool_use"
@@ -150,7 +223,7 @@ def from_openai(data: dict):
     usage = SimpleNamespace(input_tokens=(u.get("prompt_tokens") or 0) - cached, output_tokens=u.get("completion_tokens") or 0,
                             cache_read_input_tokens=cached, cache_creation_input_tokens=0)
     return SimpleNamespace(id=data.get("id"), stop_reason=stop, stop_details=None, content=blocks, usage=usage,
-                           model=data.get("model"), repairs=[])
+                           model=data.get("model"), host=data.get("provider"), repairs=repairs)
 
 
 def _literal(text):
@@ -188,23 +261,41 @@ def decode_nested(resp, tools):
 
 def _openai_create(cl: OpenAIChat, *, model, max_tokens, messages, system=None, tools=None, **_ignored):
     msgs, fns = to_openai(system, messages, tools)
+    if cl.one_call_per_turn:
+        msgs = one_call_per_message(msgs)
     body = {"model": model, "messages": msgs, "max_tokens": min(max_tokens, MAX_OUTPUT),
-            "temperature": TEMPERATURE, "top_p": TOP_P}
+            "temperature": TEMPERATURE, "top_p": TOP_P, **cl.extra}
     if fns:
         body["tools"] = fns
     headers = {"Content-Type": "application/json"}
     if cl.key:
         headers["Authorization"] = f"Bearer {cl.key}"
-    req = urllib.request.Request(cl.url, data=json.dumps(body).encode(), method="POST", headers=headers)
-    try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
-            return decode_nested(from_openai(json.loads(resp.read())), tools)
-    except urllib.error.HTTPError as e:
-        body = e.read()[:500]
-        if e.code == 500 and UNREADABLE in body.decode(errors="replace"):
-            # the model's own output could not be parsed (e.g. a tool call cut off at the output limit): a bad
-            # turn of the model, not a failed server. The loop sees a text turn and asks for a submit_answer.
-            resp = from_openai({"choices": [{"finish_reason": "stop", "message": {"content": UNREADABLE_NOTE}}]})
-            resp.repairs.append("unreadable-reply")
-            return resp
-        raise RuntimeError(f"the model server answered HTTP {e.code}: {body!r}") from e
+    payload = json.dumps(body).encode()
+    failure = None
+    for attempt in range(RETRIES + 1):
+        if attempt:
+            time.sleep(min(2 ** attempt, 60))
+        req = urllib.request.Request(cl.url, data=payload, method="POST", headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT_S) as resp:
+                data = json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            said = e.read()[:500].decode(errors="replace")
+            if e.code == 500 and UNREADABLE in said:
+                # the model's own output could not be parsed (e.g. a tool call cut off at the output limit): a bad
+                # turn of the model, not a failed server. The loop sees a text turn and asks for a submit_answer.
+                resp = from_openai({"choices": [{"finish_reason": "stop", "message": {"content": UNREADABLE_NOTE}}]})
+                resp.repairs.append("unreadable-reply")
+                return resp
+            failure = ServerError(f"the model server answered HTTP {e.code}: {said!r}")
+            if e.code in RETRY_CODES:
+                continue
+            raise failure from e
+        except (urllib.error.URLError, http.client.HTTPException, ConnectionError) as e:
+            failure = ServerError(f"the model server could not be reached: {e}")
+            continue
+        if not data.get("choices"):                    # OpenRouter reports a failed host as an error inside a 200
+            failure = ServerError(f"the model server answered without a reply: {str(data.get('error'))[:300]}")
+            continue
+        return decode_nested(from_openai(data), tools)
+    raise failure

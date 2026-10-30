@@ -1,0 +1,259 @@
+{
+  "question": "What recycling cost per kilogram does the review give for direct recycling?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 15,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%kg%' OR text ILIKE '%per kilo%' OR text ILIKE '%/kg%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM sentences WHERE text ILIKE '%direct recycl%' AND (text ILIKE '%cost%' OR text ILIKE '%$%' OR text ILIKE '%USD%')",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%cost%' OR text ILIKE '%$%' OR text ILIKE '%USD%' OR text ILIKE '%kg%' OR text ILIKE '%kilogram%' ORDER BY page, line_no",
+      "rows": 34
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, value, unit, quantity, about FROM measures WHERE unit ILIKE '%kg%' OR unit ILIKE '%$%' OR unit ILIKE '%usd%' OR text ILIKE '%$%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (9,10) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, label, text, strength FROM atoms WHERE text ILIKE '%direct%' OR text ILIKE '%kg%' ORDER BY page",
+      "rows": null
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%kg%' OR text ILIKE '%$%' OR text ILIKE '%cost%' OR text ILIKE '%USD%' OR text ILIKE '%direct%'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, printed_text, value, unit FROM figure_facts WHERE statement ILIKE '%cost%' OR statement ILIKE '%kg%' OR statement ILIKE '%direct%' OR printed_text ILIKE '%$%' OR unit ILIKE '%kg%'",
+      "rows": null
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%$%' OR text ILIKE '%per kg%' OR text ILIKE '%/kg%' OR text ILIKE '%kg %' OR text ILIKE '%US$%' OR text ILIKE '%dollar%' OR text ILIKE '%USD%'",
+      "rows": 2
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, printed_text, value, unit FROM figure_facts WHERE statement ILIKE '%cost%' OR statement ILIKE '%kg%' OR statement ILIKE '%direct%' OR printed_text ILIKE '%$%' OR unit ILIKE '%kg%'",
+      "rows": null
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (6,7) AND (text ILIKE '%direct%' OR text ILIKE '%recycl%cost%' OR text ILIKE '%economic%')",
+      "rows": 17
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 6 ORDER BY line_no",
+      "rows": 81
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%kg%' OR text ILIKE '%kilo%' OR text ILIKE '%USD%' OR text ILIKE '%cent%' OR text ILIKE '%price%'",
+      "rows": 24
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 2
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[2]",
+        "why": "the words before citation [3] end in 'ound none of these terms:' and lead into its absence search, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ound none of these terms:[3]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "839bf151642fcfab90df674c235b2241068a2df3c3d4f8d8935148d5b0190a5d",
+  "leads": {
+    "sentences": [
+      "p6.L18:0",
+      "p2.L32:0",
+      "p2.L42:0",
+      "p3.L62:30",
+      "p3.L68:42",
+      "p6.L48:58",
+      "p1.L11:35",
+      "p10.L5:16",
+      "p2.L53:31",
+      "p2.L79:24",
+      "p2.L82:25",
+      "p2.L85:19"
+    ],
+    "measures": [],
+    "matched": 140
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 3559,
+    "cache_read_input_tokens": 91393,
+    "cache_creation_input_tokens": 19193
+  },
+  "runs": [
+    {
+      "text": "The review does not give a recycling cost per kilogram for direct recycling. It makes only a qualitative economic claim: life-cycle analysis and process-based cost models suggest that direct recycling potentially has economic benefits over pyrometallurgical and hydrometallurgical processes.",
+      "support": [
+        {
+          "atom": "p6.L18",
+          "quote": "Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits"
+        }
+      ]
+    },
+    {
+      "text": "The review says that evaluating recycling cost is still needed and points to the EverBatt model for it, but it reports no per-kilogram cost figure for any recycling route. The document contains no per-kilogram cost in its text, tables, or figure text, so no such value can be quoted.",
+      "support": [
+        {
+          "atom": "p10.L28",
+          "quote": "developed to evaluate cost and environmental effects for the"
+        }
+      ],
+      "absent": [
+        "per kg",
+        "/kg",
+        "per kilogram",
+        "kilogram",
+        "$/kg"
+      ]
+    }
+  ],
+  "rendered": "The review does not give a recycling cost per kilogram for direct recycling. It makes only a qualitative economic claim: life-cycle analysis and process-based cost models suggest that direct recycling potentially has economic benefits over pyrometallurgical and hydrometallurgical processes.[1]The review says that evaluating recycling cost is still needed and points to the EverBatt model for it, but it reports no per-kilogram cost figure for any recycling route. The document contains no per-kilogram cost in its text, tables, or figure text, so no such value can be quoted.[2][3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits",
+      "source": {
+        "atom": "p6.L18",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits",
+        "bbox": [
+          42.5,
+          267.4,
+          300.5,
+          287.8
+        ],
+        "atoms": [
+          "p6.L18",
+          "p6.L19"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits"
+    },
+    {
+      "kind": "support",
+      "quote": "developed to evaluate cost and environmental effects for the",
+      "source": {
+        "atom": "p10.L28",
+        "kind": "line",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "developed to evaluate cost and environmental effects for the",
+        "bbox": [
+          54.4,
+          386.0,
+          300.4,
+          394.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "developed to evaluate cost and environmental effects for the"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "per kg",
+        "/kg",
+        "per kilogram",
+        "kilogram",
+        "$/kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1234,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:22:12+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "mattod-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not given",
+  "trap": "inventing a cost",
+  "seconds": 23.8
+}

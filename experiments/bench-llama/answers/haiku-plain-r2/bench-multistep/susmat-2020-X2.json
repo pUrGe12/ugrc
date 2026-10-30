@@ -1,0 +1,236 @@
+{
+  "question": "By how many percentage points did the surface fluorine mass ratio fall through the Cyrene-based separation?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'fluor|F content|wt%|at%|EDX|surface') ORDER BY page, top",
+      "rows": 18
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F3"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p5.L12','p5.L13','p5.L14','p5.L15','p5.L16','p5.L17','p5.L18') OR (page=5 AND line_no BETWEEN 10 AND 20) ORDER BY id",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['12.35'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[7]",
+        "why": "the text \"'%.2f'\" puts digits into the value \"PRINTF('%.2f', 12.49 - 0.14) AS drop\" — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1551,
+    "cache_read_input_tokens": 18384,
+    "cache_creation_input_tokens": 8220
+  },
+  "runs": [
+    {
+      "text": "The surface fluorine mass ratio fell from "
+    },
+    {
+      "quote": "12.49%",
+      "atom": "p5.L17"
+    },
+    {
+      "text": " on the cathode rejects to "
+    },
+    {
+      "quote": "0.14%",
+      "atom": "p5.L18"
+    },
+    {
+      "text": " after the Cyrene-based separation, a drop of "
+    },
+    {
+      "sql": "SELECT round(cast(regexp_extract(a.text, '([0-9.]+)%', 1) AS DOUBLE) - cast(regexp_extract(b.text, '([0-9.]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM lines a, lines b WHERE a.id = 'p5.L17' AND b.id = 'p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points. These are the EDX values for fluorine shown in "
+    },
+    {
+      "figure": "p3.F3"
+    },
+    {
+      "text": " (panels d and e)."
+    }
+  ],
+  "rendered": "The surface fluorine mass ratio fell from 12.49%[1] on the cathode rejects to 0.14%[2] after the Cyrene-based separation, a drop of 12.35[3] percentage points. These are the EDX values for fluorine shown in Fig. 3[4] (panels d and e).",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "12.49%",
+      "source": {
+        "atom": "p5.L17",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+        "bbox": [
+          310.5,
+          223.1,
+          561.6,
+          232.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "12.49%"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.14%",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+        "bbox": [
+          310.5,
+          235.2,
+          561.6,
+          243.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "0.14%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT round(cast(regexp_extract(a.text, '([0-9.]+)%', 1) AS DOUBLE) - cast(regexp_extract(b.text, '([0-9.]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM lines a, lines b WHERE a.id = 'p5.L17' AND b.id = 'p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 12.35,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L17",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+          "bbox": [
+            310.5,
+            223.1,
+            561.6,
+            232.7
+          ]
+        },
+        {
+          "atom": "p5.L18",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+          "bbox": [
+            310.5,
+            235.2,
+            561.6,
+            243.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "12.35"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p3.F3",
+        "kind": "figure",
+        "label": "Fig. 3",
+        "page": 3,
+        "caption": "Fig. 3. (a) FTIR spectra of pristine PVDF, cathode scraps, the recovered materials via room temperature (RT) filtration and hot filtration; SEM images for (b) the NMC622 cathode rejects and (c) the recovered NMC622 after hot filtration; and EDX spectra of (d) the NMC622 cathode rejects and (e) the recovered NMC622 after hot filtration.",
+        "png": "figures/p3.F3.png",
+        "png_pixels_sha256": "bac56b28d52c1c4c12d4730b665762f963618860ce4a4b6993bbebc271fd75ce",
+        "bbox": [
+          74.4,
+          53.2,
+          529.6,
+          420.3
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 3"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-19T09:30:09+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "susmat-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "12.49% to 0.14% (p5.L17-18): 12.35 points",
+  "trap": "",
+  "seconds": 11.7
+}

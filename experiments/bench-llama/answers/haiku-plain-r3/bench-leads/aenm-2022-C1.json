@@ -1,0 +1,170 @@
+{
+  "question": "What capacity retention did the 0.5 Ah NFA/graphite pouch cells show, and after how many cycles?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE regexp_matches(lower(text), 'pouch|0\\.5 ?ah|retention') ORDER BY page, id",
+      "rows": 9
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=8 AND id IN ('p8.L4','p8.L5','p8.L6','p8.L7','p8.L8','p8.L9','p8.L10','p8.L11') ORDER BY id",
+      "rows": 8
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['0.5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'0.5' is written exactly so in the document (e.g. p4.L10): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.5\", \"atom\": \"p4.L10\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1059,
+    "cache_read_input_tokens": 15356,
+    "cache_creation_input_tokens": 6397
+  },
+  "runs": [
+    {
+      "text": "The "
+    },
+    {
+      "quote": "0.5 Ah",
+      "atom": "p8.L7"
+    },
+    {
+      "text": " NFA/graphite pouch cells were cycled at C/3 and showed a capacity retention of "
+    },
+    {
+      "quote": "72%",
+      "atom": "p8.L9"
+    },
+    {
+      "text": " after "
+    },
+    {
+      "quote": "200 such cycles",
+      "atom": "p8.L9"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The 0.5 Ah[1] NFA/graphite pouch cells were cycled at C/3 and showed a capacity retention of 72%[2] after 200 such cycles[3].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "0.5 Ah",
+      "source": {
+        "atom": "p8.L7",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "anodes. The assembled pouch cells (0.5 Ah) were subjected",
+        "bbox": [
+          48.2,
+          466.9,
+          289.1,
+          475.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "0.5 Ah"
+    },
+    {
+      "kind": "quote",
+      "quote": "72%",
+      "source": {
+        "atom": "p8.L9",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "able capacity retention of 72% even after 200 such cycles, as",
+        "bbox": [
+          48.2,
+          488.9,
+          289.1,
+          497.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "72%"
+    },
+    {
+      "kind": "quote",
+      "quote": "200 such cycles",
+      "source": {
+        "atom": "p8.L9",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "able capacity retention of 72% even after 200 such cycles, as",
+        "bbox": [
+          48.2,
+          488.9,
+          289.1,
+          497.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "200 such cycles"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-19T09:38:19+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "aenm-2022",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "72% after 200 cycles at C/3 (p8.L7-9)",
+  "trap": "the >80% after 100 cycles of NMM/NMT/NMA",
+  "seconds": 7.1
+}

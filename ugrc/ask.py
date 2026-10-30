@@ -14,6 +14,7 @@ that names what its value is `of` passes the pairing gate (ugrc/pairing.py).
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import re
 from datetime import datetime, timezone
@@ -123,8 +124,107 @@ Each question comes with its leads: the sentences of these relations whose words
 
 """
 
+# A shorter prompt for a small open model (style "small"): the same tools, the same door, the same rules, said in
+# fewer words, as numbered steps, with one worked example and the refusals small models hit most (a number in
+# own words, a quote not copied exactly, two kinds in one run, runs sent as a string). The examples are made up:
+# no bench paper's text or value appears here.
+SYSTEM_SMALL = """You answer one question about one document, "@FILE" (@PAGES pages), using only what the document says.
 
-def system_prompt(con) -> str:
+THE RULE: you never type a number yourself. A number reaches your answer only by pointing at the document. A machine checks every answer; if a rule is broken it refuses the answer and tells you exactly what to fix.
+
+## How to work
+1. Look things up with the sql tool (and view_figure for figures). Copy text exactly as the tool returns it.
+2. Build the answer as a list of runs (below).
+3. Call submit_answer with {"runs": [ ... ]}. If it is refused, fix exactly what the refusal says, and submit again.
+
+## The database (read-only DuckDB)
+- lines(id, page, text): every line of the text, in reading order. id like p5.L12.
+- cells(id, table_id, row_no, col_no, text): every table cell. id like p6.T2.r3c6. table_columns(table_id, col_no, header) holds the column headers.
+- figure_facts(id, figure_id, statement, value, unit): facts read from figures. id like p5.F2.k4.
+- atoms(id, kind, page, text): all of the above in one table. Search it first, for example:
+  SELECT id, text FROM atoms WHERE text ILIKE '%surface area%' LIMIT 20
+@CLAUSES## Contents
+@TOC
+
+## The answer: a list of runs, joined in order
+Each run is one JSON object with exactly ONE of these keys: text, quote, measure, sql, figure, table.
+- {"text": "your words"}: your own words. NO digits and NO number words (one, two, ten, hundred...). Names that start with a letter are fine (CO2, NMC622).
+- {"quote": "exact text", "atom": "<id>"}: characters copied exactly from that atom's text. Every number in your answer comes in a quote run. You may add "of": "<what the value belongs to>". A quote may run on into the next line: name the line it starts in.
+@MEASURE_RUN- {"sql": "SELECT ...", "column": "<name>", "row": 0, "fmt": "raw"}: a value the machine computes (a difference, a ratio, a count). Type no number in it except 0, 1 and 100. column is a column name of your SELECT. fmt is raw, int, fixed1, fixed2, or pct1 (pct1 multiplies by 100 for you).
+- {"text": "your words", "absent": ["short term", ...]}: say the document does not contain something. Each term (one to three words) must occur nowhere in the document.
+- {"figure": "<id>"} or {"table": "<id>"}: point at a figure or table. Never type "Fig." or "Table" with a number yourself.
+
+## Example (made up)
+Question: What was the BET surface area of the carbon?
+1. sql: SELECT id, text FROM atoms WHERE text ILIKE '%surface area%' LIMIT 20
+   result: p4.L22 | The BET surface area of the carbon was 1,250 m^2/g, higher than
+2. submit_answer: {"runs": [{"text": "The BET surface area of the carbon was "}, {"quote": "1,250 m^2/g", "atom": "p4.L22", "of": "the carbon"}, {"text": "."}]}
+
+These are refused:
+- {"text": "The surface area was 1,250 m^2/g."}: a number in your own words. Put it in a quote run.
+- {"quote": "1250 m2/g", "atom": "p4.L22"}: not copied exactly. The line says "1,250 m^2/g".
+- {"text": "The surface area was", "quote": "1,250 m^2/g"}: two kinds in one run. Make two runs.
+- {"runs": "[{...}]"}: runs must be a JSON list, not a string.
+
+## When the document does not answer
+If the question assumes something the document contradicts, say so in text runs and quote what the document does say. If the document holds nothing about it, use an absent run with short terms."""
+
+CLAUSES_SMALL = """## Leads
+Some questions come with leads: sentences of the document that match the question, each value listed with an id like p4.L22:3#17 and what it was read to be. If a lead holds the value you need, show it with a measure run: the machine copies the value for you. First check that the lead's sentence is about what was asked. If the leads do not hold the answer, search lines and cells as usual. The tables measures(id, text, about, quantity, sentence, atoms) and sentences(id, text, atoms) hold all the leads; you may search them with the sql tool, but a sql run in your answer may not read them.
+"""
+
+MEASURE_RUN_SMALL = """- {"measure": "<id>"}: a value from the leads, by its id (like p4.L22:3#17). The machine copies the value from the document. You may add "of". Example: {"runs": [{"text": "The surface area was "}, {"measure": "p4.L22:3#17"}, {"text": "."}]}
+"""
+
+PROMPT_STYLES = {"full": (SYSTEM, CLAUSES, MEASURE_RUN), "small": (SYSTEM_SMALL, CLAUSES_SMALL, MEASURE_RUN_SMALL)}
+
+
+def _small_corpus(con) -> str:
+    """The small prompt for a corpus: the same rules and examples, with the documents listed and every id carrying
+    its document's key ("paper-a:p4.L22", made up like the rest of the example)."""
+    docs = con.execute("SELECT id, title FROM documents ORDER BY id").fetchall()
+    listing = "\n".join(f"- {k}: {t!r}" for k, t in docs)
+    toc = "\n\n".join(f"### {k}\n{contents(con, k)}" for k, _ in docs)
+    s = SYSTEM_SMALL
+    s = s.replace('You answer one question about one document, "@FILE" (@PAGES pages), using only what the document says.',
+                  f"You answer one question about a collection of {len(docs)} documents, using only what they say. "
+                  "A question may be about one of them, several, or all.")
+    s = s.replace("## The database (read-only DuckDB)\n",
+                  "## The documents\n" + listing + "\n\n## The database (read-only DuckDB)\n"
+                  "Every id starts with its document's key and a colon (paper-a:p5.L12), and every table has a doc "
+                  "column holding that key. documents(id, title) lists the documents.\n")
+    s = s.replace("id like p5.L12", "id like paper-a:p5.L12").replace("id like p6.T2.r3c6", "id like paper-a:p6.T2.r3c6")
+    s = s.replace("id like p5.F2.k4", "id like paper-a:p5.F2.k4")
+    s = s.replace("SELECT id, text FROM atoms WHERE text ILIKE '%surface area%' LIMIT 20",
+                  "SELECT id, text FROM atoms WHERE text ILIKE '%surface area%' LIMIT 20   (add AND doc = 'paper-a' to stay in one document)")
+    s = s.replace("p4.L22", "paper-a:p4.L22")
+    s = s.replace("## When the document does not answer", "## When the documents do not answer")
+    s = s.replace("If the question assumes something the document contradicts, say so in text runs and quote what the document does say. If the document holds nothing about it,",
+                  "If the question assumes something the documents contradict, say so in text runs and quote what they do say. If no document holds anything about it,")
+    s = s.replace("must occur nowhere in the document.", "must occur nowhere in any of the documents.")
+    on = store.has_clauses(con)
+    clause_part = CLAUSES_SMALL.replace("sentences of the document", "sentences of the documents").replace("p4.L22:3#17", "paper-a:p4.L22:3#17")
+    measure_part = MEASURE_RUN_SMALL.replace("p4.L22:3#17", "paper-a:p4.L22:3#17")
+    return (s.replace("@TOC", toc).replace("@CLAUSES", clause_part if on else "")
+            .replace("@MEASURE_RUN", measure_part if on else ""))
+
+
+def system_prompt(con, style: str = "full") -> str:
+    if style != "full":
+        from ugrc import corpus
+        if corpus.is_corpus(con):
+            if style == "small":
+                return _small_corpus(con)
+            raise ValueError(f"prompt style {style!r} has no corpus form")
+        system, clause_part, measure_part = PROMPT_STYLES[style]
+        file, pages = con.execute("SELECT file, pages FROM sources").fetchone()
+        on = store.has_clauses(con)
+        return (system.replace("@FILE", file).replace("@PAGES", str(pages)).replace("@TOC", contents(con))
+                .replace("@CLAUSES", clause_part if on else "").replace("@MEASURE_RUN", measure_part if on else ""))
+    return _system_prompt_full(con)
+
+
+def _system_prompt_full(con) -> str:
     from ugrc import corpus
     if corpus.is_corpus(con):
         docs = con.execute("SELECT id, doi, pages, title FROM documents ORDER BY id").fetchall()
@@ -174,8 +274,9 @@ def _new_record(question, model, con, found) -> dict:
                       "cache_creation_input_tokens": 0}}
 
 
-def ask(root, question: str, model=None, cl=None, effort="high", log=print, judge=None) -> dict:
-    """One question in a fresh conversation. `judge` answers the pairing gate's questions (default: Jev)."""
+def ask(root, question: str, model=None, cl=None, effort="high", log=print, judge=None, prompt="full") -> dict:
+    """One question in a fresh conversation. `judge` answers the pairing gate's questions (default: Jev).
+    `prompt` is the system prompt's style (PROMPT_STYLES); the record keeps it and the prompt's hash."""
     root = Path(root)
     model = model or llm.MODEL
     cl = cl or llm.client()
@@ -183,7 +284,9 @@ def ask(root, question: str, model=None, cl=None, effort="high", log=print, judg
     try:
         text, found = question_message(con, question)
         record = _new_record(question, model, con, found)
-        _answer(con, root, cl, model, system_prompt(con), [{"role": "user", "content": text}],
+        system = system_prompt(con, prompt)
+        record["prompt"] = {"style": prompt, "sha256": hashlib.sha256(system.encode()).hexdigest()}
+        _answer(con, root, cl, model, system, [{"role": "user", "content": text}],
                 record, effort, log, judge)
         return record
     finally:
@@ -225,6 +328,9 @@ def _answer(con, root, cl, model, system, messages, record, effort, log, judge=N
         record["turns"] += 1
         if getattr(resp, "repairs", None):              # arguments the open-model adapter decoded (llm.decode_nested)
             record.setdefault("adapter_repairs", []).extend(resp.repairs)
+        if getattr(resp, "host", None):                 # the host that served this turn, when a router names it
+            hosts = record.setdefault("served_by", {})
+            hosts[resp.host] = hosts.get(resp.host, 0) + 1
         for k in record["usage"]:
             record["usage"][k] += getattr(resp.usage, k, 0) or 0
         messages.append({"role": "assistant", "content": resp.content})

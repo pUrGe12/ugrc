@@ -1,0 +1,100 @@
+{
+  "arm": "llama-leads-sp",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "error": "RuntimeError: no accepted answer within 20 model turns (1 refused submissions)",
+  "seconds": 182.6,
+  "model": "llama-3.1-8b-instruct",
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  },
+  "served_by": null,
+  "adapter_repairs": null,
+  "turns": 20,
+  "tool_calls": 1,
+  "usage": {
+    "input_tokens": 115384,
+    "output_tokens": 3800,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "cite:unordered",
+        "text:number"
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,', '150'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'150' is written exactly so in the document (e.g. p11.L127): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"150\", \"atom\": \"p11.L127\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "cite:unordered",
+        "where": "runs[1]",
+        "why": "the result has 20 rows and no ORDER BY, so row 0 is not stable",
+        "moves": [
+          "add an ORDER BY, or filter the result down to the one row you cite"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "submitted": [
+    {
+      "runs": [
+        {
+          "text": "In Table 2, the passive-targeting delivery systems with a particle size of 150 nm or more are: "
+        },
+        {
+          "sql": "SELECT text FROM cells WHERE table_id = 'p6.T2' AND col_no = '6' AND text >= '150' LIMIT 20",
+          "column": "text",
+          "row": 0,
+          "fmt": "raw"
+        },
+        {
+          "text": " and the largest one is: "
+        },
+        {
+          "sql": "SELECT text FROM cells WHERE table_id = 'p6.T2' AND col_no = '6' AND text >= '150' ORDER BY text DESC LIMIT 1",
+          "column": "text",
+          "row": 0,
+          "fmt": "raw"
+        },
+        {
+          "text": "."
+        }
+      ]
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/home/purge/Desktop/ugrc/experiments/bench-llama/run.py\", line 106, in one\n    rec = ask.ask(substrate(kind, paper), probe[\"q\"], model=model, cl=client, log=lambda *_: None, prompt=prompt)\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 257, in ask\n    _answer(con, root, cl, model, system, [{\"role\": \"user\", \"content\": text}],\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 365, in _answer\n    raise err\nRuntimeError: no accepted answer within 20 model turns (1 refused submissions)\n"
+}

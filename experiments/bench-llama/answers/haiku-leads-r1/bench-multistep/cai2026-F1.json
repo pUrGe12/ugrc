@@ -1,0 +1,327 @@
+{
+  "question": "Why was the NBF-006 trial in Table 1 terminated, and which company ran it?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c.row_no, c.col_no, c.text FROM cells c WHERE c.table_id='p2.T1' AND c.row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text ILIKE '%NBF%') ORDER BY c.row_no, c.col_no",
+      "rows": 7
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%NBF-006%' OR text ILIKE '%terminat%' OR text ILIKE '%NBF%' ORDER BY page, line_no",
+      "rows": 4
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (3) ORDER BY line_no",
+      "rows": 129
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%nitto%' OR text ILIKE '%NCT03819387%' OR text ILIKE '%GSTP%' OR text ILIKE '%terminat%' OR text ILIKE '%discontinu%' OR text ILIKE '%withdr%' OR text ILIKE '%NBF%' ORDER BY page, id",
+      "rows": 14
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 10 AND 14 ORDER BY row_no, col_no",
+      "rows": 12
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 7 AND 9 ORDER BY row_no, col_no",
+      "rows": 12
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "quote:wrapped",
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, x0, top FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 11 AND 16 ORDER BY row_no, col_no",
+      "rows": 20
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "NBF-006",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "NBF-006",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "DCR-MYC",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[1]",
+        "why": "'Phase 1' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r13c6 'Completed' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r12c6\"}",
+          "or show p2.T1.r13c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[5]",
+        "why": "'Terminated' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r8c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Terminated\", \"atom\": \"p2.T1.r9c6\"}",
+          "or show p2.T1.r8c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r12c6",
+      "of": "NBF-006",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 1
+    },
+    {
+      "quote": "Nitto BioPharma",
+      "atom": "p2.T1.r12c7",
+      "of": "NBF-006",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 3
+    },
+    {
+      "quote": "Phase 1 Terminated",
+      "atom": "p2.T1.r8c6",
+      "of": "DCR-MYC",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 5
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p3.L2:34",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p3.L47:0",
+      "p14.L51:59",
+      "p15.L69:10",
+      "p12.L3:23",
+      "p12.L48:8",
+      "p16.L1:0",
+      "p17.L21:0",
+      "p18.L121:51",
+      "p5.L53:56"
+    ],
+    "measures": [
+      "p14.L51:59#41",
+      "p14.L51:59#121",
+      "p15.L69:10#216"
+    ],
+    "matched": 41
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 3700,
+    "cache_read_input_tokens": 66468,
+    "cache_creation_input_tokens": 16301
+  },
+  "runs": [
+    {
+      "text": "The document does not give a reason for NBF-006 being terminated, and it does not mark NBF-006 as terminated. In the clinical trials table, the NBF-006 row (GSTP target, LNP carrier, non-small cell lung cancer and other cancers) lists its status as "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r12c6",
+      "of": "NBF-006"
+    },
+    {
+      "text": ". Its sponsor is "
+    },
+    {
+      "quote": "Nitto BioPharma",
+      "atom": "p2.T1.r12c7",
+      "of": "NBF-006"
+    },
+    {
+      "text": ". The only row marked as terminated in that table is the DCR-MYC row ("
+    },
+    {
+      "quote": "Phase 1 Terminated",
+      "atom": "p2.T1.r9c6",
+      "of": "DCR-MYC"
+    },
+    {
+      "text": "). The text explains termination only for early-stage candidates such as DCR-MYC, citing efficacy and toxicity issues: "
+    },
+    {
+      "quote": "Several early-stage drug candidates had their trials terminated due to",
+      "atom": "p3.L47"
+    },
+    {
+      "text": " efficacy and toxicity issues. Nothing in the document links NBF-006 to a termination."
+    }
+  ],
+  "rendered": "The document does not give a reason for NBF-006 being terminated, and it does not mark NBF-006 as terminated. In the clinical trials table, the NBF-006 row (GSTP target, LNP carrier, non-small cell lung cancer and other cancers) lists its status as Phase 1 Completed[1]. Its sponsor is Nitto BioPharma[2]. The only row marked as terminated in that table is the DCR-MYC row (Phase 1 Terminated[3]). The text explains termination only for early-stage candidates such as DCR-MYC, citing efficacy and toxicity issues: Several early-stage drug candidates had their trials terminated due to[4] efficacy and toxicity issues. Nothing in the document links NBF-006 to a termination.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r12c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          459.0,
+          388.1,
+          474.0
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r12c6",
+          "p2.T1.r13c6"
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NBF-006",
+      "n": 1,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Nitto BioPharma",
+      "source": {
+        "atom": "p2.T1.r12c7",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Nitto BioPharma",
+        "bbox": [
+          418.7,
+          459.0,
+          466.0,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 7,
+        "column_header": "Company"
+      },
+      "strength": "verbatim",
+      "of": "NBF-006",
+      "n": 2,
+      "rendered": "Nitto BioPharma"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Terminated",
+      "source": {
+        "atom": "p2.T1.r8c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Terminated",
+        "bbox": [
+          357.7,
+          424.8,
+          390.3,
+          439.7
+        ],
+        "table": "Table 1",
+        "row": 8,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r8c6",
+          "p2.T1.r9c6"
+        ]
+      },
+      "strength": "verbatim",
+      "of": "DCR-MYC",
+      "n": 3,
+      "rendered": "Phase 1 Terminated"
+    },
+    {
+      "kind": "quote",
+      "quote": "Several early-stage drug candidates had their trials terminated due to",
+      "source": {
+        "atom": "p3.L47",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "Several early-stage drug candidates had their trials terminated due to",
+        "bbox": [
+          49.6,
+          537.6,
+          288.7,
+          545.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Several early-stage drug candidates had their trials terminated due to"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:25:22+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "False premise: NBF-006's trial is Phase 1, Completed (a wrapped cell: 'Phase 1' / 'Completed'), run by Nitto BioPharma; the terminated trial is DCR-MYC (Dicerna Pharmaceuticals)",
+  "trap": "",
+  "seconds": 21.3
+}

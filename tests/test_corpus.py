@@ -55,3 +55,16 @@ def test_a_corpus_is_built_once_and_needs_plain_keys(two, tmp_path):
         corpus.build(out, [a, b], log=lambda *_: None)
     with pytest.raises(SystemExit):
         corpus.build(tmp_path / "x", [tmp_path / "missing"], log=lambda *_: None)
+
+
+def test_the_small_prompt_has_a_corpus_form(two):
+    # ask.system_prompt(con, "small") on a corpus: the documents listed, ids carry a document key in the made-up
+    # example, every placeholder filled; no leads without a clause base
+    from ugrc import ask
+    _, _, out = two
+    con = store.connect_question(out)
+    s = ask.system_prompt(con, "small")
+    assert "@" not in s and "a collection of 2 documents" in s
+    assert "- alpha:" in s and "- beta:" in s and "### alpha" in s
+    assert '"atom": "paper-a:p4.L22"' in s and "When the documents do not answer" in s
+    assert "## Leads" not in s and '{"measure"' not in s

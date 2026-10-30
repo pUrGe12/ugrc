@@ -1,0 +1,630 @@
+{
+  "question": "Using the review's equation for diffusion time and Table 5's diffusivity for ZrO2, how long would a lithium ion take to cross a 10 nm ZrO2 coating?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p14.T5' ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=12 AND (text ILIKE '%diffusion time%' OR text ILIKE '%t =%' OR text ILIKE '%l2%' OR text ILIKE '%ZrO%') ORDER BY id",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE id IN ('p12.L37','p12.L38','p12.L39','p12.L40','p12.L41') OR (page=12 AND line_no<=3) ORDER BY id",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE page=12 AND (text ILIKE '%10 nm%' OR text ILIKE '%10nm%' OR text ILIKE '%1.7%' OR text ILIKE '%=%' ) ORDER BY id",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, value, unit, definition FROM consts ORDER BY id",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, quantity, about, role FROM measures WHERE page=12 AND (text ILIKE '%5nm%' OR text ILIKE '%50nm%' OR array_to_string(about,' ') ILIKE '%diffusion length%')",
+      "rows": 2
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH p AS (\n  SELECT CAST(regexp_extract(text,'^\\s*([0-9.]+)',1) AS DOUBLE) AS m,\n         CAST(regexp_extract(text,'10\\^[^0-9]*([0-9]+)',1) AS DOUBLE) AS n\n  FROM cells WHERE id='p14.T5.r13c2'\n),\nx AS (\n  SELECT m, -n AS e,\n         power(sqrt(100), 2) / (power((SELECT value FROM consts WHERE id='K.per_mega'), 2) * 100) AS l2_cm2,\n         m * power(sqrt(100), -n) AS D_cm2s\n  FROM p\n)\nSELECT l2_cm2 / D_cm2s AS t_seconds, l2_cm2, D_cm2s, (l2_cm2 / D_cm2s) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_days FROM x",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 12,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 18,
+      "pairings": [
+        {
+          "run": 6,
+          "of": "ZrO2",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['10', '1e-6', '(1', '1e-7'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'10' is written exactly so in the document (e.g. p1.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p1.L59\"} — never shorten it",
+          "'1' is written exactly so in the document (e.g. p1.L34): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L34\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[7]",
+        "why": "your own words contain number(s) ['5;', '10', '5', '50'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "'10' is written exactly so in the document (e.g. p1.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"10\", \"atom\": \"p1.L59\"} — never shorten it",
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "'50' is written exactly so in the document (e.g. p5.L41): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"50\", \"atom\": \"p5.L41\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[7]",
+        "why": "your own words contain number(s) ['5;'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 6
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "f59c5bb22b9e16df194150cd68986a42e61e400fa214952c374f5120cde7ed27",
+  "leads": {
+    "sentences": [
+      "p12.L37:31",
+      "p12.L56:9",
+      "p12.L34:37",
+      "p2.L45:18",
+      "p16.L3:9",
+      "p12.L43:51",
+      "p12.L41:18",
+      "p14.L3:0",
+      "p15.L25:63"
+    ],
+    "measures": [
+      "p12.L37:31#196",
+      "p12.L37:31#203",
+      "p12.L56:9#43",
+      "p12.L41:18#146",
+      "p14.L3:0#66"
+    ],
+    "matched": 305
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 11764,
+    "cache_read_input_tokens": 69722,
+    "cache_creation_input_tokens": 21354
+  },
+  "runs": [
+    {
+      "text": "Using the review's equation, the diffusion time is t = l squared divided by D, where D is the lithium-ion diffusivity taken from "
+    },
+    {
+      "table": "p14.T5"
+    },
+    {
+      "text": " and l is the diffusion length. The extracted text prints the fraction without its bar, so the division is read from the layout and from the physics of diffusion time. ",
+      "support": [
+        {
+          "atom": "p12.L38",
+          "quote": "𝑡 = 𝑙^2"
+        },
+        {
+          "atom": "p12.L39",
+          "quote": "𝐷 where ‘D’ is the diffusion of lithium-ion"
+        }
+      ]
+    },
+    {
+      "text": "For ZrO2, "
+    },
+    {
+      "table": "p14.T5"
+    },
+    {
+      "text": " gives a lithium-ion diffusivity of "
+    },
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2"
+    },
+    {
+      "text": " cm²/s. Taking the diffusion length as the requested coating thickness, converted from nanometres to centimetres with the SI prefix factors in the constants table, the diffusion time is:\n"
+    },
+    {
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^\\s*([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10\\^[^0-9]*([0-9]+)',1) AS DOUBLE) AS n FROM cells WHERE id='p14.T5.r13c2'), x AS (SELECT m, -n AS e, power(sqrt(100), 2) / (power((SELECT value FROM consts WHERE id='K.per_mega'), 2) * 100) AS l2_cm2, m * power(sqrt(100), -n) AS D_cm2s FROM p) SELECT l2_cm2 / D_cm2s AS t_seconds, l2_cm2, D_cm2s, (l2_cm2 / D_cm2s) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_days FROM x",
+      "column": "t_seconds",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " seconds, which is about "
+    },
+    {
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^\\s*([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10\\^[^0-9]*([0-9]+)',1) AS DOUBLE) AS n FROM cells WHERE id='p14.T5.r13c2'), x AS (SELECT m, -n AS e, power(sqrt(100), 2) / (power((SELECT value FROM consts WHERE id='K.per_mega'), 2) * 100) AS l2_cm2, m * power(sqrt(100), -n) AS D_cm2s FROM p) SELECT l2_cm2 / D_cm2s AS t_seconds, l2_cm2, D_cm2s, (l2_cm2 / D_cm2s) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_days FROM x",
+      "column": "t_days",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " days. This is a direct calculation from the review's equation and the ZrO2 value in "
+    },
+    {
+      "table": "p14.T5"
+    },
+    {
+      "text": "; the review does not state this specific result. The review itself varies the diffusion length from "
+    },
+    {
+      "measure": "p12.L37:31#196"
+    },
+    {
+      "text": " to "
+    },
+    {
+      "measure": "p12.L37:31#203"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "Using the review's equation, the diffusion time is t = l squared divided by D, where D is the lithium-ion diffusivity taken from Table 5[1] and l is the diffusion length. The extracted text prints the fraction without its bar, so the division is read from the layout and from the physics of diffusion time.[2][3] For ZrO2, Table 5[4] gives a lithium-ion diffusivity of 1.7 ×10^− 18[5] cm²/s. Taking the diffusion length as the requested coating thickness, converted from nanometres to centimetres with the SI prefix factors in the constants table, the diffusion time is:\n588,235[6] seconds, which is about 6.8[7] days. This is a direct calculation from the review's equation and the ZrO2 value in Table 5[8]; the review does not state this specific result. The review itself varies the diffusion length from 5nm[9] to 50nm[10].",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p14.T5",
+        "kind": "table",
+        "label": "Table 5",
+        "page": 14,
+        "caption": "Table 5 Lithium-ion diffusivity of different coating materials at 300K. The term “am ”means amorphous while “cry ”means crystalline.",
+        "bbox": [
+          63.1,
+          88.2,
+          263.8,
+          287.5
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 5"
+    },
+    {
+      "kind": "support",
+      "quote": "𝑡 = 𝑙^2",
+      "source": {
+        "atom": "p12.L38",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "ing the simple equation, 𝑡 = 𝑙^2",
+        "bbox": [
+          37.9,
+          598.5,
+          144.5,
+          610.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "𝑡 = 𝑙^2"
+    },
+    {
+      "kind": "support",
+      "quote": "𝐷 where ‘D’ is the diffusion of lithium-ion",
+      "source": {
+        "atom": "p12.L39",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "𝐷 where ‘D’ is the diffusion of lithium-ion",
+        "bbox": [
+          140.1,
+          602.3,
+          289.3,
+          612.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "𝐷 where ‘D’ is the diffusion of lithium-ion"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p14.T5",
+        "kind": "table",
+        "label": "Table 5",
+        "page": 14,
+        "caption": "Table 5 Lithium-ion diffusivity of different coating materials at 300K. The term “am ”means amorphous while “cry ”means crystalline.",
+        "bbox": [
+          63.1,
+          88.2,
+          263.8,
+          287.5
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Table 5"
+    },
+    {
+      "kind": "quote",
+      "quote": "1.7 ×10^− 18",
+      "source": {
+        "atom": "p14.T5.r13c2",
+        "kind": "cell",
+        "page": 14,
+        "strength": "verbatim",
+        "text": "1.7 ×10^− 18",
+        "bbox": [
+          125.3,
+          199.4,
+          155.8,
+          206.6
+        ],
+        "table": "Table 5",
+        "row": 13,
+        "col": 2,
+        "column_header": "Li ion diffusivity (cm^2/s)"
+      },
+      "strength": "verbatim",
+      "of": "ZrO2",
+      "n": 5,
+      "rendered": "1.7 ×10^− 18"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^\\s*([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10\\^[^0-9]*([0-9]+)',1) AS DOUBLE) AS n FROM cells WHERE id='p14.T5.r13c2'), x AS (SELECT m, -n AS e, power(sqrt(100), 2) / (power((SELECT value FROM consts WHERE id='K.per_mega'), 2) * 100) AS l2_cm2, m * power(sqrt(100), -n) AS D_cm2s FROM p) SELECT l2_cm2 / D_cm2s AS t_seconds, l2_cm2, D_cm2s, (l2_cm2 / D_cm2s) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_days FROM x",
+      "column": "t_seconds",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 588235.294117647,
+      "strength": "computed from verbatim",
+      "n_sources": 5,
+      "sources": [
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        }
+      ],
+      "n": 6,
+      "rendered": "588,235"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^\\s*([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10\\^[^0-9]*([0-9]+)',1) AS DOUBLE) AS n FROM cells WHERE id='p14.T5.r13c2'), x AS (SELECT m, -n AS e, power(sqrt(100), 2) / (power((SELECT value FROM consts WHERE id='K.per_mega'), 2) * 100) AS l2_cm2, m * power(sqrt(100), -n) AS D_cm2s FROM p) SELECT l2_cm2 / D_cm2s AS t_seconds, l2_cm2, D_cm2s, (l2_cm2 / D_cm2s) / (SELECT value FROM consts WHERE id='K.s_per_min') / (SELECT value FROM consts WHERE id='K.min_per_h') / (SELECT value FROM consts WHERE id='K.h_per_day') AS t_days FROM x",
+      "column": "t_days",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 6.808278867102395,
+      "strength": "computed from verbatim",
+      "n_sources": 5,
+      "sources": [
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        }
+      ],
+      "n": 7,
+      "rendered": "6.8"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p14.T5",
+        "kind": "table",
+        "label": "Table 5",
+        "page": 14,
+        "caption": "Table 5 Lithium-ion diffusivity of different coating materials at 300K. The term “am ”means amorphous while “cry ”means crystalline.",
+        "bbox": [
+          63.1,
+          88.2,
+          263.8,
+          287.5
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "Table 5"
+    },
+    {
+      "kind": "quote",
+      "quote": "5nm",
+      "source": {
+        "atom": "p12.L41",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "from 5nm to 50nm. It is worth noting that the lithium-ion diffusivity of",
+        "bbox": [
+          37.9,
+          623.2,
+          289.3,
+          631.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p12.L37:31#196",
+      "reading": {
+        "role": "setting",
+        "role_p": 1.0,
+        "property": "size",
+        "property_p": 1.0,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "diffusion length"
+        ],
+        "sentence": "p12.L37:31",
+        "read_by": "judge"
+      },
+      "n": 9,
+      "rendered": "5nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "50nm",
+      "source": {
+        "atom": "p12.L41",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "from 5nm to 50nm. It is worth noting that the lithium-ion diffusivity of",
+        "bbox": [
+          37.9,
+          623.2,
+          289.3,
+          631.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p12.L37:31#203",
+      "reading": {
+        "role": "setting",
+        "role_p": 1.0,
+        "property": "size",
+        "property_p": 1.0,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "diffusion length"
+        ],
+        "sentence": "p12.L37:31",
+        "read_by": "judge"
+      },
+      "n": 10,
+      "rendered": "50nm"
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:34:48+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "ensm-2021",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "t = l^2/D (p12.L38-39); l = 10 nm = 1e-6 cm, D = 1.7 x 10^-18 cm^2/s: t = 1e-12/1.7e-18 = 5.9 x 10^5 s (about 6.8 days)",
+  "trap": "",
+  "seconds": 54.2
+}

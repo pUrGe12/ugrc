@@ -1,0 +1,210 @@
+{
+  "question": "What share of the 0.1C reversible capacity is retained at 1C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, region FROM lines WHERE text ILIKE '%0.1C%' OR text ILIKE '%1C%' OR text ILIKE '%retention%' OR text ILIKE '%rate%' ORDER BY page, line_no",
+      "rows": 42
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%0.1%' OR text ILIKE '%1C%' OR text ILIKE '%retain%' OR text ILIKE '%%' ORDER BY figure_id, line_no",
+      "rows": 80
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=5 AND line_no BETWEEN 55 AND 105 ORDER BY line_no",
+      "rows": 51
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract(a.text, '([0-9]+) mAh/gS at high', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share FROM lines a, lines b WHERE a.id='p5.L87' AND b.id='p5.L79'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2798,
+    "cache_read_input_tokens": 20216,
+    "cache_creation_input_tokens": 10241
+  },
+  "runs": [
+    {
+      "text": "Slow-rate reversible capacity: "
+    },
+    {
+      "quote": "reversible capacity (700 mAh/gS)",
+      "atom": "p5.L79"
+    },
+    {
+      "text": ". Capacity at the fast rate: "
+    },
+    {
+      "quote": "reversible capacity of 370 mAh/gS at high rates of 1C",
+      "atom": "p5.L87"
+    },
+    {
+      "text": ". Share of the slow-rate capacity retained at the fast rate: "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text, '([0-9]+) mAh/gS at high', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share FROM lines a, lines b WHERE a.id='p5.L87' AND b.id='p5.L79'",
+      "column": "share",
+      "row": 0,
+      "fmt": "pct0"
+    },
+    {
+      "text": ". The paper itself describes this as "
+    },
+    {
+      "quote": "over 50% retention of capacity at 10 times the rate",
+      "atom": "p5.L88"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "Slow-rate reversible capacity: reversible capacity (700 mAh/gS)[1]. Capacity at the fast rate: reversible capacity of 370 mAh/gS at high rates of 1C[2]. Share of the slow-rate capacity retained at the fast rate: 53%[3]. The paper itself describes this as over 50% retention of capacity at 10 times the rate[4].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "reversible capacity (700 mAh/gS)",
+      "source": {
+        "atom": "p5.L79",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "results and reversible capacity (700 mAh/gS) and is capable of",
+        "bbox": [
+          324.5,
+          234.1,
+          564.4,
+          245.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "reversible capacity (700 mAh/gS)"
+    },
+    {
+      "kind": "quote",
+      "quote": "reversible capacity of 370 mAh/gS at high rates of 1C",
+      "source": {
+        "atom": "p5.L87",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+        "bbox": [
+          324.5,
+          322.5,
+          564.5,
+          333.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "reversible capacity of 370 mAh/gS at high rates of 1C"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text, '([0-9]+) mAh/gS at high', 1) AS DOUBLE) / CAST(regexp_extract(b.text, '\\(([0-9]+) mAh', 1) AS DOUBLE) AS share FROM lines a, lines b WHERE a.id='p5.L87' AND b.id='p5.L79'",
+      "column": "share",
+      "row": 0,
+      "fmt": "pct0",
+      "value": 0.5285714285714286,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L79",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "results and reversible capacity (700 mAh/gS) and is capable of",
+          "bbox": [
+            324.5,
+            234.1,
+            564.4,
+            245.2
+          ]
+        },
+        {
+          "atom": "p5.L87",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "reversible capacity of 370 mAh/gS at high rates of 1C, which",
+          "bbox": [
+            324.5,
+            322.5,
+            564.5,
+            333.6
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "53%"
+    },
+    {
+      "kind": "quote",
+      "quote": "over 50% retention of capacity at 10 times the rate",
+      "source": {
+        "atom": "p5.L88",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "emphasizes over 50% retention of capacity at 10 times the rate.",
+        "bbox": [
+          324.5,
+          333.5,
+          564.4,
+          343.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "over 50% retention of capacity at 10 times the rate"
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-19T09:36:16+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05172",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "370 of ~700 mAh/gS: over 50% (the paper's words), ~53% computed (p5.L86-88)",
+  "trap": "a share of the theoretical capacity",
+  "seconds": 17.6
+}

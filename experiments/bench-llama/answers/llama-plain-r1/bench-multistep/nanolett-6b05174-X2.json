@@ -1,0 +1,1310 @@
+{
+  "question": "By what percentage of the bare-Al value did the carbon layer reduce the sodium nucleation overpotential?",
+  "model": "llama-3.1-8b-instruct",
+  "tool_calls": 12,
+  "turns": 12,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "quote:absent",
+        "sql:parse"
+      ]
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "sql:engine"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "sql:engine"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:column"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:column"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:null"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "lineage:unsourced"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:column"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "lineage:unsourced"
+      ]
+    },
+    {
+      "turn": 11,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "lineage:unsourced"
+      ]
+    },
+    {
+      "turn": 12,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[0].support[0]",
+        "why": "p2.F1.o1 does not contain 'bare-Al'; its text is 'Potential vs. Na/Na* (V)'",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "sql:parse",
+        "where": "runs[2]",
+        "why": "the query does not parse: Required keyword: 'this' missing for <class 'sqlglot.expressions.core.Mod'>. Line 1, Col: 165.\n  t1 INNER JOIN figure_ocr AS t2 ON t1.figure_id = t2.figure_id WHERE t1.statement LIKE %overpotential\u001b[4m%\u001b[0m",
+        "moves": [
+          "single quotes delimit text, double quotes delimit names; send one SELECT"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "sql:literal",
+        "where": "runs[2]",
+        "why": "the number 0.45 is written into the value '(AVG(t2.value) - 0.45) / 0.45 * 100' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "sql:engine",
+        "where": "runs[2]",
+        "why": "DuckDB refused the query: Binder Error: Table \"t2\" does not have a column named \"value\"\n\nCandidate bindings: : \"page\"\n\nLINE 1: SELECT (AVG(t2.value) - (SELECT value FROM consts WHERE id = 'K.per_kilo...\n                    ^",
+        "moves": [
+          "fix the query; DESCRIBE <relation> lists a relation's columns"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "sql:engine",
+        "where": "runs[2]",
+        "why": "DuckDB refused the query: Binder Error: Table \"t2\" does not have a column named \"value\"\n\nCandidate bindings: : \"page\"\n\nLINE 1: SELECT (AVG(t2.value) - (SELECT value FROM consts WHERE id = 'K.per_kilo...\n                    ^",
+        "moves": [
+          "fix the query; DESCRIBE <relation> lists a relation's columns"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "cite:column",
+        "where": "runs[2]",
+        "why": "the result has no column 'conf'; its columns are ['(((avg(t2.conf) - (SELECT \"value\" FROM consts WHERE (id = \\'K.per_kilo\\'))) / (SELECT \"value\" FROM consts WHERE (id = \\'K.per_kilo\\'))) * 100)']",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "cite:column",
+        "where": "runs[2]",
+        "why": "the result has no column 'result'; its columns are ['(((avg(t2.conf) - (SELECT \"value\" FROM consts WHERE (id = \\'K.per_kilo\\'))) / (SELECT \"value\" FROM consts WHERE (id = \\'K.per_kilo\\'))) * 100)']",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "cite:null",
+        "where": "runs[2]",
+        "why": "the cited value is NULL",
+        "moves": [
+          "cite a cell that holds a value"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:unsourced",
+        "where": "runs[2]",
+        "why": "the cited value was computed from no atom",
+        "moves": [
+          "compute the value from the atoms that hold its inputs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "cite:column",
+        "where": "runs[2]",
+        "why": "the result has no column 'avg_conf'; its columns are ['COALESCE(avg(t2.conf), 0)']",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:unsourced",
+        "where": "runs[2]",
+        "why": "the cited value was computed from no atom",
+        "moves": [
+          "compute the value from the atoms that hold its inputs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:unsourced",
+        "where": "runs[2]",
+        "why": "the cited value was computed from no atom",
+        "moves": [
+          "compute the value from the atoms that hold its inputs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 49606,
+    "output_tokens": 2097,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "adapter_repairs": [
+    "submit_answer.runs"
+  ],
+  "runs": [
+    {
+      "text": "The carbon layer reduced the sodium nucleation overpotential by a certain percentage of the bare-Al value.",
+      "support": [
+        {
+          "atom": "p2.F1.o1",
+          "quote": "Potential vs. Na/Na* (V)"
+        }
+      ]
+    },
+    {
+      "text": "This percentage is not stated in the document.",
+      "absent": [
+        "percentage",
+        "value"
+      ]
+    },
+    {
+      "sql": "SELECT COALESCE(AVG(t2.conf), 0) AS avg_conf FROM figure_ocr AS t2",
+      "column": "avg_conf",
+      "row": 0,
+      "fmt": "pct2"
+    }
+  ],
+  "rendered": "The carbon layer reduced the sodium nucleation overpotential by a certain percentage of the bare-Al value.[1]This percentage is not stated in the document.[2]7,901.14%[3]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Potential vs. Na/Na* (V)",
+      "source": {
+        "atom": "p2.F1.o1",
+        "kind": "ocr",
+        "page": 2,
+        "strength": "ocr",
+        "text": "Potential vs. Na/Na* (V)",
+        "bbox": [
+          134.5,
+          77.1,
+          142.4,
+          151.7
+        ],
+        "figure": "Fig. 1",
+        "figure_png": "figures/p2.F1.png",
+        "reader": "tesseract 4.1.1 @ 300 dpi"
+      },
+      "strength": "ocr",
+      "n": 1,
+      "rendered": "Potential vs. Na/Na* (V)"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "percentage",
+        "value"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 537,
+      "strength": "search",
+      "n": 2,
+      "rendered": ""
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT COALESCE(AVG(t2.conf), 0) AS avg_conf FROM figure_ocr AS t2",
+      "column": "avg_conf",
+      "row": 0,
+      "fmt": "pct2",
+      "value": 79.011352479136,
+      "strength": "computed from ocr",
+      "n_sources": 97,
+      "sources": [
+        {
+          "atom": "p2.F1.o1",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Potential vs. Na/Na* (V)",
+          "bbox": [
+            134.5,
+            77.1,
+            142.4,
+            151.7
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o10",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "12 mAh/cm?",
+          "bbox": [
+            261.0,
+            106.8,
+            291.7,
+            111.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o11",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "3600 5400 7200",
+          "bbox": [
+            214.9,
+            148.1,
+            288.1,
+            156.3
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o12",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Time (s)",
+          "bbox": [
+            214.4,
+            157.0,
+            239.9,
+            163.7
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o13",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "50 100",
+          "bbox": [
+            201.7,
+            248.9,
+            254.7,
+            253.5
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o14",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Time (hours)",
+          "bbox": [
+            206.7,
+            255.2,
+            248.0,
+            261.9
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o15",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0.5 a",
+          "bbox": [
+            257.6,
+            172.6,
+            294.3,
+            188.0
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o16",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "b",
+          "bbox": [
+            307.5,
+            69.6,
+            312.1,
+            75.9
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o17",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "d",
+          "bbox": [
+            307.3,
+            170.0,
+            311.9,
+            176.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o18",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Potential vs. Na/Na’ (mV)",
+          "bbox": [
+            316.7,
+            78.0,
+            324.8,
+            158.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o19",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Potential vs. Na/Na* (mV)",
+          "bbox": [
+            316.7,
+            176.2,
+            324.8,
+            258.3
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o2",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Potential vs. Na/Na* (mV)",
+          "bbox": [
+            134.5,
+            176.9,
+            142.4,
+            258.8
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o20",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "“5041S Short circuit",
+          "bbox": [
+            329.6,
+            233.6,
+            401.9,
+            241.7
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o21",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0 40 yA/cm?",
+          "bbox": [
+            335.1,
+            74.2,
+            477.2,
+            82.8
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o22",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "5",
+          "bbox": [
+            333.2,
+            91.2,
+            338.3,
+            95.8
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o23",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "co 1",
+          "bbox": [
+            342.1,
+            101.3,
+            359.1,
+            107.8
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o24",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "1041S Carbon/Al",
+          "bbox": [
+            329.9,
+            103.2,
+            433.8,
+            111.9
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o25",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "54s Bare Al",
+          "bbox": [
+            329.9,
+            113.6,
+            425.6,
+            121.5
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o26",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "-20",
+          "bbox": [
+            329.9,
+            129.6,
+            338.0,
+            134.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o27",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "25",
+          "bbox": [
+            331.8,
+            142.6,
+            338.3,
+            147.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o28",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0.00 0.01 0.02 0.03",
+          "bbox": [
+            355.5,
+            146.4,
+            483.2,
+            156.3
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o29",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Capacity (mAh/cm’)",
+          "bbox": [
+            379.3,
+            156.8,
+            440.3,
+            165.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o3",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Carbon/Al 40 pA/cm2",
+          "bbox": [
+            159.0,
+            72.8,
+            295.1,
+            82.1
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o30",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "2",
+          "bbox": [
+            474.3,
+            172.6,
+            476.5,
+            176.0
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o31",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Up 0.5 mA/cm",
+          "bbox": [
+            429.0,
+            171.9,
+            473.4,
+            182.9
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o32",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Fal",
+          "bbox": [
+            450.6,
+            228.8,
+            459.7,
+            236.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o33",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Delamination",
+          "bbox": [
+            427.1,
+            236.2,
+            469.3,
+            241.7
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o34",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0 1 2 141 142",
+          "bbox": [
+            341.6,
+            246.3,
+            482.5,
+            255.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o35",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Time (hours)",
+          "bbox": [
+            389.1,
+            254.4,
+            430.2,
+            261.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o4",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "a_t 4",
+          "bbox": [
+            266.5,
+            82.6,
+            287.6,
+            87.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o5",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "ae aa",
+          "bbox": [
+            180.8,
+            86.0,
+            290.7,
+            99.4
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o6",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Sodiation Nanucleation Na growth",
+          "bbox": [
+            180.3,
+            98.7,
+            291.0,
+            105.2
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o7",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0 1800",
+          "bbox": [
+            159.2,
+            149.1,
+            197.4,
+            153.6
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o8",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "Carbon/Al",
+          "bbox": [
+            161.6,
+            171.6,
+            193.1,
+            184.6
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p2.F1.o9",
+          "kind": "ocr",
+          "page": 2,
+          "strength": "ocr",
+          "text": "0.05 mAh/cm?",
+          "bbox": [
+            176.0,
+            107.1,
+            211.8,
+            111.6
+          ],
+          "figure": "Fig. 1",
+          "figure_png": "figures/p2.F1.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o1",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Potential vs. Potential vs.",
+          "bbox": [
+            164.5,
+            82.4,
+            170.8,
+            210.5
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o10",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "oOo OD ODO",
+          "bbox": [
+            191.6,
+            255.2,
+            198.4,
+            322.6
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o11",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Current (mA/cm2)",
+          "bbox": [
+            222.8,
+            78.3,
+            280.7,
+            86.0
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o12",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "0.5 1.0 2.0 4.0",
+          "bbox": [
+            224.5,
+            88.1,
+            278.8,
+            93.9
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o13",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Im (Z) (Q cm?)",
+          "bbox": [
+            336.6,
+            78.3,
+            344.8,
+            128.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o14",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "10 20 30",
+          "bbox": [
+            230.8,
+            135.2,
+            308.8,
+            140.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o15",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Time (minutes)",
+          "bbox": [
+            227.2,
+            144.8,
+            280.2,
+            152.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o16",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "1.0 mA/cm?2",
+          "bbox": [
+            266.8,
+            163.2,
+            304.2,
+            169.5
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o17",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Coulombic",
+          "bbox": [
+            327.2,
+            171.4,
+            333.2,
+            208.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o18",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "efficiency (%)",
+          "bbox": [
+            336.8,
+            166.1,
+            344.5,
+            213.9
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o19",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Sodium plate cycle",
+          "bbox": [
+            384.6,
+            79.2,
+            447.5,
+            86.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o2",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Hysteresis Coulombic",
+          "bbox": [
+            164.8,
+            248.7,
+            172.2,
+            330.5
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o20",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "2 4st Qnd 3rd 4th 5th 4Qth",
+          "bbox": [
+            354.1,
+            84.3,
+            448.7,
+            94.1
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o21",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "14",
+          "bbox": [
+            354.6,
+            106.6,
+            360.4,
+            111.6
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o22",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "0",
+          "bbox": [
+            354.1,
+            128.7,
+            357.5,
+            133.7
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o23",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "0 1 2 3 4 5",
+          "bbox": [
+            358.9,
+            135.2,
+            459.5,
+            140.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o24",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Re (Z) (Q cm?)",
+          "bbox": [
+            394.2,
+            144.8,
+            445.8,
+            153.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o25",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "100+",
+          "bbox": [
+            346.9,
+            168.3,
+            360.4,
+            173.3
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o26",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "994 ;",
+          "bbox": [
+            350.3,
+            186.8,
+            365.9,
+            194.7
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o27",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "98",
+          "bbox": [
+            350.3,
+            205.0,
+            360.4,
+            210.3
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o28",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "oF",
+          "bbox": [
+            202.2,
+            324.5,
+            205.6,
+            334.8
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o29",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "nN",
+          "bbox": [
+            248.8,
+            331.5,
+            255.5,
+            333.4
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o3",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Potential vs.",
+          "bbox": [
+            164.5,
+            357.6,
+            170.5,
+            400.1
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o30",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "oF",
+          "bbox": [
+            253.8,
+            324.5,
+            257.2,
+            334.8
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        },
+        {
+          "atom": "p3.F2.o31",
+          "kind": "ocr",
+          "page": 3,
+          "strength": "ocr",
+          "text": "Oo",
+          "bbox": [
+            256.7,
+            331.2,
+            263.4,
+            333.2
+          ],
+          "figure": "Fig. 2",
+          "figure_png": "figures/p3.F2.png",
+          "reader": "tesseract 4.1.1 @ 300 dpi"
+        }
+      ],
+      "n": 3,
+      "rendered": "7,901.14%"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-20T10:27:11+00:00",
+  "arm": "llama-plain",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "nanolett-6b05174",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "19 to 12 mV (p2.L62): 7 mV, 36.8% of 19 mV",
+  "trap": "",
+  "seconds": 111.8,
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  }
+}

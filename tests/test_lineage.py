@@ -102,6 +102,8 @@ def test_explore_looks_but_never_writes(con):
     out = lineage.explore(con, "SELECT id, text FROM cells WHERE col_no = 2 ORDER BY row_no")
     assert "p1.T1.r2c2 | 85.2" in out
     assert "id VARCHAR" in lineage.explore(con, "DESCRIBE cells")
+    # DuckDB's own DESCRIBE reads `DESCRIBE tables` as SHOW TABLES (one column of names): Llama hit it
+    assert "caption VARCHAR" in lineage.explore(con, "DESCRIBE tables")
     for bad in ("DELETE FROM lines", "SELECT * FROM read_text('/etc/hosts')", "DESCRIBE seals"):
         with pytest.raises(Refusal):
             lineage.explore(con, bad)

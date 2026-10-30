@@ -1,0 +1,169 @@
+{
+  "question": "What practical capacity and operating voltage does LiFePO4 deliver?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%LiFePO%' OR text ILIKE '%LFP%' OR text ILIKE '%iron phosphate%' OR text ILIKE '%olivine%' ORDER BY page, id",
+      "rows": 18
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=9 AND line_no BETWEEN 20 AND 50 ORDER BY line_no",
+      "rows": 31
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['170', '3.4'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'170' is written exactly so in the document (e.g. p9.L32): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"170\", \"atom\": \"p9.L32\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1145,
+    "cache_read_input_tokens": 16934,
+    "cache_creation_input_tokens": 7565
+  },
+  "runs": [
+    {
+      "text": "According to the document, LiFePO4 (LFP), the most famous olivine cathode, delivers a practical capacity of "
+    },
+    {
+      "quote": "170",
+      "atom": "p9.L32"
+    },
+    {
+      "text": " mAh g⁻¹ through the Fe2+/Fe3+ redox couple, at an operating voltage of "
+    },
+    {
+      "quote": "3.4V",
+      "atom": "p9.L33"
+    },
+    {
+      "text": " versus Li/Li+. The text also notes that LFP's inherently low electronic conductivity is offset by carbon coatings applied to the cathodes.",
+      "support": [
+        {
+          "atom": "p9.L35",
+          "quote": "onto LFP cathodes to offset their inherently low electronic"
+        }
+      ]
+    }
+  ],
+  "rendered": "According to the document, LiFePO4 (LFP), the most famous olivine cathode, delivers a practical capacity of 170[1] mAh g⁻¹ through the Fe2+/Fe3+ redox couple, at an operating voltage of 3.4V[2] versus Li/Li+. The text also notes that LFP's inherently low electronic conductivity is offset by carbon coatings applied to the cathodes.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "170",
+      "source": {
+        "atom": "p9.L32",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "delivers a practical capacity of 170 mAh g^− 1 through the Fe^2 +/",
+        "bbox": [
+          51.0,
+          366.8,
+          292.0,
+          376.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "170"
+    },
+    {
+      "kind": "quote",
+      "quote": "3.4V",
+      "source": {
+        "atom": "p9.L33",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "Fe^3 + redox couple at an operating voltage of 3.4V versus Li/",
+        "bbox": [
+          51.0,
+          377.8,
+          291.9,
+          387.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "3.4V"
+    },
+    {
+      "kind": "support",
+      "quote": "onto LFP cathodes to offset their inherently low electronic",
+      "source": {
+        "atom": "p9.L35",
+        "kind": "line",
+        "page": 9,
+        "strength": "verbatim",
+        "text": "onto LFP cathodes to offset their inherently low electronic",
+        "bbox": [
+          51.0,
+          400.9,
+          292.0,
+          409.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "onto LFP cathodes to offset their inherently low electronic"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-19T09:09:54+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "aenm-2022",
+  "probe": "C2",
+  "cat": "C",
+  "expect": "170 mAh/g at 3.4 V vs Li/Li+ (p9.L31-33)",
+  "trap": "LMO's 140 mAh/g",
+  "seconds": 10.6
+}

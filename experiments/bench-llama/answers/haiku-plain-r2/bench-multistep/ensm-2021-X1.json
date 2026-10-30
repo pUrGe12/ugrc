@@ -1,0 +1,709 @@
+{
+  "question": "Using the review's equation for diffusion time and Table 5's diffusivity for ZrO2, how long would a lithium ion take to cross a 10 nm ZrO2 coating?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%diffusion time%' OR text ILIKE '%t = %' OR text ILIKE '%ZrO%' AND kind IN ('line') ORDER BY page, id LIMIT 80",
+      "rows": 43
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (13,14) AND (text ILIKE '%ZrO%' OR text ILIKE '%diffus%' OR text ILIKE '%time%' OR text ILIKE '%thickness%' OR text ILIKE '%=%') ORDER BY page, line_no",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page = 12 ORDER BY line_no",
+      "rows": 93
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE kind IN ('line','cell') AND page=14 AND (text ILIKE '%ZrO%' OR text ILIKE '%Zr%' OR text ILIKE '%cm%' ) ORDER BY id",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p14.T5' AND row_no BETWEEN 1 AND 22 ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT * FROM consts",
+      "rows": 11
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH p AS (\n  SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m,\n         CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e\n  FROM cells WHERE id='p14.T5.r13c2'\n), k AS (\n  SELECT (SELECT value FROM consts WHERE id='K.per_mega') AS mega,\n         (SELECT value FROM consts WHERE id='K.s_per_min') AS spm,\n         (SELECT value FROM consts WHERE id='K.min_per_h') AS mph,\n         (SELECT value FROM consts WHERE id='K.h_per_day') AS hpd\n), s AS (\n  SELECT (mega*mega*0+1)/(mega*mega) AS l2_cm2_recip, m, e, mega, spm, mph, hpd,\n         POWER(mega, e/6.0) / (mega*mega) / m AS t_s\n  FROM p, k\n)\nSELECT t_s AS seconds, t_s/(spm*mph) AS hours, t_s/(spm*mph*hpd) AS days FROM s",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number",
+        "text:number",
+        "sql:literal",
+        "sql:literal",
+        "sql:literal",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 12,
+      "rules": [
+        "lineage:no-source",
+        "lineage:no-source",
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 12,
+      "pairings": [
+        {
+          "run": 2,
+          "of": "ZrO2",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['5'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['5', '300'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "'300' is written exactly so in the document (e.g. p13.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"300\", \"atom\": \"p13.L5\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[4]",
+        "why": "the number 6.0 is written into the value 'POWER(mega, e / 6.0) / (mega * mega) / m AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[6]",
+        "why": "the number 6.0 is written into the value 'POWER(mega, e / 6.0) / (mega * mega) / m AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[8]",
+        "why": "the number 6.0 is written into the value 'POWER(mega, e / 6.0) / (mega * mega) / m AS t_s' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[9]",
+        "why": "your own words contain number(s) ['300', '5;'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'300' is written exactly so in the document (e.g. p13.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"300\", \"atom\": \"p13.L5\"} — never shorten it",
+          "'5' is written exactly so in the document (e.g. p2.L107): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5\", \"atom\": \"p2.L107\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[6]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[8]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[10]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 2
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 11233,
+    "cache_read_input_tokens": 87914,
+    "cache_creation_input_tokens": 24287
+  },
+  "runs": [
+    {
+      "text": "The review gives the diffusion time as t = l^2 / D, where D is the lithium-ion diffusivity taken from the table of diffusivities and l is the diffusion length. ",
+      "support": [
+        {
+          "atom": "p12.L38",
+          "quote": "the simple equation"
+        }
+      ]
+    },
+    {
+      "text": "The ZrO2 row of that table gives a lithium-ion diffusivity of "
+    },
+    {
+      "quote": "1.7 ×10^− 18",
+      "atom": "p14.T5.r13c2",
+      "of": "ZrO2"
+    },
+    {
+      "text": " cm^2/s at "
+    },
+    {
+      "quote": "300",
+      "atom": "p13.L5"
+    },
+    {
+      "text": " K. With the thickness converted from nanometres to centimetres to match the units of D, the diffusion time is about "
+    },
+    {
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s AS seconds FROM s",
+      "column": "seconds",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " seconds, which is about "
+    },
+    {
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s/(spm*mph) AS hours FROM s",
+      "column": "hours",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " hours, or about "
+    },
+    {
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s/(spm*mph*hpd) AS days FROM s",
+      "column": "days",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " days. This is a simple estimate from the review's equation, using the ZrO2 value as printed in the table; the review itself notes that the lithium-ion diffusivity of ZrO2 is extremely low."
+    }
+  ],
+  "rendered": "The review gives the diffusion time as t = l^2 / D, where D is the lithium-ion diffusivity taken from the table of diffusivities and l is the diffusion length.[1] The ZrO2 row of that table gives a lithium-ion diffusivity of 1.7 ×10^− 18[2] cm^2/s at 300[3] K. With the thickness converted from nanometres to centimetres to match the units of D, the diffusion time is about 588,235[4] seconds, which is about 163[5] hours, or about 6.8[6] days. This is a simple estimate from the review's equation, using the ZrO2 value as printed in the table; the review itself notes that the lithium-ion diffusivity of ZrO2 is extremely low.",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "the simple equation",
+      "source": {
+        "atom": "p12.L38",
+        "kind": "line",
+        "page": 12,
+        "strength": "verbatim",
+        "text": "ing the simple equation, 𝑡 = 𝑙^2",
+        "bbox": [
+          37.9,
+          598.5,
+          144.5,
+          610.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "the simple equation"
+    },
+    {
+      "kind": "quote",
+      "quote": "1.7 ×10^− 18",
+      "source": {
+        "atom": "p14.T5.r13c2",
+        "kind": "cell",
+        "page": 14,
+        "strength": "verbatim",
+        "text": "1.7 ×10^− 18",
+        "bbox": [
+          125.3,
+          199.4,
+          155.8,
+          206.6
+        ],
+        "table": "Table 5",
+        "row": 13,
+        "col": 2,
+        "column_header": "Li ion diffusivity (cm^2/s)"
+      },
+      "strength": "verbatim",
+      "of": "ZrO2",
+      "n": 2,
+      "rendered": "1.7 ×10^− 18"
+    },
+    {
+      "kind": "quote",
+      "quote": "300",
+      "source": {
+        "atom": "p13.L5",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "Fig. 10. (a-c) Compares the diffusion time of different coating materials with respect to coating thickness at 300 K (a) different materials, (b) aluminum-based",
+        "bbox": [
+          37.9,
+          639.6,
+          558.6,
+          646.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "300"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s AS seconds FROM s",
+      "column": "seconds",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 588235.2941176471,
+      "strength": "computed from verbatim",
+      "n_sources": 12,
+      "sources": [
+        {
+          "atom": "K.avogadro",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "N_A (exact, 2019 SI)",
+          "value": 6.02214076e+23
+        },
+        {
+          "atom": "K.boltzmann",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "k (exact, 2019 SI)",
+          "value": 1.380649e-23
+        },
+        {
+          "atom": "K.faraday",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "F = N_A·e (exact, 2019 SI)",
+          "value": 96485.33212331001
+        },
+        {
+          "atom": "K.gas_constant",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "R = N_A·k (exact, 2019 SI)",
+          "value": 8.31446261815324
+        },
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.kelvin_offset",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "T[K] = T[°C] + 273.15 (SI definition)",
+          "value": 273.15
+        },
+        {
+          "atom": "K.kpa_per_atm",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 atm = 101.325 kPa (definition)",
+          "value": 101.325
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        }
+      ],
+      "n": 4,
+      "rendered": "588,235"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s/(spm*mph) AS hours FROM s",
+      "column": "hours",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 163.39869281045753,
+      "strength": "computed from verbatim",
+      "n_sources": 12,
+      "sources": [
+        {
+          "atom": "K.avogadro",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "N_A (exact, 2019 SI)",
+          "value": 6.02214076e+23
+        },
+        {
+          "atom": "K.boltzmann",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "k (exact, 2019 SI)",
+          "value": 1.380649e-23
+        },
+        {
+          "atom": "K.faraday",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "F = N_A·e (exact, 2019 SI)",
+          "value": 96485.33212331001
+        },
+        {
+          "atom": "K.gas_constant",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "R = N_A·k (exact, 2019 SI)",
+          "value": 8.31446261815324
+        },
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.kelvin_offset",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "T[K] = T[°C] + 273.15 (SI definition)",
+          "value": 273.15
+        },
+        {
+          "atom": "K.kpa_per_atm",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 atm = 101.325 kPa (definition)",
+          "value": 101.325
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        }
+      ],
+      "n": 5,
+      "rendered": "163"
+    },
+    {
+      "kind": "computed",
+      "sql": "WITH p AS (SELECT CAST(regexp_extract(text,'^([0-9.]+)',1) AS DOUBLE) AS m, CAST(regexp_extract(text,'10[^0-9]*([0-9]+)',1) AS DOUBLE) AS e FROM cells WHERE id='p14.T5.r13c2'), k AS (SELECT MAX(CASE WHEN id='K.per_mega' THEN value END) AS mega, MAX(CASE WHEN id='K.s_per_min' THEN value END) AS spm, MAX(CASE WHEN id='K.min_per_h' THEN value END) AS mph, MAX(CASE WHEN id='K.h_per_day' THEN value END) AS hpd FROM consts), s AS (SELECT m, e, mega, spm, mph, hpd, mega/m AS t_s FROM p, k WHERE e = 18) SELECT t_s/(spm*mph*hpd) AS days FROM s",
+      "column": "days",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 6.8082788671023975,
+      "strength": "computed from verbatim",
+      "n_sources": 12,
+      "sources": [
+        {
+          "atom": "K.avogadro",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "N_A (exact, 2019 SI)",
+          "value": 6.02214076e+23
+        },
+        {
+          "atom": "K.boltzmann",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "k (exact, 2019 SI)",
+          "value": 1.380649e-23
+        },
+        {
+          "atom": "K.faraday",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "F = N_A·e (exact, 2019 SI)",
+          "value": 96485.33212331001
+        },
+        {
+          "atom": "K.gas_constant",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "R = N_A·k (exact, 2019 SI)",
+          "value": 8.31446261815324
+        },
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.kelvin_offset",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "T[K] = T[°C] + 273.15 (SI definition)",
+          "value": 273.15
+        },
+        {
+          "atom": "K.kpa_per_atm",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 atm = 101.325 kPa (definition)",
+          "value": 101.325
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p14.T5.r13c2",
+          "kind": "cell",
+          "page": 14,
+          "strength": "verbatim",
+          "text": "1.7 ×10^− 18",
+          "bbox": [
+            125.3,
+            199.4,
+            155.8,
+            206.6
+          ],
+          "table": "Table 5",
+          "row": 13,
+          "col": 2,
+          "column_header": "Li ion diffusivity (cm^2/s)"
+        }
+      ],
+      "n": 6,
+      "rendered": "6.8"
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:34:44+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "ensm-2021",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "t = l^2/D (p12.L38-39); l = 10 nm = 1e-6 cm, D = 1.7 x 10^-18 cm^2/s: t = 1e-12/1.7e-18 = 5.9 x 10^5 s (about 6.8 days)",
+  "trap": "",
+  "seconds": 51.4
+}

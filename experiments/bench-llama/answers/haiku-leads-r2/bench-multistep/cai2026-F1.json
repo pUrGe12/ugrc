@@ -1,0 +1,372 @@
+{
+  "question": "Why was the NBF-006 trial in Table 1 terminated, and which company ran it?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 13,
+  "turns": 11,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c.row_no, c.col_no, c.text FROM cells c WHERE c.table_id='p2.T1' AND c.row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text ILIKE '%NBF%') ORDER BY c.row_no, c.col_no",
+      "rows": 7
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%NBF%' OR text ILIKE '%terminat%' OR text ILIKE '%discontinu%' OR text ILIKE '%withdraw%'",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE (page=3 AND id BETWEEN 'p3.L44' AND 'p3.L66') OR id IN ('p3.L2','p3.L3','p3.L4','p3.L5') ORDER BY page, line_no",
+      "rows": 28
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE text ILIKE '%nitto%' OR text ILIKE '%NBF%' OR text ILIKE '%NCT03819387%' OR text ILIKE '%GSTP%'",
+      "rows": 6
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 1 AND 60 AND (col_no=6 OR col_no=1) ORDER BY row_no, col_no",
+      "rows": 47
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 8 AND 16 ORDER BY row_no, col_no",
+      "rows": 32
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, x0, top FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 11 AND 17 ORDER BY row_no, col_no",
+      "rows": 28
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 11,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[3]",
+        "why": "the words before citation [2] end in 'us: the status cell reads' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'us: the status cell reads[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[5]",
+        "why": "the words before citation [3] end in 'any listed for NBF-006 is' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'any listed for NBF-006 is[3]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[3]",
+        "why": "'Phase 1' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r13c6 'Completed' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Completed\", \"atom\": \"p2.T1.r12c6\"}",
+          "or show p2.T1.r13c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p3.L2:34",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p3.L47:0",
+      "p14.L51:59",
+      "p15.L69:10",
+      "p12.L3:23",
+      "p12.L48:8",
+      "p16.L1:0",
+      "p17.L21:0",
+      "p18.L121:51",
+      "p5.L53:56"
+    ],
+    "measures": [
+      "p14.L51:59#41",
+      "p14.L51:59#121",
+      "p15.L69:10#216"
+    ],
+    "matched": 41
+  },
+  "usage": {
+    "input_tokens": 24,
+    "output_tokens": 4812,
+    "cache_read_input_tokens": 107904,
+    "cache_creation_input_tokens": 15895
+  },
+  "runs": [
+    {
+      "text": "The document does not give a reason for terminating NBF-006, and "
+    },
+    {
+      "table": "p2.T1"
+    },
+    {
+      "text": " does not list it as terminated. Its status cell reads "
+    },
+    {
+      "quote": "Phase 1 Completed",
+      "atom": "p2.T1.r12c6"
+    },
+    {
+      "text": ", so the table records it as completed in that early phase. The company listed for NBF-006 is "
+    },
+    {
+      "quote": "Nitto BioPharma",
+      "atom": "p2.T1.r12c7"
+    },
+    {
+      "text": ". The only termination reasons the text gives are for a different drug, DCR-MYC: "
+    },
+    {
+      "text": "its trials were stopped for efficacy and toxicity issues",
+      "support": [
+        {
+          "atom": "p3.L48",
+          "quote": "efficacy and toxicity issues"
+        }
+      ]
+    },
+    {
+      "text": ". The document does not link NBF-006 to that termination."
+    }
+  ],
+  "rendered": "The document does not give a reason for terminating NBF-006, and Table 1[1] does not list it as terminated. Its status cell reads Phase 1 Completed[2], so the table records it as completed in that early phase. The company listed for NBF-006 is Nitto BioPharma[3]. The only termination reasons the text gives are for a different drug, DCR-MYC: its trials were stopped for efficacy and toxicity issues[4]. The document does not link NBF-006 to that termination.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p2.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 2,
+        "caption": "Table 1 Clinical trials of siRNA-based anticancer drugs.",
+        "bbox": [
+          37.6,
+          354.6,
+          557.7,
+          740.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Completed",
+      "source": {
+        "atom": "p2.T1.r12c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Completed",
+        "bbox": [
+          357.7,
+          459.0,
+          388.1,
+          474.0
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r12c6",
+          "p2.T1.r13c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Phase 1 Completed"
+    },
+    {
+      "kind": "quote",
+      "quote": "Nitto BioPharma",
+      "source": {
+        "atom": "p2.T1.r12c7",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Nitto BioPharma",
+        "bbox": [
+          418.7,
+          459.0,
+          466.0,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 7,
+        "column_header": "Company"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Nitto BioPharma"
+    },
+    {
+      "kind": "support",
+      "quote": "efficacy and toxicity issues",
+      "source": {
+        "atom": "p3.L48",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "efficacy and toxicity issues. For example, DCR-MYC, the first MYC-",
+        "bbox": [
+          37.6,
+          548.0,
+          288.6,
+          556.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "efficacy and toxicity issues"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:35:18+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "False premise: NBF-006's trial is Phase 1, Completed (a wrapped cell: 'Phase 1' / 'Completed'), run by Nitto BioPharma; the terminated trial is DCR-MYC (Dicerna Pharmaceuticals)",
+  "trap": "",
+  "seconds": 27.3
+}

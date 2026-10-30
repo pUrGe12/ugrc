@@ -1,0 +1,392 @@
+{
+  "question": "By how many billion dollars is the Li-ion battery recycling market projected to grow between 2025 and 2030, and at what annual growth rate?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, about, quantity FROM measures WHERE sentence LIKE '%LIB recycling market to grow%' OR text IN ('12.2','18.1','8.2%')",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role FROM measures WHERE page = 2 AND (text LIKE '%12.2%' OR text LIKE '%18.1%' OR text LIKE '%billion%' OR id LIKE 'p2.L56%')",
+      "rows": 4
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 2 AND id LIKE 'p2.L56%' OR (page=2 AND text LIKE '%billion%')",
+      "rows": 2
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH t AS (SELECT string_agg(text, ' ' ORDER BY line_no) AS s FROM lines WHERE id IN ('p2.L56','p2.L57','p2.L58','p2.L59')) SELECT CAST(regexp_extract(s, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE) - 0 AS base, CAST(regexp_extract(s, 'to \\$([0-9.]+) billion by 2030', 1) AS DOUBLE) AS target, CAST(regexp_extract(s, 'to \\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(s, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE) AS diff, s FROM t",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "LIB recycling market",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.96
+        },
+        {
+          "run": 5,
+          "of": "LIB recycling market",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.67
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2025', '2030.', 'billion'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2025' is written exactly so in the document (e.g. p2.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2025\", \"atom\": \"p2.L6\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['2025', '2030.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2025' is written exactly so in the document (e.g. p2.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2025\", \"atom\": \"p2.L6\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['billion'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "$12.2 billion in 2025 to $18.1 billion by 2030",
+      "atom": "p2.L58",
+      "of": "LIB recycling market",
+      "sentence": "p2.L56:50",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.96,
+      "clause_about": [],
+      "request": {
+        "state": "A recent market research report projects the LIB recycling market to grow from [[$12.2 billion in 2025 to $18.1 billion by 2030]], at a compound annual growth rate of 8.2% from 2025 to 2030 [10].",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[$12.2 billion in 2025 to $18.1 billion by 2030]] a value of “LIB recycling market”?",
+            "criteria": {
+              "true": "the passage gives [[$12.2 billion in 2025 to $18.1 billion by 2030]] for “LIB recycling market”, or for something “LIB recycling market” has, makes or contains",
+              "false": "[[$12.2 billion in 2025 to $18.1 billion by 2030]] is given for something else, or the passage does not connect it to “LIB recycling market”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.96
+          }
+        },
+        "usage": {
+          "input_tokens": 481,
+          "output_tokens": 21
+        }
+      },
+      "run": 3
+    },
+    {
+      "quote": "8.2%",
+      "atom": "p2.L59",
+      "of": "LIB recycling market",
+      "sentence": "p2.L56:50",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.67,
+      "clause_about": [],
+      "request": {
+        "state": "A recent market research report projects the LIB recycling market to grow from $12.2 billion in 2025 to $18.1 billion by 2030, at a compound annual growth rate of [[8.2%]] from 2025 to 2030 [10].",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[8.2%]] a value of “LIB recycling market”?",
+            "criteria": {
+              "true": "the passage gives [[8.2%]] for “LIB recycling market”, or for something “LIB recycling market” has, makes or contains",
+              "false": "[[8.2%]] is given for something else, or the passage does not connect it to “LIB recycling market”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.67
+          }
+        },
+        "usage": {
+          "input_tokens": 418,
+          "output_tokens": 21
+        }
+      },
+      "run": 5
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "839bf151642fcfab90df674c235b2241068a2df3c3d4f8d8935148d5b0190a5d",
+  "leads": {
+    "sentences": [
+      "p2.L56:50",
+      "p2.L20:21",
+      "p2.L5:7",
+      "p2.L2:0",
+      "p1.L43:0"
+    ],
+    "measures": [
+      "p2.L56:50#96",
+      "p2.L56:50#121",
+      "p2.L56:50#163",
+      "p2.L56:50#173",
+      "p2.L5:7#98",
+      "p2.L2:0#3",
+      "p2.L2:0#9",
+      "p2.L2:0#160",
+      "p2.L2:0#183",
+      "p1.L43:0#151"
+    ],
+    "matched": 172
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3628,
+    "cache_read_input_tokens": 30819,
+    "cache_creation_input_tokens": 9047
+  },
+  "runs": [
+    {
+      "text": "The LIB recycling market is projected to grow by about "
+    },
+    {
+      "sql": "WITH t AS (SELECT string_agg(text, ' ' ORDER BY line_no) AS s FROM lines WHERE id IN ('p2.L56','p2.L57','p2.L58','p2.L59')) SELECT CAST(regexp_extract(s, 'to \\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(s, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE) AS diff FROM t",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " dollar units (in the document's dollar-denominated market figures) over that period. The source gives the market as "
+    },
+    {
+      "quote": "$12.2 billion in 2025 to $18.1 billion by 2030",
+      "atom": "p2.L58",
+      "of": "LIB recycling market"
+    },
+    {
+      "text": ", at a compound annual growth rate of "
+    },
+    {
+      "measure": "p2.L56:50#163",
+      "of": "LIB recycling market"
+    },
+    {
+      "text": " over the same period."
+    }
+  ],
+  "rendered": "The LIB recycling market is projected to grow by about 5.9[1] dollar units (in the document's dollar-denominated market figures) over that period. The source gives the market as $12.2 billion in 2025 to $18.1 billion by 2030[2], at a compound annual growth rate of 8.2%[3] over the same period.",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "WITH t AS (SELECT string_agg(text, ' ' ORDER BY line_no) AS s FROM lines WHERE id IN ('p2.L56','p2.L57','p2.L58','p2.L59')) SELECT CAST(regexp_extract(s, 'to \\$([0-9.]+) billion by 2030', 1) AS DOUBLE) - CAST(regexp_extract(s, '\\$([0-9.]+) billion in 2025', 1) AS DOUBLE) AS diff FROM t",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 5.900000000000002,
+      "strength": "computed from verbatim",
+      "n_sources": 4,
+      "sources": [
+        {
+          "atom": "p2.L56",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "potentially reduce the cost of batteries and EVs. A recent market",
+          "bbox": [
+            317.5,
+            371.6,
+            575.4,
+            380.1
+          ]
+        },
+        {
+          "atom": "p2.L57",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "research report projects the LIB recycling market to grow from",
+          "bbox": [
+            317.5,
+            383.6,
+            575.5,
+            392.1
+          ]
+        },
+        {
+          "atom": "p2.L58",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "$12.2 billion in 2025 to $18.1 billion by 2030, at a compound",
+          "bbox": [
+            317.5,
+            395.5,
+            575.4,
+            404.0
+          ]
+        },
+        {
+          "atom": "p2.L59",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "annual growth rate of 8.2% from 2025 to 2030 [10]. Market",
+          "bbox": [
+            317.5,
+            407.5,
+            575.4,
+            416.0
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "5.9"
+    },
+    {
+      "kind": "quote",
+      "quote": "$12.2 billion in 2025 to $18.1 billion by 2030",
+      "source": {
+        "atom": "p2.L58",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "$12.2 billion in 2025 to $18.1 billion by 2030, at a compound",
+        "bbox": [
+          317.5,
+          395.5,
+          575.4,
+          404.0
+        ]
+      },
+      "strength": "verbatim",
+      "of": "LIB recycling market",
+      "n": 2,
+      "rendered": "$12.2 billion in 2025 to $18.1 billion by 2030"
+    },
+    {
+      "kind": "quote",
+      "quote": "8.2%",
+      "source": {
+        "atom": "p2.L59",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "annual growth rate of 8.2% from 2025 to 2030 [10]. Market",
+        "bbox": [
+          317.5,
+          407.5,
+          575.4,
+          416.0
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p2.L56:50#163",
+      "reading": {
+        "role": "background",
+        "role_p": 0.86,
+        "property": "share",
+        "property_p": 0.54,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "compound annual growth rate"
+        ],
+        "sentence": "p2.L56:50",
+        "read_by": "judge"
+      },
+      "of": "LIB recycling market",
+      "n": 3,
+      "rendered": "8.2%"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:24:27+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "mattod-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "$12.2 billion to $18.1 billion (p2.L58): $5.9 billion; CAGR 8.2%",
+  "trap": "",
+  "seconds": 20.5
+}

@@ -1,0 +1,81 @@
+{
+  "arm": "llama-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "susmat-2020",
+  "probe": "X2",
+  "cat": "X",
+  "error": "RuntimeError: no accepted answer within 20 model turns (1 refused submissions)",
+  "seconds": 370.1,
+  "model": "llama-3.1-8b-instruct",
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  },
+  "served_by": null,
+  "adapter_repairs": [
+    "submit_answer.runs"
+  ],
+  "turns": 20,
+  "tool_calls": 1,
+  "usage": {
+    "input_tokens": 124499,
+    "output_tokens": 6550,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "trace": [
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "sql:parse"
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "sql:parse",
+        "where": "runs[2]",
+        "why": "the query does not parse: Required keyword: 'this' missing for <class 'sqlglot.expressions.core.Mod'>. Line 1, Col: 51.\n  SELECT (SELECT value FROM measures WHERE text = %\u001b[4m::\u001b[0mfloat AND about ILIKE % AND quantity ILIKE %) - (SELECT value FROM measures WHERE text = %::float AN",
+        "moves": [
+          "single quotes delimit text, double quotes delimit names; send one SELECT"
+        ]
+      }
+    ]
+  ],
+  "submitted": [
+    {
+      "runs": [
+        {
+          "text": "The surface fluorine mass ratio fell by",
+          "support": [
+            {
+              "atom": "p5.L16:50",
+              "quote": "12.49%"
+            }
+          ]
+        },
+        {
+          "text": "to",
+          "support": [
+            {
+              "atom": "p5.L16:50",
+              "quote": "0.14%"
+            }
+          ]
+        },
+        {
+          "sql": "SELECT (SELECT value FROM measures WHERE text = %::float AND about ILIKE % AND quantity ILIKE %) - (SELECT value FROM measures WHERE text = %::float AND about ILIKE % AND quantity ILIKE %) * 100 / (SELECT value FROM measures WHERE text = %::float AND about ILIKE % AND quantity ILIKE %) AS result FROM DUAL",
+          "column": "result",
+          "row": 0,
+          "fmt": "pct2"
+        }
+      ]
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/home/purge/Desktop/ugrc/experiments/bench-llama/run.py\", line 103, in one\n    return\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 186, in ask\n    raise ValueError(f\"prompt style {style!r} has no corpus form\")\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 294, in _answer\n    resp = llm.create(cl, model=model, max_tokens=16000, system=system, tools=TOOLS, messages=messages,\nRuntimeError: no accepted answer within 20 model turns (1 refused submissions)\n"
+}

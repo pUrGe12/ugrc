@@ -1,0 +1,220 @@
+{
+  "question": "What recycling cost per kilogram does the review give for direct recycling?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 10,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%per kg%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%kg%' OR lower(text) LIKE '%cost%' ORDER BY page, id",
+      "rows": 33
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (9,10) AND (lower(text) LIKE '%direct%' OR lower(text) LIKE '%$%' OR lower(text) LIKE '%usd%' OR lower(text) LIKE '%kg%' OR lower(text) LIKE '%price%') ORDER BY page, id",
+      "rows": 13
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (9,10) ORDER BY page, id",
+      "rows": 151
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%direct%' OR lower(text) LIKE '%kg%' OR text LIKE '%$%' OR lower(text) LIKE '%usd%' OR lower(text) LIKE '%per kilo%' ORDER BY page, id",
+      "rows": 54
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE id IN ('p2.L66','p2.L67','p2.L68','p2.L69','p2.L70','p2.L71','p6.L17','p6.L18','p6.L19','p6.L20','p6.L21') OR (page=6 AND id LIKE 'p6.L1%') ORDER BY id",
+      "rows": 19
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE lower(text) LIKE '%kg%' OR text LIKE '%$%' OR lower(text) LIKE '%cost%' OR lower(text) LIKE '%usd%' OR lower(text) LIKE '%/%' ORDER BY id",
+      "rows": 6
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%kilogram%' OR lower(text) LIKE '%gram%' OR text LIKE '%€%' OR lower(text) LIKE '%yuan%' OR lower(text) LIKE '%dollar%' OR lower(text) LIKE '%£%' OR lower(text) LIKE '%per ton%' OR lower(text) LIKE '%tonne%' OR lower(text) LIKE '%/t%' ORDER BY id",
+      "rows": 5
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "absent:found"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "absent:found",
+        "where": "runs[0].absent",
+        "why": "the document does contain what the search was for: 'kg' at K.per_kilo",
+        "moves": [
+          "read those atoms: the document may say what you claim it does not — quote it instead",
+          "or narrow the claim (and its terms) to what really is missing"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[0]",
+        "why": "the words before citation [1] end in 'ometallurgical processes:' and lead into its absence search, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ometallurgical processes:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 3101,
+    "cache_read_input_tokens": 90581,
+    "cache_creation_input_tokens": 15557
+  },
+  "runs": [
+    {
+      "text": "The review gives no recycling cost per kilogram for direct recycling. The document contains no kilogram-based cost figure or price for any recycling route, and it does not quantify direct recycling cost at all. ",
+      "absent": [
+        "per kilogram",
+        "$/kg",
+        "USD/kg"
+      ]
+    },
+    {
+      "text": "It only states qualitatively that cost models suggest direct recycling has economic benefits over pyrometallurgical and hydrometallurgical processes: "
+    },
+    {
+      "text": "Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits",
+      "support": [
+        {
+          "atom": "p6.L18",
+          "quote": "Life-cycle analysis and process-based cost models have revealed"
+        },
+        {
+          "atom": "p6.L19",
+          "quote": "that direct recycling potentially has both economic benefits"
+        }
+      ]
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The review gives no recycling cost per kilogram for direct recycling. The document contains no kilogram-based cost figure or price for any recycling route, and it does not quantify direct recycling cost at all.[1] It only states qualitatively that cost models suggest direct recycling has economic benefits over pyrometallurgical and hydrometallurgical processes: Life-cycle analysis and process-based cost models have revealed that direct recycling potentially has both economic benefits[2][3].",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "per kilogram",
+        "$/kg",
+        "USD/kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1234,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    },
+    {
+      "kind": "support",
+      "quote": "Life-cycle analysis and process-based cost models have revealed",
+      "source": {
+        "atom": "p6.L18",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Life-cycle analysis and process-based cost models have revealed",
+        "bbox": [
+          42.5,
+          267.4,
+          300.5,
+          275.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Life-cycle analysis and process-based cost models have revealed"
+    },
+    {
+      "kind": "support",
+      "quote": "that direct recycling potentially has both economic benefits",
+      "source": {
+        "atom": "p6.L19",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "that direct recycling potentially has both economic benefits",
+        "bbox": [
+          42.5,
+          277.3,
+          300.5,
+          287.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "that direct recycling potentially has both economic benefits"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:28:41+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "mattod-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not given",
+  "trap": "inventing a cost",
+  "seconds": 23.6
+}

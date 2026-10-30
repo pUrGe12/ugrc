@@ -1,0 +1,388 @@
+{
+  "question": "Which NFA variant had the lowest first-cycle discharge capacity, and what was it?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%discharge capacity%' OR text ILIKE '%first cycle%' OR text ILIKE '%first-cycle%' OR text ILIKE '%mAh%g%' ORDER BY page, id",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, value, unit, condition, panel FROM figure_facts WHERE statement ILIKE '%discharge%' OR statement ILIKE '%capacity%' OR statement ILIKE '%mAh%' ORDER BY figure_id, fact_no",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (8) ORDER BY page, line_no",
+      "rows": 81
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 15,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "NFA-A",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 7,
+          "of": "NFA 811",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 9,
+          "of": "NFA-F",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 11,
+          "of": "NFA-A",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['811,', 'three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['811),', '199', '192', '3', '4.5', '5B).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "'199' is written exactly so in the document (e.g. p8.L30): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"199\", \"atom\": \"p8.L30\"} — never shorten it",
+          "'192' is written exactly so in the document (e.g. p8.L30): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"192\", \"atom\": \"p8.L30\"} — never shorten it",
+          "'3' is written exactly so in the document (e.g. p2.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p2.L23\"} — never shorten it",
+          "'4.5' is written exactly so in the document (e.g. p2.L23): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4.5\", \"atom\": \"p2.L23\"} — never shorten it",
+          "'5B' is written exactly so in the document (e.g. p8.L26): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5B\", \"atom\": \"p8.L26\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "192 mAh g^− 1",
+      "atom": "p8.L30",
+      "of": "NFA-A",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "≈205",
+      "atom": "p8.L29",
+      "of": "NFA 811",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 7
+    },
+    {
+      "quote": "199",
+      "atom": "p8.L30",
+      "of": "NFA-F",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 9
+    },
+    {
+      "quote": "192",
+      "atom": "p8.L30",
+      "of": "NFA-A",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 11
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3025,
+    "cache_read_input_tokens": 27774,
+    "cache_creation_input_tokens": 11403
+  },
+  "runs": [
+    {
+      "text": "The lowest first-cycle discharge capacity was for the "
+    },
+    {
+      "quote": "NFA-A",
+      "atom": "p8.L29"
+    },
+    {
+      "text": " variant, at "
+    },
+    {
+      "quote": "192 mAh g^− 1",
+      "atom": "p8.L30",
+      "of": "NFA-A"
+    },
+    {
+      "text": ". The text gives the first-cycle discharge capacities for "
+    },
+    {
+      "quote": "NFA 811",
+      "atom": "p8.L29"
+    },
+    {
+      "text": " ("
+    },
+    {
+      "quote": "≈205",
+      "atom": "p8.L29",
+      "of": "NFA 811"
+    },
+    {
+      "text": "), NFA-F ("
+    },
+    {
+      "quote": "199",
+      "atom": "p8.L30",
+      "of": "NFA-F"
+    },
+    {
+      "text": ") and NFA-A ("
+    },
+    {
+      "quote": "192",
+      "atom": "p8.L30",
+      "of": "NFA-A"
+    },
+    {
+      "text": "), so NFA-A is the lowest. These values come from the galvanostatic charge/discharge tests shown in "
+    },
+    {
+      "figure": "p8.F5"
+    },
+    {
+      "text": "B."
+    }
+  ],
+  "rendered": "The lowest first-cycle discharge capacity was for the NFA-A[1] variant, at 192 mAh g^− 1[2]. The text gives the first-cycle discharge capacities for NFA 811[3] (≈205[4]), NFA-F (199[5]) and NFA-A (192[6]), so NFA-A is the lowest. These values come from the galvanostatic charge/discharge tests shown in Fig. 5[7]B.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "NFA-A",
+      "source": {
+        "atom": "p8.L29",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "charge capacities for NFA 811, NFA-F, and NFA-A are ≈205,",
+        "bbox": [
+          48.2,
+          576.9,
+          289.1,
+          586.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "NFA-A"
+    },
+    {
+      "kind": "quote",
+      "quote": "192 mAh g^− 1",
+      "source": {
+        "atom": "p8.L30",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "199, and 192 mAh g^− 1, respectively. The obtained capacities of",
+        "bbox": [
+          48.2,
+          586.7,
+          289.1,
+          596.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 2,
+      "rendered": "192 mAh g^− 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "NFA 811",
+      "source": {
+        "atom": "p8.L29",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "charge capacities for NFA 811, NFA-F, and NFA-A are ≈205,",
+        "bbox": [
+          48.2,
+          576.9,
+          289.1,
+          586.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "NFA 811"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈205",
+      "source": {
+        "atom": "p8.L29",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "charge capacities for NFA 811, NFA-F, and NFA-A are ≈205,",
+        "bbox": [
+          48.2,
+          576.9,
+          289.1,
+          586.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA 811",
+      "n": 4,
+      "rendered": "≈205"
+    },
+    {
+      "kind": "quote",
+      "quote": "199",
+      "source": {
+        "atom": "p8.L30",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "199, and 192 mAh g^− 1, respectively. The obtained capacities of",
+        "bbox": [
+          48.2,
+          586.7,
+          289.1,
+          596.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-F",
+      "n": 5,
+      "rendered": "199"
+    },
+    {
+      "kind": "quote",
+      "quote": "192",
+      "source": {
+        "atom": "p8.L30",
+        "kind": "line",
+        "page": 8,
+        "strength": "verbatim",
+        "text": "199, and 192 mAh g^− 1, respectively. The obtained capacities of",
+        "bbox": [
+          48.2,
+          586.7,
+          289.1,
+          596.9
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 6,
+      "rendered": "192"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p8.F5",
+        "kind": "figure",
+        "label": "Fig. 5",
+        "page": 8,
+        "caption": "Figure 5. Electrochemical evaluations of the NFA variants. A) Cyclic voltammograms at 0.1 mV s^−1 and B) galvanostatic charge/discharge tests at 0.05C between 3–4.5 V.",
+        "png": "figures/p8.F5.png",
+        "png_pixels_sha256": "d1effe4225cd78935b5ff396973750283f6079f28a30197c0618c996d78d9bc9",
+        "bbox": [
+          116.2,
+          70.4,
+          476.2,
+          273.2
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "Fig. 5"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:36:52+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "adma-2020",
+  "probe": "B1",
+  "cat": "B",
+  "expect": "NFA-A, ≈192 mAh/g (NFA 811 ≈205, NFA-F ≈199) (p8.L29-30)",
+  "trap": "NFA-F",
+  "seconds": 17.1
+}

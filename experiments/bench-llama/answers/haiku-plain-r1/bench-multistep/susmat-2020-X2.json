@@ -1,0 +1,255 @@
+{
+  "question": "By how many percentage points did the surface fluorine mass ratio fall through the Cyrene-based separation?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE lower(text) LIKE '%fluorine%' OR lower(text) LIKE '%wt%' OR lower(text) LIKE '% F %' OR text LIKE '%EDX%' ORDER BY page, id",
+      "rows": 15
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, printed_text, value, unit FROM figure_facts WHERE figure_id IN ('p3.F3','p5.F6')",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, line_no, text FROM figure_ocr WHERE figure_id='p3.F3' ORDER BY line_no",
+      "rows": 19
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE page=5 AND kind='line' ORDER BY id",
+      "rows": 36
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT round((SELECT CAST(regexp_extract(text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) FROM atoms WHERE id='p5.L17') - (SELECT CAST(regexp_extract(text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) FROM atoms WHERE id='p5.L18'), 2) AS drop_pp",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['12.35'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['(12.49%', '0.14%).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'12.49%' is written exactly so in the document (e.g. p5.L17): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"12.49%\", \"atom\": \"p5.L17\"} — never shorten it",
+          "'0.14%' is written exactly so in the document (e.g. p5.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.14%\", \"atom\": \"p5.L18\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2143,
+    "cache_read_input_tokens": 34054,
+    "cache_creation_input_tokens": 9434
+  },
+  "runs": [
+    {
+      "text": "The surface fluorine mass ratio on the cathode rejects was "
+    },
+    {
+      "quote": "12.49%",
+      "atom": "p5.L17"
+    },
+    {
+      "text": ", and after the Cyrene-based separation it was "
+    },
+    {
+      "quote": "0.14%",
+      "atom": "p5.L18"
+    },
+    {
+      "text": ". The fall, computed from those values, is "
+    },
+    {
+      "sql": "SELECT round(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM atoms a, atoms b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points."
+    }
+  ],
+  "rendered": "The surface fluorine mass ratio on the cathode rejects was 12.49%[1], and after the Cyrene-based separation it was 0.14%[2]. The fall, computed from those values, is 12.35[3] percentage points.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "12.49%",
+      "source": {
+        "atom": "p5.L17",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+        "bbox": [
+          310.5,
+          223.1,
+          561.6,
+          232.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "12.49%"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.14%",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+        "bbox": [
+          310.5,
+          235.2,
+          561.6,
+          243.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "0.14%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT round(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM atoms a, atoms b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 12.35,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L17",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+          "bbox": [
+            310.5,
+            223.1,
+            561.6,
+            232.7
+          ]
+        },
+        {
+          "atom": "p5.L18",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+          "bbox": [
+            310.5,
+            235.2,
+            561.6,
+            243.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "12.35"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-19T09:10:43+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "susmat-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "12.49% to 0.14% (p5.L17-18): 12.35 points",
+  "trap": "",
+  "seconds": 14.6
+}

@@ -1,0 +1,329 @@
+{
+  "question": "How does the review get from the known global cobalt reserves to the cobalt usable for batteries, and what amount results?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE (page = 1 AND line_no BETWEEN 38 AND 47) OR (page = 2 AND line_no BETWEEN 31 AND 32) ORDER BY page, line_no",
+      "rows": 12
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, value, unit, text, about, method, quantity FROM measures WHERE id IN ('p1.L38:31#174','p1.L38:31#257','p1.L38:31#363','p1.L38:31#434','p1.L38:31#516','p2.L31:21#133','p2.L31:21#182','p2.L31:21#217')",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9,
+      "pairings": [
+        {
+          "run": 5,
+          "of": "cobalt",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2021'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2021' is written exactly so in the document (e.g. p2.L29): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2021\", \"atom\": \"p2.L29\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "≈40%",
+      "atom": "p2.L32",
+      "of": "cobalt",
+      "sentence": "p2.L31:21",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "cobalt"
+      ],
+      "run": 5
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "239606df28bfacfaf9f35ec8bcde9eb0293e3a173ad056c8308654fd24016304",
+  "leads": {
+    "sentences": [
+      "p1.L38:31",
+      "p3.L6:58",
+      "p2.L31:21"
+    ],
+    "measures": [
+      "p1.L38:31#174",
+      "p1.L38:31#257",
+      "p1.L38:31#363",
+      "p1.L38:31#434",
+      "p1.L38:31#516",
+      "p3.L6:58#21",
+      "p3.L6:58#41",
+      "p3.L6:58#92",
+      "p3.L6:58#203",
+      "p2.L31:21#106",
+      "p2.L31:21#133",
+      "p2.L31:21#182",
+      "p2.L31:21#217"
+    ],
+    "matched": 91
+  },
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 2022,
+    "cache_read_input_tokens": 14230,
+    "cache_creation_input_tokens": 9212
+  },
+  "runs": [
+    {
+      "text": "The review starts from the known global cobalt reserves, given as "
+    },
+    {
+      "measure": "p2.L31:21#133"
+    },
+    {
+      "text": ", taken from the United States Geological Survey report on cobalt. It then applies a conservative mining efficiency of "
+    },
+    {
+      "measure": "p2.L31:21#182"
+    },
+    {
+      "text": " per year, and assumes that "
+    },
+    {
+      "measure": "p2.L31:21#217",
+      "of": "cobalt"
+    },
+    {
+      "text": " of the mined cobalt is directed toward battery manufacturing. Applying the efficiency and the battery share to the reserves, the review states that the total usable battery-specific cobalt from the total reserves comes to "
+    },
+    {
+      "measure": "p1.L38:31#516"
+    },
+    {
+      "text": " of cobalt, which is the amount it reports.",
+      "support": [
+        {
+          "atom": "p1.L38:31",
+          "quote": "servative mining efficiencies of ≈70% and cobalt directed toward battery manufacturing industries to be ≈40%, the total usable battery specific cobalt from the total reserves reduces to ≈2 million metric ton"
+        }
+      ]
+    }
+  ],
+  "rendered": "The review starts from the known global cobalt reserves, given as 7 million metric tons[1], taken from the United States Geological Survey report on cobalt. It then applies a conservative mining efficiency of ≈70%[2] per year, and assumes that ≈40%[3] of the mined cobalt is directed toward battery manufacturing. Applying the efficiency and the battery share to the reserves, the review states that the total usable battery-specific cobalt from the total reserves comes to ≈2 million[4] of cobalt, which is the amount it reports.[5]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "7 million metric tons",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing.",
+        "bbox": [
+          48.2,
+          560.1,
+          544.3,
+          568.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p2.L31:21#133",
+      "reading": {
+        "role": "background",
+        "role_p": 0.79,
+        "property": "other",
+        "property_p": 0.96,
+        "about": [
+          "cobalt"
+        ],
+        "method": [],
+        "quantity": [
+          "total global cobalt reserves"
+        ],
+        "sentence": "p2.L31:21",
+        "read_by": "judge"
+      },
+      "n": 1,
+      "rendered": "7 million metric tons"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈70%",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing.",
+        "bbox": [
+          48.2,
+          560.1,
+          544.3,
+          568.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p2.L31:21#182",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.98,
+        "property": "share",
+        "property_p": 1.0,
+        "about": [],
+        "method": [],
+        "quantity": [
+          "efficiency"
+        ],
+        "sentence": "p2.L31:21",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "≈70%"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈40%",
+      "source": {
+        "atom": "p2.L32",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "(7 million metric tons) and assume a conservative ≈70% yearly mining efficiency with ≈40% of the mined cobalt directed toward battery manufacturing.",
+        "bbox": [
+          48.2,
+          560.1,
+          544.3,
+          568.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p2.L31:21#217",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.92,
+        "property": "share",
+        "property_p": 0.98,
+        "about": [
+          "cobalt"
+        ],
+        "method": [],
+        "quantity": [],
+        "sentence": "p2.L31:21",
+        "read_by": "judge"
+      },
+      "of": "cobalt",
+      "n": 3,
+      "rendered": "≈40%"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈2 million",
+      "source": {
+        "atom": "p1.L47",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "≈2 million metric ton). This alarming scenario clearly illus-",
+        "bbox": [
+          306.1,
+          609.9,
+          547.1,
+          619.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p1.L38:31#516",
+      "reading": {
+        "role": "setting",
+        "role_p": 0.66,
+        "property": "other",
+        "property_p": 0.93,
+        "about": [
+          "cobalt"
+        ],
+        "method": [
+          "recompute"
+        ],
+        "quantity": [
+          "usable battery specific cobalt"
+        ],
+        "sentence": "p1.L38:31",
+        "read_by": "judge"
+      },
+      "n": 4,
+      "rendered": "≈2 million"
+    },
+    {
+      "kind": "support",
+      "quote": "servative mining efficiencies of ≈70% and cobalt directed toward battery manufacturing industries to be ≈40%, the total usable battery specific cobalt from the total reserves reduces to ≈2 million metric ton",
+      "source": {
+        "atom": "p1.L44",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "servative mining efficiencies of ≈70% and cobalt directed toward battery manufacturing industries to be ≈40%, the total usable battery specific cobalt from the total reserves reduces to ≈2 million metric ton). This alarming scenario clearly illus-",
+        "bbox": [
+          306.1,
+          576.9,
+          547.1,
+          619.2
+        ],
+        "atoms": [
+          "p1.L44",
+          "p1.L45",
+          "p1.L46",
+          "p1.L47"
+        ],
+        "relocated_from": "p1.L38:31"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "servative mining efficiencies of ≈70% and cobalt directed toward battery manufacturing industries to be ≈40%, the total usable battery specific cobalt from the total reserves reduces to ≈2 million metric ton"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-19T09:43:22+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-multistep",
+  "paper": "aenm-2022",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "~7 million metric tons of reserves x ~70% mining efficiency x ~40% directed to batteries = ~2 million metric tons (p1.L42-47, Fig. 1 caption)",
+  "trap": "",
+  "seconds": 10.8
+}

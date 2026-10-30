@@ -1,0 +1,1735 @@
+{
+  "question": "What share of a lead-acid cell's mass is lead or lead oxide, what share of a Li-ion cell's weight is active cathode material, and how many times larger is the first?",
+  "model": "llama-3.1-8b-instruct",
+  "tool_calls": 3,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:column",
+        "cite:column",
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "sql:pct-scaled",
+        "sql:pct-scaled",
+        "cite:column"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "cite:column",
+        "where": "runs[0]",
+        "why": "the result has no column \"SUM(CASE WHEN kind = 'lead' THEN 1 ELSE 0 END) / COUNT(id) * 100\"; its columns are [\"((CAST(sum(CASE  WHEN ((kind = 'lead')) THEN (1) ELSE 0 END) AS FLOAT) / count(id)) * 100)\"]",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      },
+      {
+        "rule": "cite:column",
+        "where": "runs[1]",
+        "why": "the result has no column \"SUM(CASE WHEN kind = 'active cathode material' THEN 1 ELSE 0 END) / COUNT(id) * 100\"; its columns are [\"((CAST(sum(CASE  WHEN ((kind = 'active cathode material')) THEN (1) ELSE 0 END) AS FLOAT) / count(id)) * 100)\"]",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[2]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "sql:pct-scaled",
+        "where": "runs[0]",
+        "why": "fmt pct1 shows a fraction as a percent by multiplying it by 100, and this sql already multiplies by 100: the answer would show 0.0% where the value is 0.0%",
+        "moves": [
+          "keep the * 100 and use fmt fixed1 (the value is already in percent; write % in your words after it)",
+          "or drop the * 100 and keep fmt pct1"
+        ]
+      },
+      {
+        "rule": "sql:pct-scaled",
+        "where": "runs[1]",
+        "why": "fmt pct1 shows a fraction as a percent by multiplying it by 100, and this sql already multiplies by 100: the answer would show 0.0% where the value is 0.0%",
+        "moves": [
+          "keep the * 100 and use fmt fixed1 (the value is already in percent; write % in your words after it)",
+          "or drop the * 100 and keep fmt pct1"
+        ]
+      },
+      {
+        "rule": "cite:column",
+        "where": "runs[2]",
+        "why": "the result has no column 'lead_percentage / cathode_percentage'; its columns are ['(lead_percentage / cathode_percentage)']",
+        "moves": [
+          "set column to one of the result's column names (alias the expression with AS)"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 6825,
+    "output_tokens": 963,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "prompt": {
+    "style": "small",
+    "sha256": "4628493b1b85108c6c97b351791c16955303ba1867a526305430a392c220fd50"
+  },
+  "runs": [
+    {
+      "sql": "SELECT ((CAST(SUM(CASE WHEN kind = 'lead' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS lead_percentage FROM atoms",
+      "column": "lead_percentage",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "sql": "SELECT ((CAST(SUM(CASE WHEN kind = 'active cathode material' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS cathode_percentage FROM atoms WHERE text ILIKE '%Li-ion%'",
+      "column": "cathode_percentage",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "sql": "SELECT (lead_percentage) / (cathode_percentage) AS ratio FROM (SELECT ((CAST(SUM(CASE WHEN kind = 'lead' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS lead_percentage FROM atoms) AS subquery1 JOIN (SELECT ((CAST(SUM(CASE WHEN kind = 'active cathode material' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS cathode_percentage FROM atoms WHERE text ILIKE '%Li-ion%') AS subquery2 ON TRUE",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "raw"
+    }
+  ],
+  "rendered": "0.0[1]0.0[2]nan[3]",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT ((CAST(SUM(CASE WHEN kind = 'lead' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS lead_percentage FROM atoms",
+      "column": "lead_percentage",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 0.0,
+      "strength": "computed from ocr",
+      "n_sources": 1234,
+      "sources": [
+        {
+          "atom": "K.avogadro",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "N_A (exact, 2019 SI)",
+          "value": 6.02214076e+23
+        },
+        {
+          "atom": "K.boltzmann",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "k (exact, 2019 SI)",
+          "value": 1.380649e-23
+        },
+        {
+          "atom": "K.faraday",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "F = N_A·e (exact, 2019 SI)",
+          "value": 96485.33212331001
+        },
+        {
+          "atom": "K.gas_constant",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "R = N_A·k (exact, 2019 SI)",
+          "value": 8.31446261815324
+        },
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.kelvin_offset",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "T[K] = T[°C] + 273.15 (SI definition)",
+          "value": 273.15
+        },
+        {
+          "atom": "K.kpa_per_atm",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 atm = 101.325 kPa (definition)",
+          "value": 101.325
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p1.L1",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Yaocai Bai 1, Nitin Muralidharan 1, Yang-Kook Sun 3, Stefano Passerini 4,5,",
+          "bbox": [
+            37.0,
+            257.3,
+            493.5,
+            273.8
+          ]
+        },
+        {
+          "atom": "p1.L10",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "electronics, electric vehicles, and renewable energy storage are driving enormous interests and",
+          "bbox": [
+            36.9,
+            395.5,
+            569.8,
+            405.9
+          ]
+        },
+        {
+          "atom": "p1.L11",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "investments in the battery sector. The explosively growing demand is generating a huge number of",
+          "bbox": [
+            36.9,
+            409.4,
+            569.8,
+            419.9
+          ]
+        },
+        {
+          "atom": "p1.L12",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "spent lithium-ion batteries, thereby urging the development of cost-effective and environmentally",
+          "bbox": [
+            36.9,
+            423.4,
+            569.8,
+            433.8
+          ]
+        },
+        {
+          "atom": "p1.L13",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "sustainable recycling technologies to manage end-of-life batteries. Currently, the recycling of end-of-",
+          "bbox": [
+            36.9,
+            437.3,
+            569.8,
+            447.8
+          ]
+        },
+        {
+          "atom": "p1.L14",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "life batteries is still in its infancy, with many fundamental and technological hurdles to overcome.",
+          "bbox": [
+            36.9,
+            451.3,
+            569.8,
+            461.7
+          ]
+        },
+        {
+          "atom": "p1.L15",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Here, the authors provide an overview of the current state of battery recycling by outlining and",
+          "bbox": [
+            36.9,
+            465.2,
+            569.8,
+            475.7
+          ]
+        },
+        {
+          "atom": "p1.L16",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "evaluating the incentives, key issues, and recycling strategies. The authors highlight a direct recycling",
+          "bbox": [
+            36.9,
+            479.1,
+            569.8,
+            489.6
+          ]
+        },
+        {
+          "atom": "p1.L17",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "strategy through discussion of its benefits, processes, and challenges. Perspectives on the future energy",
+          "bbox": [
+            36.9,
+            490.5,
+            569.8,
+            503.6
+          ]
+        },
+        {
+          "atom": "p1.L18",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "and environmental science of this important field is also discussed with respect to a new concept",
+          "bbox": [
+            36.9,
+            504.4,
+            569.8,
+            517.5
+          ]
+        },
+        {
+          "atom": "p1.L19",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "introduced as the Battery Identity Global Passport (BIGP).",
+          "bbox": [
+            36.9,
+            521.0,
+            341.2,
+            531.4
+          ]
+        },
+        {
+          "atom": "p1.L2",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "M. Stanley Whittingham 6, Ilias Belharouak 1,2,⇑",
+          "bbox": [
+            36.8,
+            273.3,
+            329.8,
+            289.7
+          ]
+        },
+        {
+          "atom": "p1.L20",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Keywords: Two-dimensional; Metallic nanocrystals; Renewable energy; Electrocatalysis",
+          "bbox": [
+            36.9,
+            546.0,
+            428.5,
+            555.0
+          ]
+        },
+        {
+          "atom": "p1.L21",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Introduction",
+          "bbox": [
+            37.0,
+            569.0,
+            96.9,
+            579.4
+          ]
+        },
+        {
+          "atom": "p1.L22",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "The development of portable electronics such as cameras, lap-",
+          "bbox": [
+            37.0,
+            583.4,
+            294.8,
+            591.8
+          ]
+        },
+        {
+          "atom": "p1.L23",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "tops, and cell phones throughout the 1980s led to a growing",
+          "bbox": [
+            36.9,
+            595.3,
+            294.8,
+            603.8
+          ]
+        },
+        {
+          "atom": "p1.L24",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "need for rechargeable batteries with high capacity and minimal",
+          "bbox": [
+            36.9,
+            607.3,
+            294.8,
+            615.8
+          ]
+        },
+        {
+          "atom": "p1.L25",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "size and weight [1]. Rechargeable batteries such as lead-acid bat-",
+          "bbox": [
+            36.9,
+            619.3,
+            294.8,
+            627.7
+          ]
+        },
+        {
+          "atom": "p1.L26",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "teries and nickel–cadmium batteries, however, could not fulfil",
+          "bbox": [
+            36.8,
+            629.1,
+            294.8,
+            639.7
+          ]
+        },
+        {
+          "atom": "p1.L27",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "the requirements because of their large size and heavy weight.",
+          "bbox": [
+            36.8,
+            643.2,
+            294.8,
+            651.6
+          ]
+        },
+        {
+          "atom": "p1.L28",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Concerted worldwide research efforts showed that lithium-ion",
+          "bbox": [
+            36.8,
+            655.1,
+            294.8,
+            663.6
+          ]
+        },
+        {
+          "atom": "p1.L29",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "batteries (LIBs) stood out because of their lightweight, recharge-",
+          "bbox": [
+            36.8,
+            667.0,
+            294.8,
+            675.5
+          ]
+        },
+        {
+          "atom": "p1.L3",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "1 Energy and Transportation Science Division, Oak Ridge National Laboratory, Oak Ridge, TN 37830, USA",
+          "bbox": [
+            37.0,
+            307.5,
+            397.0,
+            316.9
+          ]
+        },
+        {
+          "atom": "p1.L30",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "able, and powerful features [2–6]. Fig. 1 shows several major mile-",
+          "bbox": [
+            36.8,
+            676.9,
+            294.8,
+            687.5
+          ]
+        },
+        {
+          "atom": "p1.L31",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "stones in the development and application of LIBs. In the 1990 s,",
+          "bbox": [
+            36.8,
+            691.0,
+            294.8,
+            699.4
+          ]
+        },
+        {
+          "atom": "p1.L32",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Sony commercialized the first rechargeable LIB, aiding the porta-",
+          "bbox": [
+            36.8,
+            700.8,
+            294.8,
+            711.4
+          ]
+        },
+        {
+          "atom": "p1.L33",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "ble electronics revolution for nearly three decades. Now, LIBs are",
+          "bbox": [
+            311.8,
+            569.4,
+            569.8,
+            577.9
+          ]
+        },
+        {
+          "atom": "p1.L34",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "revolutionizing the era of electrified mobility and the storage of",
+          "bbox": [
+            311.8,
+            579.3,
+            569.8,
+            589.9
+          ]
+        },
+        {
+          "atom": "p1.L35",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "energy from renewable sources. The 2019 Nobel Prize in Chem-",
+          "bbox": [
+            311.8,
+            593.3,
+            569.8,
+            601.8
+          ]
+        },
+        {
+          "atom": "p1.L36",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "istry recognized the importance of the development of LIBs",
+          "bbox": [
+            311.8,
+            605.3,
+            569.8,
+            613.8
+          ]
+        },
+        {
+          "atom": "p1.L37",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "and rewarded three scientists/engineers, John B. Goodenough,",
+          "bbox": [
+            311.8,
+            617.3,
+            569.8,
+            625.7
+          ]
+        },
+        {
+          "atom": "p1.L38",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "M. Stanley Whittingham, and Akira Yoshino, for creating a",
+          "bbox": [
+            311.8,
+            629.2,
+            569.7,
+            637.6
+          ]
+        },
+        {
+          "atom": "p1.L39",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "rechargeable world.",
+          "bbox": [
+            311.8,
+            641.1,
+            390.2,
+            649.6
+          ]
+        },
+        {
+          "atom": "p1.L4",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "2 Bredesen Center for Interdisciplinary Research and Graduate Education, University of Tennessee, Knoxville, TN 37996, USA",
+          "bbox": [
+            37.0,
+            317.5,
+            463.4,
+            326.9
+          ]
+        },
+        {
+          "atom": "p1.L40",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "The key driver for the enormous growth of LIBs is a massive",
+          "bbox": [
+            323.5,
+            653.1,
+            569.8,
+            661.6
+          ]
+        },
+        {
+          "atom": "p1.L41",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "pull effect from end-user markets, which can be roughly catego-",
+          "bbox": [
+            311.8,
+            665.1,
+            569.8,
+            673.5
+          ]
+        },
+        {
+          "atom": "p1.L42",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "rized into two major segments, automotive and nonautomotive.",
+          "bbox": [
+            311.8,
+            677.0,
+            569.8,
+            685.5
+          ]
+        },
+        {
+          "atom": "p1.L43",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Demand for automotive battery has grown dramatically, and",
+          "bbox": [
+            311.8,
+            689.0,
+            569.8,
+            697.5
+          ]
+        },
+        {
+          "atom": "p1.L44",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "electric vehicle (EV) battery market is expected to become an at",
+          "bbox": [
+            311.8,
+            700.9,
+            569.7,
+            709.4
+          ]
+        },
+        {
+          "atom": "p1.L45",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "least $90 billion sector by 2026 [7]. By 2030, 140 million EVs",
+          "bbox": [
+            311.8,
+            712.9,
+            569.8,
+            721.4
+          ]
+        },
+        {
+          "atom": "p1.L46",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "are predicted to be on the road worldwide [8]. As LIBs enable",
+          "bbox": [
+            311.8,
+            724.8,
+            569.8,
+            733.3
+          ]
+        },
+        {
+          "atom": "p1.L47",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "vehicle electrification, the rapid growth in deployments of LIBs",
+          "bbox": [
+            311.8,
+            734.7,
+            569.8,
+            745.2
+          ]
+        },
+        {
+          "atom": "p1.L48",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Energy and environmental aspects in",
+          "bbox": [
+            35.7,
+            158.6,
+            505.8,
+            186.5
+          ]
+        },
+        {
+          "atom": "p1.L49",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "recycling lithium-ion batteries: Concept of",
+          "bbox": [
+            35.7,
+            188.4,
+            568.0,
+            216.3
+          ]
+        },
+        {
+          "atom": "p1.L5",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "3 Department of Energy Engineering, Hanyang University, Seoul 04763, Republic of Korea",
+          "bbox": [
+            37.0,
+            327.5,
+            345.1,
+            336.8
+          ]
+        },
+        {
+          "atom": "p1.L50",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Battery Identity Global Passport",
+          "bbox": [
+            35.7,
+            218.3,
+            441.0,
+            246.2
+          ]
+        },
+        {
+          "atom": "p1.L51",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "⇑ Corresponding author.",
+          "bbox": [
+            41.3,
+            733.1,
+            110.8,
+            743.1
+          ]
+        },
+        {
+          "atom": "p1.L52",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "E-mail address: Belharouak, I. (belharouaki@ornl.gov)",
+          "bbox": [
+            48.8,
+            746.1,
+            192.7,
+            752.5
+          ]
+        },
+        {
+          "atom": "p1.L53",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "304",
+          "bbox": [
+            36.9,
+            765.9,
+            50.0,
+            773.9
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "0.0"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT ((CAST(SUM(CASE WHEN kind = 'active cathode material' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS cathode_percentage FROM atoms WHERE text ILIKE '%Li-ion%'",
+      "column": "cathode_percentage",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 0.0,
+      "strength": "computed from verbatim",
+      "n_sources": 7,
+      "sources": [
+        {
+          "atom": "p10.L71",
+          "kind": "line",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "complex, may jeopardize the chances to recycle Li-ion batter-",
+          "bbox": [
+            329.4,
+            206.7,
+            575.4,
+            215.2
+          ]
+        },
+        {
+          "atom": "p11.L119",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "[117] F. Tedjar. Challenges for recycling advanced Li-ion batteries. Proc.",
+          "bbox": [
+            311.9,
+            498.6,
+            569.7,
+            505.1
+          ]
+        },
+        {
+          "atom": "p2.L41",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "Li-ion battery recycling value proposition",
+          "bbox": [
+            42.6,
+            718.5,
+            243.3,
+            728.9
+          ]
+        },
+        {
+          "atom": "p3.L20",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "cess. Fig. 2 plots the cell composition in a NMC622 Li-ion cell",
+          "bbox": [
+            36.9,
+            313.6,
+            294.8,
+            322.0
+          ]
+        },
+        {
+          "atom": "p3.L40",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "Current Li-ion battery recycling methods",
+          "bbox": [
+            311.9,
+            152.7,
+            509.4,
+            163.1
+          ]
+        },
+        {
+          "atom": "p3.L41",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "A typical Li-ion cell consists of four main components: cathode",
+          "bbox": [
+            311.9,
+            167.0,
+            569.8,
+            175.5
+          ]
+        },
+        {
+          "atom": "p9.L41",
+          "kind": "line",
+          "page": 9,
+          "strength": "verbatim",
+          "text": "Li-ion battery recycling technology readiness levels can move",
+          "bbox": [
+            311.8,
+            430.6,
+            569.8,
+            439.1
+          ]
+        }
+      ],
+      "n": 2,
+      "rendered": "0.0"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (lead_percentage) / (cathode_percentage) AS ratio FROM (SELECT ((CAST(SUM(CASE WHEN kind = 'lead' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS lead_percentage FROM atoms) AS subquery1 JOIN (SELECT ((CAST(SUM(CASE WHEN kind = 'active cathode material' THEN 1 ELSE 0 END) AS REAL) / COUNT(id)) * 100) AS cathode_percentage FROM atoms WHERE text ILIKE '%Li-ion%') AS subquery2 ON TRUE",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "raw",
+      "value": NaN,
+      "strength": "computed from ocr",
+      "n_sources": 1234,
+      "sources": [
+        {
+          "atom": "K.avogadro",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "N_A (exact, 2019 SI)",
+          "value": 6.02214076e+23
+        },
+        {
+          "atom": "K.boltzmann",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "k (exact, 2019 SI)",
+          "value": 1.380649e-23
+        },
+        {
+          "atom": "K.faraday",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "F = N_A·e (exact, 2019 SI)",
+          "value": 96485.33212331001
+        },
+        {
+          "atom": "K.gas_constant",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "R = N_A·k (exact, 2019 SI)",
+          "value": 8.31446261815324
+        },
+        {
+          "atom": "K.h_per_day",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 day = 24 h",
+          "value": 24.0
+        },
+        {
+          "atom": "K.kelvin_offset",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "T[K] = T[°C] + 273.15 (SI definition)",
+          "value": 273.15
+        },
+        {
+          "atom": "K.kpa_per_atm",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 atm = 101.325 kPa (definition)",
+          "value": 101.325
+        },
+        {
+          "atom": "K.min_per_h",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 h = 60 min",
+          "value": 60.0
+        },
+        {
+          "atom": "K.per_kilo",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix kilo/milli: 1 kg = 1000 g, 1 L = 1000 mL, 1 g = 1000 mg",
+          "value": 1000.0
+        },
+        {
+          "atom": "K.per_mega",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "SI prefix mega/micro",
+          "value": 1000000.0
+        },
+        {
+          "atom": "K.s_per_min",
+          "kind": "const",
+          "page": null,
+          "strength": "canon",
+          "text": "1 min = 60 s",
+          "value": 60.0
+        },
+        {
+          "atom": "p1.L1",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Yaocai Bai 1, Nitin Muralidharan 1, Yang-Kook Sun 3, Stefano Passerini 4,5,",
+          "bbox": [
+            37.0,
+            257.3,
+            493.5,
+            273.8
+          ]
+        },
+        {
+          "atom": "p1.L10",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "electronics, electric vehicles, and renewable energy storage are driving enormous interests and",
+          "bbox": [
+            36.9,
+            395.5,
+            569.8,
+            405.9
+          ]
+        },
+        {
+          "atom": "p1.L11",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "investments in the battery sector. The explosively growing demand is generating a huge number of",
+          "bbox": [
+            36.9,
+            409.4,
+            569.8,
+            419.9
+          ]
+        },
+        {
+          "atom": "p1.L12",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "spent lithium-ion batteries, thereby urging the development of cost-effective and environmentally",
+          "bbox": [
+            36.9,
+            423.4,
+            569.8,
+            433.8
+          ]
+        },
+        {
+          "atom": "p1.L13",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "sustainable recycling technologies to manage end-of-life batteries. Currently, the recycling of end-of-",
+          "bbox": [
+            36.9,
+            437.3,
+            569.8,
+            447.8
+          ]
+        },
+        {
+          "atom": "p1.L14",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "life batteries is still in its infancy, with many fundamental and technological hurdles to overcome.",
+          "bbox": [
+            36.9,
+            451.3,
+            569.8,
+            461.7
+          ]
+        },
+        {
+          "atom": "p1.L15",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Here, the authors provide an overview of the current state of battery recycling by outlining and",
+          "bbox": [
+            36.9,
+            465.2,
+            569.8,
+            475.7
+          ]
+        },
+        {
+          "atom": "p1.L16",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "evaluating the incentives, key issues, and recycling strategies. The authors highlight a direct recycling",
+          "bbox": [
+            36.9,
+            479.1,
+            569.8,
+            489.6
+          ]
+        },
+        {
+          "atom": "p1.L17",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "strategy through discussion of its benefits, processes, and challenges. Perspectives on the future energy",
+          "bbox": [
+            36.9,
+            490.5,
+            569.8,
+            503.6
+          ]
+        },
+        {
+          "atom": "p1.L18",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "and environmental science of this important field is also discussed with respect to a new concept",
+          "bbox": [
+            36.9,
+            504.4,
+            569.8,
+            517.5
+          ]
+        },
+        {
+          "atom": "p1.L19",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "introduced as the Battery Identity Global Passport (BIGP).",
+          "bbox": [
+            36.9,
+            521.0,
+            341.2,
+            531.4
+          ]
+        },
+        {
+          "atom": "p1.L2",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "M. Stanley Whittingham 6, Ilias Belharouak 1,2,⇑",
+          "bbox": [
+            36.8,
+            273.3,
+            329.8,
+            289.7
+          ]
+        },
+        {
+          "atom": "p1.L20",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Keywords: Two-dimensional; Metallic nanocrystals; Renewable energy; Electrocatalysis",
+          "bbox": [
+            36.9,
+            546.0,
+            428.5,
+            555.0
+          ]
+        },
+        {
+          "atom": "p1.L21",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Introduction",
+          "bbox": [
+            37.0,
+            569.0,
+            96.9,
+            579.4
+          ]
+        },
+        {
+          "atom": "p1.L22",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "The development of portable electronics such as cameras, lap-",
+          "bbox": [
+            37.0,
+            583.4,
+            294.8,
+            591.8
+          ]
+        },
+        {
+          "atom": "p1.L23",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "tops, and cell phones throughout the 1980s led to a growing",
+          "bbox": [
+            36.9,
+            595.3,
+            294.8,
+            603.8
+          ]
+        },
+        {
+          "atom": "p1.L24",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "need for rechargeable batteries with high capacity and minimal",
+          "bbox": [
+            36.9,
+            607.3,
+            294.8,
+            615.8
+          ]
+        },
+        {
+          "atom": "p1.L25",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "size and weight [1]. Rechargeable batteries such as lead-acid bat-",
+          "bbox": [
+            36.9,
+            619.3,
+            294.8,
+            627.7
+          ]
+        },
+        {
+          "atom": "p1.L26",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "teries and nickel–cadmium batteries, however, could not fulfil",
+          "bbox": [
+            36.8,
+            629.1,
+            294.8,
+            639.7
+          ]
+        },
+        {
+          "atom": "p1.L27",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "the requirements because of their large size and heavy weight.",
+          "bbox": [
+            36.8,
+            643.2,
+            294.8,
+            651.6
+          ]
+        },
+        {
+          "atom": "p1.L28",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Concerted worldwide research efforts showed that lithium-ion",
+          "bbox": [
+            36.8,
+            655.1,
+            294.8,
+            663.6
+          ]
+        },
+        {
+          "atom": "p1.L29",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "batteries (LIBs) stood out because of their lightweight, recharge-",
+          "bbox": [
+            36.8,
+            667.0,
+            294.8,
+            675.5
+          ]
+        },
+        {
+          "atom": "p1.L3",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "1 Energy and Transportation Science Division, Oak Ridge National Laboratory, Oak Ridge, TN 37830, USA",
+          "bbox": [
+            37.0,
+            307.5,
+            397.0,
+            316.9
+          ]
+        },
+        {
+          "atom": "p1.L30",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "able, and powerful features [2–6]. Fig. 1 shows several major mile-",
+          "bbox": [
+            36.8,
+            676.9,
+            294.8,
+            687.5
+          ]
+        },
+        {
+          "atom": "p1.L31",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "stones in the development and application of LIBs. In the 1990 s,",
+          "bbox": [
+            36.8,
+            691.0,
+            294.8,
+            699.4
+          ]
+        },
+        {
+          "atom": "p1.L32",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Sony commercialized the first rechargeable LIB, aiding the porta-",
+          "bbox": [
+            36.8,
+            700.8,
+            294.8,
+            711.4
+          ]
+        },
+        {
+          "atom": "p1.L33",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "ble electronics revolution for nearly three decades. Now, LIBs are",
+          "bbox": [
+            311.8,
+            569.4,
+            569.8,
+            577.9
+          ]
+        },
+        {
+          "atom": "p1.L34",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "revolutionizing the era of electrified mobility and the storage of",
+          "bbox": [
+            311.8,
+            579.3,
+            569.8,
+            589.9
+          ]
+        },
+        {
+          "atom": "p1.L35",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "energy from renewable sources. The 2019 Nobel Prize in Chem-",
+          "bbox": [
+            311.8,
+            593.3,
+            569.8,
+            601.8
+          ]
+        },
+        {
+          "atom": "p1.L36",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "istry recognized the importance of the development of LIBs",
+          "bbox": [
+            311.8,
+            605.3,
+            569.8,
+            613.8
+          ]
+        },
+        {
+          "atom": "p1.L37",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "and rewarded three scientists/engineers, John B. Goodenough,",
+          "bbox": [
+            311.8,
+            617.3,
+            569.8,
+            625.7
+          ]
+        },
+        {
+          "atom": "p1.L38",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "M. Stanley Whittingham, and Akira Yoshino, for creating a",
+          "bbox": [
+            311.8,
+            629.2,
+            569.7,
+            637.6
+          ]
+        },
+        {
+          "atom": "p1.L39",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "rechargeable world.",
+          "bbox": [
+            311.8,
+            641.1,
+            390.2,
+            649.6
+          ]
+        },
+        {
+          "atom": "p1.L4",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "2 Bredesen Center for Interdisciplinary Research and Graduate Education, University of Tennessee, Knoxville, TN 37996, USA",
+          "bbox": [
+            37.0,
+            317.5,
+            463.4,
+            326.9
+          ]
+        },
+        {
+          "atom": "p1.L40",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "The key driver for the enormous growth of LIBs is a massive",
+          "bbox": [
+            323.5,
+            653.1,
+            569.8,
+            661.6
+          ]
+        },
+        {
+          "atom": "p1.L41",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "pull effect from end-user markets, which can be roughly catego-",
+          "bbox": [
+            311.8,
+            665.1,
+            569.8,
+            673.5
+          ]
+        },
+        {
+          "atom": "p1.L42",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "rized into two major segments, automotive and nonautomotive.",
+          "bbox": [
+            311.8,
+            677.0,
+            569.8,
+            685.5
+          ]
+        },
+        {
+          "atom": "p1.L43",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Demand for automotive battery has grown dramatically, and",
+          "bbox": [
+            311.8,
+            689.0,
+            569.8,
+            697.5
+          ]
+        },
+        {
+          "atom": "p1.L44",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "electric vehicle (EV) battery market is expected to become an at",
+          "bbox": [
+            311.8,
+            700.9,
+            569.7,
+            709.4
+          ]
+        },
+        {
+          "atom": "p1.L45",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "least $90 billion sector by 2026 [7]. By 2030, 140 million EVs",
+          "bbox": [
+            311.8,
+            712.9,
+            569.8,
+            721.4
+          ]
+        },
+        {
+          "atom": "p1.L46",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "are predicted to be on the road worldwide [8]. As LIBs enable",
+          "bbox": [
+            311.8,
+            724.8,
+            569.8,
+            733.3
+          ]
+        },
+        {
+          "atom": "p1.L47",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "vehicle electrification, the rapid growth in deployments of LIBs",
+          "bbox": [
+            311.8,
+            734.7,
+            569.8,
+            745.2
+          ]
+        },
+        {
+          "atom": "p1.L48",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Energy and environmental aspects in",
+          "bbox": [
+            35.7,
+            158.6,
+            505.8,
+            186.5
+          ]
+        },
+        {
+          "atom": "p1.L49",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "recycling lithium-ion batteries: Concept of",
+          "bbox": [
+            35.7,
+            188.4,
+            568.0,
+            216.3
+          ]
+        },
+        {
+          "atom": "p1.L5",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "3 Department of Energy Engineering, Hanyang University, Seoul 04763, Republic of Korea",
+          "bbox": [
+            37.0,
+            327.5,
+            345.1,
+            336.8
+          ]
+        },
+        {
+          "atom": "p1.L50",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "Battery Identity Global Passport",
+          "bbox": [
+            35.7,
+            218.3,
+            441.0,
+            246.2
+          ]
+        },
+        {
+          "atom": "p1.L51",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "⇑ Corresponding author.",
+          "bbox": [
+            41.3,
+            733.1,
+            110.8,
+            743.1
+          ]
+        },
+        {
+          "atom": "p1.L52",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "E-mail address: Belharouak, I. (belharouaki@ornl.gov)",
+          "bbox": [
+            48.8,
+            746.1,
+            192.7,
+            752.5
+          ]
+        },
+        {
+          "atom": "p1.L53",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "304",
+          "bbox": [
+            36.9,
+            765.9,
+            50.0,
+            773.9
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "nan"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-20T14:02:26+00:00",
+  "arm": "llama-plain-sp",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "mattod-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "almost 70% (p3.L22-23) vs around 30% (p3.L48-49): 2.3 times",
+  "trap": "",
+  "seconds": 40.7,
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  }
+}

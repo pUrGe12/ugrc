@@ -1,0 +1,399 @@
+{
+  "question": "Which delivery system in Table 2 has a particle size of 139.83 nm, and how is its release triggered?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 10,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND text LIKE '%139.83%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%139.83%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 8 AND 14 ORDER BY row_no, col_no",
+      "rows": 34
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, x0 FROM lines WHERE page=6 AND top BETWEEN (SELECT top-5 FROM atoms WHERE id='p6.T2.r11c6') AND (SELECT top+60 FROM atoms WHERE id='p6.T2.r11c6') ORDER BY top, x0",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, x0, top FROM lines WHERE page=6 AND text LIKE '%Ultrasonic%' OR (page=6 AND text LIKE '%Proton Sponge%') OR (page=6 AND text LIKE '%US-EV%') OR (page=6 AND text LIKE '%HMME%')",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE text LIKE '%Ultrasonic%' OR text LIKE '%Proton Sponge%' OR text LIKE '%US-EV%' OR text LIKE '%HMME%' OR text LIKE '%ultrasound%'",
+      "rows": 15
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=7 AND id BETWEEN 'p7.L90' AND 'p7.L104' ORDER BY id",
+      "rows": 1
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE kind='line' AND page=7 AND text LIKE '%EV%' OR (kind='line' AND page=7 AND (text LIKE '%ultrason%' OR text LIKE '%sponge%' OR text LIKE '%cavitation%' OR text LIKE '%YTHDF1%'))",
+      "rows": 14
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE kind='line' AND page=7 AND id IN ('p7.L94','p7.L95','p7.L96','p7.L97','p7.L98','p7.L99','p7.L100','p7.L101') ORDER BY id",
+      "rows": 8
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 17,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "US-EV",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6",
+      "of": "US-EV",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 3352,
+    "cache_read_input_tokens": 54097,
+    "cache_creation_input_tokens": 9086
+  },
+  "runs": [
+    {
+      "text": "The delivery system with a particle size of "
+    },
+    {
+      "quote": "139.83 nm",
+      "atom": "p6.T2.r11c6",
+      "of": "US-EV"
+    },
+    {
+      "text": " in "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " is the US-EV system (materials: "
+    },
+    {
+      "quote": "US-EV",
+      "atom": "p6.T2.r11c2"
+    },
+    {
+      "text": "), which carries "
+    },
+    {
+      "quote": "HMME siYTHDF1",
+      "atom": "p6.T2.r11c4"
+    },
+    {
+      "text": " and targets "
+    },
+    {
+      "quote": "YTHDF1",
+      "atom": "p6.T2.r11c5"
+    },
+    {
+      "text": ". Its release mechanism is listed as "
+    },
+    {
+      "quote": "Ultrasonic Triggering",
+      "atom": "p6.T2.r11c7"
+    },
+    {
+      "text": ", so release is triggered by ultrasound. The release column also carries the wrapped entry "
+    },
+    {
+      "quote": "Proton Sponge Effect",
+      "atom": "p6.T2.r12c7"
+    },
+    {
+      "text": " on the following printed row. The paper's text describes this as ultrasound-engineered tumor-derived exosomes (US-EV) co-delivering HMME and YTHDF1 siRNA. The reference is "
+    },
+    {
+      "quote": "[81]",
+      "atom": "p6.T2.r11c8"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The delivery system with a particle size of 139.83 nm[1] in Table 2[2] is the US-EV system (materials: US-EV[3]), which carries HMME siYTHDF1[4] and targets YTHDF1[5]. Its release mechanism is listed as Ultrasonic Triggering[6], so release is triggered by ultrasound. The release column also carries the wrapped entry Proton Sponge Effect[7] on the following printed row. The paper's text describes this as ultrasound-engineered tumor-derived exosomes (US-EV) co-delivering HMME and YTHDF1 siRNA. The reference is [81][8].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "139.83 nm",
+      "source": {
+        "atom": "p6.T2.r11c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "139.83 nm",
+        "bbox": [
+          357.9,
+          170.5,
+          388.5,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "of": "US-EV",
+      "n": 1,
+      "rendered": "139.83 nm"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "US-EV",
+      "source": {
+        "atom": "p6.T2.r11c2",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "US-EV",
+        "bbox": [
+          110.8,
+          170.5,
+          128.7,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 2,
+        "column_header": "Materials"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "US-EV"
+    },
+    {
+      "kind": "quote",
+      "quote": "HMME siYTHDF1",
+      "source": {
+        "atom": "p6.T2.r11c4",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "HMME siYTHDF1",
+        "bbox": [
+          232.8,
+          170.5,
+          282.9,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 4,
+        "column_header": "Drug delivery"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "HMME siYTHDF1"
+    },
+    {
+      "kind": "quote",
+      "quote": "YTHDF1",
+      "source": {
+        "atom": "p6.T2.r11c5",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "YTHDF1",
+        "bbox": [
+          310.2,
+          170.5,
+          334.2,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 5,
+        "column_header": "Target"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "YTHDF1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Ultrasonic Triggering",
+      "source": {
+        "atom": "p6.T2.r11c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Ultrasonic Triggering",
+        "bbox": [
+          412.9,
+          170.5,
+          473.2,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 7,
+        "column_header": "Release mechanism"
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "Ultrasonic Triggering"
+    },
+    {
+      "kind": "quote",
+      "quote": "Proton Sponge Effect",
+      "source": {
+        "atom": "p6.T2.r12c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Proton Sponge Effect",
+        "bbox": [
+          412.9,
+          179.1,
+          472.3,
+          185.5
+        ],
+        "table": "Table 2",
+        "row": 12,
+        "col": 7,
+        "column_header": "Release mechanism"
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "Proton Sponge Effect"
+    },
+    {
+      "kind": "quote",
+      "quote": "[81]",
+      "source": {
+        "atom": "p6.T2.r11c8",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "[81]",
+        "bbox": [
+          535.5,
+          170.5,
+          548.1,
+          176.9
+        ],
+        "table": "Table 2",
+        "row": 11,
+        "col": 8,
+        "column_header": "Ref."
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "[81]"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:36+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "US-EV (HMME siYTHDF1, target YTHDF1): Ultrasonic Triggering, with Proton Sponge Effect (p6.T2 r11-12)",
+  "trap": "a neighbouring EV row",
+  "seconds": 21.8
+}

@@ -1,0 +1,258 @@
+{
+  "question": "What areal sulfur loading (mg/cm^2) did the cathodes have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%mg%' OR text ILIKE '%loading%' OR text ILIKE '%areal%' ORDER BY page, line_no",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, statement, printed_text, value, unit FROM figure_facts WHERE statement ILIKE '%mg%' OR statement ILIKE '%loading%' OR unit ILIKE '%cm%' OR printed_text ILIKE '%mg%' UNION ALL SELECT id, figure_id, text, NULL, NULL, NULL FROM figure_ocr WHERE text ILIKE '%mg%' OR text ILIKE '%cm%' OR text ILIKE '%loading%'",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%mg%' OR statement ILIKE '%loading%' OR statement ILIKE '%cm%' UNION ALL SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%mg%' OR text ILIKE '%cm%' OR text ILIKE '%loading%'",
+      "rows": 2
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE text ILIKE '%cm2%' OR text ILIKE '%cm^2%' OR text ILIKE '%cm−2%' OR text ILIKE '%mg c%' OR text ILIKE '%mg/%' OR text ILIKE '%areal%' OR text ILIKE '%mAh/cm%' OR text ILIKE '%per area%' OR text ILIKE '%cm 2%'",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (4,5) AND (text ILIKE '%electrode%' OR text ILIKE '%slurry%' OR text ILIKE '%wt %' OR text ILIKE '%mass%') ORDER BY page, line_no",
+      "rows": 12
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=5 AND line_no BETWEEN 76 AND 90 OR (page=5 AND id IN ('p5.L104','p5.L105','p5.L106','p5.L107','p5.L108')) ORDER BY page, line_no",
+      "rows": 20
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['\">80'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'>80' is written exactly so in the document (e.g. p4.L26): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \">80\", \"atom\": \"p4.L26\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'g a \"moderate loading\" of' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'g a \"moderate loading\" of[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "7252fbc6f6f58c60ac11a47792890c1d50ff3ac8df3123c9d413b3094645c2cf",
+  "leads": {
+    "sentences": [
+      "p5.L104:28",
+      "p2.L22:0",
+      "p4.L26:0",
+      "p5.L22:16",
+      "p1.L63:44",
+      "p5.L119:23",
+      "p5.L15:37",
+      "p6.L11:58",
+      "p5.L89:0",
+      "p4.L9:40",
+      "p2.L2:38",
+      "p5.L101:51"
+    ],
+    "measures": [
+      "p5.L104:28#71",
+      "p5.L104:28#86",
+      "p5.L104:28#101",
+      "p5.L104:28#221",
+      "p2.L22:0#103",
+      "p2.L22:0#147",
+      "p2.L22:0#183",
+      "p2.L22:0#427",
+      "p2.L22:0#430",
+      "p2.L22:0#576",
+      "p2.L22:0#579",
+      "p2.L22:0#777",
+      "p4.L26:0#31",
+      "p5.L22:16#67",
+      "p1.L63:44#394",
+      "p5.L119:23#90",
+      "p5.L119:23#97",
+      "p5.L15:37#5",
+      "p5.L15:37#158",
+      "p5.L15:37#167",
+      "p5.L15:37#215",
+      "p5.L89:0#55",
+      "p5.L89:0#165",
+      "p4.L9:40#377",
+      "p4.L9:40#758",
+      "p2.L2:38#315",
+      "p2.L2:38#317",
+      "p2.L2:38#458",
+      "p2.L2:38#477",
+      "p5.L101:51#126",
+      "p5.L101:51#156"
+    ],
+    "matched": 57
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 2606,
+    "cache_read_input_tokens": 70033,
+    "cache_creation_input_tokens": 11592
+  },
+  "runs": [
+    {
+      "text": "The document does not report an areal sulfur loading in mg/cm². Its only loading figures are gravimetric: the cathode is described as having a \"moderate loading\" of "
+    },
+    {
+      "quote": "35 wt % active sulfur",
+      "atom": "p5.L108"
+    },
+    {
+      "text": " (weight percent of active sulfur in the electrode), and the group's earlier work is cited as reaching "
+    },
+    {
+      "quote": ">80 wt % loading",
+      "atom": "p4.L26"
+    },
+    {
+      "text": " in sulfur cathodes. No value in mg/cm² appears in the text, tables, or figures. "
+    },
+    {
+      "text": "",
+      "absent": [
+        "mg/cm2",
+        "mg/cm",
+        "mg cm"
+      ]
+    }
+  ],
+  "rendered": "The document does not report an areal sulfur loading in mg/cm². Its only loading figures are gravimetric: the cathode is described as having a \"moderate loading\" of 35 wt % active sulfur[1] (weight percent of active sulfur in the electrode), and the group's earlier work is cited as reaching >80 wt % loading[2] in sulfur cathodes. No value in mg/cm² appears in the text, tables, or figures. [3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "35 wt % active sulfur",
+      "source": {
+        "atom": "p5.L108",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "of 35 wt % active sulfur. This is amplified based on the premise",
+        "bbox": [
+          324.5,
+          551.8,
+          564.4,
+          564.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "35 wt % active sulfur"
+    },
+    {
+      "kind": "quote",
+      "quote": ">80 wt % loading",
+      "source": {
+        "atom": "p4.L26",
+        "kind": "line",
+        "page": 4,
+        "strength": "verbatim",
+        "text": "Our previous work has achieved >80 wt % loading in sulfur",
+        "bbox": [
+          324.5,
+          323.4,
+          564.5,
+          333.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": ">80 wt % loading"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/cm2",
+        "mg/cm",
+        "mg cm"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 592,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "92054e0d3d705bbdb320487ba4681bb76ece2a55bf31579c8fd7c9c2407ccc03",
+    "readings": "f51e680595951c6574c1429f065e85315fa624d50c936c584d372404fae6b60a"
+  },
+  "created_at": "2026-10-19T09:26:41+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05172",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported (only the 35 wt% sulfur content)",
+  "trap": "converting 35 wt% into an areal loading",
+  "seconds": 20.5
+}

@@ -1,0 +1,279 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 11,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%Gao%' OR text ILIKE '%si-FOXM1%' OR text ILIKE '%FOXM1%' ORDER BY page, line_no",
+      "rows": 16
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 6 OR (text ILIKE '%mg/kg%' OR text ILIKE '%dose%' OR text ILIKE '%nmol%' OR text ILIKE '%mg kg%') ORDER BY page, line_no",
+      "rows": 35
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, table_id, row_no, col_no, text FROM cells WHERE text ILIKE '%FOXM1%' OR text ILIKE '%Gao%' OR text ILIKE '%CL4H6%' OR text ILIKE '%[55]%' OR text ILIKE '%55%' ORDER BY table_id, row_no",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%FOXM1%' OR text ILIKE '%LNP-si%' OR text ILIKE '%CL4H6%' OR text ILIKE '%BT549%' OR text ILIKE '%lung metastasis%' ORDER BY page, line_no",
+      "rows": 14
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, x0, top FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 1 AND 8 ORDER BY row_no, col_no",
+      "rows": 41
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=6 AND top BETWEEN (SELECT top-40 FROM lines WHERE id='p6.L4') AND 1000 ORDER BY line_no",
+      "rows": 25
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%nmol%' OR text ILIKE '%pmol%' OR text ILIKE '%μg%' OR text ILIKE '%ug/%' OR text ILIKE '%dosage%' OR text ILIKE '%dose%' OR text ILIKE '%mg/mL%' ORDER BY page, line_no",
+      "rows": 7
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=22 AND line_no <= 115 AND text ILIKE '%Gao%' OR text ILIKE '%Reprogramming tumour%' ORDER BY page, line_no",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%FOXM1%' OR statement ILIKE '%Gao%' OR statement ILIKE '%dose%' OR statement ILIKE '%mg/kg%' OR statement ILIKE '%nM%'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['[55])'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['2', '[55]),', '30'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "'30' is written exactly so in the document (e.g. p4.L38): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"30\", \"atom\": \"p4.L38\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p1.L20:92",
+      "p6.L3:61",
+      "p13.L121:18",
+      "p15.L28:38",
+      "p19.L35:0",
+      "p5.L76:57",
+      "p7.L93:33",
+      "p10.L5:32",
+      "p11.L8:67",
+      "p12.L106:28",
+      "p13.L35:46",
+      "p13.L41:43"
+    ],
+    "measures": [
+      "p6.L3:61#115",
+      "p13.L121:18#13",
+      "p13.L121:18#87",
+      "p19.L35:0#115",
+      "p5.L76:57#142",
+      "p7.L93:33#261"
+    ],
+    "matched": 213
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2982,
+    "cache_read_input_tokens": 67076,
+    "cache_creation_input_tokens": 14946
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for Gao et al. The only passage on their work, cited as reference "
+    },
+    {
+      "quote": "[55]",
+      "atom": "p6.L4"
+    },
+    {
+      "text": ", describes the formulation: a CL4H6-ionizable lipid, cholesterol and DMG-PEG2000 in a molar ratio of "
+    },
+    {
+      "quote": "60:40:1",
+      "atom": "p6.L5"
+    },
+    {
+      "text": ", used to construct LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, tested in a BT549 lung metastasis model. No dose value for that study appears in the text, in its row of the table ("
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": "), or in the figures. The only dose stated in the document is for a different study, "
+    },
+    {
+      "quote": "At a dose of 30 nM",
+      "atom": "p13.L121"
+    },
+    {
+      "text": ", which concerns lncBCMA in TNBC cells."
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for Gao et al. The only passage on their work, cited as reference [55][1], describes the formulation: a CL4H6-ionizable lipid, cholesterol and DMG-PEG2000 in a molar ratio of 60:40:1[2], used to construct LNPs encapsulating si-FOXM1 by the tert-butanol dilution method, tested in a BT549 lung metastasis model. No dose value for that study appears in the text, in its row of the table (Table 2[3]), or in the figures. The only dose stated in the document is for a different study, At a dose of 30 nM[4], which concerns lncBCMA in TNBC cells.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "[55]",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "[55]"
+    },
+    {
+      "kind": "quote",
+      "quote": "60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "60:40:1"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "At a dose of 30 nM",
+      "source": {
+        "atom": "p13.L121",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "upon degradation. At a dose of 30 nM, it downregulates lncBCMA",
+        "bbox": [
+          306.6,
+          663.7,
+          557.7,
+          671.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "At a dose of 30 nM"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:59+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 17.4
+}

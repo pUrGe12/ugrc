@@ -1,0 +1,210 @@
+{
+  "question": "What tap density did the NFA powders have?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 12,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tap%' OR text ILIKE '%density%' OR text ILIKE '%g cm%' OR text ILIKE '%g cm%3%' ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE text ILIKE '%tap d%' OR text ILIKE '%tapped%' OR text ILIKE '%tap-d%' OR text ILIKE '%packing%' OR text ILIKE '%bulk density%' OR text ILIKE '%volumetric%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tap%' OR text ILIKE '%powder density%' OR text ILIKE '%density of%' OR text ILIKE '%g/cm%' OR text ILIKE '%g cm−3%' OR text ILIKE '%g cm-3%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%tap%' OR statement ILIKE '%density%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, label, caption FROM tables WHERE caption ILIKE '%tap%' OR caption ILIKE '%density%'; SELECT id, text FROM cells WHERE text ILIKE '%tap%' OR text ILIKE '%density%' OR text ILIKE '%g cm%'",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, label, caption FROM tables WHERE caption ILIKE '%tap%' OR caption ILIKE '%density%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE text ILIKE '%tap%' OR text ILIKE '%density%' OR text ILIKE '%g cm%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, text FROM figure_ocr WHERE text ILIKE '%tap%' OR text ILIKE '%density%' OR text ILIKE '%g cm%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, about, quantity FROM (SELECT id, text, array_to_string(about,' ') AS about, array_to_string(quantity,' ') AS quantity FROM measures) m WHERE about ILIKE '%tap%' OR quantity ILIKE '%tap%' OR quantity ILIKE '%densit%' OR about ILIKE '%densit%'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 1,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 1
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['54'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'54' is written exactly so in the document (e.g. p12.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"54\", \"atom\": \"p12.L21\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'rched forms with no hits:' and lead into its absence search, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'rched forms with no hits:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "e2fbab0cd6d21365933e78a120875cee9dc4ea8fd681513fdd7f999d41f5c878",
+  "leads": {
+    "sentences": [
+      "p11.L102:42",
+      "p12.L20:55",
+      "p5.L66:0",
+      "p1.L22:0",
+      "p12.L27:44",
+      "p6.L35:0",
+      "p11.L90:17",
+      "p11.L74:55",
+      "p2.L118:20",
+      "p2.L121:0",
+      "p11.L103:60",
+      "p11.L104:51"
+    ],
+    "measures": [
+      "p11.L102:42#48",
+      "p11.L102:42#72",
+      "p12.L20:55#21",
+      "p12.L27:44#238",
+      "p12.L27:44#264",
+      "p12.L27:44#287",
+      "p6.L35:0#88",
+      "p6.L35:0#175",
+      "p11.L74:55#115",
+      "p11.L74:55#126",
+      "p2.L118:20#114",
+      "p2.L121:0#121",
+      "p2.L121:0#130",
+      "p2.L121:0#135",
+      "p2.L121:0#157"
+    ],
+    "matched": 99
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2106,
+    "cache_read_input_tokens": 40013,
+    "cache_creation_input_tokens": 9719
+  },
+  "runs": [
+    {
+      "text": "The document does not report a tap density for the NFA powders. Searches of the text, tables, cells and figure readings found no tap-density measurement, and the only density terms are the energy-density remarks and the cathode loadings per area given for Mössbauer powder samples.",
+      "absent": [
+        "tap density",
+        "tapped density",
+        "tap-density",
+        "packing density",
+        "bulk density"
+      ]
+    }
+  ],
+  "rendered": "The document does not report a tap density for the NFA powders. Searches of the text, tables, cells and figure readings found no tap-density measurement, and the only density terms are the energy-density remarks and the cathode loadings per area given for Mössbauer powder samples.[1]",
+  "citations": [
+    {
+      "kind": "search",
+      "terms": [
+        "tap density",
+        "tapped density",
+        "tap-density",
+        "packing density",
+        "bulk density"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 1342,
+      "strength": "search",
+      "n": 1,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:37:12+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "adma-2020",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a tap density",
+  "seconds": 15.1
+}

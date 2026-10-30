@@ -1,0 +1,210 @@
+{
+  "question": "What is the largest particle size reported in Table 2, and for which system?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND col_no IN (1,2,3,5,6) ORDER BY row_no, col_no",
+      "rows": 151
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT c.row_no, c.text, c.id, (SELECT string_agg(b.text, ' | ') FROM cells b WHERE b.table_id='p6.T2' AND b.row_no=c.row_no AND b.col_no=2) AS mat, (SELECT string_agg(b.text, ' | ') FROM cells b WHERE b.table_id='p6.T2' AND b.row_no=c.row_no AND b.col_no=5) AS tgt FROM cells c WHERE c.table_id='p6.T2' AND c.col_no=6 AND c.row_no>=50 ORDER BY c.row_no",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no>=56 ORDER BY row_no, col_no",
+      "rows": 18
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, id FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 17 AND 25 ORDER BY row_no, col_no",
+      "rows": 43
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "LF-RES nanoparticles",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "MOF",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['485', '625'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'625' is written exactly so in the document (e.g. p6.T2.r23c6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"625\", \"atom\": \"p6.T2.r23c6\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "625 ±58 nm",
+      "atom": "p6.T2.r23c6",
+      "of": "LF-RES nanoparticles",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6",
+      "of": "MOF",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2568,
+    "cache_read_input_tokens": 41184,
+    "cache_creation_input_tokens": 12245
+  },
+  "runs": [
+    {
+      "text": "The largest particle size in the table is "
+    },
+    {
+      "quote": "625 ±58 nm",
+      "atom": "p6.T2.r23c6",
+      "of": "LF-RES nanoparticles"
+    },
+    {
+      "text": " for the LF-RES nanoparticles system (siRNA silncOSLMT, targeting lncOSLMT). The next largest value is "
+    },
+    {
+      "quote": "~485 nm",
+      "atom": "p6.T2.r18c6",
+      "of": "MOF"
+    },
+    {
+      "text": " for the MOF system, so the LF-RES value is the maximum.\n"
+    }
+  ],
+  "rendered": "The largest particle size in the table is 625 ±58 nm[1] for the LF-RES nanoparticles system (siRNA silncOSLMT, targeting lncOSLMT). The next largest value is ~485 nm[2] for the MOF system, so the LF-RES value is the maximum.\n",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "625 ±58 nm",
+      "source": {
+        "atom": "p6.T2.r23c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "625 ±58 nm",
+        "bbox": [
+          357.9,
+          271.7,
+          395.5,
+          279.7
+        ],
+        "table": "Table 2",
+        "row": 23,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "of": "LF-RES nanoparticles",
+      "n": 1,
+      "rendered": "625 ±58 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "~485 nm",
+      "source": {
+        "atom": "p6.T2.r18c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~485 nm",
+        "bbox": [
+          357.9,
+          230.5,
+          384.9,
+          236.9
+        ],
+        "table": "Table 2",
+        "row": 18,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "of": "MOF",
+      "n": 2,
+      "rendered": "~485 nm"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:42+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "T4",
+  "cat": "T",
+  "expect": "625 ±58 nm, LF-RES nanoparticles (p6.T2 r23)",
+  "trap": "the MOF's ~485 nm",
+  "seconds": 16.1
+}

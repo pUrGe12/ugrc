@@ -1,0 +1,322 @@
+{
+  "question": "Since NFA-A retained less capacity than the NCA reference after 100 cycles, by how many percentage points did it fall behind?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE (page IN (10,11) AND (text ILIKE '%retention%' OR text ILIKE '%NCA%' OR text ILIKE '%NFA-A%' OR text ILIKE '%100 cycles%')) OR id LIKE 'p11.F8%' ORDER BY id",
+      "rows": 33
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p11.F8"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (CAST(regexp_extract((SELECT text FROM lines WHERE id='p11.L21'), '≈(\\d+)%', 1) AS INT) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p11.L22'), '≈(\\d+)%', 1) AS INT)) AS gap",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 8,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "NFA-A",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "NCA",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['100'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p1.L70): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p1.L70\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['8,', '100.'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p8.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p8.L2\"} — never shorten it",
+          "'100' is written exactly so in the document (e.g. p1.L70): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p1.L70\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['8,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p8.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p8.L2\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['8,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'8' is written exactly so in the document (e.g. p8.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p8.L2\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "≈80%",
+      "atom": "p11.L21",
+      "of": "NFA-A",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "≈68%",
+      "atom": "p11.L22",
+      "of": "NCA",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 4294,
+    "cache_read_input_tokens": 36887,
+    "cache_creation_input_tokens": 10815
+  },
+  "runs": [
+    {
+      "text": "Contrary to the premise, NFA-A did not fall behind the NCA reference. It retained more capacity over the cycle test: "
+    },
+    {
+      "quote": "≈80%",
+      "atom": "p11.L21",
+      "of": "NFA-A"
+    },
+    {
+      "text": " versus "
+    },
+    {
+      "quote": "≈68%",
+      "atom": "p11.L22",
+      "of": "NCA"
+    },
+    {
+      "text": ", so NFA-A was ahead by "
+    },
+    {
+      "sql": "SELECT MAX(CASE WHEN id='p11.L21' THEN CAST(regexp_extract(text, '≈(\\d+)%', 1) AS INT) END) - MAX(CASE WHEN id='p11.L22' THEN CAST(regexp_extract(text, '≈(\\d+)%', 1) AS INT) END) AS gap FROM lines WHERE id IN ('p11.L21','p11.L22')",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " percentage points at the end of the test. This matches the capacity retention figure, where the NFA A curve ends above the NCA curve. "
+    },
+    {
+      "figure": "p11.F8"
+    }
+  ],
+  "rendered": "Contrary to the premise, NFA-A did not fall behind the NCA reference. It retained more capacity over the cycle test: ≈80%[1] versus ≈68%[2], so NFA-A was ahead by 12[3] percentage points at the end of the test. This matches the capacity retention figure, where the NFA A curve ends above the NCA curve. Fig. 8[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "≈80%",
+      "source": {
+        "atom": "p11.L21",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+        "bbox": [
+          51.0,
+          246.9,
+          292.0,
+          256.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NFA-A",
+      "n": 1,
+      "rendered": "≈80%"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈68%",
+      "source": {
+        "atom": "p11.L22",
+        "kind": "line",
+        "page": 11,
+        "strength": "verbatim",
+        "text": "compared with that of NCA cathode (≈68%) after 100 charge/",
+        "bbox": [
+          51.0,
+          257.9,
+          292.0,
+          267.2
+        ]
+      },
+      "strength": "verbatim",
+      "of": "NCA",
+      "n": 2,
+      "rendered": "≈68%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT MAX(CASE WHEN id='p11.L21' THEN CAST(regexp_extract(text, '≈(\\d+)%', 1) AS INT) END) - MAX(CASE WHEN id='p11.L22' THEN CAST(regexp_extract(text, '≈(\\d+)%', 1) AS INT) END) AS gap FROM lines WHERE id IN ('p11.L21','p11.L22')",
+      "column": "gap",
+      "row": 0,
+      "fmt": "int",
+      "value": 12,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p11.L21",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "the NFA-A variant had superior capacity retention (≈80%) when",
+          "bbox": [
+            51.0,
+            246.9,
+            292.0,
+            256.2
+          ]
+        },
+        {
+          "atom": "p11.L22",
+          "kind": "line",
+          "page": 11,
+          "strength": "verbatim",
+          "text": "compared with that of NCA cathode (≈68%) after 100 charge/",
+          "bbox": [
+            51.0,
+            257.9,
+            292.0,
+            267.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "12"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p11.F8",
+        "kind": "figure",
+        "label": "Fig. 8",
+        "page": 11,
+        "caption": "Figure 8. Capacity retention of the NFA variants compared with that of NCA material synthesized using the same methodology.",
+        "png": "figures/p11.F8.png",
+        "png_pixels_sha256": "e190b0a56a8619c42a8a1f394d8b348e77fcf0b7527ee4d36d8ef492c5752ff3",
+        "bbox": [
+          52.1,
+          550.3,
+          290.9,
+          691.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 8"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:32:16+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "adma-2020",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "False premise: NFA-A ~80% vs NCA ~68% after 100 cycles (p11.L20-23): NFA-A is 12 points ahead",
+  "trap": "",
+  "seconds": 22.6
+}

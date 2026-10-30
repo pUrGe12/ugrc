@@ -18,6 +18,8 @@ line otherwise. Tables are found only where the document DRAWS them (a full-widt
 "Table N" caption); columns come from the per-column header rules the document draws, and only
 when it draws none, from word-free vertical strips. Figures are the embedded images that have a
 "Fig. N" caption directly below them.
+A page whose text is mostly set sideways (a landscape table) is read turned upright; its atoms' boxes
+are stored in page coordinates.
 """
 from __future__ import annotations
 
@@ -31,7 +33,7 @@ from pathlib import Path
 
 import pdfplumber
 
-EXTRACTOR_VERSION = "4"     # 2: images captioned "Scheme N" / "Chart N" are figures too
+EXTRACTOR_VERSION = "5"     # 2: images captioned "Scheme N" / "Chart N" are figures too
                             # 3: a raised superscript joins with "^" (10^7, not 107); a wide gap splits a
                             #    line only where it spans the page's centre (a stretched line stays whole)
                             # 4: on a page that prints no space glyphs, a word ends at a gap of WORD_GAP_EM of
@@ -42,6 +44,19 @@ EXTRACTOR_VERSION = "4"     # 2: images captioned "Scheme N" / "Chart N" are fig
                             #    on past rules inside it while the text between them is table-sized; a rule
                             #    just above the caption opens it. "FIGURE 1" on a line of its own captions.
                             #    Rotated text (a publisher's notice down the margin) is not read, by name.
+                            # 5: tables missed in 2026-10-30's held-out papers are found. A caption's lower
+                            #    bound is the next caption BELOW it in its column (not the next in reading
+                            #    order, which on a two-column page can sit higher); its rules are the ones
+                            #    under it; the 40 pt to the top rule counts from the caption's LAST line;
+                            #    "full width" is measured against the rules within that 40 pt (not a wider
+                            #    rule further down the page, nor a running-head rule above); a rule broken
+                            #    into pieces still opens a table when the pieces span TABLE_MIN_WIDTH_PT;
+                            #    "rule / caption / rule / header" starts at the rule under the caption. A
+                            #    page whose text is mostly set sideways (a landscape table) is read turned
+                            #    upright. "Table 2. Cont." continues Table 2; "Table7" (glued on a tightly set
+                            #    line) is a caption. A table with no bottom rule ends at a gap or at body text,
+                            #    not at the next caption. An image too small to render is declined by name
+                            #    instead of crashing the ingest.
 
 # THE NAMED TOLERANCES. Each is a value, a unit and what it measures (pt = a PDF point, 1/72 inch).
 # They decide what an atom id means, so EXTRACTOR_VERSION moves with any change to them.
@@ -69,7 +84,15 @@ RULE_JOIN_GAP_PT = 0.5            # pieces of one rule that touch end to end wit
 TABLE_MIN_WIDTH_PT = 150.0        # a rule narrower than this never opens a table (a footnote separator)
 CAPTION_RULE_ABOVE_PT = 12.0      # a table's top rule may sit at most this far above its caption
 SAME_Y_PT = 1.0                   # rules whose tops differ by at most this are one rule line
-TABLE_RULE_MAX_GAP_PT = 40.0      # a table's top rule starts at most this far below its caption
+TABLE_RULE_MAX_GAP_PT = 40.0      # a table's top rule starts at most this far below its caption's last line
+TABLE_ROW_MAX_GAP_PT = 12.0       # a table with no bottom rule on its page ends at the first vertical gap wider
+                                  # than this between its lines (rows sit 0-5 pt apart; the text after a
+                                  # table is set off by more), or at body text when the table is set smaller
+RULE_ALIGN_PT = 3.0              # a rule just above a caption is the table's own top rule only when its ends
+                                  # lie within this of the table's rule under the caption (a running-head
+                                  # rule spans the page, wider than a one-column table)
+SIDEWAYS_MIN_SHARE = 0.5          # a page on which at least this share of the characters is set rotated is
+                                  # a landscape page, read turned upright (a margin notice is a few percent)
 COLUMN_GUTTER_MIN_PT = 4.0        # a word-free vertical strip this wide separates two table columns
                                   # (used only when the table draws no per-column header rules)
 SMALL_GLYPH_MARGIN_PT = 0.5       # a word this much smaller than a table's main size is a sub/superscript
@@ -87,7 +110,7 @@ FIGURE_DPI = 200                  # dots per inch a figure region is rendered at
 LIGATURES = {"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl",
              "ﬅ": "ft", "ﬆ": "st"}
 
-TABLE_CAPTION = re.compile(r"^Table\s+(\d+)\b\s*(\(continued\))?")
+TABLE_CAPTION = re.compile(r"^Table\s*(\d+)\b\.?\s*(\((?:[Cc]ontinued|[Cc]ont\.?)\)|(?:[Cc]ontinued|[Cc]ont\.)(?=\s|$))?")
 FIGURE_CAPTION = re.compile(r"^(Fig\.|Figure|FIGURE|FIG\.|Scheme|SCHEME|Chart)\s*(\d+)\s*(?:[.:|]|$)")
 # a caption line that is only the label ("FIGURE 1"), set in the margin beside the caption text: it
 # need not sit horizontally under the image
@@ -166,13 +189,62 @@ def _upright(page):
     return page.filter(lambda o: o.get("object_type") != "char" or o.get("upright", True))
 
 
+class _Sideways:
+    """A landscape page: its text set rotated by a quarter turn, read turned upright. Its characters and
+    drawn shapes are given in the turned frame (text runs left to right, lines go down), where the rest
+    of this module reads them as on any page; `unturn` maps a box back to page coordinates. Characters
+    set upright on it (a running head, the page number) are left out and counted in `dropped`."""
+
+    def __init__(self, page, ccw):
+        self.ccw, self.W, self.H = ccw, page.width, page.height
+        self.width, self.height = page.height, page.width
+        keep = [c for c in page.chars if not c.get("upright", True) and (c["matrix"][1] > 0) == ccw]
+        self.dropped = sum(1 for c in page.chars if c.get("upright", True) and not c["text"].isspace())
+        self.chars = [self._turned(c, upright=True) for c in keep]
+        self.lines, self.rects, self.curves = ([self._turned(o) for o in objs]
+                                               for objs in (page.lines, page.rects, page.curves))
+
+    def turn(self, x0, top, x1, bottom):
+        """A page box in the turned frame. Counter-clockwise text reads up the page."""
+        if self.ccw:
+            return self.H - bottom, x0, self.H - top, x1
+        return top, self.W - x1, bottom, self.W - x0
+
+    def unturn(self, x0, top, x1, bottom):
+        """A turned-frame box back on the page."""
+        if self.ccw:
+            return top, self.H - x1, bottom, self.H - x0
+        return self.W - bottom, x0, self.W - top, x1
+
+    def _turned(self, o, upright=None):
+        x0, top, x1, bottom = self.turn(o["x0"], o["top"], o["x1"], o["bottom"])
+        d = dict(o, x0=x0, top=top, x1=x1, bottom=bottom, doctop=top, y0=self.height - bottom,
+                 y1=self.height - top, width=x1 - x0, height=bottom - top)
+        if upright is not None:                           # a character: pdfminer's size is its box height on the
+            d["upright"], d["size"] = upright, bottom - top   # page, a sideways glyph's advance; here, its height
+        return d
+
+    def extract_words(self, **kw):
+        return pdfplumber.utils.extract_words(self.chars, **kw)
+
+
+def _view(page):
+    """The page as it is read: itself, or turned upright when most of its text is set sideways."""
+    ink = [c for c in page.chars if not c["text"].isspace()]
+    rot = [c for c in ink if not c.get("upright", True)]
+    if not ink or len(rot) < SIDEWAYS_MIN_SHARE * len(ink):
+        return page
+    return _Sideways(page, ccw=2 * sum(1 for c in rot if c["matrix"][1] > 0) >= len(rot))
+
+
 def _page_words(page):
-    page = _upright(page)
-    chars = page.chars
+    view = page if isinstance(page, _Sideways) else _view(page)
+    src = view if isinstance(view, _Sideways) else _upright(page)
+    chars = src.chars
     spaced = sum(1 for c in chars if c["text"] == " ") >= SPACE_GLYPH_MIN_SHARE * len(chars)
     gap = {"x_tolerance": WORD_X_TOLERANCE_PT} if spaced else {"x_tolerance_ratio": WORD_GAP_EM}
-    return page.extract_words(**gap, y_tolerance=WORD_Y_TOLERANCE_PT,
-                              use_text_flow=True, extra_attrs=["size"])
+    return src.extract_words(**gap, y_tolerance=WORD_Y_TOLERANCE_PT,
+                             use_text_flow=True, extra_attrs=["size"])
 
 
 def _stream_lines(words, mid) -> list[dict]:
@@ -279,39 +351,68 @@ def _visual_rows(words) -> list[dict]:
     return rows
 
 
+def _overlaps(a, b) -> bool:
+    """Two things share some horizontal extent."""
+    return a["x0"] < b["x1"] and a["x1"] > b["x0"]
+
+
 def _find_tables(pageno, plines, rule_rows, folio_top, declined, body_size) -> list[dict]:
     """Table regions on one page: a "Table N" caption, a full-width rule within
-    TABLE_RULE_MAX_GAP_PT below it (or just above it), optional per-column header rules, and a bottom
-    rule (or, for a table continued on the next page, the last ink above the folio). A rule is
-    full-width when it spans the widest rule under the caption: a one-column table's rules span its
-    column. The table runs on past further full-width rules while the text between them is smaller
-    than the paper's body text (`body_size`), as when rules separate groups of rows."""
+    TABLE_RULE_MAX_GAP_PT below its last line (or just above it), optional per-column header rules, and
+    a bottom rule (or, for a table continued on the next page, the last ink above the folio). Only rules
+    under the caption count, down to the next caption below it in its column. A rule is full-width when
+    it spans the widest of those rules near the caption: a one-column table's rules span its column. The
+    table runs on past further full-width rules while the text between them is smaller than the paper's
+    body text (`body_size`), as when rules separate groups of rows."""
     found = []
     caps = [ln for ln in plines if TABLE_CAPTION.match(ln["text"])]
-    for i, cap in enumerate(caps):
+    for cap in caps:
         m = TABLE_CAPTION.match(cap["text"])
-        limit = caps[i + 1]["top"] if i + 1 < len(caps) else folio_top
+        limit = min((c["top"] for c in caps if c is not cap and c["top"] > cap["top"] and _overlaps(c, cap)),
+                    default=folio_top)
         below = [r for r in rule_rows if cap["bottom"] <= r["y"] < limit]
-        above = [r for r in rule_rows if cap["top"] - CAPTION_RULE_ABOVE_PT <= r["y"] < cap["top"]][-1:]
-        widest = max((r["run"] for r in above + below), default=0.0)
+        wide = [r for r in below if r["x1"] - r["x0"] >= TABLE_MIN_WIDTH_PT]
+        # the caption's lines above its first rule; a line set in body text ("Table 2 shows that ...") is
+        # prose, measured from its first line as before
+        small = cap["size"] < body_size - SMALL_GLYPH_MARGIN_PT
+        caption = [ln for ln in (_caption_lines(plines, cap) or [cap])
+                   if not wide or ln["bottom"] <= wide[0]["y"] + SAME_Y_PT] or [cap]
+        lines = caption if small else [cap]
+        near = [r for r in wide if r["y"] - lines[-1]["bottom"] <= TABLE_RULE_MAX_GAP_PT]
+        widest = max((r["run"] for r in near), default=0.0)
 
         def full(r):
-            return r["run"] >= FULL_RULE_FRACTION * widest and r["run"] >= TABLE_MIN_WIDTH_PT
+            return r["run"] >= FULL_RULE_FRACTION * widest and r["x1"] - r["x0"] >= TABLE_MIN_WIDTH_PT
 
-        top = next((r for r in below if full(r)), None)
-        box_top = None
-        if above and full(above[0]) and any(full(r) for r in below):
-            top = above[0]                                # "rule / Table 1. caption / header / rule / rows / rule"
-            block = []
-            for ln in _caption_lines(plines, cap) or [cap]:
-                block.append(ln)
-                if ln["text"].rstrip().endswith("."):
-                    break                                 # the caption ends at its full stop; the header row follows
-            box_top = block[-1]["bottom"]
-        elif top is None or top["y"] - cap["bottom"] > TABLE_RULE_MAX_GAP_PT:
+        first = next((r for r in near if full(r)), None)
+        if first is None:
             declined.append(f"p{pageno}: line {cap['text'][:40]!r} starts like a table caption but no "
                             f"full-width rule follows within {TABLE_RULE_MAX_GAP_PT:g} pt — read as prose")
             continue
+        x0, x1 = first["x0"], first["x1"]
+        # the table ends by the next caption below anywhere under its width (its caption may be a short label)
+        span = {"x0": min(cap["x0"], x0), "x1": max(cap["x1"], x1)}
+        limit = min((c["top"] for c in caps if c is not cap and c["top"] > cap["top"] and _overlaps(c, span)),
+                    default=limit)
+        below = [r for r in below if r["y"] < limit]
+
+        def inside(ln):
+            return ln["x0"] >= x0 - SAME_Y_PT and ln["x1"] <= x1 + SAME_Y_PT
+
+        block = []
+        for ln in caption:
+            block.append(ln)
+            if ln["text"].rstrip().endswith("."):
+                break                                     # the caption ends at its full stop
+        above = [r for r in rule_rows if cap["top"] - CAPTION_RULE_ABOVE_PT <= r["y"] < cap["top"]][-1:]
+        own = above and full(above[0]) and abs(above[0]["x0"] - x0) <= RULE_ALIGN_PT \
+            and abs(above[0]["x1"] - x1) <= RULE_ALIGN_PT
+        header_rows = [ln for ln in plines if block[-1]["bottom"] < ln["top"] and ln["bottom"] <= first["y"]
+                       and inside(ln) and all(ln is not b for b in block)]
+        if own and header_rows:                           # "rule / Table 1. caption / header / rule / rows / rule"
+            top, box_top = above[0], block[-1]["bottom"]
+        else:                                             # "caption / rule / header / rule / rows / rule"
+            top, box_top = first, None
         after = [r for r in below if r["y"] > top["y"] + SAME_Y_PT]
         header = None
         if after and not full(after[0]) and len(after[0]["segs"]) >= 2:
@@ -319,10 +420,6 @@ def _find_tables(pageno, plines, rule_rows, folio_top, declined, body_size) -> l
         fulls = [r for r in after if full(r)]
         if header is None and len(fulls) >= 2:
             header, fulls = fulls[0], fulls[1:]          # a full-width rule under the header row
-        x0, x1 = top["x0"], top["x1"]
-
-        def inside(ln):
-            return ln["x0"] >= x0 - SAME_Y_PT and ln["x1"] <= x1 + SAME_Y_PT
 
         if fulls:
             y1 = fulls[0]["y"]
@@ -331,11 +428,18 @@ def _find_tables(pageno, plines, rule_rows, folio_top, declined, body_size) -> l
                 if not between or any(ln["size"] >= body_size - SMALL_GLYPH_MARGIN_PT for ln in between):
                     break
                 y1 = nxt["y"]
-        else:                                             # continues on the next page
+        else:                                             # no bottom rule: it ends on this page, or continues
             start = (header or top)["y"]
-            ink = [ln["bottom"] for ln in plines
-                   if ln["top"] > start and ln["bottom"] <= limit and inside(ln)]
-            y1 = max(ink, default=start)
+            ink = sorted((ln for ln in plines if ln["top"] > start and ln["bottom"] <= limit and inside(ln)),
+                         key=lambda ln: ln["top"])
+            y1 = start
+            small = bool(ink) and ink[0]["size"] < body_size - SMALL_GLYPH_MARGIN_PT
+            for ln in ink:                                # its rows run down to a gap, or to body text after
+                if ln["top"] - y1 > TABLE_ROW_MAX_GAP_PT and y1 > start:   # a table set smaller than the body
+                    break
+                if small and ln["size"] >= body_size - SMALL_GLYPH_MARGIN_PT:
+                    break
+                y1 = max(y1, ln["bottom"])
         found.append({"caption": cap, "number": int(m.group(1)), "continued": bool(m.group(2)),
                       "box": (x0, box_top if box_top is not None else top["y"], x1, y1), "header": header})
     return found
@@ -439,7 +543,8 @@ def pixels_sha256(img) -> str:
 
 def _caption_lines(lines, start) -> list[dict]:
     """The caption's first line and the lines that continue it: next in reading order, same font
-    size, starting right under the previous caption line."""
+    size, starting right under the previous caption line, or beside it (a line whose box a raised or
+    lowered glyph made taller reaches into the next one)."""
     try:
         i = next(k for k, ln in enumerate(lines)
                  if abs(ln["top"] - start["top"]) < 0.01 and abs(ln["x0"] - start["x0"]) < 0.01)
@@ -449,7 +554,7 @@ def _caption_lines(lines, start) -> list[dict]:
     for ln in lines[i + 1:]:
         prev = out[-1]
         if (abs(ln["size"] - prev["size"]) <= CAPTION_SIZE_TOLERANCE_PT
-                and 0 <= ln["top"] - prev["bottom"] <= CAPTION_LINE_GAP_PT):
+                and ln["top"] >= prev["top"] - SAME_Y_PT and ln["top"] - prev["bottom"] <= CAPTION_LINE_GAP_PT):
             out.append(ln)
         else:
             break
@@ -477,15 +582,32 @@ def extract(pdf_path) -> Extraction:
         ex.pages = len(pdf.pages)
         body_size = _body_size(pdf.pages)
         for pageno, page in enumerate(pdf.pages, 1):
-            rotated = sum(1 for c in page.chars if not c.get("upright", True))
-            if rotated:
-                ex.declined.append(f"p{pageno}: {rotated} characters set rotated (a margin notice or rotated "
-                                   f"labels) — not read")
-            words = _page_words(page)
-            plines = _stream_lines(words, page.width / 2) if words else []
-            folio = _folio_top(plines, page.height)
-            found = _find_tables(pageno, plines, _rule_rows(page), folio, ex.declined, body_size)
-            figs = _find_figures(pageno, page, plines)
+            view = _view(page)
+            if view is page:
+                rotated = sum(1 for c in page.chars if not c.get("upright", True))
+                if rotated:
+                    ex.declined.append(f"p{pageno}: {rotated} characters set rotated (a margin notice or "
+                                       f"rotated labels) — not read")
+                unturn = None
+            else:
+                unturn = view.unturn                      # atoms are found in the turned frame, stored on the page
+                if view.dropped:
+                    ex.declined.append(f"p{pageno}: page set sideways, read turned upright; its {view.dropped} "
+                                       f"upright characters (a running head, the page number) — not read")
+                if page.images:
+                    ex.declined.append(f"p{pageno}: {len(page.images)} images on a page set sideways — not read "
+                                       f"as figures")
+
+            def placed(d):
+                if unturn is not None:
+                    d["x0"], d["top"], d["x1"], d["bottom"] = unturn(d["x0"], d["top"], d["x1"], d["bottom"])
+                return d
+
+            words = _page_words(view)
+            plines = _stream_lines(words, view.width / 2) if words else []
+            folio = _folio_top(plines, view.height)
+            found = _find_tables(pageno, plines, _rule_rows(view), folio, ex.declined, body_size)
+            figs = _find_figures(pageno, page, plines) if view is page else []
 
             # tables first: their words become cells and leave the line stream
             in_table = set()
@@ -498,20 +620,20 @@ def extract(pdf_path) -> Extraction:
                     table["continues"] = last_part.get(t["number"])
                 last_part[t["number"]] = table["id"]
                 t["table"] = table
-                ex.tables.append(table)
-                ex.columns.extend(columns)
-                ex.cells.extend(cells)
+                ex.tables.append(placed(table))
+                ex.columns.extend(columns)                # on a sideways page, x_from/x_to run along its lines
+                ex.cells.extend(placed(c) for c in cells)
                 in_table.update(id(w) for w in words if _inside(w, t["box"]))
 
             rest = [w for w in words if id(w) not in in_table]
-            lines = _stream_lines(rest, page.width / 2) if rest else []
+            lines = _stream_lines(rest, view.width / 2) if rest else []
             fig_boxes = [(f["id"], f["box"]) for f in figs if f["label"]]
             for n, ln in enumerate(lines, 1):
                 ln["id"] = f"p{pageno}.L{n}"
                 region = next((fid for fid, box in fig_boxes if all(_inside(w, box, 0) for w in ln["words"])), None)
-                ex.lines.append({"id": ln["id"], "page": pageno, "line_no": n, "text": ln["text"],
-                                 "size": ln["size"], "region": region,
-                                 "x0": ln["x0"], "top": ln["top"], "x1": ln["x1"], "bottom": ln["bottom"]})
+                ex.lines.append(placed({"id": ln["id"], "page": pageno, "line_no": n, "text": ln["text"],
+                                        "size": ln["size"], "region": region,
+                                        "x0": ln["x0"], "top": ln["top"], "x1": ln["x1"], "bottom": ln["bottom"]}))
 
             for t in found:                                # table captions: the lines above the top rule
                 if "table" not in t:
@@ -525,6 +647,10 @@ def extract(pdf_path) -> Extraction:
             for f in figs:
                 cap = _caption_lines(lines, f["caption_line"]) if f["caption_line"] else []
                 img = render_region(page, f["box"], FIGURE_DPI)
+                if img.width == 0 or img.height == 0:
+                    ex.declined.append(f"p{pageno}: image {f['id']} renders to no pixels "
+                                       f"({f['box'][2] - f['box'][0]:.2f} x {f['box'][3] - f['box'][1]:.2f} pt) — not read")
+                    continue
                 buf = io.BytesIO()
                 img.save(buf, format="PNG")
                 ex.pngs[f["id"]] = buf.getvalue()

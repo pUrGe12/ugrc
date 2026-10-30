@@ -1,0 +1,291 @@
+{
+  "question": "What particle size and release mechanism does Table 2 give for the SPIONs carrier?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, page FROM cells WHERE table_id='p6.T2' AND (text ILIKE '%SPION%' OR text ILIKE '%iron%' OR text ILIKE '%magnetic%') ORDER BY row_no, col_no",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT atoms.id, atoms.kind, atoms.page, atoms.text FROM atoms WHERE atoms.text ILIKE '%SPION%' ORDER BY page",
+      "rows": 8
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 14 AND 22 ORDER BY row_no, col_no",
+      "rows": 43
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=6 AND id IN (SELECT id FROM lines) ORDER BY line_no LIMIT 200",
+      "rows": 29
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE page=6 AND (text ILIKE '%60 nm%' OR text ILIKE '%Lysosomal Escape%' OR text ILIKE '%PEN%') ORDER BY id",
+      "rows": 12
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "SPIONs",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "SPIONs",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,', '[99])'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'99' is written exactly so in the document (e.g. p8.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"99\", \"atom\": \"p8.L59\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "~60 nm",
+      "atom": "p6.T2.r17c6",
+      "of": "SPIONs",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 3
+    },
+    {
+      "quote": "Intracellular/Lysosomal Escape",
+      "atom": "p6.T2.r17c7",
+      "of": "SPIONs",
+      "verdict": "unchecked",
+      "why": "not in a sentence of the prose (a table cell, a figure fact?)",
+      "run": 5
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p8.L54:54",
+      "p8.L57:29",
+      "p8.L37:27",
+      "p12.L126:7",
+      "p21.L7:49",
+      "p3.L16:61",
+      "p5.L53:56",
+      "p14.L69:0",
+      "p12.L122:28",
+      "p19.L103:62",
+      "p20.L97:7",
+      "p7.L12:48"
+    ],
+    "measures": [
+      "p3.L16:61#154"
+    ],
+    "matched": 211
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2073,
+    "cache_read_input_tokens": 53660,
+    "cache_creation_input_tokens": 11329
+  },
+  "runs": [
+    {
+      "text": "In "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": ", the SPIONs carrier row (siRNA siSnail with PEN, targeting Snail) gives a particle size of "
+    },
+    {
+      "quote": "~60 nm",
+      "atom": "p6.T2.r17c6",
+      "of": "SPIONs"
+    },
+    {
+      "text": " and a release mechanism of "
+    },
+    {
+      "quote": "Intracellular/Lysosomal Escape",
+      "atom": "p6.T2.r17c7",
+      "of": "SPIONs"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In Table 2[1], the SPIONs carrier row (siRNA siSnail with PEN, targeting Snail) gives a particle size of ~60 nm[2] and a release mechanism of Intracellular/Lysosomal Escape[3].",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "~60 nm",
+      "source": {
+        "atom": "p6.T2.r17c6",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "~60 nm",
+        "bbox": [
+          357.9,
+          221.9,
+          381.3,
+          228.3
+        ],
+        "table": "Table 2",
+        "row": 17,
+        "col": 6,
+        "column_header": "Particle size"
+      },
+      "strength": "verbatim",
+      "of": "SPIONs",
+      "n": 2,
+      "rendered": "~60 nm"
+    },
+    {
+      "kind": "quote",
+      "quote": "Intracellular/Lysosomal Escape",
+      "source": {
+        "atom": "p6.T2.r17c7",
+        "kind": "cell",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Intracellular/Lysosomal Escape",
+        "bbox": [
+          412.9,
+          221.9,
+          501.3,
+          228.3
+        ],
+        "table": "Table 2",
+        "row": 17,
+        "col": 7,
+        "column_header": "Release mechanism"
+      },
+      "strength": "verbatim",
+      "of": "SPIONs",
+      "n": 3,
+      "rendered": "Intracellular/Lysosomal Escape"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:39:11+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "~60 nm; Intracellular/Lysosomal Escape (siSnail2, PEN shell) (p6.T2 r17)",
+  "trap": "the AuNP row (no size)",
+  "seconds": 16.4
+}

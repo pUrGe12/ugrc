@@ -1,0 +1,280 @@
+{
+  "question": "In Table 1, which company is running the NBF-006 trial, and what is its status?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 9,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text LIKE '%NBF%') ORDER BY row_no, col_no",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 11 AND 14 ORDER BY row_no, col_no",
+      "rows": 11
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, top FROM lines WHERE page=2 AND top BETWEEN (SELECT MIN(top) FROM lines WHERE page=2 AND text LIKE '%NBF-006%')-5 AND (SELECT MAX(top) FROM lines WHERE page=2 AND text LIKE '%NCT03819387%')+30 ORDER BY top",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, top, x0 FROM lines WHERE page=2 AND (text LIKE '%NBF%' OR text LIKE '%NCT03819387%' OR text LIKE '%Completed%' OR text LIKE '%Nitto%' OR text LIKE '%Phase 1%' OR text LIKE '%Lung%' OR text LIKE '%Pancreatic%') ORDER BY top",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text LIKE '%NBF-006%' OR text LIKE '%Nitto%' OR text LIKE '%NCT03819387%' OR (text='Completed' AND page=2)",
+      "rows": 11
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 3 AND 7 ORDER BY row_no, col_no",
+      "rows": 22
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "NBF-006",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "NBF-006",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "NBF-006",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1,', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1,', 'two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "Nitto BioPharma",
+      "atom": "p2.T1.r12c7",
+      "of": "NBF-006",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "Phase 1",
+      "atom": "p2.T1.r12c6",
+      "of": "NBF-006",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "Completed",
+      "atom": "p2.T1.r13c6",
+      "of": "NBF-006",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 2702,
+    "cache_read_input_tokens": 44891,
+    "cache_creation_input_tokens": 8024
+  },
+  "runs": [
+    {
+      "text": "The NBF-006 trial (Non-Small Cell Lung Cancer, GSTP, LNPs) is run by "
+    },
+    {
+      "quote": "Nitto BioPharma",
+      "atom": "p2.T1.r12c7",
+      "of": "NBF-006"
+    },
+    {
+      "text": ". Its status is listed as "
+    },
+    {
+      "quote": "Phase 1",
+      "atom": "p2.T1.r12c6",
+      "of": "NBF-006"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "Completed",
+      "atom": "p2.T1.r13c6",
+      "of": "NBF-006"
+    },
+    {
+      "text": ", the status wrapping onto the next printed row of the table."
+    }
+  ],
+  "rendered": "The NBF-006 trial (Non-Small Cell Lung Cancer, GSTP, LNPs) is run by Nitto BioPharma[1]. Its status is listed as Phase 1[2] Completed[3], the status wrapping onto the next printed row of the table.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Nitto BioPharma",
+      "source": {
+        "atom": "p2.T1.r12c7",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Nitto BioPharma",
+        "bbox": [
+          418.7,
+          459.0,
+          466.0,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 7,
+        "column_header": "Company"
+      },
+      "strength": "verbatim",
+      "of": "NBF-006",
+      "n": 1,
+      "rendered": "Nitto BioPharma"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1",
+      "source": {
+        "atom": "p2.T1.r12c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1",
+        "bbox": [
+          357.7,
+          459.0,
+          379.5,
+          465.4
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "of": "NBF-006",
+      "n": 2,
+      "rendered": "Phase 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Completed",
+      "source": {
+        "atom": "p2.T1.r13c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Completed",
+        "bbox": [
+          357.7,
+          467.7,
+          388.1,
+          474.0
+        ],
+        "table": "Table 1",
+        "row": 13,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "of": "NBF-006",
+      "n": 3,
+      "rendered": "Completed"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:36+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "T3",
+  "cat": "T",
+  "expect": "Nitto BioPharma; Phase 1, Completed (NCT03819387) (p2.T1 r12-13)",
+  "trap": "a neighbouring row's company",
+  "seconds": 19.8
+}

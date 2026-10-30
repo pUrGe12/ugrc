@@ -1,0 +1,194 @@
+{
+  "question": "Which drugs in Table 1 use lipid-based nanocarriers, according to the text?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (2,3) AND (text ILIKE '%lipid%' OR text ILIKE '%Atu027%' OR text ILIKE '%EphA2%' OR text ILIKE '%DCR-MYC%' OR text ILIKE '%TKM%' OR text ILIKE '%NBF%') ORDER BY page, line_no",
+      "rows": 9
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND col_no IN (2,5) ORDER BY row_no, col_no",
+      "rows": 41
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['1', '1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p2.L48:0",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p5.L53:56",
+      "p6.L25:0",
+      "p3.L23:0",
+      "p3.L2:34",
+      "p19.L117:0",
+      "p16.L1:0",
+      "p1.L71:31",
+      "p19.L6:0",
+      "p5.L68:0"
+    ],
+    "measures": [],
+    "matched": 189
+  },
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 2199,
+    "cache_read_input_tokens": 13498,
+    "cache_creation_input_tokens": 9137
+  },
+  "runs": [
+    {
+      "text": "According to the text, the drugs in "
+    },
+    {
+      "table": "p2.T1"
+    },
+    {
+      "text": " that use lipid-based nanocarriers are Atu027, TKM-080301, DCR-MYC, NBF-006 and EphA2 siRNA. The text says these all utilize lipid-based nanocarriers, including lipid nanoparticles, liposomes and DOPC formulations.\n",
+      "support": [
+        {
+          "atom": "p3.L2",
+          "quote": "Atu027, TKM-080301, DCR-MYC,"
+        },
+        {
+          "atom": "p3.L3",
+          "quote": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,"
+        }
+      ]
+    },
+    {
+      "text": "\nThe table's carrier column agrees: Atu027 is listed with liposomes, TKM-080301, DCR-MYC and NBF-006 with LNPs, and EphA2 siRNA with DOPC. The text does not assign lipid-based carriers to the other drugs in the table, which are listed with non-lipid carriers such as LODER, polymer, GalNAc, CpG, exosomes or naked siRNA."
+    }
+  ],
+  "rendered": "According to the text, the drugs in Table 1[1] that use lipid-based nanocarriers are Atu027, TKM-080301, DCR-MYC, NBF-006 and EphA2 siRNA. The text says these all utilize lipid-based nanocarriers, including lipid nanoparticles, liposomes and DOPC formulations.[2][3]\n\nThe table's carrier column agrees: Atu027 is listed with liposomes, TKM-080301, DCR-MYC and NBF-006 with LNPs, and EphA2 siRNA with DOPC. The text does not assign lipid-based carriers to the other drugs in the table, which are listed with non-lipid carriers such as LODER, polymer, GalNAc, CpG, exosomes or naked siRNA.",
+  "citations": [
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p2.T1",
+        "kind": "table",
+        "label": "Table 1",
+        "page": 2,
+        "caption": "Table 1 Clinical trials of siRNA-based anticancer drugs.",
+        "bbox": [
+          37.6,
+          354.6,
+          557.7,
+          740.8
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Table 1"
+    },
+    {
+      "kind": "support",
+      "quote": "Atu027, TKM-080301, DCR-MYC,",
+      "source": {
+        "atom": "p3.L2",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "carriers playing a dominant role. Atu027, TKM-080301, DCR-MYC,",
+        "bbox": [
+          37.6,
+          66.8,
+          288.7,
+          74.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Atu027, TKM-080301, DCR-MYC,"
+    },
+    {
+      "kind": "support",
+      "quote": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,",
+      "source": {
+        "atom": "p3.L3",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,",
+        "bbox": [
+          37.6,
+          77.3,
+          288.7,
+          85.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:22:33+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "Atu027, TKM-080301, DCR-MYC, NBF-006 and EphA2 siRNA, all five (p3.L1-3)",
+  "trap": "adding a polymer-based drug",
+  "seconds": 12.9
+}

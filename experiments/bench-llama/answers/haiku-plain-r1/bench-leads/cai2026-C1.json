@@ -1,0 +1,204 @@
+{
+  "question": "Which drugs in Table 1 use lipid-based nanocarriers, according to the text?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND col_no IN (1,2,5,6) ORDER BY row_no, col_no",
+      "rows": 88
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE lower(text) LIKE '%lipid%' OR lower(text) LIKE '%liposom%' OR lower(text) LIKE '%LNP%' OR lower(text) LIKE '%DOPC%' ORDER BY page, line_no",
+      "rows": 70
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=3 AND line_no BETWEEN 1 AND 8 ORDER BY line_no",
+      "rows": 8
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1', 'five'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['five'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['five'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2478,
+    "cache_read_input_tokens": 37657,
+    "cache_creation_input_tokens": 10968
+  },
+  "runs": [
+    {
+      "text": "According to the text, the drugs in the table that use lipid-based nanocarriers are: "
+    },
+    {
+      "text": "Atu027, TKM-080301, DCR-MYC,",
+      "support": [
+        {
+          "atom": "p3.L2",
+          "quote": "Atu027, TKM-080301, DCR-MYC,"
+        }
+      ]
+    },
+    {
+      "text": " "
+    },
+    {
+      "text": "NBF-006, and EphA2 siRNA",
+      "support": [
+        {
+          "atom": "p3.L3",
+          "quote": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,"
+        }
+      ]
+    },
+    {
+      "text": ". The text says these carriers encompass lipid nanoparticles (LNPs), liposomes, and DOPC. In the table, Atu027 is listed with liposomes, TKM-080301 and DCR-MYC with LNP, NBF-006 with LNPs, and EphA2 siRNA with DOPC."
+    }
+  ],
+  "rendered": "According to the text, the drugs in the table that use lipid-based nanocarriers are: Atu027, TKM-080301, DCR-MYC,[1] NBF-006, and EphA2 siRNA[2]. The text says these carriers encompass lipid nanoparticles (LNPs), liposomes, and DOPC. In the table, Atu027 is listed with liposomes, TKM-080301 and DCR-MYC with LNP, NBF-006 with LNPs, and EphA2 siRNA with DOPC.",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Atu027, TKM-080301, DCR-MYC,",
+      "source": {
+        "atom": "p3.L2",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "carriers playing a dominant role. Atu027, TKM-080301, DCR-MYC,",
+        "bbox": [
+          37.6,
+          66.8,
+          288.7,
+          74.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Atu027, TKM-080301, DCR-MYC,"
+    },
+    {
+      "kind": "support",
+      "quote": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,",
+      "source": {
+        "atom": "p3.L3",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,",
+        "bbox": [
+          37.6,
+          77.3,
+          288.7,
+          85.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "NBF-006, and EphA2 siRNA-all five utilize lipid-based nanocarriers,"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:10:32+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "Atu027, TKM-080301, DCR-MYC, NBF-006 and EphA2 siRNA, all five (p3.L1-3)",
+  "trap": "adding a polymer-based drug",
+  "seconds": 18.8
+}

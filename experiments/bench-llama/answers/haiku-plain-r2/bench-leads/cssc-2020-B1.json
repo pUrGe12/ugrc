@@ -1,0 +1,228 @@
+{
+  "question": "How long does delamination take at room temperature, and how long at 100 °C?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, text, strength FROM atoms WHERE figure_id IS NULL AND (text ILIKE '%room temperature%' OR text ILIKE '%100 °C%' OR text ILIKE '%100 °C%' OR text ILIKE '%min%') AND page IN (3,4,5) ORDER BY id",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, figure_id, text, conf FROM atoms WHERE kind IN ('figure_ocr') AND figure_id='p4.F4' ORDER BY id",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, statement, value, unit, condition, check_note FROM figure_facts WHERE figure_id='p4.F4'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text, strength FROM atoms WHERE page IN (3,4,5) AND (text ILIKE '%room temp%' OR text ILIKE '%100%°C%' OR text ILIKE '%°C%' OR text ILIKE '%min%' OR text ILIKE '%temperature%') ORDER BY id",
+      "rows": 53
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, strength FROM atoms WHERE id LIKE 'p4.F4.%' ORDER BY id",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 8
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['100'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'100' is written exactly so in the document (e.g. p3.L134): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"100\", \"atom\": \"p3.L134\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['4'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4' is written exactly so in the document (e.g. p1.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4\", \"atom\": \"p1.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1831,
+    "cache_read_input_tokens": 16220,
+    "cache_creation_input_tokens": 8793
+  },
+  "runs": [
+    {
+      "text": "At room temperature, delamination typically takes "
+    },
+    {
+      "quote": "a couple hours",
+      "atom": "p3.L132"
+    },
+    {
+      "text": " to complete. At "
+    },
+    {
+      "quote": "100 °C",
+      "atom": "p3.L134"
+    },
+    {
+      "text": ", the time drops to "
+    },
+    {
+      "quote": "less than 2 min",
+      "atom": "p3.L133"
+    },
+    {
+      "text": ", as the text states. The figure plots the time needed for complete delamination against temperature: "
+    },
+    {
+      "figure": "p4.F4"
+    }
+  ],
+  "rendered": "At room temperature, delamination typically takes a couple hours[1] to complete. At 100 °C[2], the time drops to less than 2 min[3], as the text states. The figure plots the time needed for complete delamination against temperature: Fig. 4[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "a couple hours",
+      "source": {
+        "atom": "p3.L132",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "PVDF. Delamination typically takes a couple hours to be",
+        "bbox": [
+          304.7,
+          461.7,
+          548.5,
+          470.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "a couple hours"
+    },
+    {
+      "kind": "quote",
+      "quote": "100 °C",
+      "source": {
+        "atom": "p3.L134",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "needed when increasing the reaction temperature to 100 °C. As",
+        "bbox": [
+          304.7,
+          485.6,
+          548.5,
+          494.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "100 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "less than 2 min",
+      "source": {
+        "atom": "p3.L133",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "completed at room temperature, while less than 2 min are",
+        "bbox": [
+          304.7,
+          473.7,
+          548.5,
+          482.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "less than 2 min"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F4",
+        "kind": "figure",
+        "label": "Fig. 4",
+        "page": 4,
+        "caption": "Figure 4. Effect of temperature on the time needed for complete delamina- tion.",
+        "png": "figures/p4.F4.png",
+        "png_pixels_sha256": "cd736d27a882d58ecb69a9953ebee9a873dd69f7c1b6b8674532b69536c104c0",
+        "bbox": [
+          83.6,
+          442.5,
+          253.7,
+          585.1
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 4"
+    }
+  ],
+  "seals": {
+    "extraction": "6b070d4f372ad360ee3c4866e36f3d1b67d1e0ae809608709c04ef0fb109d310",
+    "readings": "5b727b40e250b1a853ac5c550975589ead58b2ee2800d1cd6729b45d4b8323e4"
+  },
+  "created_at": "2026-10-19T09:27:29+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cssc-2020",
+  "probe": "B1",
+  "cat": "B",
+  "expect": "a couple of hours at room temperature (~20 °C); less than 2 min at 100 °C (p3.L132-134)",
+  "trap": "the seconds at 160 °C",
+  "seconds": 11.0
+}

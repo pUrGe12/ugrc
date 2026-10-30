@@ -1,0 +1,337 @@
+{
+  "question": "By how many percentage points did the surface fluorine mass ratio fall through the Cyrene-based separation?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page = 5 AND id IN ('p5.L16','p5.L17','p5.L18','p5.L19') OR (page=5 AND text ILIKE '%fluorine%')",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT ROUND(12.49 - 0.14, 2) AS diff, (SELECT text FROM lines WHERE id='p5.L17') AS l17, (SELECT text FROM lines WHERE id='p5.L18') AS l18",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT ROUND(CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L17'), '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract((SELECT text FROM lines WHERE id='p5.L18'), '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "cathode rejects",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.88
+        },
+        {
+          "run": 3,
+          "of": "after the Cyrene-based separation process",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.98
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "12.49%",
+      "atom": "p5.L17",
+      "of": "cathode rejects",
+      "sentence": "p5.L16:50",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.88,
+      "clause_about": [
+        "fluorine element"
+      ],
+      "request": {
+        "state": "The mass ratio of fluorine element on the surface of the cathode rejects was [[12.49%]], and that value was greatly reduced to 0.14% after the Cyrene-based separa-tion process.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[12.49%]] a value of “cathode rejects”?",
+            "criteria": {
+              "true": "the passage gives [[12.49%]] for “cathode rejects”, or for something “cathode rejects” has, makes or contains",
+              "false": "[[12.49%]] is given for something else, or the passage does not connect it to “cathode rejects”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.88
+          }
+        },
+        "usage": {
+          "input_tokens": 409,
+          "output_tokens": 21
+        }
+      },
+      "run": 1
+    },
+    {
+      "quote": "0.14%",
+      "atom": "p5.L18",
+      "of": "after the Cyrene-based separation process",
+      "sentence": "p5.L16:50",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.98,
+      "clause_about": [
+        "fluorine element"
+      ],
+      "request": {
+        "state": "The mass ratio of fluorine element on the surface of the cathode rejects was 12.49%, and that value was greatly reduced to [[0.14%]] after the Cyrene-based separa-tion process.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[0.14%]] a value of “after the Cyrene-based separation process”?",
+            "criteria": {
+              "true": "the passage gives [[0.14%]] for “after the Cyrene-based separation process”, or for something “after the Cyrene-based separation process” has, makes or contains",
+              "false": "[[0.14%]] is given for something else, or the passage does not connect it to “after the Cyrene-based separation process”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.98
+          }
+        },
+        "usage": {
+          "input_tokens": 418,
+          "output_tokens": 21
+        }
+      },
+      "run": 3
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "3d77803c405379e511940ae37df2f17d364cfc08f7045fd47edf128c15fe3110",
+  "leads": {
+    "sentences": [
+      "p5.L16:50"
+    ],
+    "measures": [
+      "p5.L16:50#77",
+      "p5.L16:50#123"
+    ],
+    "matched": 76
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1809,
+    "cache_read_input_tokens": 28365,
+    "cache_creation_input_tokens": 6780
+  },
+  "runs": [
+    {
+      "text": "The surface fluorine mass ratio of the cathode rejects was "
+    },
+    {
+      "measure": "p5.L16:50#77",
+      "of": "cathode rejects"
+    },
+    {
+      "text": ", and after the Cyrene-based separation process it fell to "
+    },
+    {
+      "measure": "p5.L16:50#123",
+      "of": "after the Cyrene-based separation process"
+    },
+    {
+      "text": ". The drop is "
+    },
+    {
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points."
+    }
+  ],
+  "rendered": "The surface fluorine mass ratio of the cathode rejects was 12.49%[1], and after the Cyrene-based separation process it fell to 0.14%[2]. The drop is 12.35[3] percentage points.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "12.49%",
+      "source": {
+        "atom": "p5.L17",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+        "bbox": [
+          310.5,
+          223.1,
+          561.6,
+          232.7
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p5.L16:50#77",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "ratio",
+        "property_p": 0.8,
+        "about": [
+          "fluorine element"
+        ],
+        "method": [],
+        "quantity": [
+          "mass ratio"
+        ],
+        "sentence": "p5.L16:50",
+        "read_by": "judge"
+      },
+      "of": "cathode rejects",
+      "n": 1,
+      "rendered": "12.49%"
+    },
+    {
+      "kind": "quote",
+      "quote": "0.14%",
+      "source": {
+        "atom": "p5.L18",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+        "bbox": [
+          310.5,
+          235.2,
+          561.6,
+          243.2
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p5.L16:50#123",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "ratio",
+        "property_p": 0.71,
+        "about": [
+          "fluorine element"
+        ],
+        "method": [],
+        "quantity": [
+          "mass ratio"
+        ],
+        "sentence": "p5.L16:50",
+        "read_by": "judge"
+      },
+      "of": "after the Cyrene-based separation process",
+      "n": 2,
+      "rendered": "0.14%"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT ROUND(CAST(regexp_extract(a.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE) - CAST(regexp_extract(b.text, '([0-9]+\\.[0-9]+)%', 1) AS DOUBLE), 2) AS drop_pp FROM lines a, lines b WHERE a.id='p5.L17' AND b.id='p5.L18'",
+      "column": "drop_pp",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 12.35,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p5.L17",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "fluorine element on the surface of the cathode rejects was 12.49%, and",
+          "bbox": [
+            310.5,
+            223.1,
+            561.6,
+            232.7
+          ]
+        },
+        {
+          "atom": "p5.L18",
+          "kind": "line",
+          "page": 5,
+          "strength": "verbatim",
+          "text": "that value was greatly reduced to 0.14% after the Cyrene-based separa-",
+          "bbox": [
+            310.5,
+            235.2,
+            561.6,
+            243.2
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "12.35"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-19T09:22:53+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "susmat-2020",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "12.49% to 0.14% (p5.L17-18): 12.35 points",
+  "trap": "",
+  "seconds": 13.1
+}

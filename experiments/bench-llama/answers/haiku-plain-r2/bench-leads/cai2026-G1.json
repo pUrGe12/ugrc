@@ -1,0 +1,183 @@
+{
+  "question": "According to Fig. 2, which nanocarriers are shown under the metal-based nanoparticles heading?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p5.F2"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement, basis, printed_text, ocr_confirmed FROM figure_facts WHERE figure_id='p5.F2' ORDER BY fact_no",
+      "rows": 26
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, conf FROM figure_ocr WHERE figure_id='p5.F2' ORDER BY line_no",
+      "rows": 13
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['three'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[2]",
+        "why": "the words before citation [2] end in 'e nanocarriers shown are:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'e nanocarriers shown are:[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 1220,
+    "cache_read_input_tokens": 23357,
+    "cache_creation_input_tokens": 10391
+  },
+  "runs": [
+    {
+      "text": "Under the metal-based nanoparticles heading in ",
+      "support": []
+    },
+    {
+      "figure": "p5.F2"
+    },
+    {
+      "text": ", the nanocarriers shown are ",
+      "support": []
+    },
+    {
+      "quote": "AuNPs, SPIONs and MOF",
+      "atom": "p5.F2.k16"
+    },
+    {
+      "text": ".",
+      "support": []
+    }
+  ],
+  "rendered": "Under the metal-based nanoparticles heading in Fig. 2[1], the nanocarriers shown are AuNPs, SPIONs and MOF[2].",
+  "citations": [
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p5.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 5,
+        "caption": "Fig. 2. Various nanocarriers are used to deliver siRNA for targeting tumor metastasis. Created in BioRender. Fu, Y. (2026) https://BioRender.com/kusjibi These nanocarriers can achieve passive targeting through the EPR effect.",
+        "png": "figures/p5.F2.png",
+        "png_pixels_sha256": "4e7d561d7b6e9fa0cfca98d4a7c0c58afe0d3cae66e890c424287dfc4058e2cb",
+        "bbox": [
+          310.1,
+          56.1,
+          553.9,
+          379.4
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Fig. 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "AuNPs, SPIONs and MOF",
+      "source": {
+        "atom": "p5.F2.k16",
+        "kind": "figure_fact",
+        "page": 5,
+        "strength": "model-read, ocr-confirmed",
+        "text": "Under the metal-based nanoparticles heading, the three nanocarriers shown are AuNPs, SPIONs and MOF.",
+        "bbox": [
+          310.1,
+          56.1,
+          553.9,
+          379.4
+        ],
+        "figure": "Fig. 2",
+        "figure_png": "figures/p5.F2.png",
+        "reader": "claude-opus-5-5",
+        "basis": "printed",
+        "printed_text": [
+          "AuNPs",
+          "SPIONs",
+          "MOF"
+        ],
+        "ocr_confirmed": true,
+        "check_note": null
+      },
+      "strength": "model-read, ocr-confirmed",
+      "n": 2,
+      "rendered": "AuNPs, SPIONs and MOF"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:45+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "G1",
+  "cat": "G",
+  "expect": "AuNPs, SPIONs and MOF (figure reading, OCR-confirmed)",
+  "trap": "adding CQD or MSNP",
+  "seconds": 8.6
+}

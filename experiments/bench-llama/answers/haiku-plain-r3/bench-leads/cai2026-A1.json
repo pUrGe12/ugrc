@@ -1,0 +1,196 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 10,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%Gao%' OR text ILIKE '%mg/kg%' OR text ILIKE '%dose%' ORDER BY page, id",
+      "rows": 19
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (6,7) AND kind IN ('line','lines') ORDER BY page, id LIMIT 5; SELECT id, page, text FROM lines WHERE page BETWEEN 5 AND 7 AND (text ILIKE '%CL4H6%' OR text ILIKE '%siRNA%' OR text ILIKE '%ionizable%' OR text ILIKE '%Gao%') ORDER BY page, line_no;",
+      "rows": null
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page BETWEEN 6 AND 7 AND (text ILIKE '%CL4H6%' OR text ILIKE '%ionizable%' OR text ILIKE '%Gao%' OR text ILIKE '%[55]%' OR text ILIKE '%mg%' OR text ILIKE '%kg%') ORDER BY page, line_no",
+      "rows": 5
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE text ILIKE '%Gao%' OR text ILIKE '%[55]%' OR text ILIKE '%55%' OR text ILIKE '%CL4H6%' ORDER BY page, row_no, col_no",
+      "rows": 5
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id='p6.T2' AND row_no<=12 ORDER BY row_no, col_no",
+      "rows": 58
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%μg%' OR text ILIKE '%ug%' OR text ILIKE '%mg%' OR text ILIKE '%nmol%' OR text ILIKE '%pmol%' OR text ILIKE '%nM%' OR text ILIKE '%mg kg%' OR text ILIKE '%FOXM1%' ORDER BY page, id",
+      "rows": 151
+    },
+    {
+      "turn": 7,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=6 AND line_no BETWEEN 1 AND 12 ORDER BY line_no",
+      "rows": 12
+    },
+    {
+      "turn": 8,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, kind, page, text FROM atoms WHERE (text ILIKE '%dosage%' OR text ILIKE '%dosing%' OR text ILIKE '%mg/kg%' OR text ILIKE '%mg kg%' OR text ILIKE '%injected%' OR text ILIKE '%per mouse%' OR text ILIKE '%siFOXM1%' OR text ILIKE '%si-FOXM1%') ORDER BY page, id",
+      "rows": 7
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 4
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[1]",
+        "why": "your own words contain number(s) ['[55]'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[3]",
+        "why": "your own words contain number(s) ['2,', '[55])'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 3141,
+    "cache_read_input_tokens": 79450,
+    "cache_creation_input_tokens": 16604
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for Gao et al. The only passage about their work says that "
+    },
+    {
+      "text": "Gao et al.",
+      "support": [
+        {
+          "atom": "p6.L4",
+          "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+        }
+      ]
+    },
+    {
+      "text": " built lipid nanoparticles encapsulating si-FOXM1, which were tested in a BT549 lung metastasis model. "
+    },
+    {
+      "text": "No dose value, dosing unit or dosing regimen is given for that study, and its summary table entry only lists the target, the lysosomal-escape mechanism and particle size.",
+      "absent": [
+        "mg/kg",
+        "mg kg"
+      ]
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for Gao et al. The only passage about their work says that Gao et al.[1] built lipid nanoparticles encapsulating si-FOXM1, which were tested in a BT549 lung metastasis model. No dose value, dosing unit or dosing regimen is given for that study, and its summary table entry only lists the target, the lysosomal-escape mechanism and particle size.[2]",
+  "citations": [
+    {
+      "kind": "support",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg",
+        "mg kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 2,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:39:43+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 24.6
+}

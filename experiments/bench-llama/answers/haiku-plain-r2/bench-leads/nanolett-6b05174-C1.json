@@ -1,0 +1,251 @@
+{
+  "question": "What voltage hysteresis did the carbon/Al electrode show at 4 mA/cm^2?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%hysteresis%' OR lower(text) LIKE '%4 mA%' OR lower(text) LIKE '%mV%' ORDER BY page, top",
+      "rows": 9
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (2,3) AND (lower(text) LIKE '%ma/cm%' OR lower(text) LIKE '%mv%' OR lower(text) LIKE '%high current%' OR lower(text) LIKE '%45 mV%') ORDER BY page, top",
+      "rows": 24
+    },
+    {
+      "turn": 2,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F2"
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=3 AND line_no BETWEEN 12 AND 22 ORDER BY line_no",
+      "rows": 11
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 4,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 8,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "carbon/Al electrode",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['4', '2a,', '0.5', '4'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'4' is written exactly so in the document (e.g. p1.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4\", \"atom\": \"p1.L15\"} — never shorten it",
+          "'2a' is written exactly so in the document (e.g. p3.L16): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2a\", \"atom\": \"p3.L16\"} — never shorten it",
+          "'0.5' is written exactly so in the document (e.g. p1.L17): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"0.5\", \"atom\": \"p1.L17\"} — never shorten it",
+          "'4' is written exactly so in the document (e.g. p1.L15): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"4\", \"atom\": \"p1.L15\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2a).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2a' is written exactly so in the document (e.g. p3.L16): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2a\", \"atom\": \"p3.L16\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "45 mV hysteresis",
+      "atom": "p3.L17",
+      "of": "carbon/Al electrode",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1126,
+    "cache_read_input_tokens": 28072,
+    "cache_creation_input_tokens": 8019
+  },
+  "runs": [
+    {
+      "text": "The carbon/Al electrode showed a voltage hysteresis of "
+    },
+    {
+      "quote": "45 mV hysteresis",
+      "atom": "p3.L17",
+      "of": "carbon/Al electrode"
+    },
+    {
+      "text": " at "
+    },
+    {
+      "quote": "4 mA/cm^2",
+      "atom": "p3.L18"
+    },
+    {
+      "text": " (testing over a range of currents, shown in "
+    },
+    {
+      "quote": "Figure 2a",
+      "atom": "p3.L16"
+    },
+    {
+      "text": "). "
+    },
+    {
+      "figure": "p3.F2"
+    }
+  ],
+  "rendered": "The carbon/Al electrode showed a voltage hysteresis of 45 mV hysteresis[1] at 4 mA/cm^2[2] (testing over a range of currents, shown in Figure 2a[3]). Fig. 2[4]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "45 mV hysteresis",
+      "source": {
+        "atom": "p3.L17",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "voltage hysteresis even at high currents, with a 45 mV hysteresis",
+        "bbox": [
+          60.5,
+          686.1,
+          300.4,
+          696.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "carbon/Al electrode",
+      "n": 1,
+      "rendered": "45 mV hysteresis"
+    },
+    {
+      "kind": "quote",
+      "quote": "4 mA/cm^2",
+      "source": {
+        "atom": "p3.L18",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "at 4 mA/cm^2. In contrast, bare Al electrodes were prone to",
+        "bbox": [
+          60.5,
+          695.9,
+          300.5,
+          707.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "4 mA/cm^2"
+    },
+    {
+      "kind": "quote",
+      "quote": "Figure 2a",
+      "source": {
+        "atom": "p3.L16",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "shown in Figure 2a, the carbon nucleation layer enables a low",
+        "bbox": [
+          60.5,
+          674.9,
+          300.5,
+          684.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Figure 2a"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p3.F2",
+        "kind": "figure",
+        "label": "Fig. 2",
+        "page": 3,
+        "caption": "Figure 2. (a) Galvanostatic plating/stripping of sodium on carbon/Al current collectors performed over a range of currents for 30 min plating times.",
+        "png": "figures/p3.F2.png",
+        "png_pixels_sha256": "aa6ee046ec34d9474cbdae845c3dd7671d951e424db387a74d27aa6d98895faa",
+        "bbox": [
+          155.2,
+          69.2,
+          469.8,
+          426.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Fig. 2"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:25:49+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05174",
+  "probe": "C1",
+  "cat": "C",
+  "expect": "45 mV (p3.L16-18)",
+  "trap": "the 14 mV long-term average",
+  "seconds": 12.9
+}

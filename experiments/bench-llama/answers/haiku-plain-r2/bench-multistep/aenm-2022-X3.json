@@ -1,0 +1,270 @@
+{
+  "question": "By what factors have LIB energy density risen and battery cost fallen, between the starting points the review gives and 2020?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE regexp_matches(lower(text), 'energy density|cost|fold|times|\\$/kwh|per kwh|kwh') ORDER BY page, line_no",
+      "rows": 37
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p13.F11"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (1,13) AND line_no BETWEEN 0 AND 200 AND (regexp_matches(text, 'Wh|kWh|energy|cost|fold|%') ) ORDER BY page, line_no",
+      "rows": 35
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=13 AND id IN (SELECT id FROM lines WHERE page=13) ORDER BY line_no LIMIT 40",
+      "rows": 40
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 10,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 10
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2020', '1991,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2020' is written exactly so in the document (e.g. p7.L26): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2020\", \"atom\": \"p7.L26\"} — never shorten it",
+          "'1991' is written exactly so in the document (e.g. p13.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1991\", \"atom\": \"p13.L19\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['11a', '2008', '2020'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2008' is written exactly so in the document (e.g. p13.L21): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2008\", \"atom\": \"p13.L21\"} — never shorten it",
+          "'2020' is written exactly so in the document (e.g. p7.L26): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2020\", \"atom\": \"p7.L26\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['11a'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 3217,
+    "cache_read_input_tokens": 35042,
+    "cache_creation_input_tokens": 13348
+  },
+  "runs": [
+    {
+      "text": "The review's summary gives the starting points and the endpoint. Energy density: since the commercial debut in "
+    },
+    {
+      "quote": "1991",
+      "atom": "p13.L19"
+    },
+    {
+      "text": ", LIB energy density has risen from "
+    },
+    {
+      "quote": "LIBs has increased from 150 to 250 Wh kg^− 1",
+      "atom": "p13.L20"
+    },
+    {
+      "text": " (specific energy, in Wh per kg). Battery cost: it has "
+    },
+    {
+      "quote": "cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+      "atom": "p13.L21"
+    },
+    {
+      "text": " "
+    },
+    {
+      "quote": "to around $130 kWh^− 1 in 2020",
+      "atom": "p13.L22"
+    },
+    {
+      "text": ". The review does not express these as multiplicative factors; the changes are the quoted endpoints. The accompanying figure charts the same trend for pack energy density and cost over the period."
+    },
+    {
+      "figure": "p13.F11"
+    }
+  ],
+  "rendered": "The review's summary gives the starting points and the endpoint. Energy density: since the commercial debut in 1991[1], LIB energy density has risen from LIBs has increased from 150 to 250 Wh kg^− 1[2] (specific energy, in Wh per kg). Battery cost: it has cost has steadily decreased from over $1000 kWh^− 1 in 2008[3] to around $130 kWh^− 1 in 2020[4]. The review does not express these as multiplicative factors; the changes are the quoted endpoints. The accompanying figure charts the same trend for pack energy density and cost over the period.Fig. 11[5]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "1991",
+      "source": {
+        "atom": "p13.L19",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "Since their commercial debut in 1991, the energy density of",
+        "bbox": [
+          51.0,
+          477.9,
+          292.0,
+          486.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "1991"
+    },
+    {
+      "kind": "quote",
+      "quote": "LIBs has increased from 150 to 250 Wh kg^− 1",
+      "source": {
+        "atom": "p13.L20",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "LIBs has increased from 150 to 250 Wh kg^− 1. Similarly, bat-",
+        "bbox": [
+          51.0,
+          487.8,
+          292.0,
+          497.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "LIBs has increased from 150 to 250 Wh kg^− 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+      "source": {
+        "atom": "p13.L21",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "tery cost has steadily decreased from over $1000 kWh^− 1 in 2008",
+        "bbox": [
+          51.0,
+          498.8,
+          292.0,
+          508.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "cost has steadily decreased from over $1000 kWh^− 1 in 2008"
+    },
+    {
+      "kind": "quote",
+      "quote": "to around $130 kWh^− 1 in 2020",
+      "source": {
+        "atom": "p13.L22",
+        "kind": "line",
+        "page": 13,
+        "strength": "verbatim",
+        "text": "to around $130 kWh^− 1 in 2020 (Figure 11) which has enabled",
+        "bbox": [
+          51.0,
+          509.8,
+          292.0,
+          519.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "to around $130 kWh^− 1 in 2020"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p13.F11",
+        "kind": "figure",
+        "label": "Fig. 11",
+        "page": 13,
+        "caption": "Figure 11. a) Energy density and cost of Li-ion battery packs from 2008 to 2020. b) Schematics showing the electrode/electrolyte interfacial contact for liquid versus solid-state electrolytes.",
+        "png": "figures/p13.F11.png",
+        "png_pixels_sha256": "9412b1aaa62e6898b51231a01c810763d32a465463b30c1c3e4278656bfefe04",
+        "bbox": [
+          53.1,
+          70.9,
+          545.1,
+          252.2
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "Fig. 11"
+    }
+  ],
+  "seals": {
+    "extraction": "accd299beb2b0897164063d63ea1cdb0351642b44940b77c0e485be9a3d0ff39",
+    "readings": "18227e8760600307666b99883dd778b9cc396df57f2273bb34996ec4a7f715d0"
+  },
+  "created_at": "2026-10-19T09:34:01+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "aenm-2022",
+  "probe": "X3",
+  "cat": "X",
+  "expect": "energy density 150 to 250 Wh/kg since 1991 (1.7 times); cost from over $1000/kWh in 2008 to around $130/kWh in 2020 (7.7 times lower) (p13.L19-22)",
+  "trap": "",
+  "seconds": 21.7
+}

@@ -1,0 +1,207 @@
+{
+  "question": "In which year was the first commercial Li-ion battery with a TiS2 cathode deployed?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%tis2%' OR lower(text) LIKE '%tis%2%' OR lower(text) LIKE '%titanium disulfide%' OR lower(text) LIKE '%tis<sub>2%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%commercial%' AND (lower(text) LIKE '%19%' OR lower(text) LIKE '%cathode%')",
+      "rows": 3
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (1,2) ORDER BY page, line_no",
+      "rows": 151
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1990'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1990' is written exactly so in the document (e.g. p1.L45): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1990\", \"atom\": \"p1.L45\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[0]",
+        "why": "the words before citation [1] end in 'p up with growing demand:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'p up with growing demand:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[3]",
+        "why": "the words before citation [3] end in 'ed LiCoO2 as its cathode:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ed LiCoO2 as its cathode:[3]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2156,
+    "cache_read_input_tokens": 30274,
+    "cache_creation_input_tokens": 12388
+  },
+  "runs": [
+    {
+      "text": "The document does not give a year for a commercial Li-ion battery with a TiS2 cathode. It mentions TiS2 only as the earliest positive electrode of the first Li-based battery. The quoted text says it was incapable of handling growing battery demand: "
+    },
+    {
+      "quote": "was TiS2 which proved to be incapable to handle the rapidly grow-",
+      "atom": "p1.L41"
+    },
+    {
+      "text": "\nThe only commercial deployment year it gives is for a different cathode. The first commercial LIB was deployed in "
+    },
+    {
+      "quote": "1990",
+      "atom": "p1.L45"
+    },
+    {
+      "text": " and used LiCoO2 as its cathode, as the document states: "
+    },
+    {
+      "quote": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode",
+      "atom": "p1.L45"
+    },
+    {
+      "text": "\nSo the answer is that the document does not state when a TiS2-cathode commercial battery was deployed; the date given belongs to the LiCoO2-cathode battery."
+    }
+  ],
+  "rendered": "The document does not give a year for a commercial Li-ion battery with a TiS2 cathode. It mentions TiS2 only as the earliest positive electrode of the first Li-based battery. The quoted text says it was incapable of handling growing battery demand: was TiS2 which proved to be incapable to handle the rapidly grow-[1]\nThe only commercial deployment year it gives is for a different cathode. The first commercial LIB was deployed in 1990[2] and used LiCoO2 as its cathode, as the document states: cial LIB deployed in the year 1990 employed LiCoO2 as the cathode[3]\nSo the answer is that the document does not state when a TiS2-cathode commercial battery was deployed; the date given belongs to the LiCoO2-cathode battery.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "was TiS2 which proved to be incapable to handle the rapidly grow-",
+      "source": {
+        "atom": "p1.L41",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "tery was TiS2 which proved to be incapable to handle the rapidly grow-",
+        "bbox": [
+          37.9,
+          532.5,
+          289.3,
+          542.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "was TiS2 which proved to be incapable to handle the rapidly grow-"
+    },
+    {
+      "kind": "quote",
+      "quote": "1990",
+      "source": {
+        "atom": "p1.L45",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode",
+        "bbox": [
+          37.9,
+          574.4,
+          289.3,
+          583.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "1990"
+    },
+    {
+      "kind": "quote",
+      "quote": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode",
+      "source": {
+        "atom": "p1.L45",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode",
+        "bbox": [
+          37.9,
+          574.4,
+          289.3,
+          583.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "cial LIB deployed in the year 1990 employed LiCoO2 as the cathode"
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:29:19+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "ensm-2021",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "premise false: TiS2 was the earliest positive electrode of the first Li-based battery; the first commercial LIB (1990) used LiCoO2 (p1.L40-46)",
+  "trap": "giving 1990 for TiS2",
+  "seconds": 13.3
+}

@@ -1,0 +1,184 @@
+{
+  "question": "What price per kilogram does the review give for ZrO2 coating precursors?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%price%' OR lower(text) LIKE '%/kg%' OR lower(text) LIKE '%per kg%' OR lower(text) LIKE '%kilogram%' OR lower(text) LIKE '%cost%' OR text LIKE '%$%' OR lower(text) LIKE '%usd%'",
+      "rows": 15
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE lower(text) LIKE '%kg%' OR lower(text) LIKE '%precursor%' OR lower(text) LIKE '%zirconium%' OR lower(text) LIKE '%zro%' ORDER BY page, id",
+      "rows": 62
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ~ '[€£¥₹]' OR lower(text) LIKE '%dollar%' OR lower(text) LIKE '%euro%' OR lower(text) LIKE '%yuan%' OR lower(text) LIKE '%per gram%' OR lower(text) LIKE '%/g%' OR lower(text) LIKE '%per ton%' OR lower(text) LIKE '%tonne%'",
+      "rows": 5
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'requirements table says \"' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'requirements table says \"[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[3]",
+        "why": "the words before citation [2] end in 'ewhere the review cites \"' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ewhere the review cites \"[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1991,
+    "cache_read_input_tokens": 24239,
+    "cache_creation_input_tokens": 9354
+  },
+  "runs": [
+    {
+      "text": "The review does not give a price per kilogram for ZrO2 coating precursors. It contains no price or per-kilogram cost figures at all. It only describes precursors qualitatively as costly. The coating-requirements table states the challenge as "
+    },
+    {
+      "quote": "Expensive coating precursor, increase cathode material cost",
+      "atom": "p7.T1.r6c2"
+    },
+    {
+      "text": ", and an earlier passage lists "
+    },
+    {
+      "quote": "high cost of precursors",
+      "atom": "p5.L90"
+    },
+    {
+      "text": " as a drawback of certain coating processes. "
+    },
+    {
+      "text": "The review contains no price or per-kilogram cost figure for these precursors.",
+      "absent": [
+        "price",
+        "per kilogram",
+        "kilogram"
+      ]
+    }
+  ],
+  "rendered": "The review does not give a price per kilogram for ZrO2 coating precursors. It contains no price or per-kilogram cost figures at all. It only describes precursors qualitatively as costly. The coating-requirements table states the challenge as Expensive coating precursor, increase cathode material cost[1], and an earlier passage lists high cost of precursors[2] as a drawback of certain coating processes. The review contains no price or per-kilogram cost figure for these precursors.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Expensive coating precursor, increase cathode material cost",
+      "source": {
+        "atom": "p7.T1.r6c2",
+        "kind": "cell",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "Expensive coating precursor, increase cathode material cost",
+        "bbox": [
+          238.1,
+          613.5,
+          407.0,
+          619.8
+        ],
+        "table": "Table 1",
+        "row": 6,
+        "col": 2,
+        "column_header": "Challenges"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Expensive coating precursor, increase cathode material cost"
+    },
+    {
+      "kind": "quote",
+      "quote": "high cost of precursors",
+      "source": {
+        "atom": "p5.L90",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "process times, high cost of precursors, difficulties in handling the precur-",
+        "bbox": [
+          306.9,
+          340.3,
+          558.2,
+          348.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "high cost of precursors"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "price",
+        "per kilogram",
+        "kilogram"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 2288,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:29:21+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "ensm-2021",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a price",
+  "seconds": 14.0
+}

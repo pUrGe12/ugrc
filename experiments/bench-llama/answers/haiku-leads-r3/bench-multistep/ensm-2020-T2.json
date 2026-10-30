@@ -1,0 +1,432 @@
+{
+  "question": "In Table 1, which technologies have the highest and the lowest upper bound of estimated energy density improvement, and how far apart are those bounds?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p10.T1' ORDER BY row_no, col_no",
+      "rows": 53
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=10 AND (text ILIKE '%^a%' OR text ILIKE 'a %' OR text ILIKE 'b %' OR text ILIKE '%estimated%' OR text ILIKE '%Table 1%' OR text ILIKE '%Section 8%' OR text ILIKE '%Section 9%') ORDER BY top",
+      "rows": 4
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (SELECT CAST(regexp_extract(text,'-(\\d+)',1) AS INT) FROM cells WHERE id='p10.T1.r12c5') - (SELECT CAST(regexp_extract(text,'-(\\d+)',1) AS INT) FROM cells WHERE id='p10.T1.r10c5') AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "quote:absent",
+        "quote:absent",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['9,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['350).', '8,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'350' is written exactly so in the document (e.g. p10.L36): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"350\", \"atom\": \"p10.L36\"} — never shorten it",
+          "'8' is written exactly so in the document (e.g. p2.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p2.L7\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['240).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['9', '5-7', '8', '1000'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "'5-7' is written exactly so in the document (e.g. p10.L87): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5-7\", \"atom\": \"p10.L87\"} — never shorten it",
+          "'8' is written exactly so in the document (e.g. p2.L7): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"8\", \"atom\": \"p2.L7\"} — never shorten it",
+          "'1000' is written exactly so in the document (e.g. p1.L20): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1000\", \"atom\": \"p1.L20\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:absent",
+        "where": "runs[5]",
+        "why": "'350' occurs in p10.T1.r12c5 only as part of a longer word or number (its text: '325-350^b')",
+        "moves": [
+          "the quote is verbatim in 2 places (p10.L36, p10.L62): set \"atom\" to the one you mean"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[11]",
+        "why": "'240' occurs in p10.T1.r10c5 only as part of a longer word or number (its text: '220-240^a')",
+        "moves": [
+          "copy the characters exactly as the document has them (whole words and whole numbers); a quote may continue across a line break, and a hyphen at a line end may be kept or dropped",
+          "look the text up first: SELECT id, text FROM atoms WHERE text ILIKE '%<a word of it>%'"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[12]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[14]",
+        "why": "your own words contain number(s) ['9', 'one'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['9'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'9' is written exactly so in the document (e.g. p9.L25): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"9\", \"atom\": \"p9.L25\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "3b312f4f66989c574f2d9eae7d6f3b3e95d6380a8663a0467feafe71cec0d174",
+  "leads": {
+    "sentences": [
+      "p10.L84:0",
+      "p10.L28:0",
+      "p10.L61:0",
+      "p11.L3:28",
+      "p6.L73:43",
+      "p3.L1:11",
+      "p9.L81:52",
+      "p6.L36:0",
+      "p1.L17:56",
+      "p10.L35:26",
+      "p10.L43:39",
+      "p2.L76:25"
+    ],
+    "measures": [
+      "p10.L61:0#92",
+      "p10.L61:0#194",
+      "p10.L61:0#282",
+      "p10.L61:0#377",
+      "p10.L61:0#458",
+      "p10.L61:0#508",
+      "p6.L73:43#255",
+      "p6.L73:43#273",
+      "p1.L17:56#86",
+      "p1.L17:56#256",
+      "p1.L17:56#327",
+      "p10.L35:26#108",
+      "p10.L35:26#176",
+      "p10.L43:39#109",
+      "p10.L43:39#147",
+      "p10.L43:39#176",
+      "p2.L76:25#74",
+      "p2.L76:25#100",
+      "p2.L76:25#128"
+    ],
+    "matched": 125
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 4334,
+    "cache_read_input_tokens": 59859,
+    "cache_creation_input_tokens": 14271
+  },
+  "runs": [
+    {
+      "text": "Highest upper bound: "
+    },
+    {
+      "quote": "Section 9",
+      "atom": "p10.T1.r12c1"
+    },
+    {
+      "text": " (Ultra-High-Speed (Thick) Electrode Processing), with an estimated energy density improvement of "
+    },
+    {
+      "quote": "325-350",
+      "atom": "p10.T1.r12c5"
+    },
+    {
+      "text": " Wh/kg. Lowest upper bound: "
+    },
+    {
+      "quote": "Section 8",
+      "atom": "p10.T1.r10c1"
+    },
+    {
+      "text": " (coating parameter and drying protocols), with an estimated improvement of "
+    },
+    {
+      "quote": "220-240",
+      "atom": "p10.T1.r10c5"
+    },
+    {
+      "text": " Wh/kg. The gap between these upper bounds is "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text,'-(\\d+)',1) AS INT) - CAST(regexp_extract(b.text,'-(\\d+)',1) AS INT) AS diff FROM cells a, cells b WHERE a.id='p10.T1.r12c5' AND b.id='p10.T1.r10c5'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " Wh/kg. The top value is marked with a footnote that describes it as a combined estimate drawn from earlier sections, not a single technology alone."
+    }
+  ],
+  "rendered": "Highest upper bound: Section 9[1] (Ultra-High-Speed (Thick) Electrode Processing), with an estimated energy density improvement of 325-350[2] Wh/kg. Lowest upper bound: Section 8[3] (coating parameter and drying protocols), with an estimated improvement of 220-240[4] Wh/kg. The gap between these upper bounds is 110[5] Wh/kg. The top value is marked with a footnote that describes it as a combined estimate drawn from earlier sections, not a single technology alone.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Section 9",
+      "source": {
+        "atom": "p10.T1.r12c1",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "Section 9 – Ultra-High-Speed (Thick)",
+        "bbox": [
+          43.6,
+          176.3,
+          147.4,
+          184.1
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 1,
+        "column_header": "Process Technology or Cell Chemistry Modification"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Section 9"
+    },
+    {
+      "kind": "quote",
+      "quote": "325-350",
+      "source": {
+        "atom": "p10.T1.r12c5",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "325-350^b",
+        "bbox": [
+          454.6,
+          176.4,
+          480.8,
+          184.1
+        ],
+        "table": "Table 1",
+        "row": 12,
+        "col": 5,
+        "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "325-350"
+    },
+    {
+      "kind": "quote",
+      "quote": "Section 8",
+      "source": {
+        "atom": "p10.T1.r10c1",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "Section 8 – Coating Parameter and Drying",
+        "bbox": [
+          43.6,
+          159.2,
+          162.0,
+          167.0
+        ],
+        "table": "Table 1",
+        "row": 10,
+        "col": 1,
+        "column_header": "Process Technology or Cell Chemistry Modification"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Section 8"
+    },
+    {
+      "kind": "quote",
+      "quote": "220-240",
+      "source": {
+        "atom": "p10.T1.r10c5",
+        "kind": "cell",
+        "page": 10,
+        "strength": "verbatim",
+        "text": "220-240^a",
+        "bbox": [
+          454.6,
+          159.3,
+          480.5,
+          167.0
+        ],
+        "table": "Table 1",
+        "row": 10,
+        "col": 5,
+        "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "220-240"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text,'-(\\d+)',1) AS INT) - CAST(regexp_extract(b.text,'-(\\d+)',1) AS INT) AS diff FROM cells a, cells b WHERE a.id='p10.T1.r12c5' AND b.id='p10.T1.r10c5'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int",
+      "value": 110,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p10.T1.r10c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "220-240^a",
+          "bbox": [
+            454.6,
+            159.3,
+            480.5,
+            167.0
+          ],
+          "table": "Table 1",
+          "row": 10,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        },
+        {
+          "atom": "p10.T1.r12c5",
+          "kind": "cell",
+          "page": 10,
+          "strength": "verbatim",
+          "text": "325-350^b",
+          "bbox": [
+            454.6,
+            176.4,
+            480.8,
+            184.1
+          ],
+          "table": "Table 1",
+          "row": 12,
+          "col": 5,
+          "column_header": "Estimated Energy Density Improvement (Wh/kg)"
+        }
+      ],
+      "n": 5,
+      "rendered": "110"
+    }
+  ],
+  "seals": {
+    "extraction": "798c9152e3015554d859f821680ae76eaea235c416203732eb68bf19e18beb03",
+    "readings": "bfc1129563d595d4ee1be5d3b0b21fc2dc56f77cece2a024ce81d2f8a8a84892"
+  },
+  "created_at": "2026-10-19T09:42:46+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-multistep",
+  "paper": "ensm-2020",
+  "probe": "T2",
+  "cat": "T",
+  "expect": "highest: Section 9 ultra-high-speed (thick) electrode processing, 325-350 Wh/kg; lowest: Section 8 coating parameter and drying protocols, 220-240; 350 - 240 = 110 Wh/kg",
+  "trap": "",
+  "seconds": 26.9
+}

@@ -1,0 +1,576 @@
+{
+  "question": "How many times faster is delamination at the boiling point of ethylene glycol than at 160 °C, and what is that boiling point?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE id IN ('p3.L127','p3.L128','p3.L129','p3.L132','p3.L133','p3.L134','p3.L135','p3.L136','p3.L137','p3.L138') OR (page=3 AND text ILIKE '%boiling point%') OR (page=3 AND text ILIKE '%about 6 s%') ORDER BY id",
+      "rows": 10
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number",
+        "sql:literal"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit FROM measures WHERE sentence ILIKE '%about 6 s%' OR sentence ILIKE '%around 2 s%' OR sentence ILIKE '%198%'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, sentence FROM measures WHERE page = 3",
+      "rows": 16
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L136'),'about ([0-9]+) s',1) AS DOUBLE)) / (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L138'),'around ([0-9]+) s',1) AS DOUBLE)) AS ratio",
+      "rows": 1
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:number",
+        "lineage:no-source",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 15,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 17,
+      "pairings": [
+        {
+          "run": 5,
+          "of": "spent cathode",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 9,
+          "of": "peel off",
+          "verdict": "agrees",
+          "by": "clause base"
+        },
+        {
+          "run": 11,
+          "of": "EG",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2', '6', '160', '3', '198'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L2\"} — never shorten it",
+          "'6' is written exactly so in the document (e.g. p1.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6\", \"atom\": \"p1.L6\"} — never shorten it",
+          "'160' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"160\", \"atom\": \"p2.L118\"} — never shorten it",
+          "'3' is written exactly so in the document (e.g. p1.L3): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L3\"} — never shorten it",
+          "'198' is written exactly so in the document (e.g. p3.L129): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"198\", \"atom\": \"p3.L129\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['198', '160'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'198' is written exactly so in the document (e.g. p3.L129): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"198\", \"atom\": \"p3.L129\"} — never shorten it",
+          "'160' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"160\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['6', '2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'6' is written exactly so in the document (e.g. p1.L6): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6\", \"atom\": \"p1.L6\"} — never shorten it",
+          "'2' is written exactly so in the document (e.g. p1.L2): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L2\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "sql:literal",
+        "where": "runs[7]",
+        "why": "the number 6.0 is written into the value '6.0 / 2.0 AS ratio' — a value may only carry numbers read from atoms",
+        "moves": [
+          "read the number from the atom that holds it (e.g. regexp_extract over its text) instead of typing it",
+          "for a unit factor or physical constant, read it from consts: (SELECT value FROM consts WHERE id = 'K.per_kilo')",
+          "0, 1 and 100 are allowed as written; constants in WHERE/ON (choosing) are always allowed"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['160'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'160' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"160\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[1]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['160'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'160' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"160\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['160'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'160' is written exactly so in the document (e.g. p2.L118): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"160\", \"atom\": \"p2.L118\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "6 s",
+      "atom": "p3.L136",
+      "of": "spent cathode",
+      "sentence": "p3.L132:6",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "spent cathode"
+      ],
+      "run": 5
+    },
+    {
+      "quote": "2 s",
+      "atom": "p3.L138",
+      "of": "peel off",
+      "sentence": "p3.L132:6",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "peel off"
+      ],
+      "run": 9
+    },
+    {
+      "quote": "198 °C",
+      "atom": "p3.L129",
+      "of": "EG",
+      "sentence": "p3.L127:0",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "EG"
+      ],
+      "run": 11
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "dfdaca79728c0eb0f7e0bfbd444026344ff336efb7581aac5342ce1ff0e357d1",
+  "leads": {
+    "sentences": [
+      "p3.L127:0",
+      "p3.L132:6",
+      "p5.L107:10",
+      "p6.L58:0",
+      "p6.L76:33",
+      "p2.L117:16",
+      "p1.L65:45",
+      "p2.L73:38",
+      "p2.L139:30",
+      "p2.L77:11",
+      "p1.L75:43",
+      "p2.L104:24"
+    ],
+    "measures": [
+      "p3.L127:0#128",
+      "p3.L127:0#164",
+      "p3.L132:6#97",
+      "p3.L132:6#158",
+      "p3.L132:6#278",
+      "p3.L132:6#285",
+      "p3.L132:6#387",
+      "p6.L76:33#232",
+      "p6.L76:33#241",
+      "p2.L117:16#52",
+      "p2.L139:30#117"
+    ],
+    "matched": 74
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 3357,
+    "cache_read_input_tokens": 64036,
+    "cache_creation_input_tokens": 12375
+  },
+  "runs": [
+    {
+      "text": "Delamination at the boiling point of ethylene glycol is faster than at "
+    },
+    {
+      "quote": "160 °C",
+      "atom": "p3.L137"
+    },
+    {
+      "text": " by a factor of "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract(text,'about ([0-9]+) s',1) AS DOUBLE)) / (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L138'),'around ([0-9]+) s',1) AS DOUBLE)) AS ratio FROM lines WHERE id='p3.L136'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed0"
+    },
+    {
+      "text": " times: the spent cathode detached in "
+    },
+    {
+      "measure": "p3.L132:6#278",
+      "of": "spent cathode"
+    },
+    {
+      "text": " at "
+    },
+    {
+      "quote": "160 °C",
+      "atom": "p3.L137"
+    },
+    {
+      "text": ", while at the boiling point it took "
+    },
+    {
+      "measure": "p3.L132:6#387",
+      "of": "peel off"
+    },
+    {
+      "text": ". The boiling point of EG is "
+    },
+    {
+      "measure": "p3.L127:0#164",
+      "of": "EG"
+    },
+    {
+      "text": ".\n\nSources: "
+    },
+    {
+      "quote": "about 6 s at",
+      "atom": "p3.L136"
+    },
+    {
+      "text": "; "
+    },
+    {
+      "quote": "around 2 s to fully",
+      "atom": "p3.L138"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "Delamination at the boiling point of ethylene glycol is faster than at 160 °C[1] by a factor of 3[2] times: the spent cathode detached in 6 s[3] at 160 °C[4], while at the boiling point it took 2 s[5]. The boiling point of EG is 198 °C[6].\n\nSources: about 6 s at[7]; around 2 s to fully[8].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "160 °C",
+      "source": {
+        "atom": "p3.L137",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "160 °C. When the heating temperature is further increased to",
+        "bbox": [
+          304.7,
+          521.5,
+          548.5,
+          530.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "160 °C"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract(text,'about ([0-9]+) s',1) AS DOUBLE)) / (CAST(regexp_extract((SELECT text FROM lines WHERE id='p3.L138'),'around ([0-9]+) s',1) AS DOUBLE)) AS ratio FROM lines WHERE id='p3.L136'",
+      "column": "ratio",
+      "row": 0,
+      "fmt": "fixed0",
+      "value": 3.0,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p3.L136",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "cathode detached from the aluminum foil in about 6 s at",
+          "bbox": [
+            304.7,
+            509.7,
+            548.5,
+            518.7
+          ]
+        },
+        {
+          "atom": "p3.L138",
+          "kind": "line",
+          "page": 3,
+          "strength": "verbatim",
+          "text": "the boiling point of EG, it takes around 2 s to fully peel off the",
+          "bbox": [
+            304.7,
+            533.7,
+            548.5,
+            542.7
+          ]
+        }
+      ],
+      "n": 2,
+      "rendered": "3"
+    },
+    {
+      "kind": "quote",
+      "quote": "6 s",
+      "source": {
+        "atom": "p3.L136",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "cathode detached from the aluminum foil in about 6 s at",
+        "bbox": [
+          304.7,
+          509.7,
+          548.5,
+          518.7
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p3.L132:6#278",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "duration",
+        "property_p": null,
+        "about": [
+          "spent cathode"
+        ],
+        "method": [],
+        "quantity": [],
+        "sentence": "p3.L132:6",
+        "read_by": "judge"
+      },
+      "of": "spent cathode",
+      "n": 3,
+      "rendered": "6 s"
+    },
+    {
+      "kind": "quote",
+      "quote": "160 °C",
+      "source": {
+        "atom": "p3.L137",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "160 °C. When the heating temperature is further increased to",
+        "bbox": [
+          304.7,
+          521.5,
+          548.5,
+          530.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "160 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "2 s",
+      "source": {
+        "atom": "p3.L138",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "the boiling point of EG, it takes around 2 s to fully peel off the",
+        "bbox": [
+          304.7,
+          533.7,
+          548.5,
+          542.7
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p3.L132:6#387",
+      "reading": {
+        "role": "result",
+        "role_p": 1.0,
+        "property": "duration",
+        "property_p": null,
+        "about": [
+          "peel off"
+        ],
+        "method": [],
+        "quantity": [],
+        "sentence": "p3.L132:6",
+        "read_by": "judge"
+      },
+      "of": "peel off",
+      "n": 5,
+      "rendered": "2 s"
+    },
+    {
+      "kind": "quote",
+      "quote": "198 °C",
+      "source": {
+        "atom": "p3.L129",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "temperature (~20 °C) to the boiling point of EG (198 °C).",
+        "bbox": [
+          304.7,
+          425.6,
+          548.5,
+          434.8
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p3.L127:0#164",
+      "reading": {
+        "role": "background",
+        "role_p": 0.96,
+        "property": "temperature",
+        "property_p": null,
+        "about": [
+          "EG"
+        ],
+        "method": [],
+        "quantity": [
+          "point"
+        ],
+        "sentence": "p3.L127:0",
+        "read_by": "judge"
+      },
+      "of": "EG",
+      "n": 6,
+      "rendered": "198 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "about 6 s at",
+      "source": {
+        "atom": "p3.L136",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "cathode detached from the aluminum foil in about 6 s at",
+        "bbox": [
+          304.7,
+          509.7,
+          548.5,
+          518.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 7,
+      "rendered": "about 6 s at"
+    },
+    {
+      "kind": "quote",
+      "quote": "around 2 s to fully",
+      "source": {
+        "atom": "p3.L138",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "the boiling point of EG, it takes around 2 s to fully peel off the",
+        "bbox": [
+          304.7,
+          533.7,
+          548.5,
+          542.7
+        ]
+      },
+      "strength": "verbatim",
+      "n": 8,
+      "rendered": "around 2 s to fully"
+    }
+  ],
+  "seals": {
+    "extraction": "6b070d4f372ad360ee3c4866e36f3d1b67d1e0ae809608709c04ef0fb109d310",
+    "readings": "5b727b40e250b1a853ac5c550975589ead58b2ee2800d1cd6729b45d4b8323e4"
+  },
+  "created_at": "2026-10-19T09:32:40+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "cssc-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "about 6 s at 160 °C vs around 2 s at the boiling point (p3.L136-138): 3 times; 198 °C (p3.L129)",
+  "trap": "",
+  "seconds": 23.7
+}

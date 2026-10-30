@@ -1,0 +1,1127 @@
+{
+  "arm": "llama-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "cssc-2020",
+  "probe": "H1",
+  "cat": "H",
+  "error": "RuntimeError: no accepted answer within 20 model turns (16 refused submissions)",
+  "seconds": 438.6,
+  "model": "llama-3.1-8b-instruct",
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  },
+  "served_by": null,
+  "adapter_repairs": [
+    "submit_answer.runs"
+  ],
+  "turns": 20,
+  "tool_calls": 16,
+  "usage": {
+    "input_tokens": 215512,
+    "output_tokens": 8341,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 757,
+      "rules": [
+        "answer:shape"
+      ]
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number",
+        "absent:near"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number",
+        "absent:found"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 11,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 12,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 13,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 14,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 15,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 16,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 17,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 18,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 19,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 20,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 2,
+      "rules": [
+        "text:number"
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "answer:shape",
+        "where": null,
+        "why": "the answer must be {\"runs\": [ ...non-empty list of runs... ]}; runs arrived as a string (text that holds a list), not as a list",
+        "moves": [
+          "send the list itself: {\"runs\": [{\"text\": \"...\"}, {\"quote\": \"...\", \"atom\": \"...\"}]}, not {\"runs\": \"[...]\"}",
+          "send runs of the kinds text / quote / measure / sql / figure / table"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['42.3', '6b.', '(29.3', '20.7'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "absent:near",
+        "where": "runs[1].absent",
+        "why": "the document may say this in other words: the words of 'used for delamination' occur together at p5.L103–p5.L104 (e.g. p5.L103: 'after delamination at C/10 charge/discharge rates tested in half cells. Inset')",
+        "moves": [
+          "read those atoms: if they say it, quote them instead of claiming it is absent",
+          "if they are about something else, say what IS there (quote it) and search for the exact wording the missing thing would have"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "absent:found",
+        "where": "runs[1].absent",
+        "why": "the document does contain what the search was for: 'delamination' at p1.L73–p1.L74, p2.L132, p2.L137, p2.L71–p2.L72, p2.L86–p2.L87, p3.L84, …; 'at C/10 charge/discharge rates tested in half cells. Inset' at p5.L103; 'after delamination at C/10 charge/discharge rates tested in half cells. Inset' at p5.L103",
+        "moves": [
+          "read those atoms: the document may say what you claim it does not — quote it instead",
+          "or narrow the claim (and its terms) to what really is missing"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['\"42.3\",', '\"6b\",', '\"29.3\",', '\"20.7\",'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'42.3' is written exactly so in the document (e.g. p6.L73): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} — never shorten it",
+          "'6b' is written exactly so in the document (e.g. p6.L72): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6b\", \"atom\": \"p6.L72\"} — never shorten it",
+          "'29.3' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"29.3\", \"atom\": \"p6.L80\"} — never shorten it",
+          "'20.7' is written exactly so in the document (e.g. p6.L80): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "submitted": [
+    {
+      "runs": "[{\"text\": \"The solvent with the strongest hydrogen bonding in the paper is water with a δH value of 42.3 MPa^1/2, as plotted in Figure 6b. However, EG is not used for delamination because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH (29.3 and 20.7 MPa^1/2, respectively) and work well for delamination, but EG does not.\", \"support\": [{\"atom\": \"p6.L72\", \"quote\": \"42.3 MPa^1\"}, {\"atom\": \"p1.L105\", \"quote\": \"2\"}, {\"atom\": \"p1.L105\", \"quote\": \"3\"}, {\"atom\": \"p1.L105\", \"quote\": \"3\"}, {\"atom\": \"p1.L105\", \"quote\": \"4\"}, {\"atom\": \"p6.L76\", \"quote\": \"29.3\"}, {\"atom\": \"p6.L76\", \"quote\": \"20.7 MPa^1\"}]}"
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of 42.3 MPa^1/2, as plotted in Figure 6b. However, EG is not used for delamination because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH (29.3 and 20.7 MPa^1/2, respectively) and work well for delamination, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L72",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for delamination"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L72\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for delamination because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L76\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L76\"} MPa^1/2, respectively) and work well for delamination, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L72",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "delamination",
+            "used for delamination",
+            "at C/10 charge/discharge rates tested in half cells. Inset",
+            "after delamination at C/10 charge/discharge rates tested in half cells. Inset",
+            "after delamination at C/10 charge/discharge rates tested in half cells. Inset"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L72\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L76\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L76\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L72",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L76",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    },
+    {
+      "runs": [
+        {
+          "text": "The solvent with the strongest hydrogen bonding in the paper is water with a δH value of {\"quote\": \"42.3\", \"atom\": \"p6.L73\"} MPa^1/2, as plotted in Figure {\"quote\": \"6b\", \"atom\": \"p6.L72\"}. However, EG is not used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"} because it can form strong hydrogen bonds with the thin oxidation layer of aluminum oxide, competitively replacing the bonding between the PVDF and substrate. Glycerol and diethylene glycol have high values of δH ({\"quote\": \"29.3\", \"atom\": \"p6.L80\"} and {\"quote\": \"20.7\", \"atom\": \"p6.L80\"} MPa^1/2, respectively) and work well for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}, but EG does not.",
+          "support": [
+            {
+              "atom": "p6.L73",
+              "quote": "42.3 MPa^1"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "2"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "3"
+            },
+            {
+              "atom": "p1.L105",
+              "quote": "4"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "29.3"
+            },
+            {
+              "atom": "p6.L80",
+              "quote": "20.7 MPa^1"
+            }
+          ]
+        },
+        {
+          "text": "EG",
+          "absent": [
+            "used for {\"quote\": \"delamination\", \"atom\": \"p1.L73\"}",
+            "{\"quote\": \"at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}",
+            "{\"quote\": \"after delamination at C/10 charge/discharge rates tested in half cells. Inset\", \"atom\": \"p5.L103\"}"
+          ]
+        }
+      ]
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/home/purge/Desktop/ugrc/experiments/bench-llama/run.py\", line 103, in one\n    return\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 186, in ask\n    raise ValueError(f\"prompt style {style!r} has no corpus form\")\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 294, in _answer\n    resp = llm.create(cl, model=model, max_tokens=16000, system=system, tools=TOOLS, messages=messages,\nRuntimeError: no accepted answer within 20 model turns (16 refused submissions)\n"
+}

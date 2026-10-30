@@ -1,0 +1,229 @@
+{
+  "question": "In the froth flotation study the review cites, what collector was used, what share of the graphite floated, and what purity and total recovery did the cathode tailing product reach?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%flotation%' OR lower(text) LIKE '%collector%' OR lower(text) LIKE '%tailing%' OR lower(text) LIKE '%purity%' ORDER BY page, id",
+      "rows": 11
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page=7 AND line_no BETWEEN 25 AND 60 OR (page=7 AND id IN ('p7.L84','p7.L95','p7.L97','p7.L99')) ORDER BY page, line_no",
+      "rows": 40
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page IN (7,8) AND line_no BETWEEN 85 AND 110 OR page=8 AND line_no<=12 ORDER BY page, line_no",
+      "rows": 64
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 6,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 8,
+      "rules": [
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['90%'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'90%' is written exactly so in the document (e.g. p5.L44): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"90%\", \"atom\": \"p5.L44\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[0]",
+        "why": "the words before citation [1] end in 'lector used was kerosene:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'lector used was kerosene:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 1803,
+    "cache_read_input_tokens": 29036,
+    "cache_creation_input_tokens": 9275
+  },
+  "runs": [
+    {
+      "text": "The review describes froth flotation as a purification method for spent cathode material. The collector used was ",
+      "support": []
+    },
+    {
+      "quote": "kerosene",
+      "atom": "p7.L97"
+    },
+    {
+      "text": ". Under that choice, the graphite share that floated was ",
+      "support": []
+    },
+    {
+      "quote": "over 90% of spent graphite",
+      "atom": "p7.L98"
+    },
+    {
+      "text": ", which is hydrophobic, so it floated into the froth layers. The cathode tailing product reached a purity of ",
+      "support": []
+    },
+    {
+      "quote": "88.2% active cathode materials",
+      "atom": "p7.L100"
+    },
+    {
+      "text": " and a total recovery of ",
+      "support": []
+    },
+    {
+      "quote": "74.3%",
+      "atom": "p7.L101"
+    },
+    {
+      "text": ".",
+      "support": []
+    }
+  ],
+  "rendered": "The review describes froth flotation as a purification method for spent cathode material. The collector used was kerosene[1]. Under that choice, the graphite share that floated was over 90% of spent graphite[2], which is hydrophobic, so it floated into the froth layers. The cathode tailing product reached a purity of 88.2% active cathode materials[3] and a total recovery of 74.3%[4].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "kerosene",
+      "source": {
+        "atom": "p7.L97",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "[124,134,135]. By choosing kerosene as the collector, researchers",
+        "bbox": [
+          311.8,
+          517.5,
+          569.8,
+          526.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "kerosene"
+    },
+    {
+      "kind": "quote",
+      "quote": "over 90% of spent graphite",
+      "source": {
+        "atom": "p7.L98",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "demonstrated that over 90% of spent graphite, which is",
+        "bbox": [
+          311.8,
+          529.5,
+          569.7,
+          537.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "over 90% of spent graphite"
+    },
+    {
+      "kind": "quote",
+      "quote": "88.2% active cathode materials",
+      "source": {
+        "atom": "p7.L100",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "having 88.2% active cathode materials was obtained at a total",
+        "bbox": [
+          311.8,
+          553.4,
+          569.8,
+          561.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "88.2% active cathode materials"
+    },
+    {
+      "kind": "quote",
+      "quote": "74.3%",
+      "source": {
+        "atom": "p7.L101",
+        "kind": "line",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "recovery of 74.3%, suggesting the effectiveness of the froth flota-",
+        "bbox": [
+          311.8,
+          563.2,
+          569.8,
+          573.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "74.3%"
+    }
+  ],
+  "seals": {
+    "extraction": "e3ba6063228ff72b1e22017d58f431a6bfe090dd3cd3186b0d0b7b61812f5aa5",
+    "readings": "0dc69607271b47e631d51441bf68a1225c621bd9605d47cb9f20ee94e647328c"
+  },
+  "created_at": "2026-10-19T09:12:25+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "mattod-2020",
+  "probe": "H1",
+  "cat": "H",
+  "expect": "kerosene; over 90% of spent graphite floated; tailing with 88.2% active cathode materials at a total recovery of 74.3% (p7.L97-101)",
+  "trap": "",
+  "seconds": 15.9
+}

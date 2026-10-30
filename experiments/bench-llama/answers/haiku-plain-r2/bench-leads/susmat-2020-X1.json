@@ -1,0 +1,193 @@
+{
+  "question": "By how much did the recovered NMC622's first charge capacity fall short of the baseline's?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p5.F5"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE (kind IN ('line','cell','figure_ocr') OR kind LIKE '%fact%') AND (text ILIKE '%mAh%' OR text ILIKE '%capacity%' OR text ILIKE '%first%' OR text ILIKE '%charge%') ORDER BY page, id",
+      "rows": 15
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT round(205.6 - 194.0, 1) AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "WITH t AS (SELECT text FROM atoms WHERE id='p6.L21'), n AS (SELECT CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 1) AS DOUBLE) AS base, CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 2) AS DOUBLE) AS rec FROM t) SELECT round(base - rec, 1) AS shortfall FROM n",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['5a).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'5a' is written exactly so in the document (e.g. p6.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"5a\", \"atom\": \"p6.L18\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 1830,
+    "cache_read_input_tokens": 21683,
+    "cache_creation_input_tokens": 6982
+  },
+  "runs": [
+    {
+      "text": "The recovered NMC622's first charge capacity was lower than the baseline's by "
+    },
+    {
+      "sql": "WITH t AS (SELECT text FROM atoms WHERE id='p6.L21'), n AS (SELECT CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 1) AS DOUBLE) AS base, CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 2) AS DOUBLE) AS rec FROM t) SELECT round(base - rec, 1) AS shortfall FROM n",
+      "column": "shortfall",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " mAh/g. The text reports first charge capacities of "
+    },
+    {
+      "quote": "205.6 and 194.0 mAh/g",
+      "atom": "p6.L21"
+    },
+    {
+      "text": ", for the baseline and recovered NMC622 respectively, at a charge/discharge rate of C/10 (see "
+    },
+    {
+      "figure": "p5.F5"
+    },
+    {
+      "text": ")."
+    }
+  ],
+  "rendered": "The recovered NMC622's first charge capacity was lower than the baseline's by 11.6[1] mAh/g. The text reports first charge capacities of 205.6 and 194.0 mAh/g[2], for the baseline and recovered NMC622 respectively, at a charge/discharge rate of C/10 (see Fig. 5[3]).",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "WITH t AS (SELECT text FROM atoms WHERE id='p6.L21'), n AS (SELECT CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 1) AS DOUBLE) AS base, CAST(regexp_extract(text, '([0-9]+\\.[0-9]+) and ([0-9]+\\.[0-9]+) mAh', 2) AS DOUBLE) AS rec FROM t) SELECT round(base - rec, 1) AS shortfall FROM n",
+      "column": "shortfall",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 11.6,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p6.L21",
+          "kind": "line",
+          "page": 6,
+          "strength": "verbatim",
+          "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+          "bbox": [
+            33.7,
+            266.6,
+            284.8,
+            274.5
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "11.6"
+    },
+    {
+      "kind": "quote",
+      "quote": "205.6 and 194.0 mAh/g",
+      "source": {
+        "atom": "p6.L21",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "NMC622 were 205.6 and 194.0 mAh/g, respectively. The recovered",
+        "bbox": [
+          33.7,
+          266.6,
+          284.8,
+          274.5
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "205.6 and 194.0 mAh/g"
+    },
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p5.F5",
+        "kind": "figure",
+        "label": "Fig. 5",
+        "page": 5,
+        "caption": "Fig. 5. (a) Charge/discharge profiles for the baseline and recovered NMC622 at a charge/ discharge rate of C/10; and (b) cycle performance of the baseline and recovered NMC622 at a charge/discharge rate of C/3.",
+        "png": "figures/p5.F5.png",
+        "png_pixels_sha256": "73193af6445551b038a9594e6e75d9d676fbbe90cb0f10c08bd3bf50c6d76e27",
+        "bbox": [
+          61.7,
+          53.2,
+          274.4,
+          329.7
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Fig. 5"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-19T09:25:34+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "susmat-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "205.6 - 194.0 = 11.6 mAh/g",
+  "trap": "a wrong difference",
+  "seconds": 11.8
+}

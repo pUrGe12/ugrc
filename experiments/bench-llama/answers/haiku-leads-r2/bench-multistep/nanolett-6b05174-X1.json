@@ -1,0 +1,296 @@
+{
+  "question": "By how much does the anode-free full cell's energy density exceed the theoretical maximum the paper gives for LiCoO2/graphite cells, and what energy density do the state-of-the-art sodium-ion full cells it cites reach?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 7,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text, value, unit, role, about, quantity, sentence FROM measures WHERE unit ILIKE '%Wh%' OR text ILIKE '%Wh%'",
+      "rows": 1
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%Wh/kg%' OR text ILIKE '%Wh kg%' OR text ILIKE '%387%' OR text ILIKE '%200 W%'",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT (CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L19'), '∼([0-9]+) Wh/kg', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L21'), '\\(([0-9]+) Wh/kg', 1) AS INTEGER)) AS diff",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "lineage:no-source"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "lineage:no-source",
+        "where": "runs[5]",
+        "why": "a SELECT without FROM reads no atom, so its value has no source",
+        "moves": [
+          "read the value from the relation that holds it"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['400'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['400'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "4ac64b3bb36f7e896c79ffff1490396834a66eb2d7a3f0b92167847693569b0d",
+  "leads": {
+    "sentences": [
+      "p1.L17:51",
+      "p1.L35:54",
+      "p4.L11:46",
+      "p2.L17:54"
+    ],
+    "measures": [
+      "p1.L17:51#241",
+      "p4.L11:46#48",
+      "p4.L11:46#73",
+      "p4.L11:46#135",
+      "p4.L11:46#147",
+      "p4.L11:46#166",
+      "p4.L11:46#230"
+    ],
+    "matched": 62
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3449,
+    "cache_read_input_tokens": 33965,
+    "cache_creation_input_tokens": 9050
+  },
+  "runs": [
+    {
+      "text": "The anode-free full cell (pre-sodiated pyrite cathode) reaches "
+    },
+    {
+      "quote": "∼400 Wh/kg",
+      "atom": "p1.L19"
+    },
+    {
+      "text": ", while the paper gives the theoretical maximum for LiCoO2/graphite cells as "
+    },
+    {
+      "measure": "p1.L17:51#241"
+    },
+    {
+      "text": ". The full cell therefore exceeds that maximum by about "
+    },
+    {
+      "sql": "SELECT (CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L19'), '∼([0-9]+) Wh/kg', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L21'), '\\(([0-9]+) Wh/kg', 1) AS INTEGER)) AS diff FROM atoms WHERE id='p1.L19'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int"
+    },
+    {
+      "text": " Wh/kg (approximate, since the cell figure is itself given as an approximate value). The state-of-the-art sodium-ion full cells the paper cites reach only "
+    },
+    {
+      "quote": "∼200 Wh/kg",
+      "atom": "p1.L39"
+    },
+    {
+      "text": " with respect to active mass."
+    }
+  ],
+  "rendered": "The anode-free full cell (pre-sodiated pyrite cathode) reaches ∼400 Wh/kg[1], while the paper gives the theoretical maximum for LiCoO2/graphite cells as 387 Wh/kg[2]. The full cell therefore exceeds that maximum by about 13[3] Wh/kg (approximate, since the cell figure is itself given as an approximate value). The state-of-the-art sodium-ion full cells the paper cites reach only ∼200 Wh/kg[4] with respect to active mass.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "∼400 Wh/kg",
+      "source": {
+        "atom": "p1.L19",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "sodiated pyrite cathode to achieve energy densities of ∼400 Wh/kg,",
+        "bbox": [
+          69.4,
+          353.7,
+          329.2,
+          366.4
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "∼400 Wh/kg"
+    },
+    {
+      "kind": "quote",
+      "quote": "387 Wh/kg",
+      "source": {
+        "atom": "p1.L21",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and",
+        "bbox": [
+          69.4,
+          378.4,
+          555.5,
+          389.5
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p1.L17:51#241",
+      "reading": {
+        "role": "background",
+        "role_p": 1.0,
+        "property": "other",
+        "property_p": 0.97,
+        "about": [
+          "LiCoO2/graphite cells",
+          "LIB technology"
+        ],
+        "method": [],
+        "quantity": [
+          "theoretical maximum"
+        ],
+        "sentence": "p1.L17:51",
+        "read_by": "judge"
+      },
+      "n": 2,
+      "rendered": "387 Wh/kg"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT (CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L19'), '∼([0-9]+) Wh/kg', 1) AS INTEGER) - CAST(regexp_extract((SELECT text FROM atoms WHERE id='p1.L21'), '\\(([0-9]+) Wh/kg', 1) AS INTEGER)) AS diff FROM atoms WHERE id='p1.L19'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "int",
+      "value": 13,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p1.L19",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "sodiated pyrite cathode to achieve energy densities of ∼400 Wh/kg,",
+          "bbox": [
+            69.4,
+            353.7,
+            329.2,
+            366.4
+          ]
+        },
+        {
+          "atom": "p1.L21",
+          "kind": "line",
+          "page": 1,
+          "strength": "verbatim",
+          "text": "maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and",
+          "bbox": [
+            69.4,
+            378.4,
+            555.5,
+            389.5
+          ]
+        }
+      ],
+      "n": 3,
+      "rendered": "13"
+    },
+    {
+      "kind": "quote",
+      "quote": "∼200 Wh/kg",
+      "source": {
+        "atom": "p1.L39",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "of-the-art full cells demonstrating only ∼200 Wh/kg with",
+        "bbox": [
+          60.5,
+          601.3,
+          300.5,
+          614.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "∼200 Wh/kg"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:30:25+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-multistep",
+  "paper": "nanolett-6b05174",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "~400 vs 387 Wh/kg (p1.L19-21): ~13 Wh/kg more; recent SIB full cells only ~200 Wh/kg (p1.L39)",
+  "trap": "",
+  "seconds": 17.1
+}

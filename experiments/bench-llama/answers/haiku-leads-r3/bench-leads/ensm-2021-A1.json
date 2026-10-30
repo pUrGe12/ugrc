@@ -1,0 +1,297 @@
+{
+  "question": "What price per kilogram does the review give for ZrO2 coating precursors?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%price%' OR text ILIKE '%/kg%' OR text ILIKE '%per kg%' OR text ILIKE '%$%' OR text ILIKE '%kg%' OR text ILIKE '%cost%' ORDER BY page, line_no",
+      "rows": 12
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM cells WHERE text ILIKE '%price%' OR text ILIKE '%kg%' OR text ILIKE '%$%' OR text ILIKE '%cost%' OR text ILIKE '%ZrO%'",
+      "rows": 10
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%price%' OR text ILIKE '%kg%' OR text ILIKE '%US$%' OR text ILIKE '%USD%' OR text ILIKE '%dollar%' OR text ILIKE '%cheap%' OR text ILIKE '%expens%'",
+      "rows": 12
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%kg%' OR text ILIKE '%$%' OR text ILIKE '%price%' OR text ILIKE '%per kilo%' OR text ILIKE '%/kg%' OR text ILIKE '%pricing%' OR text ILIKE '%USD%' OR text ILIKE '%€%' OR text ILIKE '%¥%'",
+      "rows": 2
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (5,6,9,16) AND (text ILIKE '%precursor%') ORDER BY page, line_no",
+      "rows": 9
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, statement FROM figure_facts WHERE statement ILIKE '%cost%' OR statement ILIKE '%price%' OR statement ILIKE '%kg%' OR statement ILIKE '%ZrO%'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page IN (9,16) AND (text ILIKE '%cost%' OR text ILIKE '%ZrO%' OR text ILIKE '%zirconi%') ORDER BY page, line_no",
+      "rows": 7
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 6
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L34): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L34\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L34): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L34\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'ating-process discussion:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'ating-process discussion:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[2]",
+        "why": "the words before citation [2] end in 'le gives the challenge as' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'le gives the challenge as[2]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "f59c5bb22b9e16df194150cd68986a42e61e400fa214952c374f5120cde7ed27",
+  "leads": {
+    "sentences": [
+      "p6.L25:36",
+      "p6.L56:0",
+      "p6.L75:0",
+      "p7.L12:39",
+      "p10.L25:52",
+      "p2.L20:45",
+      "p2.L29:19",
+      "p4.L62:10",
+      "p5.L25:61",
+      "p5.L46:49",
+      "p5.L9:30",
+      "p1.L26:97"
+    ],
+    "measures": [
+      "p6.L25:36#284",
+      "p6.L25:36#291",
+      "p6.L56:0#158",
+      "p6.L75:0#139",
+      "p6.L75:0#147",
+      "p6.L75:0#215",
+      "p6.L75:0#222",
+      "p7.L12:39#144",
+      "p7.L12:39#212",
+      "p7.L12:39#327",
+      "p7.L12:39#332",
+      "p7.L12:39#338",
+      "p7.L12:39#360",
+      "p7.L12:39#416",
+      "p2.L20:45#191",
+      "p2.L20:45#196",
+      "p2.L20:45#201",
+      "p2.L29:19#153",
+      "p2.L29:19#158",
+      "p2.L29:19#163",
+      "p4.L62:10#77",
+      "p4.L62:10#142",
+      "p4.L62:10#231",
+      "p4.L62:10#297",
+      "p4.L62:10#393",
+      "p5.L25:61#62",
+      "p5.L25:61#172",
+      "p5.L46:49#41",
+      "p5.L46:49#102",
+      "p5.L46:49#162",
+      "p5.L46:49#328",
+      "p5.L9:30#23",
+      "p5.L9:30#141",
+      "p5.L9:30#200",
+      "p5.L9:30#277",
+      "p5.L9:30#334",
+      "p5.L9:30#405"
+    ],
+    "matched": 279
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 2844,
+    "cache_read_input_tokens": 49245,
+    "cache_creation_input_tokens": 12780
+  },
+  "runs": [
+    {
+      "text": "The review gives no price per kilogram for ZrO2 coating precursors. It mentions cost only qualitatively. The coating-process discussion refers to "
+    },
+    {
+      "quote": "expensive precursor salts",
+      "atom": "p5.L20"
+    },
+    {
+      "text": ", and the requirements table names the challenge as "
+    },
+    {
+      "quote": "Expensive coating precursor, increase cathode material cost",
+      "atom": "p7.T1.r6c2"
+    },
+    {
+      "text": ". No price, currency or per-kilogram figure for any ZrO2 precursor appears in the document."
+    },
+    {
+      "text": "No price or per-kilogram figure is given anywhere in the document.",
+      "absent": [
+        "price",
+        "per kilogram",
+        "/kg"
+      ]
+    }
+  ],
+  "rendered": "The review gives no price per kilogram for ZrO2 coating precursors. It mentions cost only qualitatively. The coating-process discussion refers to expensive precursor salts[1], and the requirements table names the challenge as Expensive coating precursor, increase cathode material cost[2]. No price, currency or per-kilogram figure for any ZrO2 precursor appears in the document.No price or per-kilogram figure is given anywhere in the document.[3]",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "expensive precursor salts",
+      "source": {
+        "atom": "p5.L20",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "due to difficult processing, expensive precursor salts and low yield of",
+        "bbox": [
+          37.9,
+          246.2,
+          289.3,
+          254.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "expensive precursor salts"
+    },
+    {
+      "kind": "quote",
+      "quote": "Expensive coating precursor, increase cathode material cost",
+      "source": {
+        "atom": "p7.T1.r6c2",
+        "kind": "cell",
+        "page": 7,
+        "strength": "verbatim",
+        "text": "Expensive coating precursor, increase cathode material cost",
+        "bbox": [
+          238.1,
+          613.5,
+          407.0,
+          619.8
+        ],
+        "table": "Table 1",
+        "row": 6,
+        "col": 2,
+        "column_header": "Challenges"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Expensive coating precursor, increase cathode material cost"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "price",
+        "per kilogram",
+        "/kg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 2288,
+      "strength": "search",
+      "n": 3,
+      "rendered": ""
+    }
+  ],
+  "seals": {
+    "extraction": "d803943d8b1d20f3d986dad43e92209ad07bacd1e405579b6d44b77511acd94d",
+    "readings": "69879b62b423f7bd988002a1ef7c8c2866b92b9eb229b0d62fda044eb84b65a4"
+  },
+  "created_at": "2026-10-19T09:39:08+00:00",
+  "arm": "haiku-leads",
+  "run": 3,
+  "bench": "bench-leads",
+  "paper": "ensm-2021",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a price",
+  "seconds": 17.2
+}

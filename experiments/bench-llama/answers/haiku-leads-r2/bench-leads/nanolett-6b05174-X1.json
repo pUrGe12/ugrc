@@ -1,0 +1,243 @@
+{
+  "question": "What energy density does the anode-free full cell reach, and how does it compare with the theoretical maximum of LiCoO2/graphite cells?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 4,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page IN (1,2) AND (text ILIKE '%Wh/kg%') ORDER BY page, line_no",
+      "rows": 4
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, value, unit, text, about, role FROM measures WHERE array_to_string(about, ' ') ILIKE '%LiCoO2%' OR text ILIKE '%387%'",
+      "rows": 1
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "full cell",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.96
+        },
+        {
+          "run": 3,
+          "of": "LiCoO2/graphite cells",
+          "verdict": "agrees",
+          "by": "clause base"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['400', '400'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "'400' is written exactly so in the document (e.g. p1.L19): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"400\", \"atom\": \"p1.L19\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "∼400 Wh/kg",
+      "atom": "p1.L19",
+      "of": "full cell",
+      "sentence": "p1.L17:51",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.96,
+      "clause_about": [],
+      "request": {
+        "state": "Building upon this anode-free architecture, we demonstrate a full cell using a pre-sodiated pyrite cathode to achieve energy densities of [[∼400 Wh/kg]], far surpassing recent reports on SIBs and even the theoretical maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and cost-effective aqueous processing.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[∼400 Wh/kg]] a value of “full cell”?",
+            "criteria": {
+              "true": "the passage gives [[∼400 Wh/kg]] for “full cell”, or for something “full cell” has, makes or contains",
+              "false": "[[∼400 Wh/kg]] is given for something else, or the passage does not connect it to “full cell”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.96
+          }
+        },
+        "usage": {
+          "input_tokens": 442,
+          "output_tokens": 21
+        }
+      },
+      "run": 1
+    },
+    {
+      "quote": "387 Wh/kg",
+      "atom": "p1.L21",
+      "of": "LiCoO2/graphite cells",
+      "sentence": "p1.L17:51",
+      "verdict": "agrees",
+      "by": "clause base",
+      "clause_about": [
+        "LIB technology",
+        "LiCoO2/graphite cells"
+      ],
+      "run": 3
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "4ac64b3bb36f7e896c79ffff1490396834a66eb2d7a3f0b92167847693569b0d",
+  "leads": {
+    "sentences": [
+      "p1.L17:51",
+      "p4.L11:46",
+      "p1.L35:54",
+      "p2.L17:54"
+    ],
+    "measures": [
+      "p1.L17:51#241",
+      "p4.L11:46#48",
+      "p4.L11:46#73",
+      "p4.L11:46#135",
+      "p4.L11:46#147",
+      "p4.L11:46#166",
+      "p4.L11:46#230"
+    ],
+    "matched": 36
+  },
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 1475,
+    "cache_read_input_tokens": 11039,
+    "cache_creation_input_tokens": 6915
+  },
+  "runs": [
+    {
+      "text": "The anode-free full cell, built with a pre-sodiated pyrite cathode, is reported to reach an energy density of "
+    },
+    {
+      "quote": "∼400 Wh/kg",
+      "atom": "p1.L19",
+      "of": "full cell"
+    },
+    {
+      "text": ". This is described as far surpassing recent sodium-ion battery reports and even the theoretical maximum for lithium-ion battery technology, which the document gives as "
+    },
+    {
+      "measure": "p1.L17:51#241",
+      "of": "LiCoO2/graphite cells"
+    },
+    {
+      "text": ". So the full cell's energy density is reported to exceed the LiCoO2/graphite theoretical limit, though only by a modest margin. The document's own wording is approximate (the tilde sign), and the full-cell figure is stated in the abstract and introduction rather than tabulated as a separate measurement."
+    }
+  ],
+  "rendered": "The anode-free full cell, built with a pre-sodiated pyrite cathode, is reported to reach an energy density of ∼400 Wh/kg[1]. This is described as far surpassing recent sodium-ion battery reports and even the theoretical maximum for lithium-ion battery technology, which the document gives as 387 Wh/kg[2]. So the full cell's energy density is reported to exceed the LiCoO2/graphite theoretical limit, though only by a modest margin. The document's own wording is approximate (the tilde sign), and the full-cell figure is stated in the abstract and introduction rather than tabulated as a separate measurement.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "∼400 Wh/kg",
+      "source": {
+        "atom": "p1.L19",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "sodiated pyrite cathode to achieve energy densities of ∼400 Wh/kg,",
+        "bbox": [
+          69.4,
+          353.7,
+          329.2,
+          366.4
+        ]
+      },
+      "strength": "verbatim",
+      "of": "full cell",
+      "n": 1,
+      "rendered": "∼400 Wh/kg"
+    },
+    {
+      "kind": "quote",
+      "quote": "387 Wh/kg",
+      "source": {
+        "atom": "p1.L21",
+        "kind": "line",
+        "page": 1,
+        "strength": "verbatim",
+        "text": "maximum for LIB technology (387 Wh/kg for LiCoO2/graphite cells) while still relying on naturally abundant raw materials and",
+        "bbox": [
+          69.4,
+          378.4,
+          555.5,
+          389.5
+        ]
+      },
+      "strength": "verbatim",
+      "measure": "p1.L17:51#241",
+      "reading": {
+        "role": "background",
+        "role_p": 1.0,
+        "property": "other",
+        "property_p": 0.97,
+        "about": [
+          "LiCoO2/graphite cells",
+          "LIB technology"
+        ],
+        "method": [],
+        "quantity": [
+          "theoretical maximum"
+        ],
+        "sentence": "p1.L17:51",
+        "read_by": "judge"
+      },
+      "of": "LiCoO2/graphite cells",
+      "n": 2,
+      "rendered": "387 Wh/kg"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:25:57+00:00",
+  "arm": "haiku-leads",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "nanolett-6b05174",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "~400 Wh/kg vs 387 Wh/kg for LiCoO2/graphite (p1.L19-21)",
+  "trap": "the ~200 Wh/kg of earlier SIB full cells",
+  "seconds": 9.7
+}

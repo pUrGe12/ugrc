@@ -1,0 +1,257 @@
+{
+  "question": "What two components does the TGA show being burned off the recovered NMC622, how much of each and at what temperature, and what calcination removes both?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 7,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p4.F4"
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE (page = 4 OR page=3) AND (lower(text) LIKE '%tga%' OR lower(text) LIKE '%thermo%' OR lower(text) LIKE '%wt%' OR lower(text) LIKE '%calcin%' OR lower(text) LIKE '%pvdf%' OR lower(text) LIKE '%carbon%' OR lower(text) LIKE '%%%') ORDER BY page, id LIMIT 150",
+      "rows": 141
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (4,5) AND kind='line' AND (lower(text) LIKE '%weight%' OR lower(text) LIKE '%tga%' OR lower(text) LIKE '%decompos%' OR lower(text) LIKE '%calcin%' OR lower(text) LIKE '%carbon black%' OR lower(text) LIKE '%cb%' OR lower(text) LIKE '%%%' ) ORDER BY page, id",
+      "rows": 94
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE lower(text) LIKE '%tga%' OR lower(text) LIKE '%calcin%' OR lower(text) LIKE '%weight loss%' OR lower(text) LIKE '%600%' OR lower(text) LIKE '%thermogravimetric%' OR lower(text) LIKE '%surface coating%' OR lower(text) LIKE '%pvdf/cb%' ORDER BY page, id",
+      "rows": 23
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE page=6 AND kind='line' ORDER BY id LIMIT 20",
+      "rows": 20
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE page=6 AND kind='line' AND id IN ('p6.L1','p6.L2','p6.L3','p6.L4','p6.L5','p6.L6','p6.L7','p6.L8','p6.L9','p6.L10') ORDER BY id",
+      "rows": 10
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "organic coating layer",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 5,
+          "of": "CB",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "~3.3 wt% loss at ~350 °C",
+      "atom": "p6.L6",
+      "of": "organic coating layer",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    },
+    {
+      "quote": "~4.1 wt% loss at ~550 °C",
+      "atom": "p6.L7",
+      "of": "CB",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 5
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 16,
+    "output_tokens": 2962,
+    "cache_read_input_tokens": 83775,
+    "cache_creation_input_tokens": 20075
+  },
+  "runs": [
+    {
+      "text": "The TGA-DTG data in "
+    },
+    {
+      "figure": "p4.F4"
+    },
+    {
+      "text": " show components burned off the recovered NMC622: an organic coating layer and carbon black (CB). The organic coating layer accounts for a "
+    },
+    {
+      "quote": "~3.3 wt% loss at ~350 °C",
+      "atom": "p6.L6",
+      "of": "organic coating layer"
+    },
+    {
+      "text": ", and the CB for a "
+    },
+    {
+      "quote": "~4.1 wt% loss at ~550 °C",
+      "atom": "p6.L7",
+      "of": "CB"
+    },
+    {
+      "text": ". Calcination in air at "
+    },
+    {
+      "quote": "600 °C",
+      "atom": "p6.L8"
+    },
+    {
+      "text": " removes both of them, as the text says they \"can be both removed by calcining in air\" at that temperature. The temperatures in the text are approximate; the DTG minima in the plot sit somewhat lower."
+    }
+  ],
+  "rendered": "The TGA-DTG data in Fig. 4[1] show components burned off the recovered NMC622: an organic coating layer and carbon black (CB). The organic coating layer accounts for a ~3.3 wt% loss at ~350 °C[2], and the CB for a ~4.1 wt% loss at ~550 °C[3]. Calcination in air at 600 °C[4] removes both of them, as the text says they \"can be both removed by calcining in air\" at that temperature. The temperatures in the text are approximate; the DTG minima in the plot sit somewhat lower.",
+  "citations": [
+    {
+      "kind": "figure",
+      "source": {
+        "atom": "p4.F4",
+        "kind": "figure",
+        "label": "Fig. 4",
+        "page": 4,
+        "caption": "Fig. 4. (a) TGA and DTG curves for the recovered NMC622; (b) XRD patterns for the recovered NMC622 before and after calcination; and (c) and (d) SEM images for the recovered NMC622 after calcination at 600 °C in air.",
+        "png": "figures/p4.F4.png",
+        "png_pixels_sha256": "fc2ea4ac9a7aa2ed94548c8f0c299056a1ce928a21ed7492f71ecb06b48c8dd6",
+        "bbox": [
+          65.7,
+          53.2,
+          520.8,
+          383.0
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Fig. 4"
+    },
+    {
+      "kind": "quote",
+      "quote": "~3.3 wt% loss at ~350 °C",
+      "source": {
+        "atom": "p6.L6",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "Fig. 4a, the organic coating layer (~3.3 wt% loss at ~350 °C) and CB",
+        "bbox": [
+          33.7,
+          109.6,
+          284.8,
+          117.6
+        ]
+      },
+      "strength": "verbatim",
+      "of": "organic coating layer",
+      "n": 2,
+      "rendered": "~3.3 wt% loss at ~350 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "~4.1 wt% loss at ~550 °C",
+      "source": {
+        "atom": "p6.L7",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "(~4.1 wt% loss at ~550 °C) can be both removed by calcining in air",
+        "bbox": [
+          33.7,
+          120.1,
+          284.9,
+          128.1
+        ]
+      },
+      "strength": "verbatim",
+      "of": "CB",
+      "n": 3,
+      "rendered": "~4.1 wt% loss at ~550 °C"
+    },
+    {
+      "kind": "quote",
+      "quote": "600 °C",
+      "source": {
+        "atom": "p6.L8",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "at 600 °C. Fig. 4b shows the powder X-ray diffraction patterns for",
+        "bbox": [
+          33.7,
+          130.6,
+          284.8,
+          138.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "600 °C"
+    }
+  ],
+  "seals": {
+    "extraction": "da6518c1183494f27cffbae44922e2f4cf38f81e6850ef7008b884aefa702dd7",
+    "readings": "0d8a2e642ace2f660f38dba39b2db63eae98cad964d79ac1482f30727075dc2e"
+  },
+  "created_at": "2026-10-19T09:10:57+00:00",
+  "arm": "haiku-plain",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "susmat-2020",
+  "probe": "H3",
+  "cat": "H",
+  "expect": "organic coating ~3.3 wt% at ~350 °C, carbon black ~4.1 wt% at ~550 °C (p6.L6-7); calcination in air at 600 °C (for 2 h, p3.L21)",
+  "trap": "",
+  "seconds": 19.9
+}

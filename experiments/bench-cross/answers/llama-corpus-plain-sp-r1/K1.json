@@ -1,0 +1,127 @@
+{
+  "question": "How many of the papers are about sodium batteries rather than lithium batteries, and which are they?",
+  "model": "llama-3.1-8b-instruct",
+  "tool_calls": 3,
+  "turns": 3,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "cite:unordered"
+      ]
+    },
+    {
+      "turn": 2,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "run:fields"
+      ]
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 3
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "cite:unordered",
+        "where": "runs[1]",
+        "why": "the result has 2 rows and no ORDER BY, so row 0 is not stable",
+        "moves": [
+          "add an ORDER BY, or filter the result down to the one row you cite"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "run:fields",
+        "where": "runs[1]",
+        "why": "a sql run takes ['column', 'fmt', 'row', 'sql']; unexpected ['ORDER BY']",
+        "moves": [
+          "remove ['ORDER BY']"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 23100,
+    "output_tokens": 209,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "prompt": {
+    "style": "small",
+    "sha256": "e6485baea071eb3fae00628aae441d32474184500ca65d77a43c40cb44f61c69"
+  },
+  "runs": [
+    {
+      "text": "The papers about sodium batteries are"
+    },
+    {
+      "sql": "SELECT id FROM documents WHERE title ILIKE '%sodium%' ORDER BY id",
+      "column": "id",
+      "row": 0,
+      "fmt": "raw"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "The papers about sodium batteries arenanolett-6b05172[1].",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT id FROM documents WHERE title ILIKE '%sodium%' ORDER BY id",
+      "column": "id",
+      "row": 0,
+      "fmt": "raw",
+      "value": "nanolett-6b05172",
+      "strength": "computed from None",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "nanolett-6b05172",
+          "kind": "unknown"
+        }
+      ],
+      "n": 1,
+      "rendered": "nanolett-6b05172"
+    }
+  ],
+  "seals": {
+    "extraction": "2cfc43ae5a6f18244636caded1b1855f4127785cc92a3d819ea30543b448d660",
+    "readings": "439ed13c9060c72e79e20b4f73e9cef81a82323c9972c22c1218b96f300aca21"
+  },
+  "created_at": "2026-10-20T18:46:28+00:00",
+  "arm": "llama-corpus-plain-sp",
+  "run": 1,
+  "probe": "K1",
+  "cat": "K",
+  "papers": [
+    "nanolett-6b05172",
+    "nanolett-6b05174"
+  ],
+  "expect": "2: the room-temperature sodium-sulfur battery (nanolett-6b05172) and the anode-free sodium battery (nanolett-6b05174)",
+  "trap": "",
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1"
+  },
+  "seconds": 11.4
+}

@@ -1,0 +1,347 @@
+{
+  "question": "In the BatPaC scenario, how much cobalt would NMC 111 and NMC 811/NCA require, and how much would NFA?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 8,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": true,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE (kind LIKE '%ocr%' OR figure_id IS NULL) AND (text ILIKE '%cobalt%' OR text ILIKE '%BatPaC%' OR text ILIKE '%NMC%' OR text ILIKE '%kg%') ORDER BY page, id LIMIT 150",
+      "rows": null
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p3.F1"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text, strength FROM atoms WHERE text ILIKE '%cobalt%' OR text ILIKE '%BatPaC%' OR text ILIKE '%kilotonne%' OR text ILIKE '%tonne%' ORDER BY page, id",
+      "rows": 68
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, figure_id, line_no, text, conf FROM figure_ocr WHERE figure_id='p3.F1' ORDER BY line_no",
+      "rows": 29
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE id IN ('p2.L77','p2.L78','p2.L79','p2.L80','p2.L81','p2.L82','p2.L83','p2.L84','p2.L85','p2.L86','p2.L87','p2.L88','p2.L89','p2.L90','p2.L91','p2.L92','p2.L93','p2.L94','p2.L95','p2.L96','p2.L97','p2.L98') ORDER BY id",
+      "rows": 22
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE id IN ('p2.L99','p2.L100','p2.L101','p2.L102','p2.L103','p2.L104','p2.L105','p2.L106') ORDER BY id",
+      "rows": 8
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number",
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 11
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1', '000', '000', '2030', '(260-mile', '111'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L1): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L1\"} — never shorten it",
+          "'000' is written exactly so in the document (e.g. p2.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"000\", \"atom\": \"p2.L12\"} — never shorten it",
+          "'000' is written exactly so in the document (e.g. p2.L12): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"000\", \"atom\": \"p2.L12\"} — never shorten it",
+          "'2030' is written exactly so in the document (e.g. p2.L8): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p2.L8\"} — never shorten it",
+          "'111' is written exactly so in the document (e.g. p2.L86): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"111\", \"atom\": \"p2.L86\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['1B'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1B' is written exactly so in the document (e.g. p2.L83): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1B\", \"atom\": \"p2.L83\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['2030'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2030' is written exactly so in the document (e.g. p2.L8): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2030\", \"atom\": \"p2.L8\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['811'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'811' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"811\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[8]",
+        "why": "your own words contain number(s) ['1B'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1B' is written exactly so in the document (e.g. p2.L83): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1B\", \"atom\": \"p2.L83\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['1B'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1B' is written exactly so in the document (e.g. p2.L83): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1B\", \"atom\": \"p2.L83\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 18,
+    "output_tokens": 3652,
+    "cache_read_input_tokens": 75804,
+    "cache_creation_input_tokens": 16229
+  },
+  "runs": [
+    {
+      "text": "In the BatPaC scenario for the projected EV fleet, the document says that with "
+    },
+    {
+      "quote": "NMC 111",
+      "atom": "p2.L91"
+    },
+    {
+      "text": " as the cathode of choice, the total cobalt required would be "
+    },
+    {
+      "quote": "≈2500 tons",
+      "atom": "p2.L93"
+    },
+    {
+      "text": " of cobalt. For the next-generation "
+    },
+    {
+      "quote": "NMC 811",
+      "atom": "p2.L94"
+    },
+    {
+      "text": " and NCA cathodes, the document says they would "
+    },
+    {
+      "quote": "still require ≈700 tons of cobalt",
+      "atom": "p2.L96"
+    },
+    {
+      "text": " to realize the same scenario. By contrast, for NFA the document states that if NFA cathodes were deployed for the same number of EVs, range and pack energy, "
+    },
+    {
+      "quote": "no cobalt would be required",
+      "atom": "p2.L104"
+    },
+    {
+      "text": ". The text gives these totals; the per-class cobalt bars are shown in the Figure panel of the BatPaC results."
+    }
+  ],
+  "rendered": "In the BatPaC scenario for the projected EV fleet, the document says that with NMC 111[1] as the cathode of choice, the total cobalt required would be ≈2500 tons[2] of cobalt. For the next-generation NMC 811[3] and NCA cathodes, the document says they would still require ≈700 tons of cobalt[4] to realize the same scenario. By contrast, for NFA the document states that if NFA cathodes were deployed for the same number of EVs, range and pack energy, no cobalt would be required[5]. The text gives these totals; the per-class cobalt bars are shown in the Figure panel of the BatPaC results.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "NMC 111",
+      "source": {
+        "atom": "p2.L91",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "that in such a scenario if the current mainstream, NMC 111",
+        "bbox": [
+          303.3,
+          367.9,
+          544.2,
+          376.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "NMC 111"
+    },
+    {
+      "kind": "quote",
+      "quote": "≈2500 tons",
+      "source": {
+        "atom": "p2.L93",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cobalt required would be ≈2500 tons. Even the next-generation",
+        "bbox": [
+          303.3,
+          389.9,
+          544.3,
+          399.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "≈2500 tons"
+    },
+    {
+      "kind": "quote",
+      "quote": "NMC 811",
+      "source": {
+        "atom": "p2.L94",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "cathodes, such as NMC 811 and NCA which are poised for a",
+        "bbox": [
+          303.3,
+          400.9,
+          544.2,
+          409.9
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "NMC 811"
+    },
+    {
+      "kind": "quote",
+      "quote": "still require ≈700 tons of cobalt",
+      "source": {
+        "atom": "p2.L96",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "still require ≈700 tons of cobalt to realize this scenario. These",
+        "bbox": [
+          303.3,
+          422.9,
+          544.3,
+          432.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "still require ≈700 tons of cobalt"
+    },
+    {
+      "kind": "quote",
+      "quote": "no cobalt would be required",
+      "source": {
+        "atom": "p2.L104",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "gies, no cobalt would be required. These comparisons categori-",
+        "bbox": [
+          303.3,
+          510.8,
+          544.2,
+          519.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "no cobalt would be required"
+    }
+  ],
+  "seals": {
+    "extraction": "e1deb964d6a4efeac67260e0dfe644859bb4c89ee15158039675101cb589edea",
+    "readings": "543c80ede508da154a6da8ec0874c13d0523ce1bb68d67bcc6db08f381e1001a"
+  },
+  "created_at": "2026-10-19T09:27:32+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "adma-2020",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "≈2500 tons (NMC 111), ≈700 tons (NMC 811 and NCA), none for NFA (1,000,000 EVs, 260 miles) (p2.L84-104)",
+  "trap": "the 215 million EV projection",
+  "seconds": 26.4
+}

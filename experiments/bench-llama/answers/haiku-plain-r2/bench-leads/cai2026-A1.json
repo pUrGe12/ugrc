@@ -1,0 +1,376 @@
+{
+  "question": "What siRNA dose did Gao et al. use in their study?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 15,
+  "turns": 10,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%Gao%' ORDER BY page, id",
+      "rows": 13
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%mg/kg%' OR text ILIKE '%dose%' ORDER BY page, id",
+      "rows": 6
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page IN (6,7) AND kind='line' ORDER BY page, id LIMIT 40",
+      "rows": 40
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM atoms WHERE (text ILIKE '%CL4H6%' OR text ILIKE '%[55]%' OR text ILIKE '%55]%') ORDER BY page, id",
+      "rows": 7
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id='p6.T2' AND row_no BETWEEN 1 AND 60 AND (col_no=8 OR col_no=2 OR col_no=4) ORDER BY row_no, col_no",
+      "rows": 114
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM cells WHERE table_id IN ('p16.T3','p17.T3') AND (text ILIKE '%Gao%' OR text ILIKE '%FOXM1%' OR text ILIKE '%[55]%') ORDER BY table_id, row_no, col_no",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%FOXM1%' OR text ILIKE '%BT549%' OR text ILIKE '%tert-butanol%' OR text ILIKE '%CL4H6%' OR text ILIKE '%DMG-PEG%' ORDER BY page, id",
+      "rows": 7
+    },
+    {
+      "turn": 4,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ~ '(nM|μM|µM|mg|μg|µg|pmol|nmol|mM|\\bdose|dosage|injection|injected)' ORDER BY page, id",
+      "rows": 1
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE text ILIKE '%nM%' OR text ILIKE '%mg%' OR text ILIKE '%μg%' OR text ILIKE '%µg%' OR text ILIKE '%pmol%' OR text ILIKE '%dose%' OR text ILIKE '%injected%' OR text ILIKE '%mg/kg%' ORDER BY page, id",
+      "rows": 98
+    },
+    {
+      "turn": 5,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page=22 AND id IN ('p22.L109','p22.L110') OR (page=22 AND kind='line' AND text ILIKE '%siRNA%') ORDER BY page, id",
+      "rows": 5
+    },
+    {
+      "turn": 6,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM atoms WHERE page=5 AND id BETWEEN 'p5.L80' AND 'p5.L90' OR (page=13 AND id BETWEEN 'p13.L116' AND 'p13.L123') ORDER BY id",
+      "rows": 21
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 13,
+      "rules": [
+        "text:lead-in",
+        "text:lead-in"
+      ]
+    },
+    {
+      "turn": 10,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 13
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['60:40:1,', \"2's\", '[55]'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'60:40:1' is written exactly so in the document (e.g. p6.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"60:40:1\", \"atom\": \"p6.L5\"} — never shorten it",
+          "'55' is written exactly so in the document (e.g. p6.L4): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"55\", \"atom\": \"p6.L4\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[6]",
+        "why": "your own words contain number(s) ['[53]).'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'53' is written exactly so in the document (e.g. p5.L77): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"53\", \"atom\": \"p5.L77\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['2'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'2' is written exactly so in the document (e.g. p1.L37): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"2\", \"atom\": \"p1.L37\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:lead-in",
+        "where": "runs[1]",
+        "why": "the words before citation [1] end in 'LNP-based siRNA delivery:' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'LNP-based siRNA delivery:[1]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      },
+      {
+        "rule": "text:lead-in",
+        "where": "runs[9]",
+        "why": "the words before citation [5] end in 'some, where the text says' and lead into its support quote, which the reader does not see: support quotes and searches are cited, not shown, so the answer reads 'some, where the text says[5]'",
+        "moves": [
+          "show the words the reader needs as a quote run right after the text: {\"quote\": \"<exact text>\", \"atom\": \"<id>\"}",
+          "or finish the sentence in your own words before the citation, so they say what it backs"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 4655,
+    "cache_read_input_tokens": 103469,
+    "cache_creation_input_tokens": 19101
+  },
+  "runs": [
+    {
+      "text": "The document does not state an siRNA dose for the Gao et al. study. The only Gao et al. description is in the text on LNP-based siRNA delivery, which says "
+    },
+    {
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "atom": "p6.L4"
+    },
+    {
+      "text": " and the paper goes on to describe the LNP formulation (molar ratio "
+    },
+    {
+      "quote": "60:40:1",
+      "atom": "p6.L5"
+    },
+    {
+      "text": ", encapsulating si-FOXM1) and the BT549 lung metastasis model. Neither that passage nor the "
+    },
+    {
+      "table": "p6.T2"
+    },
+    {
+      "text": " entry for that reference gives a dose. "
+    },
+    {
+      "text": "",
+      "absent": [
+        "mg/kg",
+        "pmol",
+        "μg"
+      ]
+    },
+    {
+      "text": " The only dose-like values in the document belong to other studies. For example, the MBD2 liposome study reports "
+    },
+    {
+      "quote": "demonstrates high MBD2 silencing efficiency at 200 nM",
+      "atom": "p5.L84"
+    },
+    {
+      "text": " (a different study, ref. "
+    },
+    {
+      "quote": "53",
+      "atom": "p5.L77"
+    },
+    {
+      "text": ")."
+    }
+  ],
+  "rendered": "The document does not state an siRNA dose for the Gao et al. study. The only Gao et al. description is in the text on LNP-based siRNA delivery, which says Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,[1] and the paper goes on to describe the LNP formulation (molar ratio 60:40:1[2], encapsulating si-FOXM1) and the BT549 lung metastasis model. Neither that passage nor the Table 2[3] entry for that reference gives a dose. [4] The only dose-like values in the document belong to other studies. For example, the MBD2 liposome study reports demonstrates high MBD2 silencing efficiency at 200 nM[5] (a different study, ref. 53[6]).",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+      "source": {
+        "atom": "p6.L4",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "instance, Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,",
+        "bbox": [
+          37.6,
+          647.8,
+          288.7,
+          655.8
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Gao et al. [55]used a novel CL4H6-ionizable lipid, cholesterol,"
+    },
+    {
+      "kind": "quote",
+      "quote": "60:40:1",
+      "source": {
+        "atom": "p6.L5",
+        "kind": "line",
+        "page": 6,
+        "strength": "verbatim",
+        "text": "and DMG-PEG2000 (in a molar ratio of 60:40:1) to construct LNPs",
+        "bbox": [
+          37.6,
+          658.3,
+          288.6,
+          666.3
+        ]
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "60:40:1"
+    },
+    {
+      "kind": "table",
+      "source": {
+        "atom": "p6.T2",
+        "kind": "table",
+        "label": "Table 2",
+        "page": 6,
+        "caption": "Table 2 Nanocarrier-based siRNA delivery systems for tumor metastasis.",
+        "bbox": [
+          37.6,
+          74.7,
+          557.7,
+          597.9
+        ],
+        "strength": "verbatim"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Table 2"
+    },
+    {
+      "kind": "search",
+      "terms": [
+        "mg/kg",
+        "pmol",
+        "μg"
+      ],
+      "matches": 0,
+      "scope": "every atom of the document: text lines, table cells, column headers, OCR lines, figure facts",
+      "atoms_searched": 4108,
+      "strength": "search",
+      "n": 4,
+      "rendered": ""
+    },
+    {
+      "kind": "quote",
+      "quote": "demonstrates high MBD2 silencing efficiency at 200 nM",
+      "source": {
+        "atom": "p5.L84",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "demonstrates high MBD2 silencing efficiency at 200 nM. It significantly",
+        "bbox": [
+          306.6,
+          672.3,
+          557.7,
+          680.2
+        ]
+      },
+      "strength": "verbatim",
+      "n": 5,
+      "rendered": "demonstrates high MBD2 silencing efficiency at 200 nM"
+    },
+    {
+      "kind": "quote",
+      "quote": "53",
+      "source": {
+        "atom": "p5.L77",
+        "kind": "line",
+        "page": 5,
+        "strength": "verbatim",
+        "text": "Zhang et al. [53] developed a cationic liposome delivery system to",
+        "bbox": [
+          306.6,
+          599.0,
+          557.6,
+          607.0
+        ]
+      },
+      "strength": "verbatim",
+      "n": 6,
+      "rendered": "53"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:30:09+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "A1",
+  "cat": "A",
+  "expect": "not reported",
+  "trap": "inventing a dose",
+  "seconds": 30.5
+}

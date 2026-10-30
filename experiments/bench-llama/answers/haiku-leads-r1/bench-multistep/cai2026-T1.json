@@ -1,0 +1,375 @@
+{
+  "question": "In Table 1, what carrier does NCP-CD47 siRNA use, which institution runs its trial, and what is the trial's status?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 10,
+  "turns": 9,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no IN (SELECT row_no FROM cells WHERE table_id='p2.T1' AND text ILIKE '%CD47%') ORDER BY row_no, col_no",
+      "rows": 8
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%NCP%' OR text ILIKE '%CD47%'",
+      "rows": 7
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 19 AND 23 ORDER BY row_no, col_no",
+      "rows": 24
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, text FROM lines WHERE page=2 AND id IN ('p2.L45','p2.L46','p2.L47') OR (page=3 AND id IN ('p3.L9','p3.L10','p3.L11')) OR id IN ('p2.T1.r20c6') ORDER BY id",
+      "rows": 6
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 3,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 7,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "quote:wrapped",
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 8,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 9,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 9,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[2]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[1]",
+        "why": "'non-' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r21c5 'cationic' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"non- cationic\", \"atom\": \"p2.T1.r20c5\"}",
+          "or show p2.T1.r21c5 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      },
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[5]",
+        "why": "'Phase 1' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r21c6 'Not yet recruiting' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Not yet recruiting\", \"atom\": \"p2.T1.r20c6\"}",
+          "or show p2.T1.r21c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[1]",
+        "why": "'non- cationic' stops where its table cell goes on to the printed row below it: the cell continues with p2.T1.r22c5 'peptide' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"non- cationic peptide\", \"atom\": \"p2.T1.r21c5\"}",
+          "or show p2.T1.r22c5 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": true,
+  "clause_seal": "37b12f3c62b7077fd551e1085bc8910d975ff4d9e6579339b441e2ef061932e1",
+  "leads": {
+    "sentences": [
+      "p3.L7:63",
+      "p1.L20:92",
+      "p2.L45:50",
+      "p2.L49:0",
+      "p3.L16:61",
+      "p5.L53:56",
+      "p19.L31:0",
+      "p3.L12:17",
+      "p1.L35:56",
+      "p3.L32:16",
+      "p13.L58:44",
+      "p15.L69:10"
+    ],
+    "measures": [
+      "p3.L16:61#154",
+      "p19.L31:0#64",
+      "p3.L12:17#146",
+      "p3.L12:17#172",
+      "p1.L35:56#13",
+      "p1.L35:56#58",
+      "p1.L35:56#118",
+      "p1.L35:56#134",
+      "p1.L35:56#148",
+      "p3.L32:16#30",
+      "p3.L32:16#44",
+      "p3.L32:16#130",
+      "p3.L32:16#215",
+      "p3.L32:16#248",
+      "p3.L32:16#259",
+      "p15.L69:10#216"
+    ],
+    "matched": 215
+  },
+  "usage": {
+    "input_tokens": 20,
+    "output_tokens": 4639,
+    "cache_read_input_tokens": 75929,
+    "cache_creation_input_tokens": 13780
+  },
+  "runs": [
+    {
+      "text": "In the table, the NCP-CD47 siRNA row is a Ligand-siRNA conjugate, and its carrier is "
+    },
+    {
+      "quote": "non- cationic peptide",
+      "atom": "p2.T1.r20c5"
+    },
+    {
+      "text": " (the carrier text wraps onto the following printed rows). The trial is run by "
+    },
+    {
+      "quote": "West China Hospital",
+      "atom": "p2.T1.r20c7"
+    },
+    {
+      "text": ". Its status is "
+    },
+    {
+      "quote": "Phase 1 Not yet recruiting",
+      "atom": "p2.T1.r20c6"
+    },
+    {
+      "text": ", with trial number "
+    },
+    {
+      "quote": "NCT07583914",
+      "atom": "p2.T1.r20c8"
+    },
+    {
+      "text": "."
+    }
+  ],
+  "rendered": "In the table, the NCP-CD47 siRNA row is a Ligand-siRNA conjugate, and its carrier is non- cationic peptide[1] (the carrier text wraps onto the following printed rows). The trial is run by West China Hospital[2]. Its status is Phase 1 Not yet recruiting[3], with trial number NCT07583914[4].",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "non- cationic peptide",
+      "source": {
+        "atom": "p2.T1.r20c5",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "non- cationic peptide",
+        "bbox": [
+          312.1,
+          527.6,
+          334.4,
+          551.1
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 5,
+        "column_header": "Carrier",
+        "atoms": [
+          "p2.T1.r20c5",
+          "p2.T1.r21c5",
+          "p2.T1.r22c5"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "non- cationic peptide"
+    },
+    {
+      "kind": "quote",
+      "quote": "West China Hospital",
+      "source": {
+        "atom": "p2.T1.r20c7",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "West China Hospital",
+        "bbox": [
+          418.7,
+          527.6,
+          476.3,
+          534.0
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 7,
+        "column_header": "Company"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "West China Hospital"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1 Not yet recruiting",
+      "source": {
+        "atom": "p2.T1.r20c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1 Not yet recruiting",
+        "bbox": [
+          357.7,
+          527.6,
+          407.4,
+          542.6
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 6,
+        "column_header": "Status",
+        "atoms": [
+          "p2.T1.r20c6",
+          "p2.T1.r21c6"
+        ]
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Phase 1 Not yet recruiting"
+    },
+    {
+      "kind": "quote",
+      "quote": "NCT07583914",
+      "source": {
+        "atom": "p2.T1.r20c8",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "NCT07583914",
+        "bbox": [
+          494.5,
+          527.6,
+          535.6,
+          534.0
+        ],
+        "table": "Table 1",
+        "row": 20,
+        "col": 8,
+        "column_header": "Clinical trial number"
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "NCT07583914"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:25:19+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "T1",
+  "cat": "T",
+  "expect": "non-cationic peptide (a cell wrapped over three printed rows: 'non-' / 'cationic' / 'peptide'); West China Hospital; Phase 1, Not yet recruiting (NCT07583914)",
+  "trap": "",
+  "seconds": 30.1
+}

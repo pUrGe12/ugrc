@@ -1,0 +1,150 @@
+{
+  "arm": "llama-plain-sp",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "ensm-2020",
+  "probe": "T1",
+  "cat": "T",
+  "error": "RuntimeError: no accepted answer within 20 model turns (1 refused submissions)",
+  "seconds": 255.9,
+  "model": "llama-3.1-8b-instruct",
+  "llama_endpoint": {
+    "url": "https://helloitsme0218--ugrc-llama-server.us-east.modal.direct/v1",
+    "host": null
+  },
+  "served_by": null,
+  "adapter_repairs": null,
+  "turns": 20,
+  "tool_calls": 1,
+  "usage": {
+    "input_tokens": 121144,
+    "output_tokens": 6085,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "trace": [
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "quote:absent",
+        "text:number",
+        "cite:row",
+        "quote:absent",
+        "cite:row"
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L31): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L31\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[3]",
+        "why": "there is no atom 'p10.T1.r6'",
+        "moves": [
+          "the quote is verbatim in 37 places (p2.L61, p4.L5, p4.L26, p5.L18, p5.L26, p5.L30, p5.L55, p5.L57, …): set \"atom\" to the one you mean"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['6C', '532', '622'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'6C' is written exactly so in the document (e.g. p7.L79): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"6C\", \"atom\": \"p7.L79\"} — never shorten it",
+          "'532' is written exactly so in the document (e.g. p2.L5): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"532\", \"atom\": \"p2.L5\"} — never shorten it",
+          "'622' is written exactly so in the document (e.g. p5.L18): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"622\", \"atom\": \"p5.L18\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "cite:row",
+        "where": "runs[5]",
+        "why": "row 0 does not exist; the result has 0 row(s) (0-based)",
+        "moves": [
+          "cite an existing row, or filter so the value is in row 0"
+        ]
+      },
+      {
+        "rule": "quote:absent",
+        "where": "runs[7]",
+        "why": "there is no atom 'p10.T1.r6'",
+        "moves": [
+          "the quote is verbatim in 37 places (p2.L61, p4.L5, p4.L26, p5.L18, p5.L26, p5.L30, p5.L55, p5.L57, …): set \"atom\" to the one you mean"
+        ]
+      },
+      {
+        "rule": "cite:row",
+        "where": "runs[9]",
+        "why": "row 1 does not exist; the result has 0 row(s) (0-based)",
+        "moves": [
+          "cite an existing row, or filter so the value is in row 0"
+        ]
+      }
+    ]
+  ],
+  "submitted": [
+    {
+      "runs": [
+        {
+          "text": "Table 1 refers to "
+        },
+        {
+          "quote": "Section 6",
+          "atom": "p10.T1.r6"
+        },
+        {
+          "text": ", which is about "
+        },
+        {
+          "quote": "NMC 811",
+          "atom": "p10.T1.r6"
+        },
+        {
+          "text": ". At a 6C charging rate, compared to NMC 532 and NMC 622 in the ORNL study, "
+        },
+        {
+          "sql": "SELECT text FROM atoms WHERE id = (SELECT id FROM atoms WHERE text ILIKE '%ORNL study%' LIMIT 1) AND text ILIKE '%6C charging rate%'",
+          "column": "text",
+          "row": 0,
+          "fmt": "raw"
+        },
+        {
+          "text": " the cathode "
+        },
+        {
+          "quote": "NMC 811",
+          "atom": "p10.T1.r6"
+        },
+        {
+          "text": " kept "
+        },
+        {
+          "sql": "SELECT text FROM atoms WHERE id = (SELECT id FROM atoms WHERE text ILIKE '%ORNL study%' LIMIT 1) AND text ILIKE '%6C charging rate%'",
+          "column": "text",
+          "row": 1,
+          "fmt": "raw"
+        },
+        {
+          "text": "."
+        }
+      ]
+    }
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"/home/purge/Desktop/ugrc/experiments/bench-llama/run.py\", line 106, in one\n    rec = ask.ask(substrate(kind, paper), probe[\"q\"], model=model, cl=client, log=lambda *_: None, prompt=prompt)\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 257, in ask\n    _answer(con, root, cl, model, system, [{\"role\": \"user\", \"content\": text}],\n  File \"/home/purge/Desktop/ugrc/ugrc/ask.py\", line 365, in _answer\n    raise err\nRuntimeError: no accepted answer within 20 model turns (1 refused submissions)\n"
+}

@@ -1,0 +1,263 @@
+{
+  "question": "Why was the exosome-based siRNA trial SY in Table 1 withdrawn?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 8,
+  "turns": 6,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND (text ILIKE '%SY%' OR text ILIKE '%exosom%' OR text ILIKE '%withdraw%') ORDER BY row_no, col_no",
+      "rows": 3
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%withdraw%' OR text ILIKE '%SY %' OR text ILIKE '%exosom%' OR text ILIKE '%SY-%' ORDER BY page, line_no",
+      "rows": 32
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text, x0, top FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 25 AND 36 ORDER BY row_no, col_no",
+      "rows": 51
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE page=3 AND line_no BETWEEN 10 AND 30 OR (page=3 AND id LIKE 'p3.L5%') ORDER BY line_no",
+      "rows": 32
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT row_no, col_no, text FROM cells WHERE table_id='p2.T1' AND row_no BETWEEN 20 AND 28 ORDER BY row_no, col_no",
+      "rows": 36
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 11,
+      "rules": [
+        "quote:wrapped"
+      ]
+    },
+    {
+      "turn": 6,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 9
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[10]",
+        "why": "your own words contain number(s) ['1'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1' is written exactly so in the document (e.g. p1.L33): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1\", \"atom\": \"p1.L33\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ],
+    [
+      {
+        "rule": "quote:wrapped",
+        "where": "runs[9]",
+        "why": "'Withdrawn' stops where its table cell goes on to the printed row above it: the cell continues from p2.T1.r26c6 'Phase 1' (a printed row that fills at most half of the table's columns, all under text on the row above, continues that row), so the reader would see part of the cell",
+        "moves": [
+          "run the quote across the row break: {\"quote\": \"Phase 1 Withdrawn\", \"atom\": \"p2.T1.r27c6\"}",
+          "or show p2.T1.r26c6 with a quote run of its own, next to this one",
+          "if that piece belongs to a different entry of the table, show it too and say so in your words"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 14,
+    "output_tokens": 3984,
+    "cache_read_input_tokens": 41441,
+    "cache_creation_input_tokens": 12888
+  },
+  "runs": [
+    {
+      "text": "The premise is not supported: the clinical trials table does not list the SY trial as withdrawn. The SY row (exosome carrier, KrasG12D siRNA, metastatic pancreas cancer, M.D. Anderson Cancer Center, NCT03608631) has its status cells reading "
+    },
+    {
+      "quote": "Phase 1",
+      "atom": "p2.T1.r31c6"
+    },
+    {
+      "text": " then "
+    },
+    {
+      "quote": "Phase 2",
+      "atom": "p2.T1.r32c6"
+    },
+    {
+      "text": " and "
+    },
+    {
+      "quote": "Recruiting",
+      "atom": "p2.T1.r33c6"
+    },
+    {
+      "text": ". The text agrees: SY is described as currently in the "
+    },
+    {
+      "quote": "Phase 1/2 patient recruitment stage",
+      "atom": "p3.L19"
+    },
+    {
+      "text": ". The document gives no reason for any withdrawal of the SY trial, because it does not describe SY as withdrawn."
+    }
+  ],
+  "rendered": "The premise is not supported: the clinical trials table does not list the SY trial as withdrawn. The SY row (exosome carrier, KrasG12D siRNA, metastatic pancreas cancer, M.D. Anderson Cancer Center, NCT03608631) has its status cells reading Phase 1[1] then Phase 2[2] and Recruiting[3]. The text agrees: SY is described as currently in the Phase 1/2 patient recruitment stage[4]. The document gives no reason for any withdrawal of the SY trial, because it does not describe SY as withdrawn.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Phase 1",
+      "source": {
+        "atom": "p2.T1.r31c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 1",
+        "bbox": [
+          357.7,
+          621.9,
+          379.5,
+          628.2
+        ],
+        "table": "Table 1",
+        "row": 31,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "n": 1,
+      "rendered": "Phase 1"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 2",
+      "source": {
+        "atom": "p2.T1.r32c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Phase 2",
+        "bbox": [
+          357.7,
+          630.4,
+          379.5,
+          636.8
+        ],
+        "table": "Table 1",
+        "row": 32,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "n": 2,
+      "rendered": "Phase 2"
+    },
+    {
+      "kind": "quote",
+      "quote": "Recruiting",
+      "source": {
+        "atom": "p2.T1.r33c6",
+        "kind": "cell",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "Recruiting",
+        "bbox": [
+          357.7,
+          639.0,
+          387.1,
+          645.4
+        ],
+        "table": "Table 1",
+        "row": 33,
+        "col": 6,
+        "column_header": "Status"
+      },
+      "strength": "verbatim",
+      "n": 3,
+      "rendered": "Recruiting"
+    },
+    {
+      "kind": "quote",
+      "quote": "Phase 1/2 patient recruitment stage",
+      "source": {
+        "atom": "p3.L19",
+        "kind": "line",
+        "page": 3,
+        "strength": "verbatim",
+        "text": "Phase 1/2 patient recruitment stage. In addition, naked siRNA (STP705,",
+        "bbox": [
+          37.6,
+          244.6,
+          288.7,
+          252.6
+        ]
+      },
+      "strength": "verbatim",
+      "n": 4,
+      "rendered": "Phase 1/2 patient recruitment stage"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:29:56+00:00",
+  "arm": "haiku-plain",
+  "run": 2,
+  "bench": "bench-leads",
+  "paper": "cai2026",
+  "probe": "F1",
+  "cat": "F",
+  "expect": "premise false: SY (KrasG12D, exosomes, M.D. Anderson) is Phase 1/Phase 2, Recruiting; the withdrawn trial is CpG-STAT3 siRNA CAS3/SS3 (p2.T1 r26-33)",
+  "trap": "explaining a withdrawal",
+  "seconds": 19.7
+}

@@ -1,0 +1,266 @@
+{
+  "question": "In Table 3, what tumor inhibition rates did TP-siRC@tHyNPs reach in the PMM and the PDX models, and how many percentage points apart are they?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 6,
+  "turns": 5,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, row_no, col_no, text FROM cells WHERE table_id IN ('p16.T3','p17.T3') AND text ILIKE '%tHyNP%' OR (table_id IN ('p16.T3','p17.T3') AND text ILIKE '%PDX%') OR (table_id IN ('p16.T3','p17.T3') AND text ILIKE '%PMM%')",
+      "rows": 7
+    },
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, text FROM lines WHERE text ILIKE '%tHyNP%' OR text ILIKE '%PMM%' OR text ILIKE '%PDX%' OR text ILIKE '%inhibition%'",
+      "rows": 23
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, row_no, col_no, text FROM cells WHERE table_id='p16.T3' AND row_no BETWEEN 9 AND 13 ORDER BY row_no, col_no",
+      "rows": 17
+    },
+    {
+      "turn": 3,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT CAST(regexp_extract(a.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) - CAST(regexp_extract(b.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "rows": 1
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 7,
+      "rules": [
+        "text:number",
+        "text:number"
+      ]
+    },
+    {
+      "turn": 5,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 7,
+      "pairings": [
+        {
+          "run": 1,
+          "of": "TP-siRC@tHyNPs in the PMM model",
+          "verdict": "unchecked"
+        },
+        {
+          "run": 3,
+          "of": "TP-siRC@tHyNPs in the PDX model",
+          "verdict": "unchecked"
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[0]",
+        "why": "your own words contain number(s) ['3,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'3' is written exactly so in the document (e.g. p1.L40): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"3\", \"atom\": \"p1.L40\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      },
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['two'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "Tumor inhibition rate:94.91",
+      "atom": "p16.T3.r10c6",
+      "of": "TP-siRC@tHyNPs in the PMM model",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 1
+    },
+    {
+      "quote": "Tumor inhibition rate: 91.00",
+      "atom": "p16.T3.r12c6",
+      "of": "TP-siRC@tHyNPs in the PDX model",
+      "verdict": "unchecked",
+      "why": "no clause base",
+      "run": 3
+    }
+  ],
+  "clause_base": false,
+  "clause_seal": null,
+  "leads": {
+    "sentences": [],
+    "measures": [],
+    "matched": 0
+  },
+  "usage": {
+    "input_tokens": 12,
+    "output_tokens": 2244,
+    "cache_read_input_tokens": 23579,
+    "cache_creation_input_tokens": 8087
+  },
+  "runs": [
+    {
+      "text": "In the table, TP-siRC@tHyNPs reached a tumor inhibition rate of "
+    },
+    {
+      "quote": "Tumor inhibition rate:94.91",
+      "atom": "p16.T3.r10c6",
+      "of": "TP-siRC@tHyNPs in the PMM model"
+    },
+    {
+      "text": " (PMM model, SCID mice), and a tumor inhibition rate of "
+    },
+    {
+      "quote": "Tumor inhibition rate: 91.00",
+      "atom": "p16.T3.r12c6",
+      "of": "TP-siRC@tHyNPs in the PDX model"
+    },
+    {
+      "text": " (PDX model, B-NDG mice). The gap between them is "
+    },
+    {
+      "sql": "SELECT CAST(regexp_extract(a.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) - CAST(regexp_extract(b.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed2"
+    },
+    {
+      "text": " percentage points, with the PMM rate higher."
+    }
+  ],
+  "rendered": "In the table, TP-siRC@tHyNPs reached a tumor inhibition rate of Tumor inhibition rate:94.91[1] (PMM model, SCID mice), and a tumor inhibition rate of Tumor inhibition rate: 91.00[2] (PDX model, B-NDG mice). The gap between them is 3.91[3] percentage points, with the PMM rate higher.",
+  "citations": [
+    {
+      "kind": "quote",
+      "quote": "Tumor inhibition rate:94.91",
+      "source": {
+        "atom": "p16.T3.r10c6",
+        "kind": "cell",
+        "page": 16,
+        "strength": "verbatim",
+        "text": "PMM: Tumor inhibition rate:94.91 ±2.01%,",
+        "bbox": [
+          386.4,
+          160.3,
+          513.0,
+          168.3
+        ],
+        "table": "Table 3",
+        "row": 10,
+        "col": 6,
+        "column_header": "Results"
+      },
+      "strength": "verbatim",
+      "of": "TP-siRC@tHyNPs in the PMM model",
+      "n": 1,
+      "rendered": "Tumor inhibition rate:94.91"
+    },
+    {
+      "kind": "quote",
+      "quote": "Tumor inhibition rate: 91.00",
+      "source": {
+        "atom": "p16.T3.r12c6",
+        "kind": "cell",
+        "page": 16,
+        "strength": "verbatim",
+        "text": "PDX: Tumor inhibition rate: 91.00 ±3.83%",
+        "bbox": [
+          386.4,
+          177.4,
+          510.4,
+          185.5
+        ],
+        "table": "Table 3",
+        "row": 12,
+        "col": 6,
+        "column_header": "Results"
+      },
+      "strength": "verbatim",
+      "of": "TP-siRC@tHyNPs in the PDX model",
+      "n": 2,
+      "rendered": "Tumor inhibition rate: 91.00"
+    },
+    {
+      "kind": "computed",
+      "sql": "SELECT CAST(regexp_extract(a.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) - CAST(regexp_extract(b.text, 'rate:\\s*([0-9.]+)', 1) AS DOUBLE) AS diff FROM cells a, cells b WHERE a.id='p16.T3.r10c6' AND b.id='p16.T3.r12c6'",
+      "column": "diff",
+      "row": 0,
+      "fmt": "fixed2",
+      "value": 3.9099999999999966,
+      "strength": "computed from verbatim",
+      "n_sources": 2,
+      "sources": [
+        {
+          "atom": "p16.T3.r10c6",
+          "kind": "cell",
+          "page": 16,
+          "strength": "verbatim",
+          "text": "PMM: Tumor inhibition rate:94.91 ±2.01%,",
+          "bbox": [
+            386.4,
+            160.3,
+            513.0,
+            168.3
+          ],
+          "table": "Table 3",
+          "row": 10,
+          "col": 6,
+          "column_header": "Results"
+        },
+        {
+          "atom": "p16.T3.r12c6",
+          "kind": "cell",
+          "page": 16,
+          "strength": "verbatim",
+          "text": "PDX: Tumor inhibition rate: 91.00 ±3.83%",
+          "bbox": [
+            386.4,
+            177.4,
+            510.4,
+            185.5
+          ],
+          "table": "Table 3",
+          "row": 12,
+          "col": 6,
+          "column_header": "Results"
+        }
+      ],
+      "n": 3,
+      "rendered": "3.91"
+    }
+  ],
+  "seals": {
+    "extraction": "08c16a1d46671edab01510f3c3a68b362b21bf173a532aa536ef460793c41113",
+    "readings": "80e52053929fe16050774320c42183660fff726372b2188fff708e91ba51bca7"
+  },
+  "created_at": "2026-10-19T09:44:53+00:00",
+  "arm": "haiku-plain",
+  "run": 3,
+  "bench": "bench-multistep",
+  "paper": "cai2026",
+  "probe": "X1",
+  "cat": "X",
+  "expect": "PMM 94.91 ±2.01%, PDX 91.00 ±3.83% (p16.T3 rows 10-12): 3.91 points",
+  "trap": "80.34 (the TUNEL apoptosis rate)",
+  "seconds": 12.3
+}

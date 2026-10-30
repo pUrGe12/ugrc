@@ -1,0 +1,236 @@
+{
+  "question": "By what percentage of the bare-Al value did the carbon layer reduce the sodium nucleation overpotential?",
+  "model": "claude-haiku-5-5",
+  "tool_calls": 5,
+  "turns": 4,
+  "trace": [
+    {
+      "turn": 1,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT id, page, line_no, text FROM lines WHERE page = 2 AND (text ILIKE '%overpotential%' OR text ILIKE '%mV%') ORDER BY line_no",
+      "rows": 5
+    },
+    {
+      "turn": 1,
+      "tool": "view_figure",
+      "refused": false,
+      "figure": "p2.F1"
+    },
+    {
+      "turn": 2,
+      "tool": "sql",
+      "refused": false,
+      "query": "SELECT 100*(CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) - CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',2) AS DOUBLE)) / CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) AS reduction_pct FROM lines WHERE id = 'p2.L62'",
+      "rows": 1
+    },
+    {
+      "turn": 3,
+      "tool": "submit_answer",
+      "refused": true,
+      "runs": 5,
+      "rules": [
+        "text:number"
+      ]
+    },
+    {
+      "turn": 4,
+      "tool": "submit_answer",
+      "refused": false,
+      "runs": 5,
+      "pairings": [
+        {
+          "run": 3,
+          "of": "nucleation overpotential",
+          "verdict": "agrees",
+          "by": "judge",
+          "p": 0.94
+        }
+      ]
+    }
+  ],
+  "door_refusals": [
+    [
+      {
+        "rule": "text:number",
+        "where": "runs[4]",
+        "why": "your own words contain number(s) ['1b).', '(19', '12)', '19,'] — a number must come from the document, in digits or in words",
+        "moves": [
+          "'1b' is written exactly so in the document (e.g. p2.L59): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"1b\", \"atom\": \"p2.L59\"} — never shorten it",
+          "'19' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"19\", \"atom\": \"p2.L62\"} — never shorten it",
+          "'12' is written exactly so in the document (e.g. p1.L16): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"12\", \"atom\": \"p1.L16\"} — never shorten it",
+          "'19' is written exactly so in the document (e.g. p2.L62): if that is what you mean (a name like this, or that value), quote it: {\"quote\": \"19\", \"atom\": \"p2.L62\"} — never shorten it",
+          "move each number into a quote run: {\"quote\": \"<exact characters>\", \"atom\": \"<id>\"}",
+          "or compute it in a sql run (counts, sums, conversions)",
+          "or say it without a number (\"several\", \"a\", \"each\")"
+        ]
+      }
+    ]
+  ],
+  "door_version": "6",
+  "pairings": [
+    {
+      "quote": "19 to 12 mV",
+      "atom": "p2.L62",
+      "of": "nucleation overpotential",
+      "sentence": "p2.L58:0",
+      "verdict": "agrees",
+      "by": "judge",
+      "p": 0.94,
+      "clause_about": [],
+      "request": {
+        "state": "Comparing the plating process for a sodiated carbon and a bare Al current collector (Figure 1b), we observe that nuclea-tion overpotential (difference between the bottom of the trough where nucleation occurs and the steady-state plating potential) is reduced from [[19 to 12 mV]] by the carbon layer.",
+        "questions": {
+          "c_of": {
+            "type": "noul",
+            "instructions": "Is [[19 to 12 mV]] a value of “nucleation overpotential”?",
+            "criteria": {
+              "true": "the passage gives [[19 to 12 mV]] for “nucleation overpotential”, or for something “nucleation overpotential” has, makes or contains",
+              "false": "[[19 to 12 mV]] is given for something else, or the passage does not connect it to “nucleation overpotential”"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "jev-1.13.0",
+        "answers": {
+          "c_of": {
+            "type": "noul",
+            "noul": 0.94
+          }
+        },
+        "usage": {
+          "input_tokens": 457,
+          "output_tokens": 21
+        }
+      },
+      "run": 3
+    }
+  ],
+  "clause_base": true,
+  "clause_seal": "4ac64b3bb36f7e896c79ffff1490396834a66eb2d7a3f0b92167847693569b0d",
+  "leads": {
+    "sentences": [
+      "p2.L58:0",
+      "p2.L84:0",
+      "p2.L31:42",
+      "p3.L1:0",
+      "p3.L5:22",
+      "p2.L47:7",
+      "p2.L65:36",
+      "p5.L37:14",
+      "p1.L10:9",
+      "p2.L7:0",
+      "p2.L52:0",
+      "p5.L21:11"
+    ],
+    "measures": [
+      "p2.L58:0#264",
+      "p2.L84:0#102",
+      "p2.L31:42#18",
+      "p2.L31:42#215",
+      "p2.L31:42#218",
+      "p2.L47:7#165",
+      "p2.L47:7#183",
+      "p2.L47:7#256",
+      "p2.L65:36#143",
+      "p2.L65:36#173",
+      "p2.L65:36#176",
+      "p2.L52:0#61"
+    ],
+    "matched": 63
+  },
+  "usage": {
+    "input_tokens": 10,
+    "output_tokens": 2361,
+    "cache_read_input_tokens": 23333,
+    "cache_creation_input_tokens": 9817
+  },
+  "runs": [
+    {
+      "text": "The carbon layer reduced the sodium nucleation overpotential by about "
+    },
+    {
+      "sql": "SELECT 100*(CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) - CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',2) AS DOUBLE)) / CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) AS reduction_pct FROM lines WHERE id = 'p2.L62'",
+      "column": "reduction_pct",
+      "row": 0,
+      "fmt": "fixed1"
+    },
+    {
+      "text": " percent. The paper states that the nucleation overpotential, measured from the trough to the steady-state plating potential, is reduced from "
+    },
+    {
+      "quote": "19 to 12 mV",
+      "atom": "p2.L62",
+      "of": "nucleation overpotential"
+    },
+    {
+      "text": " by the carbon layer, so the reduction is the drop from the bare-Al value to the carbon/Al value, relative to the bare-Al value."
+    }
+  ],
+  "rendered": "The carbon layer reduced the sodium nucleation overpotential by about 36.8[1] percent. The paper states that the nucleation overpotential, measured from the trough to the steady-state plating potential, is reduced from 19 to 12 mV[2] by the carbon layer, so the reduction is the drop from the bare-Al value to the carbon/Al value, relative to the bare-Al value.",
+  "citations": [
+    {
+      "kind": "computed",
+      "sql": "SELECT 100*(CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) - CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',2) AS DOUBLE)) / CAST(regexp_extract(text,'from (\\d+) to (\\d+) mV',1) AS DOUBLE) AS reduction_pct FROM lines WHERE id = 'p2.L62'",
+      "column": "reduction_pct",
+      "row": 0,
+      "fmt": "fixed1",
+      "value": 36.8421052631579,
+      "strength": "computed from verbatim",
+      "n_sources": 1,
+      "sources": [
+        {
+          "atom": "p2.L62",
+          "kind": "line",
+          "page": 2,
+          "strength": "verbatim",
+          "text": "potential) is reduced from 19 to 12 mV by the carbon layer.",
+          "bbox": [
+            324.5,
+            532.8,
+            564.5,
+            542.8
+          ]
+        }
+      ],
+      "n": 1,
+      "rendered": "36.8"
+    },
+    {
+      "kind": "quote",
+      "quote": "19 to 12 mV",
+      "source": {
+        "atom": "p2.L62",
+        "kind": "line",
+        "page": 2,
+        "strength": "verbatim",
+        "text": "potential) is reduced from 19 to 12 mV by the carbon layer.",
+        "bbox": [
+          324.5,
+          532.8,
+          564.5,
+          542.8
+        ]
+      },
+      "strength": "verbatim",
+      "of": "nucleation overpotential",
+      "n": 2,
+      "rendered": "19 to 12 mV"
+    }
+  ],
+  "seals": {
+    "extraction": "a0edb561aff930bdb3a5144bc53abf5a1479eb4a8f31348f203c026227f554d2",
+    "readings": "5d1297be81fd68b1b81ba08bc11d3eb6153b99a37d623f599fb5b402ecf87f64"
+  },
+  "created_at": "2026-10-19T09:23:00+00:00",
+  "arm": "haiku-leads",
+  "run": 1,
+  "bench": "bench-multistep",
+  "paper": "nanolett-6b05174",
+  "probe": "X2",
+  "cat": "X",
+  "expect": "19 to 12 mV (p2.L62): 7 mV, 36.8% of 19 mV",
+  "trap": "",
+  "seconds": 15.3
+}
