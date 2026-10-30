@@ -88,10 +88,17 @@ answers held back. It misses true facts that don't answer the question (superlat
 - **Run:** `run.sh` (all arms, ~19 min, about $1 of Modal); `grade.py sheet|record|progress|unseal|report`;
   rules 19-23 in `cheme/GRADING.md`; `check.py run|report` (Jev checker).
 
+**Facts + prose beats them all on the same 148 questions (not held out).** `experiments/prose/` (2026-10-30, frozen,
+blind against facts): facts form + up to 30 number-free sentences (5,000 chars) picked by BM25 on the question.
+- **Right of 444:** 330 against facts 298 (p = 0.018); pdf 294 and hybrid 286 from their ChemE grades. Gains on chained
+  and lookup questions, loses 9 on computation. About 8k tokens a prompt against the PDF's 17k.
+- **Caveat:** designed after reading these questions' losses; needs new questions on new papers before it is trusted.
+- **Run:** `run.sh`, `run.py check|sizes|show`; `grade.py` (6 letters a question); rules 24-25 in `prose/GRADING.md`.
+
 ## Constraints from the user
 
 - **Don't run anything against Haiku** (too costly at this scale). Jev can be used freely.
-- **Modal credit:** about $5 of the $30 monthly free credit left on 2026-10-30 (after the cheme runs) (`modal billing summary`). An L40S
+- **Modal credit:** about $4.30 of the $30 monthly free credit left on 2026-10-30 (after the prose run) (`modal billing summary`). An L40S
   costs about $2 an hour; 684 hybrid answers cost $1.25.
 - **Never print keys:** `~/.jev_key`, `~/.ugrc_vllm_key`, `~/.modal.toml`, env vars `API_KEY` and `OPENROUTER_API_KEY`.
 - **Keep this file short.** Results go in the methodology doc (Claude Docs connector, doc id above).
