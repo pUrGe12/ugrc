@@ -92,20 +92,35 @@ answers held back. It misses true facts that don't answer the question (superlat
 blind against facts): facts form + up to 30 number-free sentences (5,000 chars) picked by BM25 on the question.
 - **Right of 444:** 330 against facts 298 (p = 0.018); pdf 294 and hybrid 286 from their ChemE grades. Gains on chained
   and lookup questions, loses 9 on computation. About 8k tokens a prompt against the PDF's 17k.
-- **Caveat:** designed after reading these questions' losses; needs new questions on new papers before it is trusted.
+- **Caveat:** designed after reading these questions' losses; held out in `cheme2` below.
 - **Run:** `run.sh`, `run.py check|sizes|show`; `grade.py` (6 letters a question); rules 24-25 in `prose/GRADING.md`.
+
+**Held out, facts + prose wins bigger.** `experiments/cheme2/` (2026-10-30, frozen, blind, 9 letters a question):
+19 new ACS Omega / RSC Adv papers by `fetch.py` (`~/Desktop/papers-cheme2/`, `runs/cheme2/<key>`), 152 new questions.
+- **Right of 456:** prose 340, facts 288, pdf 273; prose beats both at p < 0.0001; facts vs pdf p = 0.33.
+- **Where:** tables +29 over facts. In 12 of 37 table questions the facts form never prints "Table N" (16 facts
+  `[label]` wrongs); BM25 pulls in a sentence citing it. Without table questions prose still leads (p = 0.003, 0.013).
+- **Run:** `prepare.sh`, `run.sh`, `run.py check|sizes`; `grade.py`; rules 26-29 in `cheme2/GRADING.md`.
+
+**The library test.** `experiments/library/` (2026-10-31, frozen, blind; `PLAN.md`). The question names no paper;
+the model gets a 10-paper library and must find the right one. 28 papers (cheme + cheme2), 246 questions reworded
+without table numbers, 3 libraries. Right of 246: prose 132, pages 128, facts 113 (prose - pages p = 0.71, prose -
+facts p = 0.03); pages' prompt is 22k tokens against 61k. Wrong-paper answers 5 of 738; BM25 ranks the right paper
+first for 244 of 246 (offline). With one paper in view the same questions got prose 181, facts 156, PDF 152, so the
+cost is the long prompt, not finding the paper. Next to try: BM25 picks the paper, then that one paper's prose form.
+Results are in the methodology doc.
 
 ## Constraints from the user
 
 - **Don't run anything against Haiku** (too costly at this scale). Jev can be used freely.
-- **Modal credit:** about $4.30 of the $30 monthly free credit left on 2026-10-30 (after the prose run) (`modal billing summary`). An L40S
+- **Modal credit:** about $3.20 of the $30 monthly free credit left on 2026-10-30 (after cheme2) (`modal billing summary`). An L40S
   costs about $2 an hour; 684 hybrid answers cost $1.25.
 - **Never print keys:** `~/.jev_key`, `~/.ugrc_vllm_key`, `~/.modal.toml`, env vars `API_KEY` and `OPENROUTER_API_KEY`.
 - **Keep this file short.** Results go in the methodology doc (Claude Docs connector, doc id above).
 
 ## Repo state
 
-- **Nothing of this work is committed:** `master` is at `0e886f1`; every file below is modified or untracked.
+- **Committed and pushed through `f64d79e`** (facts + prose); `experiments/cheme2/` and `runs/cheme2/` are untracked.
 - **ugrc code touched:**
   - `ugrc/llm.py`: the OpenAI-compatible path, retries, host pinning, `one_call_per_turn`.
   - `ugrc/ask.py`: `SYSTEM_SMALL` / `prompt="small"`, and `_small_corpus`, its corpus form.
@@ -174,19 +189,22 @@ blind against facts): facts form + up to 30 number-free sentences (5,000 chars) 
 
 ## Open threads (in the order I would take them)
 
-1. **Make the hybrid a ugrc mode** (the pipeline to build on: BM25-picked pages over the whole library, a free answer,
+1. **Facts form: print each table's caption ("Table 6. ...") with its rows** (`scaling.condensed` /
+   `_tables_and_figures`), then rerun facts and prose on cheme2's 152 questions (answers exist; regrade blind).
+   Also test table questions that do not name the table. Then make facts + prose a ugrc mode.
+2. **Make the hybrid a ugrc mode** (the pipeline to build on: BM25-picked pages over the whole library, a free answer,
    code pointers, the Jev checker), with the zero-model receipt re-checking each pointer. Table-row pointers
    (`p6.T2.r3`) are not atom ids yet: narrow each to the cell that prints the number.
-2. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
+3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a
    new held-out set: `test` has been used.
-3. **Computing without SQL** (discussed 2026-10-21): code re-checks the arithmetic an answer writes out (in the
+4. **Computing without SQL** (discussed 2026-10-21): code re-checks the arithmetic an answer writes out (in the
    jev-pick answers, 5 of 6 answers to aenm-2022-X2 multiplied 7 × 0.7 × 0.4 wrong); counts (K, wrong in 17 of 18 runs)
    from a menu of code-run operations that the model or Jev picks from.
-4. **Page picking at scale:** test questions that need several papers at once on the 40-paper library (the 33
+5. **Page picking at scale:** test questions that need several papers at once on the 40-paper library (the 33
    cross-paper questions only cover the 10 corpus papers); chained lookups and false premises trail the pasted PDF.
-5. **Door v7 candidates:**
+6. **Door v7 candidates:**
    - refuse absence terms of 4+ words (no Haiku answer uses one);
    - the cai2026-T1 hole: two `submit_answer` calls in one turn, and a bare "placeholder" was accepted.
-6. **Parked:** Laya (2 of 12 papers rebuilt, `experiments/laya-bench`); the laptop setup (abandoned, see memory).
+7. **Parked:** Laya (2 of 12 papers rebuilt, `experiments/laya-bench`); the laptop setup (abandoned, see memory).

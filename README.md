@@ -667,6 +667,12 @@ are all labels takes it from 83 to 95 right (p = 0.017; `experiments/scaling-noj
 At 40 papers the picture reverses (`experiments/scaling-more/`): condensing every paper falls to 67, while picking 24k
 tokens of ugrc's PDF pages by keyword search gets 103, as many as the paper's own text alone. What limits an 8B model is
 prompt length, so the pipeline to build on picks pages, lets the model answer freely, and checks afterwards.
+On chemical-engineering papers, the condensed form plus the 30 or so sentences that best match the question (BM25)
+does best with one paper in view: on 19 held-out papers it got 340 of 456 answers right, against 288 for the condensed
+form and 273 for the pasted PDF (p < 0.0001; `experiments/cheme2/`). With a 10-paper library and questions that name
+no paper (`experiments/library/`), finding the paper is easy: keyword search ranks it first for 244 of 246 questions.
+The long prompt is what costs: facts+prose 132 of 246, picked pages 128, the condensed form 113, against 181 / 152 /
+156 with the one paper in view.
 Method and numbers: the methodology doc (https://claude.ai/code/artifact/efe49cff-4c52-4f7f-9eb9-180920121aa6);
 how to pick the work up: `experiments/bench-llama/HANDOFF.md`.
 
