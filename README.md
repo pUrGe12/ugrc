@@ -673,6 +673,9 @@ form and 273 for the pasted PDF (p < 0.0001; `experiments/cheme2/`). With a 10-p
 no paper (`experiments/library/`), finding the paper is easy: keyword search ranks it first for 244 of 246 questions.
 The long prompt is what costs: facts+prose 132 of 246, picked pages 128, the condensed form 113, against 181 / 152 /
 156 with the one paper in view.
+Letting keyword search pick the paper first and giving the model only that paper's condensed form plus
+sentences gets 184 of 246, as many as with the right paper handed over, from a 7k-token prompt
+(`experiments/routed/`).
 Method and numbers: the methodology doc (https://claude.ai/code/artifact/efe49cff-4c52-4f7f-9eb9-180920121aa6);
 how to pick the work up: `experiments/bench-llama/HANDOFF.md`.
 

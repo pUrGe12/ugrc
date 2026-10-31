@@ -102,13 +102,18 @@ blind against facts): facts form + up to 30 number-free sentences (5,000 chars) 
   `[label]` wrongs); BM25 pulls in a sentence citing it. Without table questions prose still leads (p = 0.003, 0.013).
 - **Run:** `prepare.sh`, `run.sh`, `run.py check|sizes`; `grade.py`; rules 26-29 in `cheme2/GRADING.md`.
 
-**The library test.** `experiments/library/` (2026-10-31, frozen, blind; `PLAN.md`). The question names no paper;
-the model gets a 10-paper library and must find the right one. 28 papers (cheme + cheme2), 246 questions reworded
-without table numbers, 3 libraries. Right of 246: prose 132, pages 128, facts 113 (prose - pages p = 0.71, prose -
-facts p = 0.03); pages' prompt is 22k tokens against 61k. Wrong-paper answers 5 of 738; BM25 ranks the right paper
-first for 244 of 246 (offline). With one paper in view the same questions got prose 181, facts 156, PDF 152, so the
-cost is the long prompt, not finding the paper. Next to try: BM25 picks the paper, then that one paper's prose form.
-Results are in the methodology doc.
+**The library test.** `experiments/library/` (2026-10-31, frozen, blind; `PLAN.md`). The question names no paper; the
+model gets a 10-paper library and must find the right one. 28 papers (cheme + cheme2), 246 questions reworded without
+table numbers, 3 libraries. Right of 246: prose 132, pages 128, facts 113 (prose - pages p = 0.71, prose - facts p =
+0.03); pages' prompt is 22k tokens against 61k. Wrong-paper answers 5 of 738; BM25 ranks the right paper first for 244
+of 246 (offline). With one paper in view the same questions got prose 181, facts 156, PDF 152, so the cost is the long
+prompt, not finding the paper. Results are in the methodology doc.
+
+**Search picks the paper, then one paper.** `experiments/routed/` (2026-10-31, frozen, blind between its 2 arms;
+`PLAN.md`): BM25 over the library's pages picks the paper of the top page (244 of 246 right), then the one-paper
+prompts. Right of 246: facts+prose 184 (one-paper reference 181), pasted PDF 145; +52 over the library's prose (p <
+0.0001) at 7.2k tokens instead of 61k. This is the pipeline to build: route, then the one paper's facts+prose form.
+Untested: libraries of close topics, where routing misses more.
 
 ## Constraints from the user
 
@@ -120,7 +125,7 @@ Results are in the methodology doc.
 
 ## Repo state
 
-- **Committed and pushed through `f64d79e`** (facts + prose); `experiments/cheme2/` and `runs/cheme2/` are untracked.
+- **Committed and pushed through `9f01ce0`** (the library test); `experiments/routed/` is uncommitted.
 - **ugrc code touched:**
   - `ugrc/llm.py`: the OpenAI-compatible path, retries, host pinning, `one_call_per_turn`.
   - `ugrc/ask.py`: `SYSTEM_SMALL` / `prompt="small"`, and `_small_corpus`, its corpus form.
@@ -192,9 +197,10 @@ Results are in the methodology doc.
 1. **Facts form: print each table's caption ("Table 6. ...") with its rows** (`scaling.condensed` /
    `_tables_and_figures`), then rerun facts and prose on cheme2's 152 questions (answers exist; regrade blind).
    Also test table questions that do not name the table. Then make facts + prose a ugrc mode.
-2. **Make the hybrid a ugrc mode** (the pipeline to build on: BM25-picked pages over the whole library, a free answer,
-   code pointers, the Jev checker), with the zero-model receipt re-checking each pointer. Table-row pointers
-   (`p6.T2.r3`) are not atom ids yet: narrow each to the cell that prints the number.
+2. **Make routing + facts+prose a ugrc mode** (the pipeline to build on, `experiments/routed/`: BM25 over every page
+   picks the paper, then that paper's facts+prose form, a free answer, then the Jev checker). First test routing where
+   it is hard: a larger library of papers on close topics (the questions here carry subject words, so it found the
+   paper 244 times of 246), and whether sending the top 2 papers recovers the misses.
 3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a
