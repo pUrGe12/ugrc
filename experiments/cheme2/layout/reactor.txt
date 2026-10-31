@@ -1,0 +1,1500 @@
+                                                                                                       This article is licensed under CC-BY 4.0
+
+http://pubs.acs.org/journal/acsodf                                                                                                               Article
+
+
+
+Reinforcement Learning-Based Temperature Control of Lab-Scale
+Continuous Stirred Tank Reactor
+Jim George, Anagha Ravikumar, Erin Joshy, Alin Cheriyan, and Thirunavukkarasu Indiran*
+
+       Cite This: ACS Omega 2026, 11, 51335−51359                                    Read Online
+
+
+ACCESS                                 Metrics & More                                                 Article Recommendations
+
+
+ABSTRACT: Continuous Stirred Tank Reactors (CSTRs) are
+widely used in chemical process industries, where precise
+temperature control is crucial for product quality, operational
+effectiveness, and safety. However, the accuracy of strict first-
+principle models is limited by the extremely nonlinear thermal
+behavior brought on by Arrhenius-based kinetics, measurement
+noise, transport delay, and feed fluctuations. In order to overcome
+this, the current study uses multivariate pilot-plant time-series data
+to create a high-fidelity nonlinear autoregressive model with
+exogenous inputs (NARX). Twin Delayed Deep Deterministic
+Policy Gradient (TD3) and Soft Actor-Critic (SAC) are used in the
+NARX model as a reinforcement learning environment for closed-
+loop temperature regulation. Feed temperatures, feed flow rates,
+and hot-oil-bath actuation are among the various manipulated-variable combinations that are assessed. The suggested NARX−RL
+framework effectively tracks set points, according to the results. Both SAC and TD3 exhibit acceptable closed-loop performance,
+according to a comparative analysis; however, TD3 consistently outperforms SAC in tracking indices, convergence speed, and
+control stability across the majority of manipulated-variable combinations. Overall, the proposed NARX-based reinforcement
+learning technique provides a feasible option for flexible, data-driven, and practically implementable temperature regulation in lab-
+scale CSTR systems.
+
+
+1. INTRODUCTION                                                                 for experimental testing, multivariable extension, actuator-
+A Continuous Stirred Tank Reactor (CSTR) is widely used in                      saturation handling, and unmeasurable-state estimation.
+chemical and process industries because it supports controlled                  References20,26,28,31 mostly look on structured model-based
+operation and continuous production through the continuous                      control techniques for reactor temperature regulation and
+feeding, stirring, and processing of reactants. Its agitator                    disturbance rejection. Reference20 suggests an iterative-
+promotes uniform temperature and concentration throughout                       learning-observer-based predefined-time sliding mode con-
+the reactor volume, making the CSTR suitable for monitoring,                    troller that handles input-output limitations and disturbances
+analysis, and control.                                                          while guaranteeing designer-specified convergence time.
+                                                                                Reference26, in comparison to traditional PID and linear-
+1.1. Model-Based Control Strategies for Continuous
+Stirred Tank Reactors                                                           surface DSMC techniques, empirically demonstrated a hybrid
+                                                                                Dynamic Sliding Mode Control framework with a nonlinear
+Nonlinear model-based control techniques for CSTR systems                       PID sliding surface reduces integral square error (ISE),
+with an emphasis on precise output tracking under process                       overshoot, settling time, and chattering. The study28 combines
+uncertainty are dealt in refs1,19. Reference1 integrates a first-               dynamic matrix control, PID cascade control, Smith prediction,
+principle nonlinear model with an adaptive fuzzy backstepping                   and a disturbance observer to enhance reactor temperature
+controller based on the Barrier Lyapunov Function,using                         regulation under lag, nonlinearity, and disturbances. Refer-
+temperature and concentration as major states and coolant
+temperature as the controlled input. Reference19 develops a
+neural-network-based adaptive backstepping controller with                      Received: April 20, 2026
+covariance resetting for a nonlinear, nonaffine CSTR, achieving                 Revised: August 5, 2026
+improved concentration tracking with reduced oscillations and                   Accepted: August 10, 2026
+control effort under parameter uncertainty. Although the                        Published: August 18, 2026
+approach strengthens robustness when process data are
+limited, its simulation-based validation leaves opportunities
+                                     © 2026 The Authors. Published by
+                                           American Chemical Society                                                https://doi.org/10.1021/acsomega.6c04451
+                                                                        51335                                              ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                       http://pubs.acs.org/journal/acsodf                                                             Article
+
+Table 1. Research Gaps Leading to the Proposed Work
+             Theme                                 References                                        Research gaps leading to the proposed work
+                                 1,19,20,22,24,26,28,31
+Model-based control                                                               Adaptive, less model-dependent CSTR temperature control is needed for
+                                                                                    uncertainties, disturbances, constraints, and practical implementation.
+                                 2−4,6,7,7−10,10,11,11,12,12,12−17,17−29,29−35
+RL/ADP/intelligent control                                                        Practical RL-based CSTR temperature control requires safe, stable, computationally
+                                                                                    efficient real-time deployment beyond simulation environments.
+                                 5,14,15,18,21,25,30
+Data-driven/hybrid/black-box                                                      A simple, interpretable, control-oriented nonlinear CSTR temperature model is
+ modeling                                                                           needed for practical closed-loop real-time implementation.
+                                 14,32
+NARX/control-oriented                                                             NARX enables computationally feasible, RL-based temperature control and
+ predictive modeling                                                                experimental validation for lab-scale nonlinear CSTR systems.
+                                 7−9,23,27,29
+Experimental/practical/                                                           Reliable real-time experimental validation of RL-based temperature control is
+ diagnostic studies                                                                 essential for practical lab-scale CSTR deployment.
+                                 11,12,20,21,31
+Safety/constraints/reliability                                                    A safety-aware, constraint-aware adaptive RL framework is needed for reliable lab-
+                                                                                    scale CSTR temperature control operation.
+                                 3,7,11,20,27−31
+Temperature-control-focused                                                       RL-based temperature control with control-oriented nonlinear modeling enables
+  studies                                                                           safe, adaptive, real-time, reliable lab-scale CSTR operation.
+                                 8,9,23,27
+Reactor characterization/                                                         Lab-scale reactor behavior insights should inform intelligent temperature control for
+  kinetics/mixing/diagnosis                                                         realistic, deployable CSTR controller design.
+  support
+Integrative benchmark/summary    32                                               A unified data-driven RL framework is needed for practical real-time temperature
+  perspective                                                                      control of lab-scale CSTRs.
+
+ences22,24,31 advance CSTR control toward optimization and                               controller tuning, optimization, fault detection, and fault-
+uncertainty-aware operation through gain-scheduled mean-                                 tolerant control was provided by ref34. The review is highly
+field-type control, optimal switched-system control, and                                 relevant to CSTR temperature control because it highlights the
+metaheuristic state-dependent-parameter proportional-inte-                               suitability of RL for nonlinear, uncertain, and continuously
+gral-plus control, respectively. In general, referen-                                    operated process systems where conventional model-based
+ces20,22,24,26,28,31 demonstrate how model-based CSTR control                            controllers may require accurate models and frequent retuning.
+has progressed from deterministic nonlinear regulation to risk-                          The study encourages adaptive temperature regulation
+aware control under uncertainty, optimal switching, and                                  solutions based on TD3, SAC, and related actor-critic
+structured temperature management.                                                       techniques by supporting the usage of RL-based control and
+1.2. Reinforcement Learning and Intelligent Control                                      optimization frameworks for handling manipulated variables
+Strategies for CSTRs                                                                     like reactant flow rate and heat input in the context of CSTRs.
+                                                                                         Reference35 presented a distributed trading control framework
+According to ref2, adaptive critic designs, reinforcement                                based on Soft Actor−Critic for real-time optimization of active
+learning (RL), and nonlinear Model Predictive Control                                    distribution networks under operational restrictions and
+(NMPC) provide promising solutions for managing the                                      unknown operating conditions. The work is pertinent to
+nonlinear dynamics of Continuous Stirred Tank Reactors                                   CSTR temperature regulation because it shows the efficacy of
+(CSTRs). However, practical implementations must account                                 SAC for nonlinear, limited, and continuous decision-making
+for nonzero equilibrium conditions, realistic operating                                  issues, even if the application domain is power-system dispatch
+constraints, dynamic trajectory tracking, asymmetric input                               rather than reactor control. Applying SAC to CSTR temper-
+limits, decentralized cascade-reactor control, and reduced real-                         ature control, where manipulated variables like feed temper-
+time computational burden, as emphasized in ref4. Thus,                                  ature, feed flow rate, coolant flow rate, or heating input must
+references2,4 establish RL, adaptive critic designs, and non-                            be adjusted safely and adaptively under nonlinear thermal
+linear optimal control as significant directions for flexible and                        dynamics, is motivated by the entropy-regularized SAC
+scalable CSTR control. The work7 integrates adaptive control                             structure, stable actor−critic learning, and constraint-aware
+for nonlinear process dynamics with reinforcement learning to                            reward formulation. References7−35 provide a pathway for SAC
+provide a timely and pertinent contribution to CSTR/CSTH                                 control for systems like CSTR.
+temperature regulation. Although both TD3 and SAC are                                       3,6,7,11,29
+                                                                                                        highlight the growing role of RL in reactor
+appropriate for continuous control, the given results indicate                           temperature regulation, adaptive control, operational safety,
+that TD3 with a Gaussian reward function performs better in                              and practical deployment. In ref3, a mechanistic-model-based
+tracking and disturbance-rejection than SAC in the heating                               Twin Delayed Deep Deterministic Policy Gradient (TD3)
+process under study. Reference33 suggested for highly                                    controller enhanced with improved Ornstein−Uhlenbeck
+nonlinear semiconductor manufacturing process impacted by                                noise, fractional-order memory, and reward-feedback adapta-
+drift, noise, and dynamic operating fluctuations, Soft Actor−                            tion improves exploration, reduces overshoot, and increases
+Critic-based reinforcement learning controller. The study’s                              outlet-temperature tracking accuracy under cooling disturban-
+model-free adaptive control philosophy is very applicable to                             ces, although it remains dependent on accurate modeling and
+CSTR applications, where nonlinear kinetics, disturbances, and                           simulation-based validation. Reference6 introduces a control-
+uncertainty frequently diminish the efficacy of traditional                              informed reinforcement learning framework that embeds
+model-based controllers, even if it is not specifically focused on                       Proportional−Integral−Derivative (PID) structure within a
+CSTR temperature regulation. In situations where precise first-                          deep RL policy, achieving superior set-point tracking,
+principles modeling is challenging, the work encourages the                              improved sample efficiency, reduced training variance, and
+application of SAC-family reinforcement learning techniques                              enhanced robustness compared with pure model-free RL and
+to nonlinear reactor systems like CSTRs. A thorough analysis                             static PID control. In ref7, TD3- and Soft Actor−Critic
+of reinforcement learning applications in low-level control,                             (SAC)-based adaptive PID controllers are investigated for a
+                                                                                 51336                                            https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                                         ACS Omega 2026, 11, 51335−51359
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                        Article
+
+nonlinear Continuous Stirred Tank Heater process, where                       shows that the method estimates reactor trajectories and
+Gaussian rewards enable smoother regulation and TD3                           drifting heat-transfer coefficients more accurately than conven-
+achieves lower Integral Square Error (ISE), Integral Absolute                 tional hybrid models, thereby supporting safer temperature
+Error (IAE), settling time, and overshoot than SAC and                        prediction, constraint satisfaction, and adaptive control.
+conventional PID, together with successful real-time validation.              References14,18,21 directly connect data-driven reactor model-
+References10,12,12,17 extend intelligent reactor control toward               ing with predictive control design for nonlinear CSTR
+optimal tracking, constrained reliability, and computational                  operation. In ref14, a neural-network-based offset-free Model
+efficiency, with ref10 employing Adaptive Dynamic Program-                    Predictive Control (MPC) framework employs a Nonlinear
+ming (ADP) and neural networks for constrained neuro-                         Autoregressive Network with Exogenous Inputs (NARX)
+optimal tracking,12,12 developing RL-enhanced event-triggered                 model augmented with an integrating disturbance state and a
+reliability control under asymmetric input constraints, and17                 nonlinear observer to eliminate steady-state tracking offsets
+combining multiple neural networks with RL for faster, more                   caused by plant−model mismatch. Simulation results in ref14
+robust, and computationally efficient regulation than NMPC.                   demonstrate superior tracking performance over nominal and
+Reference11 proposes a Proximal Policy Optimization-based                     baseline offset-free NARX-MPC approaches, especially when
+resilient control framework for safer exothermic CSTR                         only limited-excitation training data are available. Reference18
+operation, whereas ref29 experimentally validates an RL-                      develops a deep-learning-based MPC scheme using a growing
+assisted NMPC strategy for a jacketed batch reactor.                          deep belief network, online quadratic optimization, transfer
+Collectively, refs3,6,7,10−12,12,17,29 demonstrate that intelligent           learning, and Partial Least Squares Regression (PLSR)-based
+reactor control has progressed from ADP-based formulations                    fine-tuning to improve identification, tracking, and disturbance
+toward temperature-focused RL, event-triggered reliability,                   rejection, whereas ref21 presents a prescribed-performance-
+safety-oriented resilient control, and experimentally deployable              based direct data-driven MPC method that ensures bounded
+predictive control.                                                           tracking error and Bounded-Input Bounded-Output (BIBO)
+                                                                              stability without requiring an explicit process model. Overall,
+1.3. Data-Driven and Hybrid Modeling Approaches for
+                                                                              refs5,14,15,18,21,25,30 demonstrate that CSTR modeling has
+CSTR Control
+                                                                              progressed from standalone black-box identification toward
+Reference5 presents an implicit hybrid machine learning                       hybrid, stability-constrained, and control-oriented data-driven
+technique for Continuous Stirred Tank Reactor (CSTR)                          frameworks capable of supporting accurate prediction, robust
+modeling that integrates physics-based conservation laws with                 temperature regulation, and advanced real-time control
+neural networks using an implicit trapezoidal formulation                     design.16
+solved through automatic differentiation and Newton                           1.4. Experimental Validation and Practical Advancements
+iterations. The proposed model captures stiff reactor dynamics                in CSTR Monitoring and Control
+more effectively than an explicit RK4-based hybrid model,
+producing lower training and testing prediction losses while                  Reference7 presents a reinforcement-learning-based adaptive PID
+                                                                              controller for a nonlinear Continuous Stirred Tank Heater process, in
+maintaining reliable performance in the presence of noisy data.               which TD3 and Soft Actor−Critic (SAC) agents tune PID parameters
+Moreover, ref5 demonstrates that the hybrid model can serve                   online under varying operating conditions. The results in ref7 show
+as a surrogate environment for Proximal Policy Optimization                   that Gaussian rewards provide smoother temperature regulation than
+(PPO)-based reinforcement learning, where the learned policy                  discrete rewards, while TD3 outperforms SAC and conventional PID
+performs nearly as well as plant-trained RL and surpasses real-               control through lower Integral Square Error (ISE), Integral Absolute
+time optimization. Thus, ref5 highlights the effective                        Error (IAE), settling time, zero overshoot in simulation, and
+integration of hybrid modeling and reinforcement learning                     successful real-time validation. Reference27 develops an experimen-
+for data-efficient nonlinear reactor optimization. Reference15                tally validated model-based fault diagnostic framework for a closed-
+                                                                              loop safety-critical CSTR by combining residual signal analysis with
+compares one fully data-driven model and three hybrid models
+                                                                              the T2 statistic for real-time fault detection and fault-size estimation
+for catalytic CO2 methanation in a CSTR, with emphasis on                     under feedback temperature control. Although ref27 demonstrates
+prediction accuracy, training effort, and reliability. The findings           reliable deviation detection, accurate estimation of feed-inlet temper-
+in ref15 show that hybrid models incorporating mechanistic                    ature faults, and effective set-point tracking under alternative
+knowledge do not always outperform purely data-driven                         manipulated-input configurations, further work is required for
+models, indicating that model selection should depend on                      multivariable reactor networks, simultaneous faults, nonlinear
+the available data and the specific process-modeling problem.                 adaptive fault-tolerant control, and industrial validation under
+Reference25 proposes a black-box nonlinear CSTR identi-                       stronger uncertainties and actuator limitations. In ref29, an
+fication method based on fractional neural networks and a                     experimentally validated reinforcement-learning-assisted nonlinear
+                                                                              Model Predictive Control (NMPC) framework for a jacketed batch
+newly developed fractional activation function for improved                   reactor employs an actor−critic algorithm and an RNN-based
+real-time modeling under challenging operating conditions.                    predictive model derived from open-loop process data to update
+The RLF tanh-based multilayer perceptron model in ref25                       NMPC weights dynamically. The Jetson Orin implementation in
+achieves improved prediction accuracy, generalization, noise                  ref29 confirms that integrating RL with NMPC can improve
+tolerance, reduced-data robustness, and faster training                       computational efficiency, reduce prediction error, and enhance
+compared with conventional tanh and existing fractional-                      temperature-trajectory tracking in practical nonlinear thermal systems
+activation-based models, although automatic fractional-order                  where accurate first-principles models are difficult to maintain.
+tuning and broader closed-loop validation remain necessary.                   References8,9,23 broaden the experimental foundation of reactor
+                                                                              studies through process characterization, mixing analysis, inhibitor
+Reference30 introduces a Lyapunov-constrained hybrid                          evaluation, and kinetic parameter estimation. Reference8 introduces a
+modeling framework that combines first-principles knowledge                   brine chemistry inhibitor CSTR method that improves scale-inhibitor
+with data-driven correction terms to learn uncertain state-                   screening through rapid crystallization, sharper end points, repeat-
+dependent parameters while preserving stability and physical                  ability errors below 6.6%, approximately 20 min testing, and a
+consistency. Using a CSTR with time-varying fouling, ref30                    mechanistic correlation for minimum inhibitor concentration
+
+                                                                      51337                                          https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                            ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                   http://pubs.acs.org/journal/acsodf                                                    Article
+
+
+
+
+Figure 1. Pilot plant CSTR setup at machine learning and advanced process control lab, School of Electrical Engineering, Manipal Institute of
+Technology, Manipal, Karnataka. (image captured by Thirunavukkarasu Indiran).
+
+prediction.9 experimentally investigates residence time distribution in            constraints, using nonquadratic performance functions, dy-
+three unequal cascade CSTRs using pulse and step tracer inputs,                    namic event-triggered Hamilton−Jacobi−Bellman formula-
+revealing greater nonideal deviations with pulse injection and                     tions, and critic-only neural networks to reduce communica-
+systematic effects of flow rate on concentration and residence-time
+                                                                                   tion and execution burden while ensuring dependable
+curves, whereas ref23 estimates reaction kinetics in an adiabatic CSTR
+using only transient start-up temperature measurements. Collectively,              constrained regulation. References13,21,31 further extend
+refs7−9,23,27,29 demonstrate that experimental and practical CSTR                  reliable CSTR control through prescribed-performance
+research not only validates advanced real-time control strategies but              adaptive neural-network control, direct data-driven model
+also strengthens fault diagnosis, mixing assessment, inhibitor analysis,           predictive control with bounded tracking error and BIBO
+and thermal−kinetic characterization for reliable industrial deploy-               stability, and gain-scheduled mean-field-type control for
+ment.                                                                              uncertainty-aware temperature regulation. Reference13 con-
+1.5. Advanced Temperature Regulation, Safety, and                                  fines tracking errors within prescribed transient and steady-
+Reliability in CSTRs                                                               state limits through an invertible performance function and
+Reference20 proposes an iterative-learning-observer-based                          online radial basis function neural-network adaptation, while
+predefined-time sliding mode control strategy for a Con-                           ref21 achieves accurate tracking without requiring an explicit
+tinuous Stirred Tank Reactor (CSTR) subject to input-output                        process model. Reference28 addresses delayed and disturb-
+constraints and external disturbances, ensuring rapid temper-                      ance-sensitive reactor temperature regulation by integrating
+ature tracking within a designer-defined convergence time. By                      dynamic matrix control, PID cascade control, Smith prediction,
+integrating a constraint-aware sliding surface with disturbance                    and a disturbance observer, thereby reducing overshoot,
+estimation, achieves improved response speed, tracking                             shortening peak time, and improving antidisturbance perform-
+accuracy, and disturbance rejection over finite-time and                           ance. Reference31 explicitly incorporates the mean and
+adaptive backstepping alternatives, although robustness under                      variance of system states and inputs into a stochastic CSTR
+model mismatch, measurement noise, and large-scale reactor                         control formulation, reducing temperature fluctuations and
+configurations remains to be investigated. References11−12                         concentration variability while supporting risk-aware closed-
+establish that reinforcement learning (RL) can improve not                         loop operation under disturbances. References3,7,11,29 demon-
+only control performance but also safety, reliability, and                         strate the increasing importance of RL for intelligent
+constrained reactor operation. In ref11, a Proximal Policy                         temperature regulation in nonlinear reactor systems. In ref3,
+Optimization-based resilient control framework incorporates                        a mechanistic-model-based TD3 controller enhanced with
+temperature, liquid-level, and thermal-runaway safety con-                         improved Ornstein−Uhlenbeck noise, fractional-order memo-
+straints into the reward design of an exothermic CSTR,                             ry, and reward-feedback adaptation improves outlet-temper-
+enabling adaptive operation under uncertainty and out-                             ature tracking under cooling disturbances, although its
+performing PID and NMPC in stability, efficiency, and safety.                      dependence on an accurate model and simulation-based
+References12,12 develop RL-enhanced event-triggered reliability                    validation limits immediate industrial deployment. Reference7
+controllers for uncertain CSTRs with asymmetric input                              applies TD3- and SAC-based adaptive PID control to a
+                                                                           51338                                     https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                            ACS Omega 2026, 11, 51335−51359
+ACS Omega                                             http://pubs.acs.org/journal/acsodf                                                  Article
+
+
+
+
+Figure 2. Schematic diagram of automated CSTR pilot plant with machine learning based control. (image created by Jim George).
+
+nonlinear Continuous Stirred Tank Heater process, showing                 temperature tracking on variation of two manipulated
+that Gaussian rewards provide smoother regulation and that                variables. Section 7 gives the conclusion and future scope.
+TD3 achieves lower ISE, IAE, settling time, and overshoot than
+SAC and conventional PID, together with successful real-time              2. CSTR LAB-SCALE PILOT PLANT
+validation. Reference29 experimentally validates an RL-assisted           The CSTR considered in this work is a lab scale Double
+NMPC framework for a jacketed batch reactor, where an                     jacketed type shown in Figure 1.
+actor−critic algorithm dynamically updates controller weights                The schematic diagram of the pilot plant CSTR is shown in
+using an RNN-based predictive model derived from open-loop                Figure 2.
+reactor data. References27,30 strengthen the temperature-                    The reactor vessel is borosilicate glass construction. This
+control literature through real-time fault diagnosis and stable           resists corrosion, which means that the vessel can handle all
+control-oriented thermal modeling, with ref27 employing the               sorts of chemical reactions without breaking down over time.
+T2 statistic and residual analysis for fault identification and           Another advantage is that the glass provides complete visibility
+estimation, and ref30 using Lyapunov-constrained hybrid                   of the process. This allows the operator to watch the reaction
+modeling to improve prediction of reactor trajectories and                happening inside in real time. They can observe changes in
+fouling-induced heat-transfer degradation. Overall,                       color or any bubbles that may form. The progress of the
+refs3,7,11,12,20,21,27−32 establish the CSTR as a benchmark               reaction is visualized by these indicators.
+nonlinear process whose temperature-control research has                     The control arrangement employs a double-jacketed reactor
+evolved from constrained model-based regulation toward                    architecture to ensure exact temperature regulation throughout
+resilient RL, dependable event-triggered control, data-driven             operation. While the outer jacket circulates a coolant or heat-
+predictive design, fault-aware operation, and uncertainty-                transfer fluid, such as water, oil, or another thermal medium,
+conscious thermal safety management.                                      the inner jacket holds the reaction mixture. The system can
+1.6. Research Gaps                                                        heat or cool the reaction mixture as needed by varying the
+Table 1 showcase the research gaps which points toward                    temperature of this circulating fluid. In both exothermic and
+reinforcement learning based on NARX model of lab scale                   endothermic processes, this promotes appropriate product
+CSTR.                                                                     production and preserves the intended reaction kinetics.
+   The focus of this work is on developing NARX model based               Additionally, the outer jacket acts as an insulating barrier,
+on the open loop data set and design of RL TD3 controller in              increasing energy efficiency and lowering heat loss to the
+the closed loop. Results showcases reactor temperature                    environment. Additionally, by avoiding direct exposure to
+tracking on variation of two manipulated variables at a time.             extremely high or low wall temperatures, it enhances operator
+Realtime deployment is also performed. In the propoesed work              safety. Overall, the double-jacketed design maintains a stable,
+NARX model is given as the environment.                                   predictable, and well-controlled thermal environment within
+   The organization of the paper is as follows. Section 2                 the reactor.
+showcase the labscale CSTR setup and schematic. Section 3
+highlights mathematical modeling of CSTR. Section 4 focus on              3. FIRST-PRINCIPLE MODEL OF CSTR
+development of NARX model based on the open loop data.                    The typical method to CSTR modeling is physics-based,
+Section 5 showcase temperature control of CSTR by RL TD3/                 drawing on the fundamental rules of mass and energy
+SAC algorithm. Section 6 gives the results and discussions of             conservation. By applying these rules to the ideal mixed
+                                                                  51339                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                    ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                        http://pubs.acs.org/journal/acsodf                                                                Article
+
+Table 2. Description of Variables and Parameters                                           Table 4. Output Layer Weights W2D (1 × 20)
+   Symbol                                  Description                                         Index                W2D                 Index                   W2D
+       V                Reactor volume                                                          1                  −0.7253                11                  0.7568
+       F                Inlet flow rate                                                         2                  −0.5301                12                  0.7231
+       CA               Concentration of species A in the reactor                               3                   0.5867                13                  0.7265
+       CAf              Feed concentration of species A                                         4                  −0.7760                14                 −0.5567
+       k0               Pre-exponential factor from the Arrhenius equation                      5                  −0.7483                15                 −0.6457
+       Ea               Activation energy                                                       6                  −0.8383                16                 −0.6361
+       R                Universal gas constant                                                  7                  −0.8337                17                  0.4965
+       T                Reactor temperature                                                     8                   0.5234                18                 −0.7248
+       ρ                Fluid density in the reactor                                            9                   0.7890                19                 −0.7348
+       Cp               Specific heat of the fluid                                              10                  0.7296                20                  0.8244
+       Tf               Inlet feed temperature
+       ΔH               Heat of reaction                                                   Table 5. Hidden Bias Vector b1D (20 × 1)
+       Q                Heat removed by the cooling jacket
+                                                                                               Index                 b1D                Index                   b1D
+reactor system, the dynamics can be described as a set of                                       1                   0.0523                11                  0.0651
+coupled, nonlinear ordinary differential equations (ODEs).3                                     2                   0.0060                12                  0.0918
+The description of variables used is given in Table 2.                                          3                  −0.2398                13                  0.1351
+   a) Expression for Mass Balance: the mass balance accounts                                    4                  −0.0720                14                  0.0212
+for the buildup of reactant species in the reactor, which is                                    5                  −0.1384                15                 −0.0541
+caused by intake flow, output flow, and reactant consumption                                    6                   0.0669                16                 −0.1005
+as a result of the chemical reaction. It is often phrased as in eq                              7                  −0.1059                17                  0.0239
+1.                                                                                              8                   0.0856                18                  0.0122
+                                                                                                9                   0.0486                19                  0.1944
+       dCA                                                                                                         −0.0333                                   −0.1058
+   V       = F(CAf           CA)     Vk 0e Ea / RT CA                                           10                                        20
+        dt                                                                   (1)
+b) Expression for Energy Balance: the energy balance
+determines thermal dynamics. It accounts for the heat brought                              training/validation figures and provide the algorithmic work-
+in by the feed, the heat removed by the product stream, the                                flow used to develop the NARX model.
+heat produced by the exothermic process, and the heat                                      4.1. Time-Series Inputs and NARX Formulation
+removed by the cooling jacket. The expression is given by eq 2.                            The exogenous time-series input vector used in the NARX
+             dT                                                                            model is
+   V Cp         = F Cp(Tf          T) + (       H )Vk 0e Ea / RT CA     Q
+             dt                                                                               u(k)
+                                                                             (2)
+                                                                                                     = [Tj(k) TB , in(k) TA , in(k) uHOB(k) uH (k) FA(k) FB(k) ]T
+  While these ODEs provide a rigid theoretical foundation,
+unmodeled dynamics and parameter variations often require                                                                                                                (3)
+the transition to empirical, data-driven modeling paradigms.                                 The discrete-time NARX model for reactor temperature is
+
+4. NONLINEAR AUTOREGRESSIVE EXOGENOUS                                                         Tr(k) = (Tr(k           1), ..., Tr(k      ny), u(k         1),
+   MODEL OF CSTR
+                                                                                                        ..., u(k     nu))                                                (4)
+NARX modeling results for the reactor temperature time series
+Tr(k) of a lab scale Continuous Stirred Tank Reactor (CSTR)                                where (·) is implemented as a neural network (hidden layer
+                                                                                           nonlinearity, output layer linear purelin). With delays:
+Table 3. Scalar Parameters
+                                                                                                u = {1, 2, ..., 15} ,        y = {1, 2, ..., 15}
+             Parameter                                   Value
+                                                                                           the regressor vector is formed by stacking delayed samples:
+               Ts                                 1.00                                                  ÄÅ                 ÉÑ
+                                                                                                         ÅÅ u(k d), d    u Ñ
+                                                                                                                            Ñ
+               μD                                 0.005748098056                                          ÅÅ                ÑÑ
+               σD                                 0.041486521948                                (k) = ÅÅÅ                    ÑÑ
+                                                                                                                              ÑÑ
+                                                                                                                                  | |
+                                                                                                           ÅÅTr(k d), d   yÑ
+               b2D                                0.114187139156                                            ÅÇ                 ÑÖ                    (5)
+               H                                  20
+               |ϕ(k)|                             90                                       4.2. Algorithm: Developing the NARX Model
+                                                                                           Algorithm 1 describes the complete workflow used to build the
+                                                                                           NARX model for Tr(k) from the time-series data set..
+shown in Figure 1, using multivariate time-series inputs is
+performed based on ref32. The objectives are (i) develop a                                 4.3. NARX-Derived Nonlinear Differential Equation
+high-accuracy NARX model for open-loop prediction of Tr(k);                                A second NARX model is trained to predict:
+(ii) derive a nonlinear differential equation approximation                                    Tr(k) = Tr(k + 1)             Tr(k)
+using a second NARX model trained on ΔTr(k) = Tr(k+1)-
+Tr(k); (iii) report all estimated parameters (including all rows                           Using the sampling time Ts, the nonlinear differential equation
+and columns of matrices) without omission; (iv) interpret all                              approximation is
+                                                                                   51340                                              https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                                             ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                    Article
+
+
+
+
+Figure 3. NARX open-loop profile of reactor temperature: measured Tr(k) vs predicted T̂ r(k) after delay alignment. Near-perfect overlap matches
+RMSE = 0.029098 and R2 = 0.999972.
+
+
+
+
+Figure 4. Training performance curve (MSE vs epochs). Best training performance is 2.6414 × 10−5 at epoch 428. Stable low test error indicates
+good generalization under time-ordered split.
+
+   dTr             1                                                           Substituting the scalar values into eq 7:
+       |t = tk        Tr(k)
+   dt              Ts                                            (6)
+                                                                                    Tr(k) = 0.005748098056 + 0.041486521948
+with the NARX network output for ΔTr expressed as
+                                                                                            (W2D(W1D (k) + b1D) + 0.114187139156)
+     Tr(k) =       D
+                     +   D(W2D(W1D   (k) + b1D) + b2D)           (7)                                                                                 (9)
+where ϕ(k) stacks the delayed time-series regressors (delayed                  where W2D, b1D and the full W1D matrix are listed in Tables 4, 5
+u and delayed ΔTr according to MATLAB internal ordering                        and Table 15 respectively. The open-loop profile (Figure 3)
+created by preparets).                                                         demonstrates that the NARX model output overlaps the
+4.4. Full Parameter Values                                                     measured reactor temperature throughout the experiment. The
+                                                                               nearly identical curves indicate that the selected time-delay
+Values can be found in Table 3.                                                embedding and the nonlinear mapping in eq 4 capture the
+4.5. Differential Equation                                                     dominant CSTR thermal dynamics. This is consistent with the
+Since Ts = 1, eq 6 becomes                                                     quantitative performance RMSE = 0.029098 and R2 =
+                                                                               0.999972, which indicate extremely low error relative to the
+   dTr                                                                         full operating range (approximately 28°C to 46 °C). The
+       |t = tk =    Tr(k)
+   dt                                                            (8)           performance curve (Figure 4) shows the evolution of mean
+                                                                       51341                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                         ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                 http://pubs.acs.org/journal/acsodf                                                     Article
+
+
+
+
+Figure 5. Error histogram for training and test sets. Errors concentrated near zero indicate negligible bias and high consistency of predictions.
+
+
+
+
+Figure 6. Regression plots (output vs target) for training, test, and all samples. High correlation indicates strong agreement between predicted and
+measured reactor temperature.
+
+squared error over training epochs. The reported best training                    The error histogram (Figure 5) depicts the distribution of
+performance 2.6414 × 10−5 at epoch 428 implies that the                        residuals. A narrow distribution centered at zero shows little
+optimization converged and achieved a very low error. The                      bias and consistent prediction accuracy. The overlap of training
+separation between training and test curves provides a visual                  and test residual distributions shows similar error statistics for
+                                                                               visible and unseen segments, indicating that the model is
+indication of generalization. Because the test curve remains low
+                                                                               reliable for prediction. The regression graphs (Figure 6)
+and stable after convergence (instead of diverging), the trained               compare expected outputs against objectives for training, test,
+model does not exhibit severe overfitting. Bayesian regulariza-                and all data. The strong correlation coefficients (R near to 1)
+tion helps to smooth out weight distributions and reduces                      show that the anticipated values are extremely close to the
+noise sensitivity.                                                             ideal line Y = T. Small variations in the test regression line
+                                                                       51342                                        https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                           ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                       Article
+
+                                                                                ΔTr(k) and converting it to dTr/dt via Ts. The complete
+                                                                                parameter set defining the differential equation approximation
+                                                                                                                                         20 × 90
+                                                                                is reported without omission, including the full W1D
+                                                                                matrix, the bias vector b1D, and the output weights W2D.
+
+                                                                                5. TEMPERATURE CONTROL OF CSTR BY
+                                                                                    REINFORCEMENT LEARNING
+                                                                                The trained NARX model of the CSTR is the reinforcement
+                                                                                learning environment. The goal is to make the reactor
+                                                                                temperature follow a time-varying reference trajectory while
+                                                                                maintaining the manipulated variables within experimentally
+                                                                                valid operating limits. Two manipulated variables are chosen at
+                                                                                a time.
+                                                                                5.1. Control Problem Formulation
+                                                                                The reactor temperature set point is defined as
+                                                                                            l
+                                                                                            o 30°C, 0 k < 60,
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o 35°C, 60 k < 120,
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            m 43°C, 120 k < 180,
+                                                                                   Tsp(k) = o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o 37°C, 180 k < 240,
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            o
+                                                                                            n 40°C, 240 k 360.                                         (10)
+
+                                                                                  The controlled variable is the reactor temperature:
+                                                                                   y(k) = Tr(k)                                                        (11)
+
+                                                                                  The reference signal is
+Figure 7. NARX network architecture. Exogenous input time series                   r(k) = Tsp(k)                                                       (12)
+(x(t), 7 channels) and output feedback (y(t), 1 channel) pass through
+delays, are weighted and biased, processed by a 20-neuron nonlinear               The manipulated-variable vector is defined as
+hidden layer, and mapped to a single linear output T̂ r.                                    ÄÅ            ÉÑ
+                                                                                             ÅÅÅ u1(k) ÑÑÑ
+                                                                                  u(k) = ÅÅÅÅ              ÑÑ
+                                                                                                            Ñ
+Table 6. Performance Metrics of the NARX Model and                                             ÅÅ u 2(k)ÑÑÑ
+Derived ODE                                                                                     ÅÇ          ÑÖ                                         (13)
+
+          Quantity                  RMSE                  R2                     The pair (u1,u2) is selected from the experimentally available
+     Sampling Time, Ts             1.00                                         manipulated-variable combinations:
+     Tr(k)                         0.029098            0.999972                                 l
+                                                                                                o(Feed A Temperature, Feed B Temperature)
+                                                                                                o
+                                                                                                o
+     ΔTr(k)                        0.028383            0.527426                                 o
+                                                                                                o
+                                                                                                o
+                                                                                                o
+     dTr                                                                                        o
+                                                                                                o(Feed A Temperature, Feed B Flow rate)
+                                   0.028383            0.527426                                 o
+                                                                                                o
+      dt                                                                                        o
+                                                                                                o
+                                                                                                o
+                                                                                                o(Feed B Temperature, Feed A Flow rate)
+                                                                                                o
+                                                                                                o
+                                                                                                o
+                                                                                                o
+                                                                                                o(Feed A Flow rate, Feed B Flow rate)
+                                                                                                o
+from the ideal line may occur as a result of time-ordered                                       o
+                                                                                  (u1, u 2)     m
+                                                                                                o
+splitting and regime shifts, but the plot demonstrates the                                      o
+                                                                                                o(Hot Oil Bath, Feed A Temperature)
+                                                                                                o
+                                                                                                o
+general high agreement.                                                                         o
+                                                                                                o
+                                                                                                o
+                                                                                                o
+   Finally, the network architecture diagram (Figure 7)                                         o
+                                                                                                o(Hot Oil Bath, Feed B Temperature)
+                                                                                                o
+                                                                                                o
+demonstrates the structural meaning of the NARX model:                                          o
+                                                                                                o
+                                                                                                o
+                                                                                                o(Hot Oil Bath, Feed A Flow rate)
+delayed time-series inputs and delayed output feedback are                                      o
+                                                                                                o
+                                                                                                o
+                                                                                                o
+weighted, biased, combined, passed through a nonlinear                                          o(Hot Oil Bath, Feed B Flow rate)
+hidden layer (20 neurons), and then mapped by a linear                                          n
+                                                                                                                                                       (14)
+output layer to produce the single output Tr. This is closely
+related to eq 4 and gives a clear conceptual explanation of how                   The reactor-temperature tracking error is
+time-series memory is integrated in the predictor (Table 6).
+Table 6 presents the performance of NARX and Knowledged                            e(k) = Tsp(k)      Tr(k)                                            (15)
+based model.
+                                                                                  The desired closed-loop tracking condition is
+   A high-fidelity NARX model was obtained for reactor
+temperature prediction with RMSE = 0.029098 and R2 =                               Tr(k)      Tsp(k), k = 1, 2, ..., N                                 (16)
+0.999972, demonstrating near-perfect open-loop tracking from
+time-series inputs. A NARX-based nonlinear differential                           The reinforcement learning agent generates the normalized
+equation approximation was also formed by modeling                              action vector
+                                                                        51343                                        https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                            ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                       http://pubs.acs.org/journal/acsodf                                                                Article
+
+
+
+
+           ÄÅ            É
+            ÅÅ a1(k) ÑÑÑ                                                               The integral and derivative tracking-error terms are
+             ÅÅ          ÑÑ
+  a(k) = ÅÅÅ              ÑÑ, ai(k)   [0, 100], i = 1, 2
+              ÅÅ a 2(k)ÑÑÑ                                                             Ie(k) = Ie(k         1) + e(k)                                               (28a)
+               ÅÇ          ÑÖ                                         (17)
+  The normalized action is mapped into the real manipulated-                              e(k) = e(k)            e(k    1)                                          (28b)
+variable range as                                                                      The auxiliary stabilizing signal is
+                               ai(k)                                                   vPID(k) = K pe(k) + K iIe(k) + Kd e(k)
+  uicmd(k) = ui ,min +               (ui ,max   ui ,min), i = 1, 2                                                                                                    (29)
+                               100                                    (18)
+                                                                                       The midpoint value of each manipulated variable is
+  To avoid abrupt actuator movement, first-order smoothing is
+applied:                                                                                         ui ,min + ui ,max
+                                                                                       ui ,mid =                   , i = 1, 2
+                                                                                                         2                                                            (30)
+  ui(k) = 0.5ui(k            1) + 0.5uicmd(k), i = 1, 2               (19)
+                                                                                       The normalized manipulated-variable contribution is
+  The smoothed manipulated variable is saturated as                                                  ÄÅ                                        ÉÑ
+                                                                                                      ÅÅÅ u1(k) u1,mid     u 2(k) u 2,mid ÑÑÑ
+  ui(k) = min[max(ui(k), ui ,min), ui ,max ]                                           vu(k) = 0.05ÅÅÅ                   +                      ÑÑ
+                                                                                                                           u 2,max u 2,min ÑÑÑÑÖ
+                                                                      (20)
+                                                                                                        ÅÅ u1,max u1,min
+                                                                                                         ÅÇ                                                           (31)
+  Thus,
+                                                                                       The closed-loop NARX environment update is
+  ui ,min     ui(k)        ui ,max , i = 1, 2                         (21)
+  The NARX regressor vector is represented as                                          Tr(k + 1) = Tr(k) +              Tr(k) + vu(k) + 0.7vPID(k)
+                 90                                                                                             0.07Tr(k)                                             (32)
+    (k )                                                              (22)
+  At each sampling instant, the current manipulated variables                          The manipulated-variable penalty is
+and reactor temperature are inserted into the regressor:                                                                    2                                 2
+                                                                                                    ij u1(k)      u1,mid yzz      ij u (k)     u 2,mid yzz
+                                                                                        Ju (k) = jjjj                      zz + jjj 2                    zz
+    (k) = [..., u1(k), u2(k), Tr(k)]T                                 (23)
+                                                                                                     k u1,max     u1,min z{        ju
+                                                                                                                                   k 2,max     u 2,min z{             (33)
+  The reinforcement learning state is the normalized NARX
+                                                                                       The reward function is
+regressor:
+         (k )                                                                          R (k ) =      5 e 2(k )     0.5Ju (k)                                          (34)
+                                      90
+  s(k) =      , s( k )
+         50                                                           (24)             The reinforcement learning objective is to maximize the
+  The hidden-layer output of the trained NARX model is                               expected discounted cumulative reward:
+                                                                                                  ÄÅ N 1               ÉÑ
+   h(k) = tanh(W1D (k) + b1D)                                                                      ÅÅÅ                  ÑÑÑ
+                                                                                        J( ) = ÅÅÅ               R(k)ÑÑÑ
+                                                                      (25)                                     k
+                                                                                                     ÅÅ                   ÑÑ
+  The predicted reactor-temperature increment is                                                      ÅÇ k = 0             ÑÖ             (35)
+                               T
+    Tr(k) =        D
+                       +    D(W2D h(k) + b2D)                         (26)             Equivalently, the problem can be written as
+                                                                                               ÄÅ N 1                              ÉÑ
+                                                                                                ÅÅ                                  ÑÑ
+  The NARX prediction can be compactly represented as                                            ÅÅ                                  Ñ
+                                                                                        min ÅÅ              k
+                                                                                                             (5e (k) + 0.5Ju (k))ÑÑÑ
+                                                                                                                2
+                                                                                                  ÅÅ                                 ÑÑ
+  Tr(k + 1) = fNARX ( (k), u1(k), u 2(k))                             (27)                         ÅÇ k = 0                           ÑÖ                              (36)
+
+                                                                             51344                                                https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                                         ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                                  http://pubs.acs.org/journal/acsodf                                                                      Article
+
+  The complete optimal control problem is                                                           For TD3:
+                             ÄÅ N 1             ÉÑ
+                              ÅÅ                 ÑÑ                                                                                                                                     (48)
+                               Å
+                               Å                  Ñ
+              * = arg max ÅÅ             k
+                                          R(k)ÑÑÑ
+                               ÅÅ                 ÑÑ                                                Step 6: Set common and algorithm-specific hyper-
+                                ÅÇ k = 0           ÑÖ                                             parameters.
+   subject to Tr(k + 1) = fNARX ( (k), u1(k), u 2(k)),                                                    = 0.995,         = 0.005                                                      (49)
+                   e(k) = Tsp(k)            Tr(k),                                                  For SAC:
+                                                                                                          = 0.2                                                                         (50)
+                                                   ai(k)
+                   uicmd(k) = ui ,min +                  (ui ,max      ui ,min),                    For TD3:
+                                                   100
+                   ui ,min   ui(k)          ui ,max , i = 1, 2,                                      d = 2,           = 2.0, c = 5.0                                                    (51)
+                                                                                                    Step 7: Reset the environment at the beginning of each
+                   ai(k)     [0, 100], i = 1, 2                                                   episode.
+                                                                                   (37)
+                                                                                                    Tr(0) = 28 °C,                      (0) = 0 ,          Ie(0) = 0,      e( 1) = 0
+  For SAC, the stochastic policy is
+                                                                                                                                                                                        (52)
+   a(k)       (a|s(k))                                                             (38)             Step 8: Compute the current RL state. Use the state
+  The SAC objective is                                                                            definition in ref (24):
+                  ÅÄÅ N 1                                                ÑÉÑ                                        (k )
+                    Å                                                      ÑÑ
+   * = arg max ÅÅÅÅ
+                                                                                                     s(k) =
+                                    k
+                                        (R (k ) +         ( ( ·|s(k))))ÑÑÑ                                          50                                                                  (53)
+                    ÅÅ                                                      ÑÑ
+                     ÅÇ k = 0                                                ÑÖ    (39)
+                                                                                                    Step 9: Generate the normalized action.
+  For TD3, the deterministic policy is                                                              For SAC:
+   a(k) =     (s(k))                                                               (40)                        (0 , I )                                                                 (54)
+
+  The TD3 objective is                                                                               z( k ) =        (s(k)) +            (s(k))                                         (55)
+                  ÄÅ N 1                   ÉÑ
+                   ÅÅ                       ÑÑ
+   * = arg max ÅÅÅÅ                 k
+                                     R(k)ÑÑÑ
+                                             Ñ                                                       a(k) = 50tanh(z(k)) + 50                                                           (56)
+                    ÅÅ                       ÑÑ
+                     ÅÇ k = 0                 ÑÖ                                   (41)             For TD3:
+  Thus, the final closed-loop control objective is                                                   a raw(k) = 50tanh ( (s(k))) + 50                                                   (57)
+   Find an RL policy that generates u1(k), u 2(k) such that Tr(k)                                    a(k) = a raw(k) + (k),                    (k )          (0 ,   2
+                                                                                                                                                                    I)                  (58)
+          Tsp(k)                                                                   (42)             The action is saturated using ref (17):
+5.2. SAC/TD3 Algorithm                                                                               a(k) = sat[0,100] (a(k))                                                           (59)
+For both SAC and TD3, the same manipulated-variable                                                 Step 10: Map the action to the actual manipulated variables.
+mapping, reward function, NARX environment, and control                                           Use refs (18), (19), and (20) to obtain u1(k) and u2(k).
+problem formulation are employed. As a result, only the                                             Step 11: Evaluate tracking error and update the NARX
+learning-update and policy-generation components are divided.                                     regressor. Use refs (15), (28), and (23).
+   Step 1: Initialize the NARX model and control problem.                                           Step 12: Predict and update the reactor temperature. Use
+Use the trained NARX parameters in refs (25)−(26), the set                                        the NARX eqs (25)−(26) and the closed-loop update eq (32).
+point in ref (10), the selected MV pair in ref (14), and the MV                                     Step 13: Compute the reward. Use the MV penalty in ref
+limits in ref (21).                                                                               (33) and the reward in ref (34).
+   Step 2: Select the reinforcement learning controller.                                            Step 14: Store the transition in the replay buffer.
+   ARL      {SAC, TD3}                                                             (43)                                 {s(k), a(k), R(k), s(k + 1), dk}                                (60)
+  Step 3: Initialize the replay buffer.                                                             Step 15: Sample a mini-batch from the replay buffer.
+   D=                                                                              (44)
+                                                                                                    {sj , a j , R j , s j , dj}Bj = 1                                                   (61)
+  Step 4: Initialize the actor and critic networks.
+  For SAC:                                                                                          Step 16: Apply SAC update if SAC is selected.
+                                                                                                    Sample the next action:
+     (a|s), Q (s , a), Q (s, a)                                                    (45)
+                   1                2                                                                aj         ( ·|s j)                                                                (62)
+  For TD3:
+                                                                                                    Compute the SAC target:
+     (s), Q (s, a), Q (s, a)                                                       (46)
+               1                2                                                                    yjSAC = R j + (1                   dj)[ min Q (s j , a j)           log     (a j|s j)]
+                                                                                                                                            i = 1,2    i
+  Step 5: Initialize target networks.
+                                                                                                                                                                                        (63)
+    1     1,  2      2                                                             (47)             Update the SAC critic:
+                                                                                          51345                                                       https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                                                             ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                                http://pubs.acs.org/journal/acsodf                                                        Article
+
+
+
+
+Figure 8. Reactor temperature tracking with manipulated variables as Feed A temperature and Feed B temperature for SAC and TD3 algorithms.
+
+                           B                                                                                        B
+                   1                                                                                          1
+   LQSAC ( i ) =          [Q (sj , a j)                yjSAC ]2 , i = 1, 2                       L( )=              Q (sj ,       (sj))
+                   B j =1    i
+                                                                               (64)                           B j= 1 1                                                  (72)
+
+  Update the SAC actor:                                                                        Step 18: Soft-update the target networks. For SAC and
+                                                                                              TD3 critics:
+                       B
+              1
+   L( )=             [ log            (a j|sj)         min Q (sj , a j)]                          i      i + (1         ) i , i = 1, 2                                  (73)
+              B j =1                                   i = 1,2   i
+                                                                               (65)             For TD3 actor:
+  Step 17: Apply TD3 update if TD3 is selected.                                                           + (1          )                                               (74)
+  Generate the target action:
+                                                                                                Step 19: Repeat the training process.
+   a j = 50tanh(           (s j)) + 50                                         (66)             k = 0, 1, ..., Ts       1, ep = 1, 2, ..., Nep                          (75)
+  Apply target-policy smoothing:                                                                Step 20: Perform deterministic evaluation after training.
+                   2                                                                            For SAC:
+    j      (0 ,    I ),        j = clip( j ,         c , c)                    (67)
+                                                                                                aSAC(k) = 50tanh ( (s(k))) + 50                                         (76)
+   a j = sat[0,100](a j + j )                                                  (68)             For TD3:
+                                                                                                aTD3(k) = 50tanh( (s(k))) + 50                                          (77)
+  Compute the TD3 target:
+                                                                                                Step 21: Record the closed-loop outputs and performance
+   yjTD3 = R j + (1              dj)min Q (s j , a j)                                         variables.
+                                    i = 1,2      i                             (69)
+                                                                                                Tr(k), Tsp(k), e(k), R(k), u1(k), u 2(k)                                (78)
+  Update the TD3 critic:
+                           B
+                   1                                                                          6. RESULTS AND DISCUSSIONS
+   LQTD3( i) =            [Q (sj , a j)                yjTD3 ]2 , i = 1, 2
+                   B j= 1    i
+                                                                               (70)           6.1. Manipulated Variables�Feed A Temperature, Feed B
+                                                                                              Temperature
+  Apply delayed actor update:
+                                                                                              The closed-loop performance of the SAC and TD3 controllers
+   mod( , d) = 0                                                               (71)           for CSTR reactor temperature tracking is compared in Figure 8
+                                                                                              utilizing Feed A and Feed B temperatures as controlled
+  When ref (71) is satisfied, update the actor:                                               variables. The stepwise reactor temperature set point can be
+                                                                                      51346                                           https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                                             ACS Omega 2026, 11, 51335−51359
+ACS Omega                                             http://pubs.acs.org/journal/acsodf                                                     Article
+
+Table 7. Performance Comparison of SAC and TD3                              Table 8. Performance Comparison of SAC and TD3
+Controllers for Feed A Temperature and Feed B                               Controllers for Feed A Temperature and Feed B Flow Rate
+Temperature                                                                 Control
+           Performance Metric               TD3          SAC                           Performance Metric                   SAC               TD3
+  Mean Error (degC)                         −0.187       −0.263              Mean Error (degC)                              −0.317           −0.313
+  Mean Absolute Error, MAE (degC)            0.245        0.314              Mean Absolute Error, MAE (degC)                 0.373            0.372
+  Root Mean Square Error, RMSE (degC)        0.421        0.454              Root Mean Square Error, RMSE (degC)             0.677            0.673
+  Integral Square Error, ISE                63.826       74.334              Integral Square Error, ISE                    164.934          163.071
+  Integral Absolute Error, IAE              88.124      112.952              Integral Absolute Error, IAE                  134.172          133.829
+  Maximum Overshoot (degC)                   1.549        1.578              Maximum Overshoot (degC)                        1.520            1.530
+  Maximum Undershoot (degC)                 −2.173       −2.076              Maximum Undershoot (degC)                      −2.482           −2.459
+  Best Episode Error (degC)                  0.241        0.282              Best Episode Error (degC)                       0.369            0.364
+  Training Time (s)                       1490.9       1586.9                Training Time (s)                            1728.6           1340.7
+  Actor Feed A Mean Command (%)             99.703       74.617              Actor Feed A Temp Mean Command (%)             18.640           78.745
+  Actor Feed B Mean Command (%)             99.975       90.215              Actor Feed B Flow Mean Command (%)             64.202           22.275
+
+effectively tracked by both controls. Both reinforcement                    temperatures fluctuate continually over the course of the
+learning techniques can successfully control the nonlinear                  operational horizon in the SAC scenario. As the simulation
+CSTR temperature, as evidenced by the reactor temperature                   comes to a close, Feed A’s temperature progressively drops,
+after the reference changes at roughly 30 °C, 35 °C, 43 °C, 37              and Feed B’s temperature likewise shows discernible swings.
+°C, and 40 °C.                                                              This implies that, although at the expense of greater actuator
+   The TD3 controller offers a somewhat smoother and more                   movement, SAC actively employs both modified variables to
+reliable response when it comes to temperature tracking.                    accomplish set point tracking.
+Especially throughout the last steady-state area and following                 On the other hand, following the initial transient phase, the
+the high-temperature transition, the TD3 output closely tracks              TD3 manipulated-variable responses are relatively smoother
+the set point with less oscillations. Although minor oscillations           and almost constant. While Feed B’s temperature stays near 45
+are seen close to the final operating region, the SAC controller            °C, Feed A’s temperature stays near 34 °C. This demonstrates
+likewise achieves respectable tracking performance. This                    that TD3 finds a manipulated-variable strategy that is more
+suggests that whereas TD3 generates a more deterministic                    stable and has less actuator variation.
+closed-loop response, SAC retains a more exploratory control                   For the chosen manipulated-variable pair, SAC and TD3
+characteristic.                                                             both offer efficient CSTR temperature regulation. While SAC
+   There is a noticeable difference between the two controllers             offers adaptive control action with greater oscillatory variation,
+in the manipulated-variable profiles. Both Feed A and Feed B                TD3 exhibits smoother manipulated-variable behavior and
+
+
+
+
+Figure 9. Reactor temperature tracking with manipulated variables as Feed A temperature and Feed B flow rate for SAC and TD3 algorithms.
+
+                                                                    51347                                       https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                       ACS Omega 2026, 11, 51335−51359
+ACS Omega                                              http://pubs.acs.org/journal/acsodf                                                   Article
+
+
+
+
+Figure 10. Reactor temperature tracking with manipulated variables as Feed B temperature and Feed A flow rate for SAC and TD3 algorithms.
+
+Table 9. Performance Comparison of SAC and TD3                               controllers exhibit appropriate transitory behavior during set
+Controllers for Feed B Temperature and Feed A Flow Rate                      point changes, as evidenced by the slight difference.
+Control                                                                        Faster convergence for the chosen CSTR control problem is
+                                                                             suggested by the fact that TD3 takes less training time than
+           Performance Metric                SAC          TD3
+                                                                             SAC. While SAC employs comparatively lower average
+ Mean Error (degC)                           −0.319       −0.322             command values, TD3 drives both Feed A and Feed B
+ Mean Absolute Error, MAE (degC)              0.379        0.377             temperature commands near their upper operational range,
+ Root Mean Square Error, RMSE (degC)          0.674        0.669             according to the mean actor command values. In general, SAC
+ Integral Square Error, ISE                 163.651      161.098             delivers adequate control with relatively lower actuator
+ Integral Absolute Error, IAE               136.565      135.821             command levels, while TD3 offers more precise and quicker
+ Maximum Overshoot (degC)                     1.520        1.529             temperature tracking.
+ Maximum Undershoot (degC)                   −2.496       −2.503
+ Best Episode Error (degC)                    0.366        0.361             6.2. Manipulated Variables�Feed A Temperature, Feed B
+ Training Time (s)                         1697.5       1476.1
+                                                                             Flow Rate
+ Actor Feed B Temp Mean Command (%)          11.275       16.339             Using Feed A temperature and Feed B flow rate as
+ Actor Feed A Flow Mean Command (%)          57.730       95.875             manipulated variables, the comparison demonstrates that
+                                                                             both SAC and TD3 properly monitor the stepwise reactor
+                                                                             temperature set point. The reactor temperature closely tracks
+somewhat improved tracking stability. Because TD3 accom-                     the reference trajectory for the major set point transitions in
+plishes accurate tracking with less actuator fluctuation, it seems           both scenarios, demonstrating the successful application of the
+more appropriate for practical application using Feed A                      NARX-based environment for closed-loop reinforcement
+temperature and Feed B temperature as controlled variables.                  learning control.
+   The performance comparison in Table 7 demonstrates that                      The SAC controller tracks temperatures smoothly, with a
+using Feed A and Feed B temperatures as controlled variables,                modest steady-state error following each set point change. Its
+both SAC and TD3 controllers provide efficient reactor                       manipulated-variable response reveals that while Feed B flow
+temperature tracking. For this manipulated-variable pair,                    rate stays almost constant, Feed A temperature fluctuates
+however, TD3 outperforms SAC in terms of total tracking                      moderately over time. This suggests that while Feed B flow
+performance. Improved accuracy and decreased cumulative                      rate makes relatively little contribution to the closed-loop
+tracking deviation are indicated by the TD3 controller’s lower               adjustment, SAC mostly employs Feed A temperature for
+mean error, MAE, RMSE, ISE, IAE, and best episode error.                     corrective control action (Figure 9).
+   Both controllers exhibit similar overshoot and undershoot                    Additionally, the TD3 controller provides a little more
+characteristics in terms of transient performance. While SAC                 predictable reaction while achieving accurate temperature
+provides a somewhat lower maximum undershoot, TD3 offers                     tracking. While the Feed B flow rate once more stays nearly
+a slightly lower maximum overshoot than SAC. Both                            constant, the Feed A temperature profile in TD3 exhibits
+                                                                     51348                                     https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                      ACS Omega 2026, 11, 51335−51359
+ACS Omega                                             http://pubs.acs.org/journal/acsodf                                                   Article
+
+
+
+
+Figure 11. Reactor temperature tracking with manipulated variables as Feed A flow rate and Feed B flow rate for SAC and TD3 algorithms.
+
+Table 10. Performance Comparison of SAC and TD3                            SAC and TD3 achieve efficient reactor temperature tracking
+Controllers for Feed A Flow Rate and Feed B Flow Rate                      for the stepwise set point profile. Both scenarios show that the
+Control                                                                    NARX-based RL environment can allow closed-loop control of
+                                                                           the nonlinear CSTR since the reactor temperature closely
+           Performance Metric               SAC          TD3
+                                                                           tracks the set point during the major transitions.
+  Mean Error (degC)                          0.554        −0.197
+                                                                              Although the SAC controller’s manipulated-variable re-
+  Mean Absolute Error, MAE (degC)            0.868         0.399
+                                                                           sponse is quite adaptable, it offers smooth temperature
+  Root Mean Square Error, RMSE (degC)        1.355         0.535
+                                                                           tracking. Feed B temperature decreases rapidly from a higher
+  Integral Square Error, ISE               660.505       103.053
+                                                                           initial value and then remains mostly near the lower operating
+  Integral Absolute Error, IAE             312.531       143.730
+  Maximum Overshoot (degC)                   4.392         1.634
+                                                                           region, while Feed A flow rate varies significantly over the full
+  Maximum Undershoot (degC)                 −2.778        −2.477
+                                                                           time horizon. This suggests that in order to sustain tracking
+  Best Episode Error (degC)                  0.277         0.301
+                                                                           performance, SAC heavily depends on ongoing Feed A flow
+  Training Time (s)                       6844.3        4962.2             rate adjustment (Figure 10).
+  Feed A Mean Output (%)                    84.526        43.832              TD3 controller exhibits a more predictable manipulated-
+  Feed B Mean Output (%)                    63.083        35.257           variable pattern and precisely tracks the set point. While Feed
+                                                                           A flow rate typically stays at a high level following the initial
+                                                                           transient, Feed B temperature varies rapidly at first and then
+frequent fluctuations between higher and lower values. This                settles near a low value. TD3 employs a more saturated and
+implies that TD3 has acquired a switching-type or more                     switching-like control strategy than SAC.
+aggressive Feed A temperature policy.                                         Both controllers offer adequate tracking accuracy overall.
+   Both SAC and TD3 offer adequate reactor temperature                     But beyond the transitory phase, TD3 achieves similar tracking
+tracking for the chosen controlled variables, according to the             with a more constant high Feed A flow rate and lower Feed B
+compared results in Table 8. TD3 provides greater tracking                 temperature, while SAC generates a more continuously
+accuracy than SAC, as seen by slightly lower MAE, RMSE, ISE,               variable control action. Practically speaking, TD3 provides a
+IAE, and best episode error. TD3 also requires less training               more straightforward but saturated control scheme, whereas
+time, suggesting faster convergence for this case. The mean                SAC provides smoother adaptive control.
+actor instructions, however, demonstrate that the two                         The performance comparison in Table 9 demonstrates that
+controllers employ distinct control strategies: TD3 uses a                 both SAC and TD3 offer adequate reactor temperature
+higher Feed A temperature command with a lower Feed B flow                 tracking. TD3 provides somewhat greater tracking accuracy
+command, while SAC depends more on Feed B flow rate.                       than SAC, as seen by slightly lower MAE, RMSE, ISE, IAE,
+6.3. Manipulated Variables�Feed B Temperature, Feed A                      and best episode error. Additionally, TD3 takes less time to
+Flow Rate                                                                  train, indicating quicker convergence in this situation. The
+Considering Feed B temperature and Feed A flow rate as                     mean actor commands, however, show distinct control
+manipulated variables, the comparison demonstrates that both               strategies: TD3 heavily depends on a high Feed A flow
+                                                                   51349                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                     ACS Omega 2026, 11, 51335−51359
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                  Article
+
+
+
+
+Figure 12. Reactor temperature tracking with manipulated variables as Hot Oil Bath and Feed A temperature for SAC and TD3 algorithms.
+
+Table 11. Performance Comparison of SAC and TD3                              manipulated-variable plots, where SAC performs more
+Controllers for Hot Oil Bath and Feed A Temperature                          aggressive flow-rate changes. This suggests that SAC achieves
+Control                                                                      temperature tracking with more powerful flow manipulation.
+             Performance Metric                SAC          TD3
+                                                                             TD3, on the other hand, creates a less saturated and more
+                                                                             balanced flow-rate profile by distributing the control effort
+Mean Error (degC)                              −0.317       −0.307
+                                                                             more evenly between Feed A and Feed B flow rates.
+Mean Absolute Error, MAE (degC)                 0.377        0.363
+Root Mean Square Error, RMSE (degC)             0.677        0.668
+                                                                                Overall, the closed-loop temperature management achieved
+Integral Square Error, ISE                    164.772      160.685
+                                                                             by both controllers is satisfactory. However, SAC requires
+Integral Absolute Error, IAE                  135.690      130.802           more actuator effort to perform tracking, whereas TD3 offers
+Maximum Overshoot (degC)                        1.510        1.540           more practical flow-rate fluctuation and relatively smoother
+Maximum Undershoot (degC)                      −2.585       −2.554           temperature tracking. Therefore, from the perspective of
+Best Episode Error (degC)                       0.364        0.362           tracking accuracy and actuator smoothness, TD3 seems more
+Training Time (s)                            2977.5       1353.3             appropriate for the Feed A flow rate-Feed B flow rate control
+Actor Hot Oil Bath Mean Command (%)            49.518       93.244           situation.
+Actor Feed A Temperature Mean Command (%)      54.108       89.223              The comparison in Table 10 demonstrates that TD3
+                                                                             outperforms SAC in terms of overall tracking performance.
+                                                                             Improved tracking accuracy and quicker convergence are
+command with a marginally higher Feed B temperature                          indicated by TD3′s lower MAE, RMSE, ISE, IAE, maximum
+command, while SAC employs a moderate Feed A flow                            overshoot, and training time. While TD3 performs superior
+command with a low Feed B temperature command.                               tracking with relatively lower mean flow commands, SAC
+6.4. Manipulated Variables�Feed A Flow Rate, Feed B                          employs higher average Feed A and Feed B flow-rate
+Flow Rate                                                                    commands, indicating greater actuator effort. Therefore, from
+The comparison demonstrates that both SAC and TD3 can                        the perspectives of tracking performance and actuator effort,
+use Feed A flow rate and Feed B flow rate as controlled                      TD3 is more suited for this manipulated-variable combination.
+variables to track the reactor temperature set point. Both                   6.5. Manipulated Variables�Hot Oil Bath, Feed A
+controllers follow the stepwise reference trajectory fairly well,            Temperature
+according to the upper charts. However, TD3 offers tighter
+tracking with fewer deviations around the set point, while the               By manipulating the temperature of the Hot Oil Bath and Feed
+SAC response exhibits somewhat larger overshoot and                          A, both SAC and TD3 are able to track reactor temperature
+oscillatory behavior throughout the high-temperature area                    effectively. In all scenarios, the reactor temperature closely
+(Figure 11).                                                                 follows the stepwise set point, demonstrating that the NARX-
+   Both Feed A and Feed B flow-rate commands often move                      based RL control framework can effectively regulate the CSTR
+toward higher command levels after the initial transient in the              temperature (Figure 12).
+                                                                     51350                                     https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                      ACS Omega 2026, 11, 51335−51359
+ACS Omega                                              http://pubs.acs.org/journal/acsodf                                                   Article
+
+
+
+
+Figure 13. Reactor temperature tracking with manipulated variables as Hot Oil Bath and Feed B temperature for SAC and TD3 algorithms.
+
+Table 12. Performance Comparison of SAC and TD3                               The comparison in Table 11 demonstrates that both SAC
+Controllers for Hot Oil Bath and Feed B Temperature                         and TD3 produce satisfactory reactor temperature monitoring
+Control                                                                     when Hot Oil Bath and Feed A temperature are adjusted
+                                                                            variables. TD3 provides somewhat greater tracking accuracy
+            Performance Metric                SAC          TD3
+                                                                            than SAC, as seen by slightly lower MAE, RMSE, ISE, IAE,
+Mean Error (degC)                             −0.317       −0.307           and best episode error. Additionally, TD3 takes a lot less time
+Mean Absolute Error, MAE (degC)                0.389        0.372           to train, indicating quicker convergence. However, SAC
+Root Mean Square Error, RMSE (degC)            0.684        0.675
+                                                                            accomplishes equivalent tracking with somewhat lower average
+Integral Square Error, ISE                   168.345      164.257
+                                                                            actuator consumption, while TD3 works with much higher
+Integral Absolute Error, IAE                 140.161      133.757
+                                                                            mean Hot Oil Bath and Feed A temperature commands.
+Maximum Overshoot (degC)                       1.464        1.559
+Maximum Undershoot (degC)                     −2.661       −2.565           6.6. Manipulated Variables�Hot Oil Bath, Feed B
+Best Episode Error (degC)                      0.365        0.362           Temperature
+Training Time (s)                           1549.4       1173.6             By manipulating the temperature of the Hot Oil Bath and Feed
+Actor Hot Oil Bath Mean Command (%)           34.673       86.407           B, both SAC and TD3 are able to provide adequate reactor
+Actor Feed B Temperature Mean Command (%)     53.345       88.421           temperature tracking. In all scenarios, the reactor temperature
+                                                                            closely tracks the stepwise set point, suggesting that the
+                                                                            NARX-based RL environment is appropriate for closed-loop
+   In terms of manipulated-variable behavior, Feed A temper-                CSTR temperature control (Figure 13).
+ature fluctuates within a narrower range, whereas SAC                          Feed B temperature fluctuates moderately around a reduced
+generates a highly oscillatory Hot Oil Bath signal, particularly            temperature range, while SAC generates a highly oscillatory
+after the midregion of the response. In contrast, Feed A                    Hot Oil Bath signal for the controlled variables, particularly
+temperature settles to a virtually constant level whereas TD3               after the midpoint of the operational horizon. On the other
+quickly drives the Hot Oil Bath command toward a nearly                     hand, Feed B temperature settles to a virtually constant value
+saturated high value and keeps it there. As a result, TD3 offers            following the initial transient, while TD3 quickly drives the
+a more predictable and saturated control technique, while SAC               Hot Oil Bath command toward a nearly saturated high value
+offers more adaptable yet oscillatory control action.                       and maintains it.
+   Both controllers offer satisfactory monitoring overall, while               Overall, SAC offers more adaptive yet oscillatory control
+SAC exhibits more actuator variation and TD3 seems to track                 action, while TD3 offers a more predictable and stable
+temperature more smoothly. If reliable tracking is the top                  manipulated-variable profile. Practically, TD3 is better because
+priority for practical implementation, TD3 might be better,                 of its lower fluctuation, but SAC might need more smoothing
+while SAC might need extra actuator-smoothing or control-                   or control-rate penalties to lessen actuator oscillations. The
+rate penalties.                                                             comparison in Table 12 demonstrates that using the
+                                                                    51351                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                      ACS Omega 2026, 11, 51335−51359
+ACS Omega                                              http://pubs.acs.org/journal/acsodf                                                   Article
+
+
+
+
+Figure 14. Reactor temperature tracking with manipulated variables as Hot Oil Bath and Feed A flow rate for SAC and TD3 algorithms.
+
+Table 13. Performance Comparison of SAC and TD3                             type manipulated-variable behavior, with both Feed A flow rate
+Controllers for Hot Oil Bath and Feed A Flow Rate Control                   and Hot Oil Bath moving abruptly between low and high
+                                                                            command levels. While SAC offers a smoother temperature
+            Performance Metric                SAC          TD3
+                                                                            response but more intense actuator oscillations, TD3 generally
+ Mean Error (degC)                            −0.316       −0.307           provides slightly more predictable tracking. Practically speak-
+ Mean Absolute Error, MAE (degC)               0.378        0.400
+                                                                            ing, both controllers work well; however, the manipulated-
+ Root Mean Square Error, RMSE (degC)           0.679        0.693
+                                                                            variable profiles would benefit from additional actuator-
+ Integral Square Error, ISE                  165.918      173.136
+                                                                            smoothing or control-move penalties.
+ Integral Absolute Error, IAE                136.223      143.931
+                                                                              The comparison in Table 13 shows that using the Hot Oil
+ Maximum Overshoot (degC)                      1.579        1.595
+                                                                            Bath and Feed A flow rate as controlled variables, both SAC
+ Maximum Undershoot (degC)                    −2.571       −2.563
+                                                                            and TD3 produce satisfactory reactor temperature tracking.
+ Best Episode Error (degC)                     0.362        0.356
+ Training Time (s)                          3064.4       1187.5
+                                                                            SAC provides somewhat greater tracking accuracy than TD3,
+ Actor Hot Oil Bath Mean Command (%)          43.754       70.644
+                                                                            as evidenced by slightly lower MAE, RMSE, ISE, IAE, and
+ Actor Feed A Flow rate Mean Command (%)      58.730       58.529
+                                                                            maximum overshoot. On the other hand, TD3 offers a slightly
+                                                                            lower best episode error and requires significantly less training
+                                                                            time, indicating faster convergence. While both controllers
+temperature of the Hot Oil Bath and Feed B as controlled                    employ virtually identical Feed A flow rate commands, the
+variables, both SAC and TD3 offer adequate reactor                          mean command values indicate that TD3 utilizes a greater Hot
+temperature tracking. TD3 provides somewhat greater tracking                Oil Bath command.
+accuracy than SAC, as seen by slightly lower MAE, RMSE, ISE,
+IAE, and best episode error. Additionally, TD3 requires less                6.8. Manipulated Variables�Hot Oil Bath, Feed B Flow
+training time, which implies quicker convergence. However,                  Rate
+SAC accomplishes similar tracking with lower mean actuator                  Using the Hot Oil Bath and Feed B flow rate as controlled
+effort, while TD3 requires much greater average Hot Oil Bath                variables, both SAC and TD3 offer efficient reactor temper-
+and Feed B temperature commands.                                            ature tracking. With minimal steady-state error following each
+6.7. Manipulated Variables�Hot Oil Bath, Feed A Flow                        transition, the reactor temperature in both scenarios closely
+Rate                                                                        tracks the stepwise set point, demonstrating adequate closed-
+By manipulating the Hot Oil Bath and Feed A flow rate, both                 loop control capability (Figure 15).
+SAC and TD3 are able to provide satisfactory reactor                           While the Feed B flow rate stays nearly constant at a low
+temperature tracking. In all scenarios, the reactor temperature             level, SAC displays an initially oscillating Hot Oil Bath
+closely tracks the stepwise set point, demonstrating efficient              command for the manipulated-variable response that even-
+closed-loop control of the CSTR temperature (Figure 14).                    tually settles near a high value. The Hot Oil Bath command is
+   While Feed A flow rate grows smoothly with mild changes,                 likewise driven toward saturation by TD3, but after the initial
+SAC exhibits highly oscillatory Hot Oil Bath action for the                 transient, it rises more quickly and exhibits more deterministic
+controlled variables, particularly after the middle of the                  behavior. For TD3, the Feed B flow rate is essentially
+reaction. TD3, on the other hand, exhibits more switching-                  unchanged.
+                                                                    51352                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                      ACS Omega 2026, 11, 51335−51359
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                  Article
+
+
+
+
+Figure 15. Reactor temperature tracking with manipulated variables as Hot Oil Bath and Feed B flow rate for SAC and TD3 algorithms.
+
+Table 14. Performance Comparison of SAC and TD3                              7. CONCLUSION AND FUTURE SCOPE
+Controllers for Hot Oil Bath and Feed B Flow Rate Control                    This study addressed a significant gap in the Continuous
+            Performance Metric                 SAC          TD3              Stirred Tank Reactor (CSTR) control literature by focusing on
+ Mean Error (degC)                             −0.318       −0.318           intelligent temperature regulation in a highly nonlinear and
+ Mean Absolute Error, MAE (degC)                0.372        0.372           exothermic reactor environment. Although earlier studies have
+ Root Mean Square Error, RMSE (degC)            0.671        0.668           independently demonstrated the effectiveness of model-based
+ Integral Square Error, ISE                   162.243      160.480           control, data-driven modeling, and reinforcement learning,
+ Integral Absolute Error, IAE                 133.941      133.865           their combined application to a practical lab-scale CSTR
+ Maximum Overshoot (degC)                       1.510        1.523           remains comparatively limited. Many existing approaches
+ Maximum Undershoot (degC)                     −2.597       −2.661           depend heavily on accurate first-principles models, simula-
+ Best Episode Error (degC)                      0.371        0.365           tion-only validation, or restricted operating conditions, which
+ Training Time (s)                           1986.9       1421.9             limits their adaptability and real-time applicability. This
+ Actor Hot Oil Bath Mean Command (%)           87.401       90.218           motivated the development of a more flexible, data-supported,
+ Actor Feed B Flow Rate Mean Command (%)       59.143       93.289           and control-oriented reinforcement learning framework for
+                                                                             CSTR temperature regulation.
+                                                                                To bridge this gap, a progressive modeling and control
+   Overall, the primary manipulated variable used by both                    strategy was adopted. First-principles modeling was initially
+controllers is Hot Oil Bath, with Feed B flow rate having a                  used to describe the fundamental mass and energy balance
+negligible impact on control action. After early oscillations,               dynamics of the reactor and to establish the thermal behavior
+SAC offers a smoother settling pattern, while TD3 offers a                   of the process. This was followed by gray-box and nonlinear
+more direct and saturated control response. Practically                      data-driven modeling approaches, culminating in a high-fidelity
+speaking, SAC exhibits a little more gradual control adjust-                 NARX-based model capable of predicting the reactor temper-
+ment, whereas TD3 provides faster actuator convergence. The                  ature response under different manipulated-variable condi-
+comparison in Table 14 highlights that utilizing the Hot Oil                 tions. The NARX model served as a practical environment for
+Bath and Feed B flow rate as controlled variables, both SAC                  reinforcement learning controller training, thereby reducing
+and TD3 obtain nearly identical reactor temperature tracking                 the direct dependence on a purely mechanistic model while
+performance. TD3 shows somewhat superior tracking accuracy                   retaining the nonlinear input−output behavior of the
+with slightly lower RMSE, ISE, IAE, and best episode error.                  experimental CSTR system.
+Additionally, TD3 requires less training time than SAC,                         Twin Delayed Deep Deterministic Policy Gradient (TD3)
+indicating faster convergence. However, SAC achieves similar                 and Soft Actor-Critic (SAC), two sophisticated deep reinforce-
+tracking with comparatively lower mean actuator effort,                      ment learning algorithms, were studied for continuous
+whereas TD3 requires higher average Hot Oil Bath and Feed                    manipulated-variable control. To assess the closed-loop
+B flow rate commands.                                                        temperature tracking capacity, several combinations of
+                                                                     51353                                     https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                      ACS Omega 2026, 11, 51335−51359
+ACS Omega                                       http://pubs.acs.org/journal/acsodf                                                 Article
+
+Table 15. Input-to-Hidden Weight Matrix W1D (20 × 90)
+                                                     W1D: Columns 1−10
+ Row       1          2          3         4               5             6             7         8                  9                10
+  1      0.0597    −0.0789    −0.0587     0.0473          0.0648      0.1188          0.0632   −0.0681          −0.0578          −0.0103
+  2     −0.0891    −0.0245    −0.0064    −0.0265          0.0040      0.0937         −0.0854   −0.0190          −0.0035           0.0199
+  3      0.0113     0.0638     0.0035    −0.0354        −0.0547       0.0101          0.0067    0.0426          −0.0004          −0.0233
+  4      0.0024    −0.0026     0.0374    −0.0114        −0.0216      −0.0566          0.0045    0.0139           0.0397           0.0055
+  5     −0.0500    −0.0279    −0.0178    −0.0676        −0.0028       0.0420         −0.0485    0.0007          −0.0219          −0.0396
+  6     −0.0355    −0.0560    −0.0128     0.0012        −0.0890       0.0819         −0.0364   −0.0214          −0.0089          −0.0236
+  7     −0.0899    −0.0672     0.0966     0.0295          0.0272     −0.0122         −0.0831   −0.0482           0.0964           0.0128
+  8      0.0607    −0.0199    −0.0199     0.1024        −0.0803       0.0805          0.0573   −0.0259          −0.0110           0.0647
+  9      0.0448     0.0598    −0.0581    −0.1124          0.0820     −0.0678          0.0422    0.0375          −0.0612          −0.1054
+  10    −0.0215     0.1059     0.0222     0.0285          0.0350      0.0470         −0.0244    0.0812           0.0240          −0.0243
+  11    −0.0226     0.0855     0.0045     0.0408          0.0621     −0.0060         −0.0263    0.0565           0.0020           0.0497
+  12     0.0287    −0.0000    −0.0237     0.0348          0.0204     −0.1139          0.0271   −0.0200          −0.0215           0.0014
+  13    −0.0467     0.0543     0.0257    −0.0123        −0.0030      −0.0092         −0.0474    0.0294           0.0282          −0.0923
+  14    −0.0609    −0.0339    −0.0390     0.0468          0.0523     −0.0127         −0.0599   −0.0269          −0.0458           0.0216
+  15    −0.0198    −0.0098     0.0725    −0.0575          0.0411      0.0158         −0.0149   −0.0048           0.0830          −0.0660
+  16     0.0568    −0.0480     0.1000     0.0157          0.0322     −0.0950          0.0542   −0.0316           0.0891          −0.0263
+  17    −0.0066    −0.0482     0.0337     0.0673        −0.0655       0.0209         −0.0103   −0.0643           0.0383           0.0472
+  18    −0.0728     0.0626     0.0172    −0.0957        −0.0022       0.0056         −0.0737    0.0819           0.0206           0.0037
+  19     0.0904    −0.0521    −0.1353     0.0603          0.0633     −0.1448          0.0937   −0.0463          −0.1250           0.0684
+  20     0.0119     0.0348     0.0579    −0.1291        −0.1215       0.0946          0.0101    0.0089           0.0608          −0.1770
+                                                     W1D: Columns 11−20
+ Row      11         12         13         14              15            16            17        18                19                20
+  1      0.0347     0.1050     0.0642    −0.0613        −0.0588      −0.0194          0.0307    0.0670           0.0660          −0.0440
+  2     −0.0418     0.0839    −0.0788    −0.0133          0.0094      0.0286         −0.0548    0.0745          −0.0743          −0.0078
+  3     −0.0266     0.0056     0.0016     0.0304        −0.0097       0.0081          0.0007    0.0081          −0.0027           0.0086
+  4     −0.0007    −0.0752     0.0112     0.0278          0.0601     −0.0830         −0.0303   −0.0646           0.0159           0.0425
+  5     −0.0240     0.0781    −0.0485     0.0082        −0.0139      −0.0604         −0.0665    0.1016          −0.0462           0.0383
+  6      0.0087     0.0673    −0.0342    −0.0012          0.0018     −0.0235          0.0083    0.0606          −0.0324           0.0323
+  7     −0.0549    −0.0011    −0.0747    −0.0390          0.1129     −0.0169         −0.0889   −0.0377          −0.0674          −0.0140
+  8     −0.0331     0.0695     0.0576    −0.0231        −0.0167       0.1139         −0.0093    0.0600           0.0570          −0.0295
+  9      0.0755    −0.0714     0.0387     0.0323        −0.0784      −0.0410          0.1091   −0.0492           0.0342           0.0143
+  10     0.0515     0.0367    −0.0290     0.0643          0.0136      0.0019          0.0778    0.0508          −0.0330           0.0371
+  11     0.0250    −0.0073    −0.0323     0.0415        −0.0090       0.0417          0.0376    0.0048          −0.0368           0.0161
+  12    −0.0071    −0.0814     0.0218    −0.0296        −0.0341       0.0109         −0.0116   −0.0557           0.0162          −0.0500
+  13    −0.0355    −0.0407    −0.0517     0.0143          0.0250     −0.0924         −0.0262   −0.0129          −0.0564          −0.0032
+  14    −0.0525     0.0130    −0.0583    −0.0250        −0.0370       0.0044         −0.0680    0.0072          −0.0564          −0.0127
+  15     0.0008     0.0350    −0.0085     0.0014          0.0978     −0.0134         −0.0209    0.0005          −0.0052           0.0093
+  16     0.0572    −0.0788     0.0522    −0.0254          0.0820     −0.0381          0.0558   −0.0788           0.0530          −0.0082
+  17     0.0047    −0.0096    −0.0108    −0.0701          0.0361      0.0905          0.0105    0.0160          −0.0141          −0.0840
+  18     0.0586    −0.0238    −0.0694     0.0872          0.0349     −0.0012          0.0418   −0.0051          −0.0671           0.1010
+  19     0.0087    −0.1075     0.0996    −0.0436        −0.1150       0.0734         −0.0220   −0.1207           0.1044          −0.0359
+  20    −0.1070     0.0973     0.0055    −0.0008          0.0410     −0.0703         −0.0715    0.0753           0.0015          −0.0181
+                                                     W1D: Columns 21−30
+ Row      21         22         23         24              25            26            27        28                29                30
+  1     −0.0677    −0.0399     0.0676     0.0513         0.0720       −0.0360        −0.0810   −0.0283           0.1211           0.0923
+  2      0.0015     0.0425    −0.0162     0.0608        −0.0683       −0.0039        −0.0071    0.0240           0.0316           0.0760
+  3     −0.0009    −0.0254    −0.0152     0.0303        −0.0118       −0.0050         0.0112   −0.0148          −0.0501          −0.0080
+  4      0.0573    −0.1380    −0.0261    −0.0443         0.0239        0.0504         0.0546   −0.1520           0.0077           0.0186
+  5     −0.0187     0.0215    −0.0751     0.0747        −0.0387        0.0576        −0.0416    0.0511          −0.0437           0.0623
+  6     −0.0042     0.0766    −0.0035     0.0221        −0.0261        0.0540        −0.0190    0.0715           0.0399           0.0032
+  7      0.1003    −0.0102    −0.0411    −0.0816        −0.0536       −0.0004         0.0780   −0.0238           0.0285           0.0118
+  8     −0.0101     0.1087    −0.0177     0.0673         0.0552       −0.0306         0.0013    0.1364          −0.0408           0.0708
+  9     −0.0760    −0.0425     0.0930    −0.0001         0.0254        0.0015        −0.0661    0.0229           0.0556          −0.0566
+  10     0.0225    −0.0422     0.0351     0.0944        −0.0417        0.0204         0.0451   −0.0428          −0.0289           0.0291
+  11     0.0056    −0.0155     0.0141     0.0187        −0.0478        0.0018         0.0283   −0.0412          −0.0441          −0.0273
+  12    −0.0228    −0.0328    −0.0543    −0.0087         0.0070       −0.0594         0.0023   −0.0243          −0.1413           0.0056
+  13     0.0288    −0.1119    −0.0196     0.0280        −0.0645       −0.0115         0.0529   −0.0461          −0.0226          −0.0407
+  14    −0.0416     0.0453    −0.0232    −0.0146        −0.0527       −0.0024        −0.0495    0.0584          −0.0034           0.0088
+
+
+                                                           51354                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                             ACS Omega 2026, 11, 51335−51359
+ACS Omega                                        http://pubs.acs.org/journal/acsodf                                                 Article
+
+Table 15. continued
+                                                      W1D: Columns 21−30
+ Row       21           22        23        24              25             26           27        28                29                30
+  15      0.0832       0.0135    0.0191   −0.0587          0.0023      0.0136          0.0672   −0.0044           0.0900          −0.0140
+  16      0.0751      −0.0309    0.0452   −0.0880          0.0549      0.0064          0.0611   −0.0358           0.0450          −0.0946
+  17      0.0380       0.0628   −0.0364    0.0542        −0.0200      −0.0877          0.0430    0.0378          −0.0652          −0.0102
+  18      0.0232       0.0558    0.0354    0.0035        −0.0604       0.1079          0.0082    0.0187           0.0713           0.0021
+  19     −0.1180       0.0888    0.0010   −0.1619          0.1121     −0.0292         −0.1252    0.0769           0.0209          −0.0827
+  20      0.0482      −0.0285   −0.0817    0.0776        −0.0071      −0.0274          0.0599    0.0521          −0.1034           0.0280
+                                                      W1D: Columns 31−40
+ Row       31           32        33        34              35             36           37        38                39                40
+  1       0.0744      −0.0260   −0.0879   −0.0693          0.1277      0.0718          0.0762   −0.0163          −0.0863          −0.0401
+  2      −0.0673      −0.0064   −0.0155    0.0162          0.0042      0.0678         −0.0658   −0.0037          −0.0132           0.0036
+  3      −0.0143      −0.0088    0.0165    0.0241          0.0124     −0.0461         −0.0172   −0.0126           0.0076           0.0057
+  4       0.0249       0.0447    0.0504   −0.1052        −0.0239       0.0518          0.0300    0.0439           0.0634          −0.0699
+  5      −0.0365       0.0593   −0.0504    0.0405        −0.0791       0.1125         −0.0318    0.0590          −0.0387           0.0585
+  6      −0.0269       0.0578   −0.0219    0.0240          0.0246      0.0709         −0.0217    0.0540          −0.0102           0.0061
+  7      −0.0496       0.0033    0.0666   −0.0837        −0.0414       0.0617         −0.0444    0.0151           0.0722          −0.0785
+  8       0.0525      −0.0280    0.0123    0.1323        −0.0052       0.0408          0.0516   −0.0276           0.0067           0.1015
+  9       0.0225       0.0068   −0.0582    0.0989          0.1263     −0.1018          0.0172    0.0099          −0.0698           0.1088
+  10     −0.0419       0.0169    0.0497   −0.0328          0.0439     −0.0365         −0.0469    0.0130           0.0406          −0.0219
+  11     −0.0504       0.0035    0.0353   −0.0941          0.0174     −0.0805         −0.0554    0.0050           0.0377          −0.1382
+  12      0.0040      −0.0584    0.0137   −0.0139        −0.1089      −0.0180         −0.0006   −0.0576           0.0113          −0.0061
+  13     −0.0643      −0.0070    0.0595   −0.0132          0.0284     −0.0734         −0.0709    0.0016           0.0572           0.0158
+  14     −0.0522      −0.0038   −0.0610    0.0454        −0.0291       0.0294         −0.0511    0.0015          −0.0550           0.0583
+  15      0.0038       0.0189    0.0636   −0.0466          0.0567     −0.0080          0.0053    0.0271           0.0586          −0.0638
+  16      0.0523       0.0038    0.0539   −0.0699          0.0751     −0.0811          0.0563    0.0009           0.0539          −0.0773
+  17     −0.0218      −0.0891    0.0483    0.0227        −0.0166      −0.0276         −0.0251   −0.0871           0.0400           0.0078
+  18     −0.0598       0.1034    0.0093   −0.0177        −0.0039       0.0724         −0.0554    0.0951           0.0159          −0.0244
+  19      0.1117      −0.0269   −0.1258    0.0494        −0.0608      −0.0538          0.1148   −0.0196          −0.1209           0.0443
+  20     −0.0099      −0.0218    0.0726    0.1089        −0.0174      −0.0464         −0.0165   −0.0214           0.0588           0.1366
+                                                      W1D: Columns 41−50
+ Row       41           42        43        44              45             46           47        48                49                50
+  1       0.0684       0.0131    0.0772   −0.0098        −0.0801       0.0155          0.0591    0.0175           0.0772          −0.0076
+  2      −0.0063      −0.0042   −0.0660   −0.0117        −0.0136       0.0115          0.0268   −0.0484          −0.0680          −0.0125
+  3       0.0426       0.0321   −0.0179   −0.0082        −0.0047      −0.0437          0.0065    0.0631          −0.0144           0.0024
+  4      −0.1034       0.0364    0.0312    0.0277          0.0731     −0.0338         −0.0908    0.0207           0.0308           0.0138
+  5      −0.0637       0.0260   −0.0277    0.0566        −0.0268       0.1035         −0.0132   −0.0042          −0.0334           0.0467
+  6      −0.0054       0.0318   −0.0196    0.0410          0.0075      0.0870          0.0256    0.0186          −0.0277           0.0252
+  7      −0.0801      −0.0476   −0.0418    0.0118          0.0769     −0.0349         −0.0632   −0.0268          −0.0432           0.0100
+  8      −0.0140       0.0646    0.0509   −0.0247          0.0122      0.0600         −0.0229    0.0655           0.0521          −0.0177
+  9       0.1070       0.0007    0.0145    0.0218        −0.0812       0.0622          0.0263    0.0188           0.0179           0.0390
+  10      0.0563       0.0249   −0.0505    0.0240          0.0244     −0.0220          0.0084    0.0211          −0.0466           0.0351
+  11      0.0295       0.0104   −0.0581    0.0176          0.0279     −0.1246         −0.0160    0.0301          −0.0551           0.0287
+  12     −0.0565       0.0608   −0.0021   −0.0429          0.0085     −0.0170         −0.0468    0.0763           0.0030          −0.0306
+  13      0.0533       0.0420   −0.0740    0.0231          0.0455     −0.0064          0.0553    0.0332          −0.0677           0.0370
+  14     −0.0214      −0.0289   −0.0522   −0.0003        −0.0652       0.0522         −0.0356   −0.0162          −0.0552          −0.0016
+  15      0.0429      −0.0986    0.0069    0.0236          0.0591     −0.0197          0.0559   −0.0999           0.0052           0.0295
+  16      0.0651      −0.1139    0.0578   −0.0028          0.0561     −0.0730          0.0482   −0.0988           0.0510          −0.0097
+  17     −0.0098       0.0477   −0.0274   −0.0814          0.0320      0.0227         −0.0004    0.0194          −0.0273          −0.0699
+  18     −0.0240       0.0604   −0.0531    0.0804          0.0252      0.0684          0.0105    0.0248          −0.0568           0.0648
+  19     −0.0593      −0.1484    0.1162   −0.0184        −0.1066       0.0944         −0.0304   −0.1532           0.1155          −0.0157
+  20      0.0150      −0.0034   −0.0183   −0.0076          0.0559      0.0768         −0.0269    0.0226          −0.0152           0.0096
+                                                      W1D: Columns 51−60
+ Row       51           52        53        54              55             56           57        58                59                60
+  1      −0.0759       0.1098    0.0588    0.0554         0.0759       −0.0059        −0.0671    0.0911           0.0725           0.0657
+  2      −0.0168      −0.0085    0.0630   −0.0489        −0.0677       −0.0185        −0.0136   −0.0504           0.0474          −0.0382
+  3      −0.0108      −0.0588   −0.0130    0.0294        −0.0150        0.0125        −0.0255   −0.0152           0.0090           0.0016
+  4       0.0816       0.0248   −0.0513    0.0452         0.0325       −0.0043         0.0894   −0.0121          −0.0755           0.0647
+  5      −0.0228       0.1051    0.0007    0.0114        −0.0319        0.0354        −0.0013    0.0214           0.0017           0.0485
+  6       0.0225       0.1299    0.0159    0.0486        −0.0272        0.0066         0.0399    0.0568           0.0006           0.0954
+
+                                                            51355                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                              ACS Omega 2026, 11, 51335−51359
+ACS Omega                                        http://pubs.acs.org/journal/acsodf                                                 Article
+
+Table 15. continued
+                                                      W1D: Columns 51−60
+ Row       51           52        53        54              55             56           57        58                59                60
+  7       0.0844      −0.0300   −0.0594    0.0765        −0.0416       0.0041          0.1005   −0.0588          −0.0962           0.1321
+  8       0.0185       0.0431   −0.0299    0.0555          0.0506     −0.0139          0.0059    0.0621          −0.0065           0.0312
+  9      −0.0873       0.0820   −0.0364   −0.0403          0.0151      0.0539         −0.1072    0.0843          −0.0266          −0.0515
+  10      0.0117      −0.0283   −0.0382   −0.0628        −0.0477       0.0504         −0.0083    0.0410          −0.0239          −0.1003
+  11      0.0221      −0.0933   −0.0322   −0.0076        −0.0564       0.0411          0.0125    0.0297          −0.0047          −0.0431
+  12      0.0130       0.0313   −0.0607    0.0456          0.0025     −0.0163          0.0027    0.0822          −0.0221          −0.0126
+  13      0.0468       0.0198    0.0375   −0.0253        −0.0699       0.0530          0.0310    0.0835           0.0552          −0.0545
+  14     −0.0750       0.0302   −0.0485    0.0073        −0.0567      −0.0066         −0.0675   −0.0186          −0.0606           0.0206
+  15      0.0612       0.0354    0.0738   −0.0312          0.0040      0.0291          0.0656    0.0129           0.0515          −0.0067
+  16      0.0556      −0.0607    0.0183   −0.0865          0.0503     −0.0195          0.0616   −0.1366           0.0323          −0.0711
+  17      0.0317       0.0880   −0.0075   −0.0487        −0.0286      −0.0651          0.0176    0.1243           0.0137          −0.0684
+  18      0.0367       0.0409    0.0196    0.0264        −0.0556       0.0487          0.0467    0.0295          −0.0242           0.0689
+  19     −0.0881       0.0798    0.0122   −0.0808          0.1178     −0.0172         −0.0826    0.0849          −0.0097          −0.0698
+  20      0.0457       0.0341   −0.0582   −0.0090        −0.0170       0.0256          0.0273    0.0426          −0.0281          −0.0227
+                                                      W1D: Columns 61−70
+ Row       61           62        63        64              65             66           67        68                69                70
+  1       0.0724      −0.0032   −0.0664    0.1092          0.0809      0.0604          0.0758   −0.0086          −0.0712           0.0635
+  2      −0.0683      −0.0202   −0.0139   −0.0503          0.0544     −0.0678         −0.0685   −0.0217          −0.0336          −0.0677
+  3      −0.0124       0.0135   −0.0317   −0.0437        −0.0042       0.0423         −0.0167    0.0148          −0.0161           0.0061
+  4       0.0301      −0.0109    0.0995    0.0241        −0.0807       0.0348          0.0320   −0.0193           0.0784           0.0794
+  5      −0.0366       0.0338    0.0002    0.0216          0.0519     −0.0237         −0.0316    0.0292          −0.0169          −0.0364
+  6      −0.0291      −0.0063    0.0520    0.1008          0.0296      0.0201         −0.0232   −0.0057           0.0473           0.1100
+  7      −0.0447       0.0074    0.1054   −0.0067        −0.0584       0.1151         −0.0400   −0.0050           0.0794          −0.0663
+  8       0.0533      −0.0156    0.0076    0.0411        −0.0378       0.0634          0.0516   −0.0157           0.0254           0.0796
+  9       0.0178       0.0556   −0.1124    0.0108        −0.0673       0.0021          0.0141    0.0626          −0.0943          −0.0212
+  10     −0.0452       0.0579   −0.0178    0.0272        −0.0933      −0.0503         −0.0476    0.0638          −0.0028           0.0744
+  11     −0.0549       0.0459    0.0036    0.0617        −0.0220       0.0055         −0.0595    0.0498           0.0197           0.1067
+  12      0.0055      −0.0082    0.0012    0.0445        −0.0377       0.0430          0.0034   −0.0032           0.0283           0.0565
+  13     −0.0671       0.0627    0.0189    0.0413          0.0685     −0.0119         −0.0667    0.0649           0.0400          −0.0068
+  14     −0.0589      −0.0080   −0.0711    0.0131        −0.0363      −0.0027         −0.0564   −0.0066          −0.0917           0.0061
+  15      0.0036       0.0259    0.0601    0.0907          0.0693     −0.0294          0.0050    0.0247           0.0396           0.1658
+  16      0.0485      −0.0257    0.0627   −0.1236          0.0267     −0.0965          0.0497   −0.0265           0.0578          −0.1267
+  17     −0.0243      −0.0660    0.0082    0.0611        −0.0050      −0.0484         −0.0257   −0.0613           0.0150           0.0569
+  18     −0.0562       0.0411    0.0459    0.0532          0.0208      0.0230         −0.0541    0.0321           0.0284           0.0342
+  19      0.1182      −0.0101   −0.0719    0.1626          0.0216     −0.0868          0.1184   −0.0151          −0.0731           0.1491
+  20     −0.0134       0.0283    0.0168    0.0064        −0.0758       0.0480         −0.0157    0.0352           0.0407           0.0384
+                                                      W1D: Columns 71−80
+ Row       71           72        73        74              75             76           77        78                79                80
+  1       0.0704       0.0553    0.0754   −0.0116        −0.0761       −0.0008         0.0423    0.0624           0.0737          −0.0171
+  2      −0.0057      −0.0899   −0.0688   −0.0199        −0.0459       −0.0480         0.0019   −0.0693          −0.0656          −0.0254
+  3       0.0957       0.0389   −0.0177    0.0116        −0.0030        0.0243         0.1269    0.0281          −0.0203           0.0111
+  4      −0.0751      −0.0083    0.0314   −0.0172         0.0569        0.1479        −0.0736    0.0296           0.0311          −0.0179
+  5       0.0308      −0.0452   −0.0331    0.0288        −0.0364       −0.0285        −0.0031   −0.0749          −0.0299           0.0187
+  6       0.0034       0.0126   −0.0259   −0.0010         0.0367        0.0870        −0.0167   −0.0143          −0.0220          −0.0022
+  7      −0.0634       0.0707   −0.0404   −0.0052         0.0550       −0.0911        −0.0200    0.0624          −0.0397          −0.0191
+  8      −0.0163       0.0761    0.0495   −0.0186         0.0343        0.0549        −0.0269    0.0794           0.0479          −0.0179
+  9      −0.0029       0.0520    0.0151    0.0610        −0.0703       −0.0805         0.0548    0.0329           0.0133           0.0637
+  10     −0.0366      −0.0428   −0.0450    0.0610         0.0133        0.0335        −0.0446   −0.0163          −0.0472           0.0682
+  11      0.0459       0.0058   −0.0578    0.0444         0.0432        0.0650         0.0406    0.0257          −0.0607           0.0506
+  12      0.0225       0.0571    0.0028   −0.0098         0.0518       −0.0006        −0.0209    0.0588          −0.0017          −0.0040
+  13      0.1763       0.0054   −0.0652    0.0586         0.0669        0.0024         0.1460    0.0176          −0.0702           0.0615
+  14     −0.0246      −0.0240   −0.0553   −0.0077        −0.1007        0.0282        −0.0371   −0.0176          −0.0512          −0.0117
+  15     −0.0397      −0.0246    0.0054    0.0277         0.0323        0.2159        −0.0363   −0.0283           0.0089           0.0184
+  16      0.0395      −0.1087    0.0471   −0.0328         0.0416       −0.1099         0.0028   −0.1101           0.0508          −0.0398
+  17      0.0240      −0.0127   −0.0261   −0.0635         0.0255        0.0730         0.0120   −0.0233          −0.0246          −0.0643
+  18     −0.0177       0.0402   −0.0559    0.0361         0.0110        0.0025        −0.0156    0.0516          −0.0543           0.0301
+  19      0.0006      −0.0987    0.1150   −0.0125        −0.0872        0.0641         0.0478   −0.1104           0.1134          −0.0209
+  20     −0.0991       0.0893   −0.0144    0.0323         0.0690        0.0185        −0.0874    0.0543          −0.0144           0.0298
+
+
+                                                            51356                                      https://doi.org/10.1021/acsomega.6c04451
+                                                                                                              ACS Omega 2026, 11, 51335−51359
+ACS Omega                                               http://pubs.acs.org/journal/acsodf                                                   Article
+
+Table 15. continued
+                                                             W1D: Columns 81−90
+ Row        81           82           83           84              85             86           87          88                89                90
+  1       −0.0758      −0.0249      0.0721       0.0824          0.0750        −0.0238       −0.0792    −0.0188            0.0532           0.0675
+  2       −0.0476      −0.0506      0.0404      −0.0360         −0.0668        −0.0216       −0.0540    −0.0963            0.0755          −0.0430
+  3       −0.0094       0.0389      0.1193      −0.0303         −0.0209         0.0026       −0.0059     0.0642            0.1232          −0.0152
+  4        0.0562       0.1695     −0.0777       0.0924          0.0295        −0.0026        0.0501     0.2338            0.0007           0.0284
+  5       −0.0247       0.0096     −0.0367      −0.0178         −0.0288         0.0171       −0.0298     0.0590           −0.0787          −0.0500
+  6        0.0450       0.0150     −0.0159       0.0037         −0.0189         0.0079        0.0545    −0.0631           −0.0404          −0.0520
+  7        0.0488      −0.0830      0.1241       0.0987         −0.0402        −0.0205        0.0304    −0.0820            0.2007           0.0596
+  8        0.0194      −0.0022      0.0172       0.0338          0.0464        −0.0214        0.0254    −0.0500            0.0166           0.0541
+  9       −0.0779      −0.0994      0.1304      −0.0500          0.0137         0.0559       −0.0653    −0.0942            0.1541          −0.0167
+  10       0.0074       0.0351     −0.0634      −0.0389         −0.0480         0.0604        0.0126     0.0439           −0.0828           0.0072
+  11       0.0438       0.0921     −0.0218       0.0066         −0.0618         0.0393        0.0530     0.1277           −0.0702           0.0659
+  12       0.0445      −0.0475     −0.0658       0.0083         −0.0020        −0.0136        0.0513    −0.0603           −0.1099           0.0528
+  13       0.0632       0.0131      0.0689      −0.0154         −0.0686         0.0472        0.0651     0.0562            0.0375          −0.0037
+  14      −0.0967       0.0551     −0.0652       0.0308         −0.0487        −0.0155       −0.1008    −0.0076           −0.0609          −0.0018
+  15       0.0283       0.2332      0.0253      −0.0184          0.0091         0.0165        0.0221     0.2271            0.0110          −0.0093
+  16       0.0423      −0.0356     −0.0090      −0.0829          0.0531        −0.0453        0.0448     0.0019           −0.0441          −0.0990
+  17       0.0129       0.0293     −0.0082      −0.0692         −0.0245        −0.0713        0.0146    −0.0008           −0.0570          −0.0301
+  18       0.0128      −0.0445     −0.0601       0.1033         −0.0554         0.0390        0.0009    −0.0679           −0.0770           0.0979
+  19      −0.0999       0.0382      0.0773      −0.1092          0.1096        −0.0188       −0.1056     0.0383            0.1048          −0.1236
+  20       0.0653       0.0730     −0.0139      −0.0436         −0.0149         0.0128        0.0759     0.1051           −0.0380          −0.0020
+
+manipulated factors, such as feed flow rates, feed temperatures,           TD3 and SAC and other sophisticated deep reinforcement
+and hot oil bath input, were taken into consideration. The                 learning algorithms, such as Proximal Policy Optimization
+findings shown that SAC and TD3 could both effectively                     (PPO), Deep Deterministic Policy Gradient (DDPG), and
+control the reactor temperature for the stepwise set point                 constrained reinforcement learning techniques, may be
+trajectory. While TD3 offered more deterministic control                   conducted. A multivariable control framework that simulta-
+behavior with consistent convergence features, SAC showed                  neously regulates reactor temperature and reactant concen-
+considerable exploratory activity and adaptive control action.             tration using a variety of manipulated inputs, including feed
+   From the comparative analysis, it was observed that the                 flow rates, feed temperatures, coolant flow rates, and heating/
+TD3-based controller produced slightly superior tracking                   cooling utility signals, can be developed from the current
+indices for most of the manipulated-variable combinations                  single-variable temperature regulation strategy.
+considered. In several cases, TD3 achieved lower values of                    Moving from simulation to real and long-term implementa-
+MAE, RMSE, ISE, IAE, and training time, indicating improved                tion opens up further possibilities. Hardware-in-the-loop
+tracking accuracy and faster convergence. SAC also provided                implementation on industrial platforms such as PLCs or
+acceptable closed-loop performance, but its manipulated-                   edge devices can be used to assess real-time inference, latency,
+variable profiles were generally more oscillatory because of               and compatibility with current control infrastructure. The
+the stochastic nature of the policy and entropy-driven                     framework can also be extended to include batch and
+exploration. Therefore, while both reinforcement learning                  semibatch reactors, online transfer learning for adjusting to
+controllers were effective, the overall trend suggests that TD3            catalyst deactivation, fouling, and sensor drift, decentralized
+offered a more balanced compromise between tracking                        control of interconnected reactor networks, and the incorpo-
+accuracy, convergence speed, and control stability for the                 ration of physics-informed neural networks to improve
+present CSTR temperature regulation problem.                               interpretability and reduce data requirements. Future research
+   Overall, the findings show that combining control-oriented              should focus on safety-critical RL with formal constraint
+nonlinear modeling with reinforcement learning is a potential              handling and fail-safe mechanisms, as well as promoting long-
+approach to practical CSTR temperature management. The                     term industrial viability through energy-aware rewards, model
+suggested methodology lowers reliance on solely mechanistic                compression, transfer learning, predictive maintenance, and
+models, increases adaptability to disturbances and uncertainty,            low-power edge deployment Table 15 .
+and facilitates the move from simulation-oriented studies to
+real-time deployable control structures. As a result, this study
+reinforces the argument for reinforcement learning-based
+                                                                           ■   ASSOCIATED CONTENT
+                                                                           Data Availability Statement
+temperature management of lab-scale Continuous Stirred
+Tank Reactors as a timely and relevant direction in advanced               The Open Loop data set of the CSTR setup is available in
+process control research.                                                  https://itarasu.com/downloads/
+   Building on the current work, future studies can concentrate
+on expanding the suggested reinforcement learning framework
+to more comprehensive, adaptable, and practically applicable
+                                                                           ■   AUTHOR INFORMATION
+                                                                           Corresponding Author
+reactor control scenarios. With a focus on sample efficiency,
+convergence speed, robustness under severe disturbances, and                 Thirunavukkarasu Indiran − Manipal Institute of Technology,
+final control performance, additional comparisons between                     Manipal Academy of Higher Education, Manipal, Karnataka
+                                                                   51357                                        https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                       ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                http://pubs.acs.org/journal/acsodf                                                          Article
+
+     576104, India; orcid.org/0000-0002-1829-7362;                              Chanona Industrial Engineering Chemistry Research. Ind. Eng. Chem.
+     Email: it.arasu@manipal.edu                                                Res. 2025, 64 (9), 4966−4978.
+                                                                                 (7) Veerasamy, G.; Balaji, S.; Kadirvelu, T.; Ramasamy, V.
+Authors                                                                         Reinforcement Learning Based Adaptive PID Controller for a
+                                                                                Continuous Stirred Tank Heater Process. Iran. J. Chem. Chem. Eng.
+   Jim George − Department of Electrical and Electronics
+                                                                                2025, 44 (1), 265−282.
+     Engineering, Muthoot Institute of Technology and Science,                   (8) Dai, Z. J.; Paudyal, S.; Dai, C.; Ko, S.; Zhao, Y.; Wang, X.; Li, W.;
+     Ernakulam, Kerala 682038, India                                            Lu, Y.-T.; Kan, A. T.; Tomson, M. B. A new CSTR method for scale
+   Anagha Ravikumar − Department of Electrical and Electronics                  inhibitor evaluation. Chem. Eng. J. 2022, 437, 135351.
+     Engineering, Muthoot Institute of Technology and Science,                   (9) Khatoon, B.; Kamil, S.; Babu, H.; Siraj Alam, M. Experimental
+     Ernakulam, Kerala 682038, India                                            analysis of Cascade CSTRs with step and pulse inputs. Mater. Today:
+   Erin Joshy − Department of Electrical and Electronics                        Proc. 2023, 78, 40−47.
+     Engineering, Muthoot Institute of Technology and Science,                   (10) Zhou, W.; Liu, H.; He, H.; Yi, J.; Li, T. Neuro-Optimal
+     Ernakulam, Kerala 682038, India                                            Tracking Control for Continuous Stirred Tank Reactor With Input
+   Alin Cheriyan − Department of Electrical and Electronics                     Constraints. IEEE Trans. Ind. Inform. 2019, 15 (8), 4516−4524.
+     Engineering, Muthoot Institute of Technology and Science,                   (11) Yu, M.; Li, B.; Zhao, S.; Roy, N.; Zhang, B. PPO-based resilient
+     Ernakulam, Kerala 682038, India                                            control framework for safer operation of exothermic CSTR. Process
+                                                                                Saf. Environ. Prot. 2025, 193, 558−576.
+Complete contact information is available at:                                    (12) Liu, J.; Ke, J.; Liu, J.; Xie, X.; Tian, E. Reinforcement Learning-
+https://pubs.acs.org/10.1021/acsomega.6c04451                                   Boosted Event-Triggered Reliability Control for Uncertain CSTR
+                                                                                System With Asymmetric Constraints. IEEE Trans. Reliab. 2025, 74
+Funding                                                                         (1), 2069−2081.
+                                                                                 (13) Liu, K.; Yang, X.; Lyu, S.; Wang, R.; Gao, C.; Liu, Y. Robust
+The work is funded under Manipal Academy of Higher
+                                                                                Adaptive Neural Network Control for Nonlinear CSTRs With
+Education, Manipal, Karnataka, India, under the seed money                      Prescribed Control Performance and Event-Triggered Inputs. In
+grant ID 0000860 grant ID 00001320.                                             IEEE Access. 2025, 13, 162611−162622.
+Notes                                                                            (14) Hassanpour, H.; Mhaskar, P. Neural network-based offset-free
+                                                                                model predictive control for nonlinear systems. AIChE J. 2026, 72
+The authors declare no competing financial interest.
+                                                                                (2), No. e70141.
+
+■    ACKNOWLEDGMENTS
+This work is performed at the Machine Learning and
+                                                                                 (15) Peterson, L.; Bremer, J.; Sundmacher, K. Challenges in data-
+                                                                                based reactor modeling: A critical analysis of purely data-driven and
+                                                                                hybrid models for a CSTR case study. Comput. Chem. Eng. 2024, 184,
+Advanced Process Control Lab, School of Electrical Engineer-                    108643.
+ing, Manipal Institute of Technology, Manipal Academy of                         (16) Banerjee, S.; Khan, O.; Mistiri, M. E.; Nandola, N. N.; Rivera,
+Higher Education, Karnataka, India. Thanks to the suggestions                   D. E. FAC-Pap. 2024, 58 (15), 420−425.
+                                                                                 (17) Dutta, D.; Upreti, S. R. A multiple neural network and
+made by Dr. Ravindra D. Gudi, Professor, Department of
+                                                                                reinforcement learning-based strategy for process control. J. Process
+Chemical Engineering, Indian Institute of Technology,                           Control. 2023, 121, 103−118.
+Bombay, India. Thanks to the suggestions made by Dr. J.                          (18) Wang, G.; Jia, Q.-S.; Qiao, J.; Bi, J.; Zhou, M. Deep Learning-
+Prakash, Professor at Instrumentation Engineering, Madras                       Based Model Predictive Control for Continuous Stirred-Tank Reactor
+Institute of Technology, Anna University, Chennai, Tamil-                       System. IEEE Trans. Neural Netw. Learn. Syst. 2021, 32 (8), 3643−
+nadu, India.                                                                    3652.
+
+■   ABBREVIATIONS
+CSTR, continuous stirred tank reactor; NARX, nonlinear
+                                                                                 (19) Alshammari, O.; Mahyuddin, M. N.; Jerbi, H. A Neural
+                                                                                Network-Based Adaptive Backstepping Control Law With Covariance
+                                                                                Resetting for Asymptotic Output Tracking of a CSTR Plant. In IEEE
+                                                                                Access. 2020, 8, 29755−29766.
+autoregressive exogeneous; RL, reinforcement learning; MV,                       (20) Zhang, X.; Song, X.; Shan, W.; Zhao, H.; Xin, L.-P. Iterative
+manipulated variable; Tr, reactor temperature; Tj, jacket                       Learning Observer-Based Predefined-Time Sliding Mode Control for
+temperature                                                                     Continuous Stirred Tank Reactor With Input and Output
+
+■   REFERENCES
+ (1) Nian, R.; Liu, J.; Huang, B. A review On reinforcement learning:
+                                                                                Constraints. In IEEE Access 2025, 13, 170268−170278.
+                                                                                 (21) Zhou, C.; Jia, L.; Li, J. Prescribed performance based direct
+                                                                                data-driven model predictive control for continuous stirred tank
+Introduction and applications in industrial process control. Comput.            reactor. J. Process Control. 2026, 157, 103609.
+Chem. Eng. 2020, 139, 106886.                                                    (22) Talaei, B. K.; Shahraki, F.; Sadeghi, J.; Khalilipour, M. M.
+ (2) Yang, X.; Wei, Q. Adaptive Critic Designs for Optimal Event-               Optimal metaheuristic state-dependent parameter proportional-
+Driven Control of a CSTR System. IEEE Trans. Ind. Inform. 2021, 17              integral-plus control: Alternative to gain-scheduled controller for
+(1), 484−493.                                                                   control of a nonlinear continuous stirred tank reactor. Syst. Soft
+ (3) Shi, H.; Wu, X.; Wang, G. Tracking Control of CSTRs Based on               Comput. 2023, 5, 200053.
+Improved OU Noise and the TD3 Algorithm. In IEEE Access 2025,                    (23) Salmi, T.; Tolvanen, P.; Eränen, K.; Wärnå, J.; Leveneur, S.;
+13, 94944−94952.                                                                Haario, H. Heikki Haario,Determination of kinetic constants by using
+ (4) Yang, X.; Meng, J.; Wei, Q. Dynamic Decentralized Event-                   transient temperature data from continuous stirred tank reactors.
+Triggered Tracking Control of Continuous Stirred Tank Reactor                   Chem. Eng. Sci. 2022, 248, 117164.
+Systems. IEEE Trans. Autom. Sci. Eng. 2025, 22, 16632−16643.                     (24) Fan, T.; Ding, Z. Optimal control of switched nonlinear
+ (5) Machalek, D.; Quah, T.; Powell, K. M. A novel implicit hybrid              systems with application to chemical processes. Chem. Eng. Sci. 2023,
+machine learning model and its application for reinforcement                    281, 119087.
+learning. Comput. Chem. Eng 2021, 155, 107496.                                   (25) Kumar, M.; Mehta, U.; Cirrincione, G. System identification of
+ (6) Bloor, M.; Ahmed, A.; Kotecha, N.; Mercangöz, M.; Tsay, C.;                a nonlinear continuously stirred tank reactor using fractional neural
+Del Río-Chanona, E. A. Calvin Tsay, and Ehecatl Antonio del Rio-   ́            network. S. Afr. J. Chem. Eng. 2024, 50, 299−310.
+
+                                                                        51358                                           https://doi.org/10.1021/acsomega.6c04451
+                                                                                                                               ACS Omega 2026, 11, 51335−51359
+ACS Omega                                                 http://pubs.acs.org/journal/acsodf                                Article
+
+ (26) Vásquez, M.; Yanascual, J.; Herrera, M.; Prado, A.; Camacho,
+O. A hybrid sliding mode control based on a nonlinear PID surface
+for nonlinear chemical processes. Eng. Sci. Technol. Int. J. 2023, 40,
+101361.
+ (27) Du, P.; Wilhite, B.; Kravaris, C. Model-based fault diagnosis in
+closed-loop safety-critical chemical reactors: An experimental study.
+AIChE J. 2025, 71 (9), No. e18906.
+ (28) Tang, X.; Xu, B. Reactor Temperature Compound Control
+Strategy Based on Disturbance Observer. In IEEE Access. 2023, 11,
+84554−84564.
+ (29) Selvamurugan, A.; Kumar, A. V.; Palan, H. R.; Simiyon, A.;
+Indiran, T. Reinforcement learning-based nonlinear model predictive
+controller for a jacketed reactor: A machine learning concept
+validation using Jetson Orin. ACS Omega 2025, 10, 30864−30878.
+ (30) Shah, P.; Kwon, J. S.-I. Lyapunov-constrained hybrid modeling
+for stable parameter learning in nonlinear systems. Ind. Eng. Chem.
+Res. 2025, 64, 24106−24119.
+ (31) Barreiro-Gomez, J.; Tembine, H. Gain-Scheduled Mean-Field-
+Type Control for a Non-Linear Continuous Stirred Tank Reactor. In
+IEEE Access. 2020, 8, 97783−97792.
+ (32) Nikolakopoulou, A.; Braatz, R. D. Polynomial NARX-based
+nonlinear model predictive control of modular chemical systems.
+Comput. Chem. Eng. 2023, 177, 108272.
+ (33) Liu, B.; Zhao, D.; Lu, X.; Liu, Y. ‘Process Control in
+Semiconductor Manufacturing Based on Deep Distributional Soft
+Actor−Critic Reinforcement Learning. IEEE T. Semicond. Manuf.
+2025, 38 (2), 210−231.
+ (34) Dogru, O.; Xie, J.; Prakash, O.; Chiplunkar, R.; Soesanto, J.;
+Chen, H.; Velswamy, K.; Ibrahim, F.; Huang, B. Reinforcement
+Learning in Process Industries: Review and Perspective. IEEE CAA J.
+Autom. Sin. 2024, 11 (2), 283−300.
+ (35) Zhang, Y.; Zhang, J.; Wu, G.; Zheng, J.; Liu, D.; An, Y. Optimal
+Power Dispatch of Active Distribution Network and P2P Energy
+Trading Based on Soft Actor-Critic Algorithm Incorporating
+Distributed Trading Control. J. Mod. Power Syst. Clean Energy 2024,
+13 (2), 540−551.
+
+
+
+
+                                                                         51359                 https://doi.org/10.1021/acsomega.6c04451
+                                                                                                      ACS Omega 2026, 11, 51335−51359
+
