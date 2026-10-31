@@ -200,8 +200,10 @@ Untested: libraries of close topics, where routing misses more.
 2. **Make routing + facts+prose a ugrc mode** (the pipeline to build on, `experiments/routed/`: BM25 over every page
    picks the paper, then that paper's facts+prose form, a free answer, then the Jev checker). First test routing where
    it is hard: done on 120 papers (`experiments/big-library/`): search-then-one-paper 304 of 388, as the right paper
-   handed over; sending the top 2 papers is worse (242), even only when search is unsure (`gated.py`). Next: routing
-   on short questions without subject words.
+   handed over; sending the top 2 papers is worse (242), even only when search is unsure (`gated.py`). Short
+   questions without subject words (`experiments/short-route/`, search only): right paper 360 of 388 instead of
+   381; a score-gap flag (`unsure.py`, 0.85) marks 57 questions holding 21 of the 28 misses. Next: answer the short
+   questions (top1, and the right paper for the misrouted ones) to measure the cost; try asking the user when unsure.
 3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a
