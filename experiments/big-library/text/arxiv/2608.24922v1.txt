@@ -1,0 +1,1031 @@
+arXiv:2608.24922v1 [physics.chem-ph] 18 Aug 2026
+
+Multi-Species Multi-Reaction Model
+Parametrization of a Commercial NCA Positive
+Electrode from Half-Cell Open-Circuit Potential
+Data
+Michele Galasso1*, Petr Čech2,3 , Ivo Horstkötter4 ,
+Simon Schwunk5 , Zuzana Vlčková Živcová2 , Václav Knap1
+1
+
+Department of Electrotechnology, Faculty of Electrical Engineering,
+Czech Technical University in Prague, Prague, Czech Republic.
+2
+Heyrovský Institute of the CAS, v. v. i., Prague, Czech Republic.
+3
+Department of Physical and Macromolecular Chemistry, Faculty of
+Science, Charles University, Prague, Czech Republic.
+4
+Chair of Vehicle Mechatronics, Dresden University of Technology,
+Dresden, Germany.
+5
+Department of Storage System Cell and Control, Dr. Ing. h.c. F.
+Porsche AG, Weissach, Germany.
+
+*Corresponding author(s). E-mail(s): galasmic@cvut.cz;
+Abstract
+Physics-based models of lithium-ion batteries require the open-circuit potential (OCP) of each electrode as a function of its lithiation. The multi-species
+multi-reaction (MSMR) model provides a compact, thermodynamically grounded
+description of this relationship, representing each insertion reaction by a standard potential, a site fraction and a disorder parameter. Here, we parametrize
+the MSMR model for nickel-cobalt-aluminum oxide (NCA), a cathode chemistry widespread in automotive cells, using the positive electrode of a commercial
+silicon-graphite/NCA cell. Cathode material was harvested from a pristine cell
+and from cells cycle-aged to the end of life under two state-of-charge windows, and its half-cell OCP was measured by slow galvanostatic cycling. Smooth
+differential-capacity curves were obtained by histogram counting, and the charge
+and discharge branches were fitted with a constrained, scale-invariant optimization that keeps every reaction anchored to a visible peak. We report the first
+
+1
+
+MSMR parameter set for an NCA cathode and show, through a differentialcapacity peak analysis across aging states, that its thermodynamic signature
+is essentially unchanged by aging. This finding supports the common modeling
+practice of holding the electrode’s intrinsic parameters fixed and ascribing aging
+to electrode-level capacity and alignment changes.
+Keywords: Electrochemistry, Intercalation compounds, Thermodynamics,
+Multi-species multi-reaction model, NCA cathode
+
+1 Introduction
+Lithium-ion batteries are the energy-storage technology of choice for electric mobility,
+and their safe and efficient operation depends on a battery management system (BMS)
+that continuously estimates internal quantities such as the state of charge (SOC), state
+of health (SOH) and the available energy and power [1, 2]. Almost every state estimation strategy relies, directly or indirectly, on a model of the cell open-circuit voltage
+(OCV) as a function of SOC, because the OCV ties the measurable terminal voltage to the otherwise unobservable lithiation state of the electrodes [1, 3]. Designing
+OCV models that are simultaneously accurate, physically interpretable, and inexpensive enough to run on embedded hardware is therefore a central problem in battery
+modeling.
+At the cell level, the OCV is the difference between the open-circuit potentials
+(OCPs) of the positive and negative electrodes, each expressed as a function of its
+local stoichiometry. Two broad families of OCP representations are used in practice.
+The first stores the measured potential in a lookup table or fits it with a closed-form
+empirical expression [1]. Such forms can reproduce measured data closely, but they
+carry no explicit connection to the electrochemical processes inside the electrode, which
+limits their ability to adapt as the cell ages. The second family is rooted in equilibrium
+thermodynamics and seeks to describe the OCP from first principles, so that the fitted
+quantities retain a physical meaning [4–6]. The latter approach is attractive precisely
+because aging predominantly alters a small number of physically meaningful quantities
+(the amount of cyclable lithium and the amount of active material in each electrode),
+rather than the intrinsic shape of the electrode OCP curves [7, 8].
+Among physics-based descriptions, the multi-species multi-reaction (MSMR)
+model [5, 6] has emerged as a particularly convenient framework. The model treats
+intercalation as a set of independent reactions, or “galleries”, each described by three
+parameters: a standard potential Uj0 , a site fraction Xj and a disorder factor ωj .
+Beyond its simplicity, the model has the advantage of providing analytically differentiable expressions for both the OCP and the differential capacity, making possible a
+simple and lightweight software implementation. In the MSMR model, each Uj0 marks
+a phase transition that appears as a peak in the differential capacity curve, which
+both aids the diagnosis of electrode behavior and provides a natural way to initialize
+a parameter fit by inspection [3, 6]. This model has been parametrized for a range
+
+2
+
+of active materials, including graphite, silicon, lithium iron phosphate (LFP), spinel
+manganese oxide (LMO) and layered nickel-manganese-cobalt oxide (NMC) [3, 5, 6].
+The interpretability of the MSMR parameters underpins a widely used modeling
+strategy for aging: the intrinsic gallery parameters {Uj0 , Xj , ωj } of each electrode
+are held fixed at their beginning-of-life (BOL) values, and degradation is captured by
+adjusting only a few cell-level quantities, namely the two electrode capacities and the
+relative alignment of the electrode stoichiometry windows, from which loss of lithium
+inventory (LLI) and loss of active material (LAM) at each electrode can be computed [8]. This separation keeps the aging model simple and well suited to on-line
+state estimation, but it relies on the assumption that the shape of each electrode OCP
+curve is invariant under aging. Recent half-cell measurements support this assumption
+for nickel-rich cathodes: Schmitt et al. found that the OCP of an NMC-811 positive
+electrode is essentially unchanged with cycle aging, whereas the change observed in a
+silicon-graphite negative electrode is dominated by the diminishing capacity contribution of silicon rather than by a change in the underlying potential of either phase [7]. A
+reliable BOL parametrization of each electrode is, therefore, the foundation on which
+such aging-aware models are built.
+Two obstacles stand between this attractive framework and its routine use. The
+first is methodological. Extracting MSMR parameters from half-cell data is not
+straightforward: low-rate cycling data are corrupted by measurement noise and voltage
+quantization (the “data-quality” problem), constant-current cut-offs can leave part of
+the curve unmeasured (the “missing-data” problem), and practical voltage limits lead
+to electrode states that are never fully (de)lithiated, so the measured stoichiometry is
+only relative (the “inaccessible-lithium” problem). Lu et al. recently formalized these
+problems and proposed a systematic processing pipeline to address them [3], while
+related approaches estimate electrode-level MSMR parameters directly from whole-cell
+data [9]. Nevertheless, the optimization problem for determining MSMR parameters
+remains prone to non-physical local minima, in which fitted galleries no longer correspond to visible differential-capacity features, or in which
+P the recovered site fractions
+depart from the model’s own conservation constraint j Xj = 1. The site fractions of
+the NMC-811 set of Garrick et al., for instance, sum to 0.91 [10]. A total that departs
+from unity is a natural outcome of an unconstrained least-squares fit, and is innocuous
+when the parameters serve as an interpolation of the measured curve; it matters when
+the Xj are read as site fractions, and, looking at the parameter set alone, it cannot be
+told apart from a deliberate renormalization of the accessible capacity. Enforcing the
+constraint during the fit removes this ambiguity. The second obstacle is a simple but
+important gap in the literature: although MSMR parameter sets have been published
+for graphite, silicon, LFP, LMO and NMC, to the best of our knowledge no MSMR
+parametrization has been reported for nickel-cobalt-aluminum oxide (NCA), despite
+the abundance of NCA cathodes in automotive cells [11].
+In this work, we address both gaps using a commercial silicon-graphite/NCA cell,
+the Molicel INR-18650-M35A, whose cathode chemistry is identified as NCA by the
+cell’s UN 38.3 transport-test report [12]. We harvested cathode material from a pristine
+cell and from cells cycle-aged to the end of life (EOL) under two different SOC windows, we assembled coin cells against lithium metal and measured the cathode OCP
+
+3
+
+by slow cycling. Following the pipeline of Lu et al., we use the histogram-counting
+method to obtain smooth differential-capacity curves and the separate-branch MSMR
+fit (their “Method 5”) to recover the absolute-stoichiometry OCP relationship.
+The specific contributions are threefold. First, we report, to our knowledge for the
+first time, an MSMR parameter set for an NCA cathode, fitted on both the lithiation and delithiation branches and averaged in the hypothesis of a purely dynamical
+hysteresis. Second, through a peak analysis of the differential-capacity curves at different aging states, we show that the cathode thermodynamic signature is essentially
+unchanged by aging, providing direct support, for NCA, to the common practice of
+keeping the gallery parameters constant across aging and attributing the whole-cell
+OCV variations to electrode-level capacity and alignment changes, in the same spirit
+as the NMC results of Schmitt et al. [7]. Third, we improve the robustness of the fit
+by constraining each Uj0 to lie within ±30 mV of an initial guess read directly from
+the differential capacity peaks and by enforcing site conservation. This anchors every
+gallery to an observed feature, which resolves the degeneracy between broad, nearly
+flat galleries and the accessible-stoichiometry window, and it is what gives the fitted
+parameters their interpretation: only a gallery that corresponds to a phase transition
+can be expected to survive aging unchanged, as the analysis of Section 4 assumes. In
+addition, we use an improved, scale-invariant cost function to prevent the optimizer
+from collapsing the accessible-stoichiometry window. Viewed as a whole, this work
+brings together in a single framework the MSMR description of Verbrugge and coworkers [5, 6], the half-cell processing pipeline of Lu et al. [3] and the aging-invariance
+question investigated by Schmitt et al. [7], and extends their combination to a material’s chemistry and to aging states that none of them covered. The analysis here is
+restricted to the NCA cathode, since the treatment of a silicon-graphite anode involves
+a higher number of galleries and brings about the additional complexity of separating
+the contributions from the two active materials to the electrode OCP. We leave the
+parametrization of the anode material to a future work.
+The remainder of the paper is organized as follows. Section 2 describes the cycleaging campaign, cell teardown and coin-cell fabrication, and the slow-cycling protocol.
+Section 3 recalls the MSMR model, details our optimization procedure and presents the
+cost function. Section 4 discusses the extracted OCP curves, the histogram smoothing,
+the differential-capacity peak analysis across aging states, and the fitted and averaged
+MSMR parameters. Section 5 places the contributions in the context of previous work
+and discusses the methodological choices, the limitations of the study and the outlook.
+Finally, Section 6 presents the conclusions.
+
+2 Experimental
+The cycle-aged cells used in this work come from a larger aging campaign carried out on
+commercial Molicel INR-18650-M35A cells. Here, we summarize the testing procedure
+only briefly and refer the reader to the original publication for further details [13].
+Eight cells were tested: two were cycled over a full-SOC window (0–90 %), two over
+a low-SOC window (0–30 %), two over a middle-SOC window (30–60 %) and two over
+a high-SOC window (60–90 %). The battery tester Neware BTS4000-5V12A was used
+
+4
+
+Fig. 1 Aging status of the eight Molicel INR-18650-M35A undergoing cycle aging. For each cycling
+window, each cell is displayed with a different line style (solid and dashed). Cells aged at full-SOC
+and low-SOC conditions reached the EOL. The capacity oscillation observed at about 1800 EFC is
+most probably due to a malfunctioning of the temperature chamber.
+
+for testing the cells, while the ambient temperature was held at 25 ◦ C using a Memmert
+ICP260+ chamber. The cycling current was set to C/2 for both charge and discharge.
+Here and in the following, the C-rate expresses the current relative to the capacity of
+the cell under test: a current of 1 C transfers the full cell capacity in 1 h, so that, for
+example, C/2 completes a charge or discharge in 2 h. Testing two nominally identical
+cells per condition allowed us to quantify the cell-to-cell variation of the capacity fade
+along a given aging path. Cycling over different SOC windows, in turn, was intended
+to activate different degradation mechanisms at the active-material level [14, 15]; these
+generally lead to different changes in the full-cell OCV and in the electrode OCP
+curves, even when two aging paths are compared at the same SOH [7, 8].
+The residual capacity was measured during a checkup (CU) phase carried out every
+120 equivalent full cycles (EFC). The CU phase also included a dynamic part based
+on the worldwide harmonized light vehicles test procedure (WLTP) [16], which is not
+used in this work. The two pairs of cells cycled over the full- and the low-SOC windows
+reached their EOL state, which we define as the point at which the CU can no longer
+be completed, because the cell capacity and internal resistance have changed so much
+that the dynamic part can no longer be run without violating the safety voltage limits.
+This typically corresponds to a SOH below 80 %, as shown in Fig. 1. Apart from the
+EOL point of the cells cycled at low SOC, the cell-to-cell differences in SOH remain
+below 1 % and can therefore be neglected. One cell from each of these two pairs was
+disassembled in the present work to fabricate half-cells.
+A total of three cylindrical cells were disassembled: a pristine one, one cell cycleaged in the full-SOC window and one cell cycle-aged in the low-SOC window. Before
+disassembly, each cell was discharged with a constant current of C/2 to 2.5 V and
+then held at 2.5 V until the current dropped below C/100, as done in a previous
+study [17]. Fully discharging the cells in this way minimizes their residual energy and
+
+5
+
+lowers the safety risk during opening [18]. The pristine cell was opened in a nitrogenfilled glovebox (VGB-2Y, MTI Corporation), whereas the aged cells were opened in
+an argon-filled glovebox (GS Mega E-Line). The cell can was cut with a pipe cutter
+along the groove running around the cell near the cathode terminal, after which it was
+peeled back with pliers and the jelly roll was unrolled. Rectangular samples were cut
+from the electrode sheets. Since the current collector is coated with active material
+on both sides, whereas a single-coated electrode is required to build the coin cells,
+the active material was removed mechanically from one side of the electrode sheet
+by scraping with cotton swabs wetted with water (for the pristine cell) or dimethyl
+carbonate (for the aged cells). Circular samples 9.5 mm in diameter were then punched
+from the single-coated sheets and transferred out of the glovebox.
+The half-cells were assembled as CR2032 coin cells in an argon-filled glovebox
+(Jacomex). A lithium metal disk (thickness 0.6 mm, 99.9 %, Merck) served as the
+counter and reference electrode, and the prepared sample as the working electrode.
+A Whatman glass fiber separator (borosilicate glass microfiber, nominal particle
+retention 1.5 µm) was placed between the electrodes and soaked with an electrolyte
+consisting of 1 M LiPF6 in EC/DMC (1:1, v/v). After assembly, the coin cells were
+left at open-circuit conditions for 24 h to let the electrolyte soak into the electrodes.
+We manufactured a total of nine coin cells, three for each aging state of the cathode,
+which we marked as B1, B2, B3 for the BOL condition, F1, F2, F3 for those whose
+active material was aged under full-SOC cycling, and L1, L2, L3 for those whose active
+material was aged under low-SOC cycling. Cell L3 displayed zero voltage after manufacturing (short-circuited), while the other eight cells underwent low-current cycling
+to measure the OCP.
+The cycling current was derived from the mass of active material and the specific
+capacity of NCA. Before assembling the coin cells B1, B2 and B3, each electrode
+disk was weighed after the coating had been removed from one side, using a precision
+balance (Ohaus PR224). As a reference, an identical disk was weighed with the coating
+still present on both sides. The active-material mass of each single-coated disk was
+then obtained as the difference between the double-coated and single-coated masses
+(Table 1). Rounding the active-material mass up to 18 mg and assuming a typical
+accessible NCA capacity of 200 mAh/g in commercial cells [19], we obtain a coin-cell
+capacity of 3.6 mAh. Aiming at a rate of C/100, we therefore cycled the coin cells
+at a constant current of 36 µA. The cathode half-cells were cycled between 3.0 and
+4.3 V for four full cycles, each consisting of a constant-current (CC) charge to 4.3 V
+followed by a CC discharge to 3.0 V. A 6 h rest was inserted after every charge and
+discharge step to allow the cell voltage to relax. Cycling was performed with a Neware
+BTS4000-5V50mA battery tester, while the temperature was maintained at 25 ◦ C
+using a Neware MHW-25-S-16CH thermal chamber.
+
+3 Methods
+Because we cycle each half cell directly between the two voltage cut-offs at 36 µA, we
+assign a relative degree of lithiation θ̃ = 0 to the state reached at the upper cut-off
+vmax = 4.3 V, where the cathode is most delithiated, and θ̃ = 1 to the state reached
+
+6
+
+Coin
+cell
+
+Mass
+(double-coated) [mg]
+
+Mass
+(single-coated) [mg]
+
+Mass
+(active material) [mg]
+
+B1
+B2
+B3
+
+37.5
+
+20.2
+19.9
+20.3
+
+17.3
+17.6
+17.2
+
+Table 1 Masses of the three circular cathode disks punched from the pristine
+cell, from which the coin cells B1, B2 and B3 were built. A single representative
+double-coated disk was also weighed; its mass is therefore common to all rows.
+The active-material mass of each disk follows as the difference between the
+double-coated and the single-coated masses.
+
+at the lower cut-off vmin = 3.0 V, where it is most lithiated. With this definition each
+branch spans the whole interval θ̃ ∈ [0, 1] by construction, so we do not encounter the
+“missing-data” problem of Lu et al. [3], that is the unobservability, for certain calibration protocols, of the portion of the discharge curve near θ̃ = 1 and of the charge curve
+near θ̃ = 0. We are therefore left only with the “data-quality” problem (the spurious
+peaks and oscillations that voltage quantization and measurement noise introduce in
+the differential capacity when the raw voltage is numerically differentiated) and the
+“inaccessible-lithium” problem (the fact that, owing to the finite cut-off voltages, the
+electrode is neither fully delithiated at θ̃ = 0 nor fully lithiated at θ̃ = 1).
+The raw charge and discharge OCP curves were taken from the measured voltage during the fourth and last cycle. Voltage was sampled at 1 s intervals, while the
+capacity was obtained by integrating the constant current. Figure 2 plots the measured voltage against the computed relative degree of lithiation for the four cycles of
+cell B2: the first charge curve is a clear outlier and the Coulombic efficiency stabilizes
+progressively over the subsequent cycles. We attribute this behavior to the formation
+processes taking place during the initial cycles and therefore extract the OCP from
+the fourth cycle, which is the most stable. We chose cell B2 to represent the BOL state
+because cell B1 short-circuited shortly after the test started, while cell B3 displayed a
+much larger current offset (2.26 %) than B2 (0.18 %), degrading the quality of its raw
+data. Cells F3 and L1 were selected for the full-SOC and low-SOC states on the basis
+of analogous observations.
+We address the “data-quality” problem with the histogram-counting method of Lu
+et al. [3], which avoids the noise amplification inherent in numerically differentiating
+the raw voltage. The measured voltage window is divided into equally sized bins of
+width ∆v , and the data points falling in each bin are counted. Since the voltage is
+sampled at a constant time interval and the current is constant, the number of samples
+in a bin is proportional to the charge passed while the cell traversed that voltage
+interval, and therefore to the differential capacity dθ̃/dŨocp . A smoothed OCP curve
+is then recovered by integrating the smoothed differential capacity. For our cathode
+half-cells we adopt a bin width ∆v = 0.01 V, which balances the smoothing of the flat
+regions against the retention of peaks (Fig. 3).
+Once the “data-quality” problem has been solved, we are left with the “inaccessiblelithium” problem, which we solve by fitting the MSMR model to obtain a mathematical
+description of the OCP curve defined at all values of the absolute stoichiometry. The
+7
+
+Fig. 2 Measured voltage versus computed relative degree of lithiation for the four cycles of cell
+B2, one of the coin cells fabricated from pristine cathode material. Solid lines denote the charge
+(delithiation) branches and dashed lines the discharge (lithiation) branches. The first charge curve is a
+clear outlier, attributed to the formation processes occurring during the initial cycles, after which the
+Coulombic efficiency progressively stabilizes. The inset bars show the discharge capacity of each cycle.
+
+OCP of an intercalation electrode departs from ideal Nernstian behavior because
+lithium insertion proceeds through several structurally distinct phases, producing a
+sequence of plateaus in the equilibrium-potential curve. The MSMR model of Verbrugge et al. [6] captures this behaviour by representing the electrode as a set of J
+independent insertion reactions (or “galleries”) operating in parallel, each described
+by a thermodynamic relation between its equilibrium potential and its fractional
+occupancy. For gallery j ,
+
+
+
+Xj − xj
+ln
+,
+f
+xj
+
+ωj
+Uj = Uj0 +
+
+f=
+
+F
+,
+RT
+
+(1)
+
+where Uj0 is the standard potential of the reaction, ωj a dimensionless disorder parameter (ωj → 0 yields a step-like, ideal two-phase plateau, ωj = 1 the single-phase Nernstian
+limit, and ωj > 1 a disordered, solid-solution insertion), and Xj the fraction of the total
+PJ
+host sites belonging to gallery j (so that j=1 Xj = 1). The variable xj is the occupancy of gallery j expressed as a fraction of the total host sites, so that 0 ≤ xj ≤ Xj
+PJ
+and the electrode stoichiometry is θ = j=1 xj . Here F , R and T are Faraday’s constant, the gas constant and the absolute temperature, respectively. At equilibrium all
+galleries share the common electrode potential, Uocp = Uj for all j .
+Inverting (1) for the occupancy of each gallery and summing over all galleries gives
+the electrode stoichiometry as an explicit function of potential,
+
+θ(Uocp ) =
+
+J
+X
+
+Xj
+
+,
+0 )/ω
+1
++
+exp
+f
+(
+U
+−
+U
+ocp
+j
+j
+j=1
+
+8
+
+(2)
+
+Fig. 3 Calculation of the differential capacity with the histogram method for the BOL charge curve.
+The value ∆v = 0.01 V provides a compromise between smoothing unphysical oscillations in the flat
+regions of the differential capacity and preserving the peaks.
+
+whose derivative yields the differential capacity in closed form,
+J
+X
+Xj f
+dθ
+=−
+n
+dUocp
+ωj
+j=1
+
+
+
+exp f (Uocp − Uj0 )/ωj
+
+o2 .
+1 + exp f (Uocp − Uj0 )/ωj
+
+(3)
+
+Equation (3) maps each potential plateau onto a peak in dθ/dUocp centred at Uj0 ,
+with a width governed by ωj and an area set by Xj ; this correspondence makes the
+differential-capacity curve a convenient template for initializing the MSMR model
+parameters.
+Because the half cell is cycled only between the cut-off voltages vmin and vmax ,
+the experiment never spans the full lithiation range of the NCA electrode: it accesses
+only θ ∈ [θmin , θmax ], where θmin and θmax are the (unknown) absolute stoichiometries reached at vmax and vmin , respectively. The processed discharge/charge data
+therefore yield a relative stoichiometry θ̃ ∈ [0, 1] and a corresponding relative OCP
+Ũocp (θ̃), related to the absolute quantities required by a physics-based model through
+the transformation
+
+θ = θmin + θ̃ (θmax − θmin )
+Uocp (θ) = Ũocp (θ̃)
+dθ
+dUocp (θ)
+
+= (θmax − θmin )
+
+9
+
+(4)
+(5)
+
+dθ̃
+dŨocp (θ̃)
+
+(6)
+
+The potential itself is unchanged by the transformation (only the abscissa is rescaled)
+while the differential capacity is scaled by the constant factor (θmax −θmin ). Recovering
+θmin and θmax is thus equivalent to resolving the inaccessible-lithium problem, and is
+precisely what allows Ũocp (θ̃) to be re-expressed as the absolute Uocp (θ).
+We fit the MSMR model parameters with the trust-region constrained algorithm
+(trust-constr), a member of the trust-region class of methods [20], as implemented
+in SciPy [21]. The number of galleries J is fixed beforehand to match the number
+of visible peaks in the measured differential capacity, and the remaining parameters
+are collected in the vector p = {θmin , θmax , Uj0 , Xj , ωj }Jj=1 . Because the optimizer is
+sensitive to the starting point, the initial guesses are read directly from the differentialcapacity curve: Uj0 from the peak positions, ωj from the peak widths in the plot of
+dθ̃/dŨocp versus Ũocp , and Xj from the peak extents in the plot of dθ̃/dŨocp versus
+θ̃. At each iteration, the current estimates of θmin and θmax convert the processed
+data to absolute coordinates through Eqs. (4)–(6), yielding the target stoichiometry
+θndata and differential capacity (dθ/dUocp )data
+at each of the N sampled voltages,
+n
+while (2) and (3) supply the corresponding model values θnmodel and (dθ/dUocp )model
+.
+n
+The parameters are then identified as
+N
+X
+ data
+2
+1
+θn − θnmodel
+p = arg min
+2
+(
+θ
+−
+θ
+)
+p
+max
+min
+n=1
+"
+data 
+model #2 !
+dθ
+dθ
++w
+−
+,
+dUocp n
+dUocp n
+∗
+
+(7)
+
+where the sum runs over the N sampled voltages and the scalar weight w balances
+the OCP residual against the differential-capacity residual. As in the work by Lu et
+al. [3], we use w = 0.001 V2 . To enforce physical bounds and reduce the size of the
+0
+search space, we constrain the
+Poptimized values of Uj to lie within 30 mV of their
+initial guesses, and we impose j Xj = 1 and ωj ∈ [0.001, 6.0). The lower bound on ωj
+avoids infinitely sharp peaks, while the upper bound prevents the fitting of excessively
+broad peaks, which would absorb the background noise and lose their correspondence
+with a phase transition in the active material. The ±30 mV constraint on Uj0 , which
+may seem stringent at first sight, keeps every gallery anchored to a visible peak in the
+differential capacity and prevents the optimizer from replacing it with a broad, featureless “background” gallery that lowers the cost function without corresponding to any
+observable peak. Such a gallery appears in the widely used graphite parametrization of
+Verbrugge et al. [6], where one reaction is broad enough to have no distinct counterpart
+in the measured differential capacity. The present constraint is designed to keep every
+gallery tied to a measurable feature and therefore physically interpretable.
+Our cost function (7) differs from that of Lu et al. [3] by the additional factor 1/(θmax − θmin )2 . We found this modification indispensable: since both residuals
+in (7) scale with (θmax − θmin ) through the change of coordinates of Eqs. (4)–(6), the
+unscaled cost can be reduced artificially, on the very same experimental data, simply
+by shrinking the accessible span (θmax − θmin ). Normalizing by (θmax − θmin )2 makes
+
+10
+
+the cost invariant to this trivial rescaling and prevents the optimizer from collapsing
+the stoichiometry window.
+
+4 Results
+The determination of the MSMR model parameters proceeds in three steps. First,
+we analyze how the differential-capacity peaks evolve across aging states and use this
+analysis to fix the number of modeled reactions J . Second, we refine the initial guesses
+read from the differential capacity plotted against the experimental voltage and the
+relative degree of lithiation. Finally, we run the trust-constr optimizer to obtain the
+converged MSMR parameters.
+
+4.1 Peak analysis
+The number of reactions J used to model the electrode response is chosen from the
+number of visible peaks in the differential-capacity plot. Figure 4 shows the differential
+capacity versus the experimental voltage Ũocp (left) and versus the relative degree of
+lithiation θ̃ (right) at the three aging states, separately for the (a) charge and (b)
+discharge curves. The guessed values of Uj0 correspond to the peak positions in the
+left plots, the Xj to the θ̃-interval spanned by each peak in the right plots, and the
+ωj are obtained from the full width at half maximum (FWHMj ) of the peaks in the
+left plots, which for a single gallery is related to ωj by
+4 ln(1 +
+FWHMj =
+f
+
+√
+
+2)
+
+ωj .
+
+(8)
+
+For the charge curve, both the BOL cathode and the EOL cathode aged with
+full-SOC cycling (SOH = 76 %) display four peaks, whose positions Uj0 shift by no
+more than 40 mV from one aging state to the other, while the Xj and ωj vary by
+less than 50 % across aging states. We stress, however, that these two parameters are
+only approximate, being harder to estimate manually than Uj0 . In the full-SOC-aged
+cathode (orange curve in Fig. 4a), peak 1 is beginning to split into two, but we assume
+it can still be modeled by a single peak centered between them.
+The EOL cathode aged with low-SOC cycling (SOH = 65 %, green curve in Fig. 4a)
+stands apart, displaying five peaks: the splitting of peak 1 already noticed in the
+full-SOC-aged cathode is now much more pronounced, to the point that the new
+peak would require its own set of MSMR parameters. Peak 1 is the electrochemical
+fingerprint of the phase transition between the hexagonal H1 and the monoclinic M
+phases of the Ni-rich layered oxide [22, 23], and its splitting could reflect an aginginduced inhomogeneity of the cathode, which separates into two populations that
+undergo the H1 → M transition at slightly different standard potentials. Apart from
+this feature, the remaining peaks are essentially unchanged. Since peak 1 shows no
+sign of splitting in the pristine cathode, and obtaining differently aged EOL cathodes
+requires an expensive and time-consuming experimental effort, we model NCA with
+J = 4 at all aging states, using the MSMR model parameters fitted on BOL data. The
+error introduced by this choice is quantified at the end of the section.
+11
+
+Fig. 4 Differential capacity versus the experimental voltage (left) and the relative degree of lithiation
+(right), overlaid and colour-coded by aging state (BOL, full SOC, low SOC), for (a) the charge and
+(b) the discharge OCP curves of the three test cells. The dashed vertical lines mark the standard
+potentials Uj0 ; the colour-matched boxes report the corresponding Uj0 and ωj (left) and the site
+fractions Xj (right).
+
+The discharge curve, shown in Fig. 4b, behaves similarly. The BOL cathode and
+the full-SOC-aged cathode each display four distinguishable peaks, and, unlike the
+corresponding charge curve, the full-SOC-aged discharge curve shows no evident peak
+splitting. For the low-SOC-aged cathode, however, both peak 2 and peak 3 split into
+two distinguishable peaks, which we again attribute to the aging-induced inhomogeneity of the electrode. Apart from these two extra peaks, the remaining features do not
+12
+
+Charge
+
+Discharge
+
+Parameter
+
+Initial
+
+Refined
+
+Initial
+
+Refined
+
+U10
+U20
+U30
+U40
+
+3.57
+3.74
+4.01
+4.19
+
+3.57
+3.69
+4.01
+4.19
+
+3.51
+3.66
+3.99
+4.15
+
+3.51
+3.66
+3.99
+4.15
+
+X1
+X2
+X3
+X4
+
+0.2873
+0.3025
+0.2485
+0.1617
+
+0.1873
+0.4525
+0.2485
+0.1117
+
+0.1981
+0.4176
+0.2374
+0.1469
+
+0.0981
+0.5176
+0.2374
+0.1469
+
+ω1
+ω2
+ω3
+ω4
+
+0.88
+3.09
+1.88
+0.88
+
+0.88
+3.09
+1.88
+0.68
+
+1.55
+3.86
+1.88
+0.88
+
+1.55
+3.86
+1.88
+0.68
+
+Table 2 Initial guess of the MSMR model
+parameters for the BOL cathode, read directly from
+the differential-capacity peaks of Fig. 4, and the
+manually refined guess from which the optimizer is
+launched. The standard potentials Uj0 are given in
+volts; the site fractions Xj and disorder factors ωj are
+dimensionless. In both guesses θmin and θmax are
+initialized at 0.03 and 0.99, respectively.
+
+change substantially: as for the charge curve, the Uj0 shift by less than 40 mV and the
+Xj and ωj by less than 50 % relative to their BOL values.
+
+4.2 Refinement of the initial guess
+Before launching the optimizer, the initial guess of MSMR model parameters from the
+peak analysis is refined manually: the parameters are adjusted slightly by hand while
+visually comparing the model curves with the experimental ones. Figure 5 illustrates
+this step for the charge curve of the BOL cell, overlaying the raw guess from the peak
+analysis, the manually refined guess and the optimized fit on the experimental data.
+The adjustment deliberately targets the differential capacity, where the individual
+electrochemical reactions are most clearly resolved: we improve its agreement with
+the measured curve even at the cost of a small increase in the distance between the
+model and experimental OCP curves. Both guesses are reported in Table 2, so that
+the manual step can be inspected and reproduced. The refinement leaves the standard
+potentials almost untouched: on discharge every Uj0 is unchanged, and on charge only
+U20 is moved, by 50 mV. The adjustment falls almost entirely on the site fractions,
+with a fraction of about 0.1 transferred from the first to the second gallery on both
+branches, and on ω4 .
+This refinement is necessary because the two steps it connects operate at different
+levels of accuracy. Reading the raw parameters directly off the differential-capacity
+plots is quick, but only approximate: the peaks overlap, and the Xj and ωj in particular are hard to estimate graphically, as noted in the peak analysis. The subsequent
+
+13
+
+Fig. 5 Progression of the MSMR fit for the charge curve of the BOL cathode, shown as voltage
+versus absolute degree of lithiation (a) and versus differential capacity (b). The experimental data
+(black) are overlaid with the model at three stages: the initial guess read from the peak analysis
+(dotted), the manually refined guess (dashed) and the optimized fit (solid).
+
+optimization, on the other hand, constrains each Uj0 to lie within 30 mV of its initial
+guess (Section 3), so its outcome depends directly on the quality of that guess. When
+launched from the unrefined guess, the fit can drive some Uj0 into these bounds, and
+the converged values are then dictated by the constraints rather than by the data.
+When launched from the refined guess, by contrast, no bound is active at the optimum, as reported in the next subsection. The manual refinement thus provides, at
+the cost of a small manual effort, a starting point accurate enough for the constrained
+optimizer to converge to a physically meaningful minimum.
+
+4.3 MSMR model optimization
+The fitted MSMR model parameters are reported in Table 3, and the agreement
+between the model and the experimental curves is shown by the optimized (solid)
+curve in Fig. 5. The residual mismatch of the differential-capacity curve reflects the
+simplicity of the MSMR model: each peak is a symmetric, bell-shaped function governed by only three parameters, whereas the real peaks are asymmetric and can depart
+appreciably from this shape. Despite this, the two OCP curves are almost indistinguishable. None of the inequality bounds on the MSMR parameters were active at the
+optimum, confirming that they acted purely as guardrails, preventing the optimizer
+from collapsing into unphysical regions of lower cost without otherwise constraining
+the solution.
+The same MSMR model fitted on the BOL cathode is compared in Fig. 6 against
+the experimental OCP curves of all three aging states, separately for the charge (a) and
+discharge (b) branches. The root-mean-squared error (RMSE) is computed over θ ∈
+
+14
+
+Parameter
+
+Charge
+
+Discharge
+
+Average
+
+U10
+U20
+U30
+U40
+
+3.57308
+3.70120
+3.98556
+4.20346
+
+3.52606
+3.66508
+4.00533
+4.13715
+
+3.54957
+3.68314
+3.99545
+4.17031
+
+X1
+X2
+X3
+X4
+
+0.16907
+0.37604
+0.32047
+0.13442
+
+0.03456
+0.67992
+0.19315
+0.09237
+
+0.10182
+0.52797
+0.25681
+0.11340
+
+ω1
+ω2
+ω3
+ω4
+
+0.69611
+2.24069
+2.57034
+1.03640
+
+0.83990
+4.32972
+1.85865
+0.37207
+
+0.76801
+3.28521
+2.21450
+0.70424
+
+Table 3 MSMR model parameters fitted to the
+charge and discharge branches of the BOL
+cathode, and their gallery-by-gallery average.
+The standard potentials Uj0 are given in volts;
+the site fractions Xj and disorder factors ωj are
+dimensionless.
+
+[0.02, 0.95], similarly to Lu et al., who also evaluate the RMSE of their OCP estimates
+over restricted stoichiometry intervals [3]. This interval excludes the steep tails of the
+OCP curve, where a small stoichiometry error translates into a large voltage error,
+while still covering the operating range of commercial cells. As expected, the BOL
+model reproduces the BOL data almost exactly (RMSE = 2.5 mV on charge). More
+notably, the same unaltered model still describes the aged cathodes well: the RMSE
+grows only to 17.4 mV for the full-SOC-aged cathode (SOH = 76 %) and to 27.5 mV
+for the more strongly degraded low-SOC-aged cathode (SOH = 65 %). This residual
+bundles together the genuine change of the cathode OCP upon aging and the error of
+forcing the four BOL galleries onto cathodes that have developed additional peaks. Its
+modest magnitude, together with the limited shift of the peak positions discussed in
+the peak analysis, indicates that the thermodynamic signature of the NCA cathode —
+the shape of its OCP curve — is largely preserved upon aging. This supports, for NCA,
+the common modeling practice of holding the intrinsic gallery parameters fixed at their
+BOL values and ascribing the whole-cell OCV changes to electrode-level capacity and
+alignment shifts [8], mirroring the analogous result reported for NMC-811 by Schmitt
+et al. [7].
+The comparison with the NMC-811 results deserves a closer look, because a careful
+reader may find the agreement in Fig. 6 less convincing than the RMSE values suggest.
+Especially for the charge curve, near the lithiated end of the stoichiometry window,
+where the OCP flattens at about 3.6 V, the same voltage corresponds to degrees of
+lithiation that differ by up to roughly 0.1 between the BOL model and the most aged
+cathode. At first sight, this seems a much larger aging effect than the NMC-811 curves
+of Schmitt et al. (Fig. 6 of Ref. [7]). The comparison, however, must account for the
+very different depths of aging. The cells of Schmitt et al. were cycled over their full
+voltage window (1 C discharge, C/2 charge) for at most 550 cycles, and the most aged
+15
+
+Fig. 6 The MSMR model fitted on the BOL cathode is compared with the experimental OCP curves
+of the three aging states (BOL, full SOC, low SOC), for (a) the charge curve and (b) the discharge
+curve. The root-mean-squared error (RMSE) of each comparison, computed over θ ∈ [0.02, 0.95], is
+reported in the legend.
+
+of them retained a SOH of 85.9 %. Our cathodes, instead, come from cells driven to
+their EOL, at 76 % SOH after 885 EFC along the full-SOC path and at 65 % SOH after
+510 EFC along the low-SOC path. Indeed, upon magnification, the mildly aged NMC
+curves show deviations of the order of 5 % of the stoichiometry axis in the same region,
+which is not negligible either for cells that lost at most 14 % of their capacity. Given
+the much deeper aging, larger distortions of the measured curves are expected here;
+what matters for the MSMR description is that the differential-capacity peaks of NCA
+remain at essentially unshifted positions even at these aging states (Fig. 4), in contrast
+with the pronounced changes that Schmitt et al. report for the silicon-graphite anode.
+The aging invariance we claim is therefore a statement about the thermodynamic
+signature of the electrode, rather than a claim of point-by-point equality of the OCP
+curves across aging.
+Finally, we obtain a single OCP curve for NCA by averaging, gallery by gallery, the
+MSMR parameters fitted to the charge and discharge branches (Table 3 and Fig. 7).
+This corresponds to “Method 5” of Lu et al. [3] and rests on the assumption that the
+charge–discharge gap stems entirely from kinetic polarization of equal magnitude on
+the two branches — a purely dynamic hysteresis — so that the equilibrium OCP lies
+midway between them.
+
+5 Discussion
+It is useful to state explicitly what the present work adds to the literature it builds
+upon. The MSMR model was formulated by Verbrugge and coworkers, who also published parameter sets for the standard chemistries, obtained however from largely
+unconstrained fits on pristine material [5, 6]. Lu et al. later contributed a systematic
+pipeline for extracting MSMR parameters from half-cell data, addressing the dataquality, missing-data and inaccessible-lithium problems, and demonstrated it, again
+on pristine material, for graphite and NMC electrodes [3]. In parallel, and outside the
+16
+
+Fig. 7 The OCP curve of NCA, obtained by averaging the charge and discharge MSMR model
+parameters of the BOL cathode.
+
+MSMR framework, the teardown study of Schmitt et al. asked how the electrode OCP
+curves themselves change upon aging [7]. The present work combines these threads
+in a single framework: the MSMR model is fitted through the pipeline of Lu et al.,
+strengthened by the constraints and the scale-invariant cost function of Section 3,
+and applied to a chemistry absent from the MSMR literature, NCA, using electrode
+material harvested not only from a pristine cell, but also from cells aged to EOL
+along two different paths. The combination is beneficial in both directions: the processing pipeline provides the machinery needed to parametrize NCA reliably, while
+the aged material turns the parametrization into a quantitative, model-based test of
+the aging-invariance assumption on which MSMR-based aging models rest, extending
+to NCA, and to considerably deeper aging states, the answer that Schmitt et al. gave
+for NMC-811.
+Two methodological choices proved important for obtaining a physically meaningful fit, and neither is specific to NCA. Constraining each standard potential to
+within 30 mV of an initial guess read from the differential-capacity peaks, together
+with enforcing site conservation, kept every gallery anchored to an observable feature
+and avoided the broad, feature-less “background” galleries that can otherwise lower
+the cost function without physical justification. Enforcing site conservation is inexpensive, and it keeps the parameter set self-consistent for downstream use: since a
+published set is commonly taken as the starting point of a new fit, a total that departs
+from unity is carried along with it [6, 10]. The scale-invariant cost function, in turn,
+removed the trivial degeneracy by which the optimizer could collapse the accessiblestoichiometry window. Together with the published parameter table, these ingredients
+make the present parametrization directly usable in physics-based cell models and in
+the state-estimation algorithms of battery management systems.
+The study also has clear limitations. The analysis is confined to the cathode and
+rests on a small number of teardowns: one cell per aging state and only the two distinct
+aging paths that reached the end of life. The choice of four galleries, although adequate
+at BOL and for the moderately aged cathode, becomes an approximation for the most
+
+17
+
+degraded electrode, where the differential-capacity peaks begin to split into aginginduced sub-populations. Finally, the symmetric, three-parameter MSMR peak shape
+cannot fully reproduce the asymmetric experimental peaks, and the charge–discharge
+averaging assumes a purely dynamic hysteresis, which is a reasonable but not exact
+description of NCA.
+As for the outlook, the natural next step is the silicon-graphite negative electrode
+of the same cell. This is a substantially harder task: the anode response involves
+a larger number of reactions, and the contributions of graphite and silicon to the
+OCP and to the differential capacity must be disentangled. Moreover, the hysteresis
+of silicon is thermodynamic rather than purely dynamic, so its charge and discharge
+branches cannot be averaged as we did here for NCA and will need to be parametrized
+separately. Our cycle-aged cells are a distinctive asset for this purpose. Because silicon
+degrades preferentially and its capacity contribution diminishes with aging [7], the
+comparison between pristine and aged anodes offers a practical route to separate
+the silicon and graphite contributions, an information unavailable to previous MSMR
+parametrizations, which have relied exclusively on pristine material [3, 5, 6].
+
+6 Conclusions
+In this work we reported the first MSMR model parametrization of an NCA positive
+electrode, obtained from half-cell OCP measurements on cathode material harvested
+from a commercial silicon-graphite/NCA cell at beginning of life and at the end of
+life of two distinct cycle-aging paths. The parameter set was fitted separately on the
+charge and discharge branches with a constrained, scale-invariant optimization that
+anchors every reaction to a visible differential-capacity peak, and the two branches
+were averaged under the assumption of a purely dynamic hysteresis (Table 3). Across
+aging states, the thermodynamic signature of the cathode proved largely preserved:
+the standard potentials shift by less than 40 mV, the site fractions and disorder factors
+by less than 50 %, and the unaltered BOL model reproduces the OCP of a cathode
+aged to 65 % SOH within 28 mV RMSE.
+These results provide direct experimental support, for NCA, to the widespread
+modeling practice of holding the intrinsic gallery parameters fixed across aging and
+attributing the whole-cell OCV changes to electrode-level capacity and alignment
+shifts, and they deliver a parameter set that is directly usable in physics-based cell
+models and battery management systems. Future work will extend the parametrization to the silicon-graphite negative electrode of the same cells, whose larger number
+of reactions and thermodynamic hysteresis require a separate treatment.
+
+Declarations
+Funding. This work was supported by the Grant Agency of the Czech Technical University in Prague, grant No. SGS24/136/OHK3/3T/13. Z.V.Ž. acknowledges
+the support of the Recovery and Resilience Plan for Slovakia under the project
+SUNFLOWERS No. 09I02-03-V01-00022, of the projects KEGA 002UPJŠ-4/2024,
+APVV-20-0138 and APVV DS-FR-24-0004, and of a grant from the Programme
+Johannes Amos Comenius of the Ministry of Education, Youth and Sports of the Czech
+18
+
+Republic, No. CZ.02.01.01/00/22 008/0004558 “Advanced MUltiscaLe materials for
+key Enabling Technologies” (AMULET).
+
+Conflict of interest. The authors declare no competing interests.
+Ethics approval and consent to participate. Not applicable.
+Consent for publication. Not applicable.
+Data availability. The fitted MSMR parameters that support the findings of this
+study are reported in full in Table 3, and the measured OCP and differential-capacity
+curves are presented in the figures. The underlying raw cycling datasets are not
+publicly available at this time.
+Materials availability. Not applicable.
+Code availability. The code implementing the constrained MSMR fit was developed in-house and is not publicly available.
+Author contributions. M.G.: Conceptualization, Methodology, Investigation, Formal analysis, Software, Visualization, Writing – Original Draft, Writing – Review &
+Editing, Funding Acquisition. P.Č.: Investigation. I.H.: Investigation, Resources. S.S.:
+Conceptualization, Supervision. Z.V.Ž.: Supervision, Writing – Review & Editing,
+Funding Acquisition. V.K.: Conceptualization, Supervision, Funding Acquisition. All
+authors discussed the results, reviewed the manuscript and approved its final version.
+
+References
+[1] Plett, G.L.: Battery Management Systems, Volume I: Battery Modeling. Artech
+House, Norwood, MA, USA (2015)
+[2] Plett, G.L.: Battery Management Systems, Volume II: Equivalent-Circuit Methods. Artech House, Norwood, MA, USA (2015)
+[3] Lu, D., Scott Trimboli, M., Fan, G., Zhang, R., Plett, G.L.: Implementation
+of a Physics-Based Model for Half-Cell Open-Circuit Potential and Full-Cell
+Open-Circuit Voltage Estimates: Part I. Processing Half-Cell Data. Journal of
+The Electrochemical Society 168(7), 070532 (2021) https://doi.org/10.1149/
+1945-7111/ac11a4
+[4] Karthikeyan, D.K., Sikha, G., White, R.E.: Thermodynamic model development
+for lithium intercalation electrodes. Journal of Power Sources 185(2), 1398–1407
+(2008) https://doi.org/10.1016/j.jpowsour.2008.07.077
+[5] Verbrugge, M., Baker, D., Xiao, X.: Formulation for the Treatment of Multiple Electrochemical Reactions and Associated Speciation for the Lithium-Silicon
+Electrode. Journal of The Electrochemical Society 163(2), 262–271 (2016) https:
+//doi.org/10.1149/2.0581602jes
+
+19
+
+[6] Verbrugge, M., Baker, D., Koch, B., Xiao, X., Gu, W.: Thermodynamic Model for
+Substitutional Materials: Application to Lithiated Graphite, Spinel Manganese
+Oxide, Iron Phosphate, and Layered Nickel-Manganese-Cobalt Oxide. Journal of
+The Electrochemical Society 164(11), 3243–3253 (2017) https://doi.org/10.1149/
+2.0341708jes
+[7] Schmitt, J., Schindler, M., Jossen, A.: Change in the half-cell open-circuit potential curves of silicon–graphite and nickel-rich lithium nickel manganese cobalt
+oxide during cycle aging. Journal of Power Sources 506, 230240 (2021) https:
+//doi.org/10.1016/j.jpowsour.2021.230240
+[8] Dubarry, M., Truchot, C., Liaw, B.Y.: Synthesize battery degradation modes via
+a diagnostic and prognostic model. Journal of Power Sources 219, 204–216 (2012)
+https://doi.org/10.1016/j.jpowsour.2012.07.016
+[9] Hu, V.W., Schwartz, D.T.: Low Error Estimation of Half-Cell Thermodynamic
+Parameters from Whole-Cell Li-Ion Battery Experiments: Physics-Based Model
+Formulation, Experimental Demonstration, and an Open Software Tool. Journal
+of The Electrochemical Society 169(3), 030539 (2022) https://doi.org/10.1149/
+1945-7111/ac5a1a
+[10] Garrick, T.R., Fernandez, M.A., Koch, B.J., Efimoff, E., Jones, M., Mollah, R.,
+Teel, H., Du, X., Shimpalee, S., Choe, S.-Y., Subramanian, V.R., Siegel, J.B.:
+Modeling Rate Dependent Volume Change in Porous Electrodes in Lithium-Ion
+Batteries. Journal of The Electrochemical Society 171(7), 073507 (2024) https:
+//doi.org/10.1149/1945-7111/ad6483
+[11] Kirst, C., Karger, A., Singer, J.P., Jossen, A.: Non-destructive electrode potential and open-circuit voltage aging estimation for lithium-ion batteries. Journal
+of Power Sources 602, 234341 (2024) https://doi.org/10.1016/j.jpowsour.2024.
+234341
+[12] Bureau Veritas Consumer Products Services (H.K.) Ltd.: Rechargeable LithiumIon Battery Cell INR-18650-M35A. Technical Report UNT190308C31, BVCPS
+(2019). Test performed to United Nations, Recommendations on the Transport
+of Dangerous Goods, Manual of Test and Criteria (Rev. 6th, Amend. 1), Section
+38.3. Prepared for E-One Moli Energy Corporation.
+[13] Galasso, M., Schwunk, S., Knap, V.: Variations in Open Circuit Voltage of
+Cycle-Aged Lithium-Ion Batteries due to Silicon-Enhanced Anodes. In: 2024
+47th International Spring Seminar on Electronics Technology (ISSE), pp. 1–5.
+IEEE, Prague, Czech Republic (2024). https://doi.org/10.1109/isse61612.2024.
+10603560
+[14] Chowdhury, N.R., Smith, A.J., Frenander, K., Mikheenkova, A., Lindström,
+R.W., Thiringer, T.: Influence of state of charge window on the degradation
+of Tesla lithium-ion battery cells. Journal of Energy Storage 76, 110001 (2024)
+20
+
+https://doi.org/10.1016/j.est.2023.110001
+[15] Kirkaldy, N., Samieian, M.A., Offer, G.J., Marinescu, M., Patel, Y.: Lithium-ion
+battery degradation: Comprehensive cycle ageing data and analysis for commercial 21700 cells. Journal of Power Sources 603, 234185 (2024) https://doi.org/10.
+1016/j.jpowsour.2024.234185
+[16] United Nations Economic Commission for Europe: Global Technical Regulation
+No. 15 — Worldwide Harmonized Light Vehicles Test Procedure (WLTP). Technical Report ECE/TRANS/180/Add.15, UNECE, Geneva, Switzerland (2014)
+[17] Stapf, N., Schneider, N., Zhan, M., Mehlich, C., Birke, K.P., Fill, A.: Is Silicon
+Replaceable? A Physical, Chemical, and Electrochemical Analysis of Different
+Commercial Lithium-Ion Battery Cells. Journal of The Electrochemical Society
+172(6), 060513 (2025) https://doi.org/10.1149/1945-7111/add112
+[18] Waldmann, T., Iturrondobeitia, A., Kasper, M., Ghanbari, N., Aguesse, F.,
+Bekaert, E., Daniel, L., Genies, S., Gordon, I.J., Löble, M.W., De Vito, E.,
+Wohlfahrt-Mehrens, M.: Review—Post-Mortem Analysis of Aged Lithium-Ion
+Batteries: Disassembly Methodology and Physico-Chemical Analysis Techniques.
+Journal of The Electrochemical Society 163(10), 2149–2164 (2016) https://doi.
+org/10.1149/2.1211609jes
+[19] Nitta, N., Wu, F., Lee, J.T., Yushin, G.: Li-ion battery materials: present and
+future. Materials Today 18(5), 252–264 (2015) https://doi.org/10.1016/j.mattod.
+2014.10.040
+[20] Conn, A.R., Gould, N.I.M., Toint, P.L.: Trust Region Methods. Society for Industrial and Applied Mathematics, Philadelphia, PA, USA (2000). https://doi.org/
+10.1137/1.9780898719857
+[21] Virtanen, P., Gommers, R., Oliphant, T.E., Haberland, M., Reddy, T., Cournapeau, D., Burovski, E., Peterson, P., Weckesser, W., Bright, J., et al.: SciPy
+1.0: fundamental algorithms for scientific computing in Python. Nature Methods
+17(3), 261–272 (2020) https://doi.org/10.1038/s41592-019-0686-2
+[22] Nuroldayeva, G., Adair, D., Bakenov, Z., Uzakbaiuly, B.: Revealing Phase Transition in Ni-Rich Cathodes via a Nondestructive Entropymetry Method. ACS
+Omega 8(41), 37899–37907 (2023) https://doi.org/10.1021/acsomega.3c03245
+[23] Betzin, C., Wolfschmidt, H.: Ageing Behavior of LiNi0.80 Co0.15 Al0.05 O2 Cathode
+Based Lithium Ion Cells — Influence of Phase Transition Processes. Materials Sciences and Applications 9(1), 155–173 (2018) https://doi.org/10.4236/msa.2018.
+91011
+
+21
+
+

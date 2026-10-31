@@ -1,0 +1,664 @@
+2025 IEEE 27th Electronics Packaging Technology Conference (EPTC) | 979-8-3315-6145-1/25/$31.00 ©2025 IEEE | DOI: 10.1109/EPTC67330.2025.11392147
+
+Thermal Sensitivity Analysis of 3D IC Face-to-Back
+Stacking Using Foundation Models for Physics
+Kabaria, Hardik
+
+Beer Mohideen, Sheik Dawood
+
+Davenport, John L.
+
+Vinci4D.ai Inc.
+hardik@vinci4d.ai
+
+Vinci4D.ai Inc.
+dawood@vinci4d.ai
+
+Vinci4D.ai Inc.
+johnny@vinci4d.ai
+
+Cherukuri, Balaji
+
+Kocheemoolayil, Joseph
+
+Patil, Nimish
+
+Vinci4D.ai Inc.
+balaji@vinci4d.ai
+
+Vinci4D.ai Inc.
+joseph@vinci4d.ai
+
+Vinci4D.ai Inc.
+nimish@vinci4d.ai
+
+Osentoski, Sarah
+
+Stark, William
+
+Lew, Adrian J.
+
+Vinci4D.ai Inc.
+sarah@vinci4d.ai
+
+Vinci4D.ai Inc.
+will@vinci4d.ai
+
+Vinci4D.ai Inc.
+adrian@vinci4d.ai
+
+in turn requires more advanced and energy-intensive cooling
+solutions to maintain thermal stability and prevent thermal
+throttling or failure. Consequently, data centers are being
+forced to lower ambient temperatures or deploy specialized
+cooling technologies, such as liquid cooling or direct-to-chip
+heat removal systems. These cooling solutions, while effective,
+introduce substantial operational costs, both in terms of energy
+consumption and the capital expenditure required for specialized
+infrastructure. The ongoing need to balance thermal dissipation
+with energy efficiency, while controlling costs, presents a
+growing challenge for the semiconductor industry as power
+demands continue to rise in next-generation designs.
+To address the escalating thermal challenges associated
+with increasing power densities, a viable solution lies in the
+development of chips designed to more efficiently manage heat
+evacuation. One promising approach involves the integration of
+advanced dielectric materials with superior thermal conductivity,
+mitigating the need for extensive active cooling. While it
+may seem ideal to incorporate enhanced-thermal-conductivity
+materials uniformly across all layers, it may be more cost
+effective and practical to do it in only some of them. This
+raises a critical question: how sensitive is the overall thermal
+performance of the chip to the thermal conductivity of each
+individual layer?
+This study introduces Vinci-Thermal©, a physics-informed
+foundation model AI platform built to identify interlayer
+configurations that minimize the normalized average temperature
+rise (θavg ) and normalized peak temperatures (θmax ) and unlock
+further scaling through rapid, full-package thermal simulation;
+see Fig. 1 for snapshots of the interface. We illustrate how we
+utilize Vinci-Thermal© to quantify the sensitivity of θmax and
+θavg to the thermal conductivity of each individual layer, and
+identify the layers where targeted material improvements would
+yield the greatest thermal benefit.
+Direct simulations of full packages are inherently challenging
+
+Abstract— As semiconductor devices push toward higher integration
+densities and 3D stacking, thermal management has emerged as a
+critical design bottleneck. This work presents how peak and average
+temperatures depend on the thermal conductivity of selected materials
+in individual layers for a 3D stacked chip package, and identify the
+thermal interface material (TIM) as the dominant lever for thermal
+mitigation, with BEOL dielectrics playing a secondary role and hybrid
+bonding layers having minimal influence. These insights provide clear
+guidance for material development priorities and design tradeoffs.
+These simulations were performed using Vinci-Thermal©. This
+software reduced manual work by directly ingesting OASIS/GDS/MCM
+files and automating meshing. We performed full-package thermal
+simulations of face-to-back stacks with nanometer-scale resolution.
+Its physics-grounded AI models guarantee accuracy and convergence
+without additional training, enabling iterative co-optimization of
+materials, layouts, and power profiles. This allowed us to run the 9101
+simulations needed to perform this study in a short amount of time.
+
+Keywords— 3D integrated circuits (3D ICs), thermal modeling,
+physics-informed AI, foundation models, thermal management
+1. INTRODUCTION
+As semiconductor devices scale in performance, driven by
+smaller geometries and higher clock speeds, the average power
+dissipation per die has seen a consistent increase. This trend
+is especially pronounced in high-performance processors and
+specialized accelerators, where power density has reached levels
+that necessitate more aggressive thermal management strategies.
+Moreover, as chip architectures move toward more advanced
+configurations, such as 3D stacking, thermal challenges
+become even more pronounced. In architectures like system
+on integrated chips, the thermal bottleneck in face-to-back
+stacking—particularly across layers like the back-end of
+line (BEOL) and hybrid bonding—poses a significant threat
+to continued Moore’s Law scaling. The increased power
+consumption directly translates to higher heat generation, which
+
+1
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+due to the vast range of length scales involved. While Material Characterization. The material characterization
+package dimensions span tens of millimeters, the smallest step solves the following problem to compute effective thermal
+features can be on the order of nanometers (see Fig. 2, conductivities kxeff , kyeff and kzeff : Let ω = [−Lx , Lx ] ×
+which illustrates the relevant length scales). This gap of [−Ly , Ly ] × [−Lz , Lz ] ⊂ R3 denote a prismatic subdomain of
+more than six orders of magnitude is typically bridged using the package, termed a tile, and k : ω → R+ denote the thermal
+homogenization strategies. However, if the homogenization conductivity matrix (typically isotropic) at each point of the
+method fails to account for the local structure of the region being domain. For a direction i ∈ {x, y, z}, find the the temperature
+averaged, it can lead to inaccurate results. As a consequence, field Ti that satisfies:
+analytical methods are often inadequate, and computational
+∇ · (k∇Ti ) = 0
+in ω,
+(1a)
+approaches become necessary. In fact, computing homogenized
+Ti = ∆T
+on Γi− ,
+(1b)
+properties constitutes the most time-consuming part of a
+full-package simulation. Therefore, conducting a sensitivity
+Ti = −∆T
+on Γi+ ,
+(1c)
+analysis—where conductivities are varied and each tile must
+∇Ti · n = 0
+on ∂ω \ (Γi+ ∪ Γi− ),
+(1d)
+be recomputed—demands a fast and intelligent computational
+framework, such as the one provided by Vinci-Thermal©. where Γi+ and Γi− are the two opposite faces of ω (Γi± is the
+Non-negligible as well is the time required to set up all these set of points in ω for which coordinate i is equal to ±Li ), n is the
+simulations—a process that Vinci-Thermal© significantly unit exterior normal to ω, and ±∆T is the temperature imposed
+streamlines. Most importantly, Vinci-Thermal© is already on each one of them. The value of ∆T can be any positive real
+trained, so users do not need to invest time and effort in training number, for example, ∆T = 1.
+a platform.
+For a direction i ∈ {x, y, z}, the effective conductivity kieff
+The paper is structured as follows. In §2, we introduce a follows by solving for it from the expression for the heat flow
+detailed explanation of the modeling strategy that Vinci-Thermal© between Γi− and Γi+ , that is,
+allows us to adopt, together with the example we use to illustrate
+Z
+∆T
+it. Results of the baseline model are described in §3, verifying its
+k∇T · n dS = |Γi+ |kieff
+,
+(1e)
+Li
+outcomes against standard commercial software, and showcasing
+Γi+
+the variability of the computed properties versus spatially
+averaged values. The results of the optimization are introduced where |Γi+ | is the area of the face. This way of computing an
+effective thermal conductivity is standard practice.
+in §4. Concluding remarks are provided in the last section.
+As illustrated in Fig. 1, Vinci-Thermal© automatizes this
+process, directly reading OASIS/GDS/MCM files, giving the
+2. MODELING STRATEGY
+user the option to select the number of tiles into which to partition
+The example problem we analyze in this work is sketched in Fig. the package domain, automatically meshing the complex
+2. The dimensions of the 3D stacked chip package is several geometry inside each tile, imposing boundary conditions and
+millimeters long and a few millimeters tall. There are a total progressively displaying the effective conductivities in each tile
+of 10 different layers. The thickness of each layer spans from as results are computed. Vinci-Thermal© leverages an AI model
+about 63% to 0.02% of the total height. The effective thermal to quickly return the thermal conductivity values. The system
+conductivities of the ten layers span two orders of magnitude. automatically detects and corrects any errors ensuring that the
+Notably, the detailed geometry of the interior of the BEOL results are always the correct conductivities to the problem
+layer needs to be resolved to assess the effects of altering the (never AI hallucinations), with Vinci-Thermal© automatically
+thermal conductivity of some of their constituents (c.f., Table verifying that the solutions are mesh converged.
+For the case shown in Fig. 2, we analyzed both the BEOL and
+I). The package contains approximately 100×100 identical
+the
+Hybrid
+Bonding layers of the (model) patch. Each of these
+rectangular patches, each with edge lengths that are several
+two
+layers
+in
+the patch was partitioned into 144 identical tiles.
+tens of micrometers long, and spanning the entire package’s
+We
+then
+performed
+Material Characterization for each tile to
+height. As a convention, x and y will denote the two horizontal
+compute
+its
+effective
+thermal
+conductivities kxeff , kyeff and kzeff (see
+directions, while z denotes thickness direction; c.f. Fig. 2.
+Fig. 2). Although the tiles have identical dimensions, each one
+The modeling strategy consists of two steps:
+reflects a unique local material distribution. The meshes used for
+Material Characterization: This is a homogenization step, in the characterization resolved the smallest features representing
+which effective thermal conductivities are computed for a technologies beyond 7nm in the BEOL layers.
+subdomain of the package.
+Full-Package Thermal Analysis. This step solves a general
+Full-Package Thermal Analysis: The computed effective
+thermal conduction problem in the package geometry, utilizing
+thermal conductivities are incorporated into a full package
+the computed effective thermal conductivities. The boundary
+thermal analysis, from which the average and peak
+conditions are illustrated in Fig. 2, and detailed in the problem
+temperatures follow.
+statement next: Let Ω ⊂ R3 denote the domain of the 3D stacked
+chip package, k : Ω → R+ denote the thermal conductivity
+2
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+Fig. 1: Vinci-Thermal©’s interface directly imports very large industry-standard layout files (e.g., 10 GB GDSII files with tens of millions of
+polygons) and allows users to interactively examine their content. Simulation workflows are easily built through a graphical interface, while
+meshing and mesh-convergence verification are fully automated.
+
+In this work, the surface Γsrc consists of the union of two
+horizontal surfaces: one located between layers 3 and 4, and the
+other between layers 6 and 7 (see Fig. 2). The power density per
+unit area f is identical on the two surfaces, so it only depends
+on (x, y) and not z—see Fig. 2 for its contour plot. The value
+of kx , ky or kz at a point x ∈ Ω are obtained by evaluating a
+set of predefined effective conductivities, except for the BEOL
+and Hybrid Bonding layers. For these two layers, the effective
+conductivities derived during the Material Characterization
+analysis are used. In this case, the tile containing the point
+where the conductivity needs to be evaluated is identified, and
+its corresponding effective conductivity is retrieved.
+
+matrix (typically anisotropic) constant in each tile of the domain,
+hconv > 0 denote a convection coefficient, Tamb ∈ R denote the
+ambient temperature, and f : Γsrc → R+ denote the power
+density per unit area over the surface Γsrc ⊂ Ω. Find the
+temperature T : Ω → R such that
+∇ · (k · ∇T ) = 0
+
+in Ω,
+
+(2a)
+
+J−k∇T · nK = f
+
+on Γsrc ,
+
+(2b)
+
+−k∇T · n = hconv (T − Tamb )
+∇T · n = 0
+
+on Γtop ,
+
+(2c)
+
+on ∂Ω \ Γtop ,
+
+(2d)
+
+where Γtop is the top face of the 3D stacked chip package, and
+n denotes the unit normal in the z-direction. Surface sources
+induce a jump on the thermal flux across them, which is captured
+by the jump of the thermal flux across Γsrc 1 . In this problem,
+Robin boundary conditions are imposed on Γtop , while adiabatic
+boundary conditions are set on the rest of the boundary.
+The average and peak temperatures then follow from
+R
+T − Tamb dΩ
+maxΩ T − Tamb
+R
+R
+,
+θavg = Ω
+.
+θmax = |Ω|
+T
+−
+T
+dΩ
+T
+− Tamb dΩ
+amb
+Ω b
+Ω b
+(3)
+Here Tb is a baseline temperature field, which we will set to be
+the one that emerges from the initial conductivity values before
+optimization. The baseline case has θavg = 1 and θmax = 1.780,
+so the peak temperature is 78% higher than the average relative
+to Tamb .
+
+Problem Sizes and Timing. Each tile in the BEOL layer
+(layers 3 and 6 are identical in this model, so only one
+computation is needed for both) is discretized on a 2048
+× 2048 × 70 grid, for a total of approximately 300 million
+degrees of freedom, providing <7nm resolution in the horizontal
+plane. The z-discretization respects the layering inside the
+BEOL itself, so it is non-uniform across the thickness. Again,
+the meshes are automatically handled by Vinci-Thermal©. Since
+there are 144 tiles, and each has to be solved 3 times, a total
+of 432 computations are performed to compute the effective
+thermal conductivity distribution on the patch. Tiles in the
+Hybrid Bonding layer needed only a 2048 × 2048 × 6 grid,
+each one with about 25 million degrees of freedom, and another
+set of 432 computations was performed for this layer as well.
+1 The thermal flux across Γ
+src is defined by JqK = limϵ↘0 [q(x + ϵn) −
+The full Material Characterization step for the BEOL layer
+
+q(x − ϵn)]
+
+3
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+the corresponding values of θavg and θmax . For changes involving
+the BEOL and Hybrid Bonding layers, Material Characterization
+was recomputed prior to running the Full-Package Thermal
+Analysis. For each material, we fitted a curve of the form
+θ = θ0 k̂ r , where θ0 , r ∈ R are constants and k̂ = k/kb is
+the thermal conductivity normalized by its baseline value. Each
+curve was fitted using 4 to 5 values of k̂. The results are presented
+in Fig. 4 and summarized in Table II.
+The TIM layer has the greatest impact on both θavg and
+θmax —increasing its thermal conductivity by a factor of 2.5
+leads to a reduction of approximately 20% in both average and
+maximum temperatures. In contrast, variations in the thermal
+conductivity of the Hybrid Bonding layers have a minimal effect
+on the results. The maximum temperature is primarily influenced
+by the following layers, listed in decreasing order of impact:
+TIM, BEOL’s material B, SiO2 , and BEOL’s material C.
+A heuristic way to evaluate the effect of joint changes in
+the different thermal conductivities is to estimate the maximum
+temperature as
+
+runs in 52 minutes in 8 AMD Instinct MI300X cards. The same
+step for the Hybrid Bonding layer runs in 25 minutes in the same
+number of cards. The role of the AI model here is important,
+as without that the runtime would be 100× longer on the same
+hardware making the study of this nature involving detailed
+layout geometry fairly difficult.
+The Full-Package Thermal Analysis discretizes the 3D
+stacked chip into a 117 million degrees of freedom grid, with
+a horizontal resolution close to 10 µm. The z-discretization is
+adaptive, and it was built so that it includes at least two grid cells
+in the thickness of each layer.
+3. MODELING RESULTS
+The effective conductivities computed in the patch for both
+the BEOL and Hybrid Bonding layers are presented in Fig. 3.
+Table I summarizes the average values and standard deviations
+of the effective conductivities across the 144 tiles. All values
+are normalized by the maximum average effective thermal
+conductivity, which corresponds to the average of kyeff for the
+BEOL layer. Notably, the distribution of effective thermal
+conductivities in the patch is particularly heterogeneous within
+the BEOL layer.
+
+b
+log θmax = log θmax
+− 0.0024 log k̂BMA − 0.0122 log k̂BMB
+
+− 0.0094 log k̂BMC − 0.0004 log k̂HBL
+− 0.0104 log k̂SiO − 0.2034 log k̂TIM . (4)
+
+TABLE I: Average (over the 144 tiles) effective thermal conductivities
+computed from the Vinci-Thermal© Material Characterization step,
+including standard deviations, all normalized by the maximum average
+effective conductivity.
+
+Layer
+BEOL
+Hybrid Bonding
+
+Quantity
+Average
+Std. Dev.
+Average
+Std. Dev
+
+kxeff
+0.8472
+0.3541
+0.0310
+0.0008
+
+kyeff
+1.0000
+0.4796
+0.0313
+0.0008
+
+b
+where the θmax
+= 1.78 is the baseline value for θmax . We
+verified that this formula estimates the maximum temperature by
+comparing its value against the value returned by Vinci-Thermal©
+after the Material Characterization and Full-Package Thermal
+Analysis steps—for k̂BMA = k̂BMB = k̂BMC = k̂HBL = 2, k̂SiO =
+k̂TIM = 2.5, (4) gives θmax = 1.44, while Vinci-Thermal©
+returns θmax = 1.43. Remarkably, this is a 19.5% reduction in
+the maximum temperature.
+b
+Equation (4) is a linear relationship between log(θmax /θmax
+)
+and the logarithms of the normalized thermal conductivities. This
+makes it straightforward to identify combinations of normalized
+conductivity values that achieve a desired reduction in θmax
+b
+relative to the baseline value θmax
+.
+For instance, increasing the thermal conductivity of the TIM
+layer by a factor of 5 (i.e., k̂TIM = 5) results in a 28% reduction
+in the maximum temperature, while the same improvement in
+the BMB layer yields a 2% reduction. Additional examples of
+such potential enhancements are presented in Table III.
+
+kzeff
+0.0440
+0.0208
+0.4640
+0.1557
+
+As noted earlier we chose to work with Vinci-Thermal© as it
+is capable of directly digesting complex layout geometries and
+performing analysis efficiently. In order to verify the results from
+this software, we compared the Full-Package Thermal Analysis
+from Vinci-Thermal© with the results obtained with ANSYS
+Icepak, adopting a similar mesh size and the Averaged Vinci
+properties in Table I. Figure 3 presents contour plots of the
+temperature field on the plane between layers 3 and 4, where
+half of the sources are located. The values of θmax and θavg
+are very close, as well as the contour plots for the temperature
+5. BROADER IMPACTS AND DESIGN TAKEAWAYS
+fields. As reported above, because of the AI model, it takes
+Vinci-Thermal© 30 seconds to obtain the results. The simulation These systematic studies confirm that the thermal interface
+with ANSYS Icepak was performed in 16 cores in an AMD material (TIM) is the most critical lever for reducing both
+Ryzen Threadripper 3970X 32-Core Processor (3.69 GHz).
+average and peak temperatures, with BEOL’s dielectrics playing
+a secondary role and the Hybrid Bonding layer having minimal
+influence. These insights are essential for prioritizing materials
+4. OPTIMIZATION
+development and guiding thermal-aware design strategies.
+The goal is to conduct a sensitivity study to identify which
+This study shows that Vinci-Thermal© enables predictive and
+materials should be enhanced first to reduce θavg and θmax . To this efficient thermal sensitivity analysis of advanced face-to-back
+end, we varied the thermal conductivity of the materials listed in stacks. By rapidly quantifying the dependence of θmax and θavg
+Table II, computed the resulting temperature fields, and extracted on the thermal conductivity of each material layer, we got clear
+4
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+Thermal Interface Material (TIM) 10
+Carrier Si
+
+9
+
+SiO
+
+8
+
+2
+
+Si 1
+
+7
+
+Detailed Layout in BEOL
+
+6
+
+Hybrid Bonding Layer
+
+5
+
+Si 2
+
+4
+
+Detailed Layout in BEOL
+
+3
+
+Bumps
+
+2
+
+Substrate
+
+1
+
+Fig. 2: Sketch of the layer distribution and boundary conditions for the 3D stacked chip package, power density distribution and dimensions
+(in units of the smallest resolved feature h). The multiscale geometry of the chip package consists of the periodic repetition of the patch shown,
+which is itself partitioned into 144 unique tiles. Each tile contains geometric features all the way down to h< 7nm. The two steps of the
+modeling strategy consists of first performing Material Characterization for each tile in the patch, to compute the three directional effective
+conductivities, followed by the Full-Package Thermal Analysis which uses the computed effective conductivities to obtain the temperature
+field over the entire domain.
+
+5
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+1.79
+
+Normalized Temperature
+
+1.72
+1.47
+1.29
+1.12
+0.96
+0.79
+0.62
+0.46
+
+Fig. 3: Results of the modeling strategy. The effective thermal conductivities obtained from the Material Characterization step for the BEOL
+and Hybrid Bonding layers are shown on top, while the contour plot of the temperature on the plane between layers 3 and 4 obtained from the
+Full-Package Thermal Analysis are at the bottom. In the latter, there is a comparison of results with two different strategies to obtain effective
+conductivities: via Vinci-Thermal©’s Material Characterization (Vinci Properties) and via averaging the same values over the patch (averaged
+Vinci properties). We also compare the results of Vinci-Thermal© with those of ANSYS Icepak using the averaged Vinci properties, and they
+are effectively identical. The effective thermal conductivities on the top were normalized by the maximum of each one over the patch.
+
+6
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+Fig. 4: Results of the sensitivity analysis for the six materials in the chip package listed in Table III.
+
+7
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+TABLE II: Parameters for the curves that fit the thermal performance on a set of thermal conductivities across different layers
+
+Layer Material
+
+Symbol
+
+BEOL’s material A
+BEOL’s material B
+BEOL’s material C
+Hybrid Bonding
+SiO2
+TIM
+
+BMA
+BMB
+BMC
+HBL
+SiO
+TIM
+
+θavg
+θ0
+1.0000
+1.0000
+1.0000
+0.9998
+0.9991
+0.9925
+
+r
+-0.0019
+-0.0085
+-0.0049
+-0.0004
+-0.0057
+-0.2535
+
+θmax
+θ0
+r
+1.7795 -0.0024
+1.7794 -0.0122
+1.7794 -0.0094
+1.7793 -0.0004
+1.7754 -0.0104
+1.7680 -0.2034
+
+TABLE III: Example of combinations of normalized thermal
+conductivities and their effect on reducing the maximum temperature
+b
+θmax as a fraction of the maximum temperature in the baseline case θmax
+.
+The normalized thermal conductivities in the baseline case all equal 1.
+
+k̂BMA
+1
+1
+1
+1
+
+k̂BMB
+3
+2
+3.25
+4
+
+k̂BMC
+1.5
+2
+3.25
+4
+
+k̂HBL
+1
+1
+1
+1
+
+k̂SiO
+1.5
+2.5
+3.25
+4.5
+
+k̂TIM
+1.5
+2.5
+3.25
+4.5
+
+b
+θmax /θmax
+90%
+80%
+75%
+70%
+
+guidance on where material improvements have the greatest
+impact. Note that for this study a total of 9101 simulations were
+performed on Vinci-Thermal© with an average of 218 million
+elements per simulation. All of these simulations were run in 26
+hours of total runtime.
+Future work will help designers find local layer modifications
+to reduce θmax . Transient and coupled electro-thermal analyses
+must also be considered to capture the holistic impact of
+design or material changes. We acknowledge that this study
+is limited to a specific design and source distribution. A
+comprehensive analysis requires examining a broader variety of
+design configurations.
+Acknowledgments. Adrian J. Lew’s contribution to this
+publication was as a paid consultant and was not part of his
+Stanford University duties or responsibilities.
+
+8
+
+Authorized licensed use limited to: INDIAN INSTITUTE OF TECHNOLOGY MADRAS. Downloaded on September 01,2026 at 12:57:59 UTC from IEEE Xplore. Restrictions apply.
+
+

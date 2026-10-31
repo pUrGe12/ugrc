@@ -199,8 +199,9 @@ Untested: libraries of close topics, where routing misses more.
    Also test table questions that do not name the table. Then make facts + prose a ugrc mode.
 2. **Make routing + facts+prose a ugrc mode** (the pipeline to build on, `experiments/routed/`: BM25 over every page
    picks the paper, then that paper's facts+prose form, a free answer, then the Jev checker). First test routing where
-   it is hard: a larger library of papers on close topics (the questions here carry subject words, so it found the
-   paper 244 times of 246), and whether sending the top 2 papers recovers the misses.
+   it is hard: done on 120 papers (`experiments/big-library/`): search-then-one-paper 304 of 388, as the right paper
+   handed over; sending the top 2 papers is worse (242), even only when search is unsure (`gated.py`). Next: routing
+   on short questions without subject words.
 3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a

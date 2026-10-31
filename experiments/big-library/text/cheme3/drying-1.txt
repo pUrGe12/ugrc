@@ -1,0 +1,2280 @@
+This article is licensed under CC-BY-NC-ND 4.0
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Machine Learning-Enabled Real-Time Prediction of Drying
+Shrinkage in Fly Ash-Modified Cementitious Materials
+Chi-tathon Kupwiwat and Lapyote Prasittisopin*
+Cite This: ACS Omega 2026, 11, 34768−34785
+
+ACCESS
+
+Read Online
+
+Metrics & More
+
+Article Recommendations
+
+ABSTRACT: Drying shrinkage remains a critical durability
+challenge in cementitious materials, where conventional prediction
+methods are limited by low temporal resolution and lack of
+interpretability. This study presents an interpretable machine
+learning (ML) framework for real-time prediction of drying
+shrinkage in fly ash-containing concrete, integrating high-frequency
+experimental measurements with physically meaningful input
+features. A data set comprising 79,008 hly observations across 16
+mix designs and different curing conditions was used to train and
+evaluate various ML models. Ensemble and nonlinear models,
+including Random Forest, Extra Trees, K-Nearest Neighbors, and
+Multi-Layer Perceptron, achieved high predictive accuracy (R2 ≈
+0.99) on the test set with low error margins under both hourly and
+daily temporal representations. Besides, SHapley Additive exPlanations (SHAP) analysis reveals that multiscale temporal variables
+govern shrinkage evolution, with short-term capillary moisture loss and long-term pore-scale desorption captured through distinct
+temporal features. Material parameters, particularly fly ash incorporation, exhibit secondary but consistent influence through
+microstructural refinement mechanisms based on C−S−H phase nucleation and formation. The proposed framework enables a
+transition from periodic testing toward continuous, data-driven monitoring, offering a pathway for real-time quality control and
+reduced physical testing of sustainable concrete infrastructures.
+
+1. INTRODUCTION
+
+internal stresses within the material, which can lead to the
+formation of internal cracks.19 The cracking process engages
+with the reduced-volume mechanisms present in drying
+concrete. The strain has a tendency to mitigate internal
+stresses generated during drying, subsequently leading to a
+reduction in crack propagation.20 Conversely, the occurrence
+of cracks results in a redistribution of the overall stress state,
+including both internal stresses and those arising from the
+applied mechanical loads. It is governed by coupled processes
+including capillary pressure development, moisture diffusion,
+and microstructural evolution of hydration products such as
+calcium silicate hydrate (C−S−H). These processes operate
+across multiple temporal scales, from rapid early-age moisture
+loss to long-term equilibrium desorption. Their implication
+indicates that structural effects concurrently influence the
+measurements of shrinkage in any experimental setup. Real-
+
+1.1. Background
+
+Cement production contributes ∼7% of global CO 2
+emissions.1 Drying shrinkage is a fundamental time-dependent
+deformation in cementitious materials that directly affects
+cracking susceptibility, long-term durability, and serviceability
+of concrete infrastructures. Many concrete structures have
+functioned in moist environments for many years, with the
+humidity levels within these concrete structures exposed to the
+atmosphere fluctuating as a result of rainfall and seepage.2,3
+The moisture content in concrete structures plays a crucial role
+in determining their mechanical and functional properties,
+including strength,4,5 young’s modulus,6 thermal and electrical
+conductivity,7−9 as well as their overall durability. Furthermore,
+fluctuations in the humidity of concrete structures lead to
+shrinkage,10 fatigue,11,12 carbonization,13 and freeze−thaw
+cycles,14 which compromise their integrity and diminish their
+performance. The movement of water within concrete leads to
+diffusion of chloride ions15,16 and corrosion of steel reinforcement.17,18
+The drying shrinkage process of concrete is characterized by
+nonhomogeneous and anisotropic behavior, resulting in
+significant structural adaptation. This phenomenon generates
+© 2026 The Authors. Published by
+American Chemical Society
+
+Received: April 22, 2026
+Revised: May 21, 2026
+Accepted: May 22, 2026
+Published: May 30, 2026
+
+34768
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 1. Methodology flowchart.
+
+time shrinkage prediction is important because shrinkage
+occurs continuously from the curing stage, and if it is neither
+monitored nor anticipated in that manner, cracking and longterm deformation can develop before any corrective action is
+possible. Predictive monitoring therefore enables early
+intervention rather than postdamage assessment, reducing
+structural risk and inspection effort.
+However, there is currently no experimental procedure that
+facilitates the straightforward separation of intrinsic behaviors
+from structural effects in the context of shrinkage.21 The
+process of identifying constitutive laws from experimental
+measurements is complicated. A robust mechanical model for
+cracking is essential to accurately compute the structural
+component. The inherent characteristics of drying can thus be
+inferred through a form of reverse analysis by concentrating on
+drying shrinkage.22 For the microscale level, the movement of
+water under sustained load enhances the drying process.23 For
+the macro-scale level, this results in drying strain. Such
+negative impacts not only give the poor appearance of concrete
+buildings and infrastructure from surfaces’ cracking but also
+lower the structural performance in the long run. Assessing
+drying shrinkage from tubes or prisms that are allowed to
+deform is valuable for understanding shrinkage at a material
+level; however, it is important to recognize that concrete
+frequently encounters constraints in actual civil engineering
+applications.24,25 Many standards for assessing drying shrinkage, such as ASTM C596,26 ASTM C157,27 and BS EN
+12390,28 periodically evaluate the concrete specimens. The
+destructive testing conditions may not serve as effective and
+
+low-cost predictors for assessing a real concrete infrastructure.29,30 A nondestructive testing (NDT) method for in
+situ monitoring utilizing sensors presents an alternative
+approach to forecast concrete shrinkage in both laboratory
+and field environments. The sensor gauge embedded in the
+hardened concrete matrix can offer more precise and effective
+outcomes.31
+Artificial intelligence (AI) and data-driven approaches for
+forecasting concrete properties and examining concrete images
+have attracted significant attention in the construction
+sector.32−36 Typically, the process of testing concrete is
+characterized by lengthy and expensive experimental methods,
+frequently necessitating considerable laboratory efforts.
+Machine learning (ML) algorithms are currently being
+developed. ML has the capability to analyze complex data,
+automate processes, and personalize experiences in many
+industries. In the concrete industry, ML is capable of
+examining extensive data sets that include diverse concrete
+mix designs,37−42 material compositions,43,44 and environmental conditions45,46 to uncover intricate patterns and
+relationships. These ML models demonstrate a high level of
+accuracy in predicting critical concrete properties, including
+compressive strength,41,47−50 fresh properties,51,52 creep,53 and
+durability.54
+Few studies for ML prediction in concrete drying shrinkage
+were explored thoroughly. In ref 55, four ML models including
+extreme gradient boosting (XGBoost), light gradient boosting
+(LGB), random forest (RF), and extra tree regressor (ETR)
+were tested and trained, concluding that ETR can offer the
+34769
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 2. Drying shrinkage test: (a) Real-time monitoring and (b) ASTM C157.
+
+most effective model with R-squared (R2) = 0.957. In ref 56,
+backpropagation neural network (BPNN), support vector
+machine (SVM), RF, XGBoost, Gaussian process regression, knearest neighbor (KNN), linear regression, and long shortterm memory were performed, and findings revealed that
+XGBoost was the most accurate model (R2 = 0.980). In ref 57,
+12 ML models were run and showed promising results with R2
+up to 99%; however, the work only measured the drying
+shrinkage for 60 days. Therefore, research should be done on
+any work that develops an efficient ML model that can
+accurately forecast drying shrinkage values for both standard
+and real-time monitoring (NDT) tests over an extended period
+of time. For other related past literature regarding the ML for
+predicting drying shrinkage of various cements and concretes,
+examples include magnesium silicate hydrate cement,58
+geopolymer,59 low-carbon cement,60 and ultrahigh-performance concrete.61,62 Recent studies have increasingly incorporated explainable and optimized ML frameworks for predicting
+the mechanical and durability properties of cementitious
+materials, including interpretable ML for shrinkage prediction,
+optimization-driven mixture design, and explainable AI
+approaches for sustainable concrete systems.63−67
+
+1.2. Research Gap, Objective, and Contribution
+
+The primary contribution of this work is the development of
+an interpretable ML framework for high-resolution shrinkage
+prediction using automated hourly monitoring data. In
+addition to predictive performance evaluation, the framework
+investigates interpretable feature relationships associated with
+temporal evolution, material composition, and environmental
+conditions under controlled experimental settings. To the best
+of our knowledge, this is the first study to integrate real-time
+shrinkage sensing with interpretable ML-based prediction. The
+novelty of this work is to deliver a continuous, interpretable,
+and deployable framework for shrinkage monitoring. This
+represents a shift from conventional discrete testing toward
+data-driven infrastructure management. Two notable research
+gaps in this field include:
+1. The key engineering innovation lies in enabling
+continuous shrinkage prediction at an hourly resolution,
+which is not achievable using existing standard methods
+and empirical models.
+2. None of the previous studies have addressed real-time
+monitoring of shrinkage of sustainable concrete using ML
+34770
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+The mix designs and testing methods performed in this work
+have the designed compressive strength at 28 days of 24 MPa,
+as shown in Table 1. The cement procured is Portland cement
+
+predictors, compared to the low-frequency, manual
+measurements.
+Conventional manual testing standards require a destructive,
+labor-intensive, and periodic specimen removal. This real-time
+framework mitigates the mentioned issues, leading to reduced
+material waste and lab energy use over a monitoring campaign.
+It also enables high-resolution predictive modeling of shrinkage
+behavior and provides mechanism-informed interpretation
+using explainable ML. Improved shrinkage prediction using
+AI enables early mitigation, reducing cracking-induced
+maintenance and associated lifecycle emissions. In this
+research, the input features used in this study include temporal
+variables (hour and day), material-related parameters (aggregate type and fly ash condition), environmental conditions
+(curing temperature and relative humidity), and statistical
+temporal descriptors (mean, standard deviation, minimum, and
+maximum shrinkage values), while the output variable
+corresponds to the measured drying shrinkage values.
+
+Table 1. Summary of the Mix Designs and Testing Methods
+of 24-MPa Concretes Having the Slump at 10−15 cma
+
+2. METHODOLOGY
+The research methods consist of two parts, as shown in the
+flowchart in Figure 1:
+(1) In this work, the term ‘real-time’ refers to automated
+hourly resolution monitoring using embedded strain-gauge
+sensing and data logging, representing near real-time
+monitoring conditions. The real-time monitoring data
+collection process involved measuring the drying shrinkage of
+concrete mixtures containing four different aggregates, fly ash,
+curing temperatures and relative humidity. The ASTM
+standard testing of four different concrete mixtures was also
+performed for comparison.26 It should be noted that the
+samples’ sizes in both measurements are different. Typically,
+rectangular sample shape per ASTM standard has higher
+deformation than the circular shape. This can cause
+deformation difference on particular sides of the samples,
+subsequently leading to more unstable deformation than the
+circular shape.
+(2) The development and testing process of several ML
+algorithms of single- and ensemble-based models for predicting
+drying shrinkage properties. In this part, a correlation analysis
+was performed to investigate the relationship between features
+and shrinkage. The input parameters were chosen on the basis
+of their established physical influence on drying shrinkage.
+Temporal variables (i.e., hour and day) capture the timedependent progression of shrinkage, while material-related
+parameters (i.e., aggregate type, fly ash content, basalt, and
+gravel) reflect the role of the mix composition. Environmental
+conditions (curing temperature and relative humidity) were
+included because of their strong effect on moisture loss and
+shrinkage development. These features were directly available
+from our experimental program and consistent with established
+factors influencing shrinkage reported in the literature. Next,
+the data were divided into test-train sets, and the models were
+trained and evaluated. A hyperparameter grid search with 5fold cross-validation and temporal feature comparison was also
+performed in this process. After training and evaluation, highperforming models were further analyzed for explainability
+using Shapley additive exPlanations (SHAP) analysis.
+
+no.
+
+fly ash
+
+aggregate
+
+curing condition (°C; %
+RH)
+
+method
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+
+no fly ash
+no fly ash
+no fly ash
+no fly ash
+with fly ash
+with fly ash
+with fly ash
+with fly ash
+no fly ash
+no fly ash
+no fly ash
+no fly ash
+with fly ash
+with fly ash
+with fly ash
+with fly ash
+no fly ash
+with fly ash
+no fly ash
+with fly ash
+
+limestone
+granite
+basalt
+gravel
+limestone
+granite
+basalt
+gravel
+limestone
+granite
+basalt
+gravel
+limestone
+granite
+basalt
+gravel
+limestone
+limestone
+limestone
+limestone
+
+23; 50%
+23; 50%
+23; 50%
+23; 50%
+23; 50%
+23; 50%
+23; 50%
+23; 50%
+30; 60%
+30; 60%
+30; 60%
+30; 60%
+30; 60%
+30; 60%
+30; 60%
+30; 60%
+23; 50%
+23; 50%
+30; 60%
+30; 60%
+
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+real time
+ASTM
+ASTM
+ASTM
+ASTM
+
+a
+
+Note: ASTM represents the ASTM C157 testing method.27
+
+Type I [21.2% SiO2; 4.95% Al2O3; CaO 62.8%; Fe2O3 2.8%;
+MgO 4.0%; SO3 2.63%; Other 1.6%]. Fly ash, an industrial
+byproduct, was sourced from a coal-fired power plant in
+northern Thailand. Their specific gravity and fineness were
+2.53 and 3200−3600 cm2/g, respectively. The chemical
+compositions of fly ash are SiO2 (37.3%); Al2O3 (28.6%);
+CaO (17.9%); Fe2O3 (13.2%); MgO (3.9%); SO3 (3.5%); and
+other (5.5%). Fly ash was used as a binder replacement at 20%
+by weight, since it is the optimal range for normal concrete.68
+It is important to note that fresh concrete samples were
+collected at the mixing stations. The mix designs and the
+percent replacement of the ready-mix concrete are the
+common ones for normal strength ready-mix concrete at the
+batching plants. This 20% replacement level contributes to
+0.15−0.20 ton CO2 reduction of 1 ton cement.69 This is
+equivalent to 30−40 kg CO2/m3 concrete.
+The strain gauge (P series Polyester wire strain gauge;
+Tokyo Measuring Instruments Laboratory) for measuring the
+strains of the samples was first installed inside the cylindrical
+aluminum molds. This strain gauge has been widely used for
+concrete applications. It is placed in the middle of the mold.
+The cables were connected to the data logger. After fresh
+concrete samples were cast and cured for 24 h, the samples
+were removed from the aluminum molds. Consequently, the
+samples were stored in the curing chambers at two different
+curing conditions for approximately 6 months at 23 °C and
+50% RH as well as 30 °C and 60% RH. It is noted that both
+curing conditions are designed to perform in the laboratory
+condition as specified by the ASTM standard and in the hot/
+humid (tropical) climate. The wet environment (e.g., 80−90%
+RH) is not assessed here since the drying shrinkage of the wet
+condition is minimal. The drying shrinkages of all concrete
+
+2.1. Real-Time Data Collection
+
+The real-time data collection for drying shrinkage of concrete
+with different mix designs is depicted in Figure 2a. The drying
+shrinkage testing per ASTM C15727 is illustrated in Figure 2b.
+34771
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+samples were recorded at a regular interval. Triplicate samples
+were assessed for each testing condition. Compared to
+standard shrinkage measurement, which required removing
+the samples from chambers during the measurement process,
+this real-time data collection method is more accurate and
+error-free, resulting in higher-quality data for ML training.
+Table 2 summarizes the statistical characteristics of the full
+real-time shrinkage data set. The temporal variables cover the
+
+value is ubiquitously utilized in normal ready-mixed concrete
+mixtures in batching plants.70−72 The features directly encode
+experimental design parameters (material composition) and
+not derived from shrinkage. They describe the concrete
+composition, which is a fundamental determinant of the
+shrinkage behavior according to materials science principles.
+The goal is to develop accurate ML models to predict
+shrinkage behavior measured up to around 4960 h, as shown in
+Figure 3. Past research73 confirmed the results of this work by
+using the cylindrical concrete specimens for drying shrinkage
+measurement under typical conditions. It is also found that a
+similar manner as using ACI 209 prediction for shrinkages
+(around 580 microstrains at 214 days or 4960 h) is used.
+The drying shrinkage behavior of concrete can be classified
+into three progressive stages that are primarily governed by
+moisture migration and microstructural evolution. The first
+stage, known as the plastic shrinkage, occurs within the first 2−
+3 h after water is mixed with cement particles, as the hydration
+reaction progresses. Then, the early-age rapid shrinkage period
+(0−200 h in Figure 3) is characterized by the evaporation of
+free water from large capillary pores following demolding and
+initial curing. During this phase, a rapid volumetric contraction
+occurs due to steep surface moisture gradients, leading to high
+internal capillary tension. These tensions initiate the development of microcracks, particularly near the paste−aggregate
+interfaces where stiffness mismatches concentrate stress. The
+process is strongly influenced by curing temperature, relative
+humidity gradients, and the degree of pore connectivity, which
+collectively determine the rate of moisture loss and the extent
+of early shrinkage deformation. As the concrete transitions into
+the intermediate steady-decline period (i.e., 200−2000 h), the
+rate of shrinkage begins to diminish as the moisture gradients
+within the material stabilize. In this stage, water molecules
+continue migrating from finer capillary and gel pores,
+accompanied by internal redistribution processes that relieve
+localized stress concentrations. The incorporation of fly ash
+plays a significant role during this phase, as the ongoing
+pozzolanic reaction promotes the formation of an additional
+C−S−H gel. This reaction refines the pore structure, reduces
+the average pore radius, and enhances their internal humidity
+buffering capacity. Consequently, the overall shrinkage rate
+decreases, and the internal stress field becomes more balanced,
+reflecting a progressive stabilization of the microstructural
+framework. Finally, the long-term stabilization stage (i.e.,
+2000−4960 h) marks the point where the moisture content of
+the concrete achieves equilibrium with the surrounding
+environment. Only the bound water within the finest gel
+pores continues to desorb gradually, leading to a near-constant
+strain response. The shrinkage curve flattens toward its
+asymptotic value, indicating that most of the capillary-driven
+moisture movement has ceased. Aggregate stiffness and curing
+temperature continue to exert minor influences on residual
+microstrains. However, their effects are marginal compared to
+the earlier phases.74 Microstructurally, the pore water
+molecules become stabilized, and no significant additional
+deformation is observed. This steady-state condition represents
+the long-term dimensional stability of the concrete, marking
+the completion of the drying shrinkage process. As mentioned
+above, the drying shrinkage measurement in a real-time
+manner shows that the microstain values during some periods
+are not stable. This is anticipated for the measuring errors. The
+paper also aims to analyze the influence of input features that
+
+Table 2. Statistical Characteristics of the Full Real-Time
+Shrinkage Dataset
+feature
+
+min
+
+mean
+
+max
+
+std
+
+day
+Hr.
+limestone with fly ash (23C50%)
+limestone with fly ash (30C60%)
+limestone no fly ash (23C50%)
+limestone no fly ash (30C60%)
+basalt with fly ash (23C-50%)
+basalt with fly ash (30C-60%)
+basalt no fly ash (23C-50%)
+basalt no fly ash (30C-60%)
+gravel with fly ash (23C-50%)
+gravel with fly ash (30C-60%)
+gravel no fly ash (23C-50%)
+gravel no fly ash (30C-60%)
+granite with fly ash (23C50%)
+granite with fly ash (30C60%)
+granite no fly ash (23C-50%)
+granite no fly ash (30C-60%)
+
+1.00
+0.00
+−431.00
+
+105.17
+2480.96
+−368.86
+
+209
+4960
+0
+
+60.26
+1435.52
+78.85
+
+−501.00
+
+−439.51
+
+0
+
+84.45
+
+−531.30
+
+−456.12
+
+0
+
+103.68
+
+−584.70
+
+−514.60
+
+0
+
+98.90
+
+−531.70
+−603.30
+−634.70
+−736.70
+−466.00
+−502.70
+−563.70
+−592.70
+−515.00
+
+−471.84
+−538.20
+−565.54
+−647.00
+−400.57
+−440.32
+−494.39
+−509.31
+−450.38
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+94.09
+100.62
+115.96
+127.76
+85.75
+87.67
+106.05
+104.82
+91.68
+
+−548.30
+
+−488.21
+
+0
+
+93.52
+
+−651.30
+−686.70
+
+−567.65
+−610.64
+
+0
+0
+
+121.34
+109.79
+
+Article
+
+entire monitoring window, with hour ranging from 0 to 4960 h
+and day ranging from 1 to 209 days, ensuring complete
+representation of the drying process. All shrinkage measurements exhibit negative strain values, as expected, with mixturedependent means typically between approximately −360 and
+−610 microstrains and standard deviations between 80 and
+120 microstrains. The minimum values (up to −686
+microstrains) exhibit the highest long-term shrinkage, while
+maximum values are near 0 microstrains, reflecting early-age
+readings immediately after demolding. The categorical mixture
+features are consistent with the 16 mix designs and two curing
+conditions described in Table 1, ensuring balanced representation across all experimental conditions. These descriptive
+statistics confirm that the data set spans the full physical range
+of shrinkage behavior observed during drying and provides
+sufficient temporal and material variability for robust ML
+model training and evaluation.
+2.2. ML Model Development and Evaluation
+
+This paper investigates the predictive capabilities of various
+ML models in estimating concrete drying shrinkage based on
+the material composition and environmental conditions. The
+procured data are shown in Table 1 as inputs. The data consist
+of near real-time experimental measurements capturing
+concrete drying shrinkage under different material compositions, curing temperature conditions, and the presence of fly
+ash at the cement replacement levels of 20% by weight. This
+34772
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 3. Empirical concrete shrinkage data.
+
+affect the real-time drying shrinkage prediction of each ML
+model.
+
+collinearity and redundant predictors. The analysis indicates
+that time data have the largest correlation with concrete
+shrinkage since the shrinkage nature increases over time. Four
+types of coarse aggregate mixtures, including basalt, granite,
+gravel, and limestone, have a smaller correlation, compared to
+fly ash. Fly ash typically reacts with cement to create
+pozzolanic (C−S−H) reactions over the long run, while
+aggregate normally acts as an inert material.1,75,76 The curing
+temperature shows the smallest correlation with the shrinkage.
+Lastly, the statistical value of the shrinkage shows somewhat
+high correlation, indicating the possibility of utilizing ML
+prediction.
+
+2.3. Data Preparation and Correlation Analysis
+
+The data that were measured either in real time or per ASTM
+standard from Section 2.1 were stored in a preprocessed
+Comma Separated Values (CSV) file. Feature extraction was
+performed to identify relevant attributes, including material
+type (i.e., limestone, basalt, gravel, granite), the presence of fly
+ash, and temperature conditions (i.e., 23 and 30 °C). One
+encoding was applied to categorical variables to enable
+numerical processing by ML models. Statistical aggregates,
+such as mean, standard deviation, minimum, and maximum
+shrinkage values, were calculated based on recorded time (day
+and hr.) to incorporate temporal trends. Statistical aggregates,
+including mean, standard deviation, minimum, and maximum
+shrinkage values, were computed from shrinkage trajectories
+across all concrete mixtures to represent temporal evolution
+characteristics of the measured data sets. These descriptors
+were intended to emulate prior engineering knowledge and
+historical shrinkage characteristics that may also be obtainable
+from external databases or empirical standards. All input
+features are standardized to ensure comparability. This process
+adjusts each variable by centering it around zero and scaling it
+to have unit variance. By removing differences in magnitude
+and distribution across features, the method prevents variables
+with larger numeric ranges from dominating the learning
+process.
+A correlation analysis was conducted to assess the
+relationships between features and shrinkage values. The
+heatmap visualization in Figure 4 identifies potential multi-
+
+2.4. ML Models and Hyperparameter Tuning
+
+Figure 5 presents 10 ML models that are implemented and
+optimized to predict concrete shrinkage using the input
+features excluding the shrinkage value. The core models
+include ridge regression (RR), a linear model that applies L2
+regularization to reduce overfitting by penalizing large
+coefficients; lasso regression (LR), which uses L1 regularization to shrink some coefficients to zero, enabling feature
+selection; and Bayesian ridge regression (BRR), a probabilistic
+approach that incorporates prior distributions to improve
+robustness under noisy and limited data. Ensemble methods
+such as random forest (RF) and extra tree regressor (ETR) are
+also employed. The RF model builds multiple decision trees on
+bootstrapped data to enhance prediction stability, while the
+ETR model increases model diversity through additional
+randomness in feature selection and split criteria. The
+XGBoost model corrects previous errors iteratively to reduce
+bias, whereas the AdaBoost model emphasizes misclassified
+34773
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 4. Correlation matrix.
+
+instances to improve overall performance. The support vector
+regression (SVR) model is applied to capture complex
+relationships through kernel-based mapping of input features
+into higher-dimensional spaces. The K-nearest neighbors
+(KNN) model predicted shrinkage based on the average of
+the k most similar training samples, reflecting local data
+patterns. Lastly, a multilayer perceptron (MLP) model, a type
+of the feedforward neural network with hidden layers, is used
+to model nonlinear interactions among features. The rationale
+for selecting these ten ML models is provided in this section,
+and all models follow the Scikit-learn algorithmic formulation.
+Each ML model is trained using an 80/20 train−test split. The
+
+training set contains 63,206 samples, and the testing set
+contains 15,802 samples. To ensure robustness against
+variability in data splitting, model training and evaluation are
+repeated across multiple random seeds. The authors acknowledge that, because of the strong temporal continuity of hourly
+shrinkage measurements, random splitting may introduce
+partial temporal information leakage between adjacent
+observations and may contribute to optimistic predictive
+performance. However, the data set still includes multiple
+mixture types, aggregate conditions, fly ash conditions, and
+curing environments, providing meaningful variability across
+shrinkage behaviors. Variance inflation factor (VIF) analysis
+34774
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 5. Diagrams of predictive ML models.
+34775
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+was additionally conducted on the predictor variables prior to
+ML model training to evaluate multicollinearity among input
+features.
+Hyperparameter optimization is subsequently performed by
+grid search with 5-fold cross-validation. This is a balanced
+strategy to ensure model generalization while maintaining
+computational efficiency, particularly suitable for our large
+hourly concrete shrinkage data set. The hyperparameter search
+space is summarized in Table 3. For instance, tree-based
+
+nested cross-validation. Because the split was random and
+repeated over multiple seeds, the distributions of temporal and
+material features in the training and testing sets remained
+representative of the full data set. To ensure statistical
+reliability, each experiment was repeated using 10 predefined
+random seeds [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]. For each seed,
+both the train−test split and the internal stochastic elements of
+the algorithms (e.g., parameter initialization) were controlled.
+Model performance metrics were computed independently for
+each run and then averaged across 10 repetitions to obtain the
+final reported values.
+Standardization of numerical features is performed to
+maintain consistent scaling across all models. To evaluate the
+effectiveness of the shrinkage prediction of the ML models,
+two performance metrics including RMSE and R2 scores are
+used to evaluate model effectiveness. RMSE provides an
+absolute measure of prediction errors, while R2 quantifies the
+proportion of variance explained by the ML model. It is noted
+that overfitting is mitigated through cross-validation, ensuring
+generalization to unseen data. The equations for RMSE and R2
+are defined as eqs 1 and 2, respectively.
+
+Table 3. ML Hyperparameters
+model
+RR
+LR
+BRR
+RF
+ETR
+XGBoost
+SVR
+AdaBoost
+KNN
+MLP
+
+parameter
+
+values
+
+alpha
+alpha
+alpha_1
+alpha_2
+n_estimators
+n_estimators
+n_estimators
+learning_rate
+C
+kernel
+n_estimators
+learning_rate
+n_neighbors
+hidden_layer_sizes
+max_iter
+
+[0.1, 1, 10]
+[0.1, 1, 10]
+[1e−6, 1e−5]
+[1e−6, 1e−5]
+[50, 100, 200]
+[50, 100, 200]
+[50, 100]
+[0.01, 0.1]
+[1, 10]
+[″rbf″, ″linear″]
+[50, 100]
+[0.01, 0.1]
+[3, 5, 10]
+[(64, 64), (128,128)]
+[1000, 2000, 4000]
+
+n
+
+RMSE =
+
+R2 = 1
+
+RR
+LR
+BRR
+RF
+ETR
+XGBoost
+SVR
+AdaBoost
+KNN
+MLP
+
+values
+
+alpha
+alpha
+alpha_1
+alpha_2
+n_estimators
+n_estimators
+n_estimators
+learning_rate
+C
+kernel
+n_estimators
+learning_rate
+n_neighbors
+hidden_layer_sizes
+max_iter
+
+10
+0.1
+1e−6
+1e−6
+200
+200
+100
+0.1
+10
+“rbf”
+100
+0.1
+3
+(64,64)
+2000
+
+n
+(y
+i=1 i
+n
+(y
+i=1 i
+
+yi )2
+(1)
+
+yi )2
+y )2
+
+(2)
+
+3. RESULTS AND DISCUSSION
+To address the research gap concerning ML models for
+predicting drying shrinkage and to explore their use in realtime monitoring, this paper evaluates 10 ML models on a
+large-scale data set comprising 79,008 hly observations of
+concrete shrinkage with different mix designs and curing
+conditions. The data set includes both temporal features and
+material properties. Each model is evaluated under two distinct
+temporal conditions:
+1. Hourly measurement, simulating real-time monitoring.
+2. Daily measurement, simulating lab-based and infrastructure-level long-term monitoring.
+
+Table 4. Optimal Hyperparameters Obtained from Grid
+Search
+parameter
+
+1
+(y
+n i=1 i
+
+where n denotes the number of data. yi, ŷi, and y denote the
+actual shrinkage, predicted shrinkage, and mean shrinkage
+values, respectively.
+
+models are tuned over the number of estimators, while
+learning-based models are tuned over the learning rates and
+architectural depth. The optimal configurations, exhibited in
+Table 4, are selected based on validation root mean squared
+error (RMSE) scores.
+
+model
+
+Article
+
+3.1. Performance on Time Data
+
+Table 5 summarizes the maximum (max), average (avg),
+minimum (min), and standard deviation (std) values of RMSE,
+normalized RMSE (NRMSE), and R2 obtained from each ML
+model at different random seeds. In the table, the four bestperforming models are RF, ETR, KNN, MLP, and XGBoost,
+having R2 > 0.99, which indicates strong shrinkage predictive
+performance. Among these models, the KNN model has the
+lowest average RMSE value (1.1533), reflecting an extremely
+low error margin. As a result, this model can be well-suited
+within the practical threshold for shrinkage estimation under
+both laboratory and field conditions. This precision level is
+competitive with or higher than those of several previously
+reported ML-based shrinkage prediction studies under
+comparable experimental conditions. In contrast, traditional
+linear models such as RR and LR models, while simpler, failed
+to capture the complexity of the shrinkage behavior.
+
+Each ML model is trained using an 80/20 train−test split.
+The training set contains 63,206 samples, and the testing set
+contains 15,802 samples. Ten random seeds for training and
+evaluating the experiments are performed. To ensure robustness for variability in data splitting, model training and
+evaluation are repeated across 10 random seeds. This approach
+provides a reliable estimate of model performance and
+variability without additional computational overhead from
+34776
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Table 5. MLs’ Performances on Hourly Data
+model
+
+value
+
+RMSE
+
+NRMSE
+
+R2
+
+model
+
+value
+
+RMSE
+
+NRMSE
+
+R2
+
+RR
+
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+
+69.197
+68.099
+66.427
+0.9766
+69.535
+68.455
+66.763
+0.9932
+69.196
+68.098
+66.428
+0.9749
+1.2091
+1.1879
+1.1544
+0.0202
+1.2462
+1.2271
+1.1944
+0.019
+
+61.8660
+60.8845
+59.3895
+0.8731
+62.1684
+61.2021
+59.6895
+0.8880
+61.8654
+60.8829
+59.3901
+0.8716
+1.0810
+1.0620
+1.0321
+0.0181
+1.1142
+1.0971
+1.0679
+0.0170
+
+0.712
+0.700
+0.690
+0.006
+0.709
+0.696
+0.687
+0.007
+0.712
+0.700
+0.690
+0.006
+1.000
+1.000
+1.000
+0.000
+1.000
+1.000
+1.000
+0.000
+
+XGBoost
+
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+
+5.6905
+5.4767
+5.2609
+0.1447
+33.184
+32.137
+30.785
+0.8568
+44.872
+43.074
+41.5
+1.0703
+1.2072
+1.1533
+1.1185
+0.0289
+3.3811
+3.0098
+2.6501
+0.248
+
+5.0876
+4.8965
+4.7035
+0.1294
+29.6681
+28.7322
+27.5233
+0.7660
+40.1179
+38.5104
+37.1032
+0.9569
+1.0793
+1.0311
+1.0000
+0.0258
+3.0229
+2.6909
+2.3693
+0.2217
+
+0.998
+0.998
+0.998
+0.000
+0.938
+0.933
+0.930
+0.003
+0.886
+0.882
+0.878
+0.002
+1.000
+1.000
+1.000
+0.000
+1.000
+0.999
+0.999
+0.000
+
+LR
+
+BRR
+
+RF
+
+ETR
+
+SVR
+
+AdaBoost
+
+KNN
+
+MLP
+
+Table 6. MLs’ Performances on Daily Data
+model
+
+value
+
+RMSE
+
+NRMSE
+
+R2
+
+model
+
+value
+
+RMSE
+
+NRMSE
+
+R2
+
+RR
+
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+
+75.43
+72.187
+68.643
+2.078
+75.43
+72.187
+68.648
+2.0757
+75.434
+72.188
+68.644
+2.0782
+4.974
+4.5383
+4.0161
+0.3543
+4.0781
+3.2656
+2.408
+0.5082
+
+31.3247
+29.9780
+28.5061
+0.8630
+31.3246
+29.9778
+28.5085
+0.8620
+31.3263
+29.9785
+28.5064
+0.8630
+2.0656
+1.8847
+1.6678
+0.1471
+1.6936
+1.3561
+1.0000
+0.2110
+
+0.703
+0.675
+0.657
+0.017
+0.703
+0.675
+0.657
+0.017
+0.703
+0.675
+0.657
+0.017
+0.999
+0.999
+0.998
+0.001
+1
+0.999
+0.999
+0.001
+
+XGBoost
+
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+max
+avg
+min
+std
+
+7.1149
+6.349
+5.7503
+0.3704
+74.925
+68.994
+64.44
+3.3605
+44.872
+43.074
+41.5
+1.0703
+11.205
+8.2656
+6.3207
+1.703
+6.9649
+5.3378
+3.9221
+1.074
+
+2.9547
+2.6366
+2.3880
+0.1538
+31.1149
+28.6519
+26.7608
+1.3956
+18.6345
+17.8878
+17.2342
+0.4445
+4.6533
+3.4326
+2.6249
+0.7072
+2.8924
+2.2167
+1.6288
+0.4460
+
+0.998
+0.998
+0.997
+0.000
+0.739
+0.703
+0.661
+0.024
+0.896
+0.884
+0.868
+0.009
+0.998
+0.996
+0.992
+0.002
+0.999
+0.998
+0.997
+0.001
+
+LR
+
+BRR
+
+RF
+
+ETR
+
+SVR
+
+AdaBoost
+
+KNN
+
+MLP
+
+To evaluate the models under conventional testing scenarios
+where daily readings are more practical (i.e., in standard ASTM
+lab protocols and in situ monitoring setups), predictions were
+made using shrinkage data aggregated by day, as shown in
+Table 5. Despite the temporal abstraction, the ranking of
+models remained largely unchanged. Results revealed that ML
+models that have R2 > 0.99 including RF, ETR, KNN, MLP,
+and GB indicate strong shrinkage predictive performances
+using daily data. Among these models, the ETR model has the
+lowest average RMSE (3.2656). The developed models in this
+work successfully offer highly accurate prediction, compared to
+the existing models. It is noted that both “hour” and “day” data
+were included because the real-time shrinkage data recorded
+every hour are much more frequent than the standard ASTM
+C157 test. The hourly values capture the short-term changes
+within each day, while the overall drying process still
+
+progresses over longer day-to-day time scales. Using both
+variables, therefore, reflects these two different aspects of the
+shrinkage behavior. Although SHAP results in Tables 5 and 6
+show that “Hour” has a stronger influence, “Day” still helps
+represent the longer-term trend and contributes to more stable
+performance in several ML models (e.g., KNN, MLP, and
+ETR). For these reasons, keeping both temporal features is
+appropriate and consistent with the multiscale nature of drying
+shrinkage. It is noted that despite high predictive accuracy, the
+model is intended to complement rather than replace physicsbased approaches, particularly under extrapolative conditions.
+Figure 6 illustrates the scatter plots comparing actual and
+predicted shrinkage values for each ML model under the
+hourly input conditions. The diagonal line represents the ideal
+1:1 agreement. High-performing models such as KNN, RF,
+ETR, and MLP demonstrate tight clustering around this
+34777
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 6. continued
+
+34778
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 6. Scatter plots comparing predicted and actual shrinkages by MLs with hourly data.
+
+reference line, indicating an excellent predictive alignment with
+actual measurements. In contrast, linear models (e.g., ridge and
+lasso) show wider scatter, reflecting their limited capacity to
+capture complex, nonlinear shrinkage behavior. These visualizations reinforce the numerical results by highlighting how
+different models handle temporal variability in shrinkage and
+underscore the superior reliability of nonlinear and ensemblebased models for real-time shrinkage prediction, which was
+evidenced in refs77−79.
+A comparison between hourly resolution and daily
+aggregated inputs reveals that finer temporal granularity
+significantly enhances model accuracy, particularly in reducing
+RMSE. KNN achieves an 86.1% RMSE reduction (from 8.27
+to 1.15), while RF, ETR, and MLP show 73.8, 62.4, and 43.6%
+reductions, respectively. These results indicate that models
+
+leveraging local temporal patterns, such as instance-based,
+ensemble, and neural models, benefit substantially from highfrequency data (i.e., hourly data) that capture the short-term
+shrinkage dynamic. The finding that the performance of hourly
+data is better than that of daily data is confirmed by ref 79. In
+contrast, improvement in R2 is relatively small, as many models
+already explain most of the variance using daily data. For
+example, tree-based models exceed R2 = 0.99 in both scenarios,
+suggesting that hourly data provide only limited additional gain
+in variance explanation. Nonlinear models like SVR and MLP
+also show significant RMSE improvement with marginal R2
+gains, reinforcing that hourly inputs enhance precision rather
+than trend fitting. Figure 7 indicates substantial RMSE gains
+(blue bars) across top models, while R2 gains (orange line)
+remain modest. These results highlight that hourly data are
+34779
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 7. Performance gain from hourly over daily data.
+
+Figure 8. SHAP analysis of the four best models using hourly data.
+
+34780
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+critical for applications requiring precise real-time monitoring
+and early-age shrinkage detection, even if the overall trend
+explanation saturates with coarser input.
+
+Article
+
+These SHAP results serve several key roles in addressing our
+research objectives. First, although results confirmed that hour
+and day as one of the most important features since shrinkage
+is a time-dependent process, temporal resolution is the most
+critical factor for accurate shrinkage prediction. It is evident
+that the hourly input drastically improves the model performance. Hour predominantly captures the short-term moisture
+loss from capillary pores, which drives rapid early-age
+shrinkage, whereas day represents the long-term desorption
+from fine gel pores and gradual stress relaxation, corresponding
+to the slower stabilization observed experimentally.80 This
+cannot be explained when the ASTM test is performed on a
+weekly basis. Moreover, results ensure model transparency,
+which is essential for practical adoption in civil engineering,
+where explainability and domain insight are as important as the
+accuracy. By linking model decisions to meaningful physical
+parameters, SHAP transforms the ML models from black boxes
+into interpretable tools, enabling engineers to trust and act
+upon their predictions in real-world applications, such as
+shrinkage monitoring, quality control, and early warning
+systems.
+Model robustness was evaluated using cross-validation,
+yielding stable performance with minimal variance across
+folds. VIF for all predictor variables used in the models was
+then calculated. VIF quantifies the degree to which a
+predictor’s variance is inflated due to linear dependence with
+other predictors. VIF values ≥5 indicate problematic multicollinearities. Table 7 presents the computed VIF for each
+
+3.2. SHAP-Based Feature Interpretation
+
+SHAP assigns each feature a value representing its marginal
+impact on the model’s prediction. This allows mechanistic
+discovery for both global model interpretation and local
+explanation. Figure 8 presents the SHAP plots for the four topperforming models: KNN, RF, ETR, and MLP, using hourly
+input data. Each plot ranks features by their average impact on
+model output (mean absolute SHAP value). Color gradients
+represent the original feature values (i.e., red = high; blue =
+low). The horizontal spread reflects how much each feature
+shifts the prediction across the data sets.
+For the tree-based models (RF and ETR), time-based
+features such as “hour” and “day” consistently dominate,
+reinforcing the importance of high-resolution temporal input in
+capturing shrinkage dynamics. These models also show
+moderate contributions from material-related features such as
+“FlyAsh_with Fly ash” and “Material_Basalt,” confirming their
+sensitivity to concrete mix composition. In the RF model,
+“hour” consistently dominates, confirming that short-term
+temporal resolution is the key driver of shrinkage dynamics,
+while “day” contributes less. By contrast, the ETR model
+distributes importance more evenly across both “hour” and
+“day,” representing its tendency to exploit multiple time scales
+due to its more randomized split selection. In the KNN model,
+the feature importance distribution is similar, though slightly
+flatter. KNN leverages the distance between neighboring data
+points rather than internal parameter learning. For the MLP
+model, the SHAP plot reveals a broader spread of influential
+features, with not only “hour” and “day” but also interaction
+and environmental variables like curing conditions (i.e.,
+“Temperature_30C” and “Temperature_27C”) and “FlyAsh_with Fly ash” exerting strong nonlinear effects. This indicates
+the model’s flexibility in capturing complex compound
+relationships, though at the cost of lower interpretability,
+compared to tree ensembles. Taken together, these four
+models reveal consistent patterns. Temporal resolution
+(especially “hour”) emerges as the dominant predictor across
+all methods, while the material-related features such as fly ash
+and basalt show secondary but stable contributions. This crossmodel agreement enhances confidence in the reliability of the
+conclusion regarding feature importance.
+The dominance of hour temporal input across all highperforming models reflects the governing role of early-stage
+capillary water evaporation. During the initial drying period
+(0−200 h), moisture loss occurs primarily from larger capillary
+pores, generating significant capillary tension. This induces
+rapid volumetric contraction and drives the majority of earlyage shrinkage strain. The strong SHAP contribution of hour
+therefore captures the kinetics of capillary pressure development and short-term moisture gradients.
+In contrast, the contribution of day input represents the
+transition toward diffusion-controlled moisture redistribution
+within finer pore structures. In this regime (200−2000 h and
+beyond), shrinkage is governed by gradual desorption of
+physically bound water from gel pores and the relaxation of
+internal stress fields. The reduced but persistent importance of
+day indicates that ML models are capturing the asymptotic
+stabilization behavior associated with long-term equilibrium
+moisture conditions.
+
+Table 7. Variance Inflation Factor (VIF) Analysis
+feature
+
+VIF
+
+feature
+
+VIF
+
+day
+
+39598.36
+
+9711.47
+
+hr.
+
+39619.34
+
+limestone with fly ash
+(23C-50%)
+limestone with fly ash
+(30C-60%)
+limestone no fly ash
+(23C-50%)
+limestone no fly ash
+(30C-60%)
+basalt with fly ash (23C50%)
+basalt with fly ash (30C60%)
+basalt no fly ash (23C50%)
+
+5073.07
+
+basalt no fly ash (30C60%)
+gravel with fly ash
+(23C-50%)
+gravel with fly ash
+(30C-60%)
+gravel no fly ash (23C50%)
+gravel no fly ash (30C60%)
+granite with fly ash
+(23C-50%)
+granite with fly ash
+(30C-60%)
+granite no fly ash
+(23C-50%)
+granite no fly ash
+(30C-60%)
+
+13054.33
+35530.81
+6794.18
+19281.62
+27095.27
+22114.56
+
+5529.99
+27878.58
+28934.39
+33797.25
+16027.29
+27237.72
+37447.95
+19139.18
+
+input variable. The temporal predictors (hour and day) show
+very high VIF values (39,619 and 39,598), reflecting their
+deterministic linear dependence. Similarly, the mixture- and
+curing-related encoded variables yield high VIF values (5073−
+37,447) due to their mutually exclusive nature. It is seen that
+while such magnitudes typically indicate severe multicollinearity in the linear regression, they are not problematic in this
+study because the ML algorithms, including RF, ETR, KNN,
+MLP, and XGBoost models, used are nonparametric and do
+not rely on coefficient estimation. Instead, these ML models
+learn for splitting rules and local patterns, and these are
+subsequently unaffected by the linear dependencies among
+features. Accordingly, Table 7 highlights structural feature
+dependencies rather than instability in the model process.
+34781
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Overall, results indicate strong generalization within the study
+domain.
+The current SHAP analysis further confirms that hour and
+day capture distinct temporal signals. Several models (i.e.,
+KNN, ETR, and MLP) demonstrate improved stability or
+lower variance when both temporal features are retained,
+supporting their complementary roles. On this combined basis
+of quantitative VIF assessment and model interpretability
+through SHAP, both hour and day parameters can be retained
+as necessary and nonredundant temporal descriptors that
+enhance predictive performance across multiple ML models.
+
+Article
+
+hourly intervals and can readily incorporate additional variables
+and sensor inputs without reformulation.
+This research illustrates that real-time, explainable ML
+predictions of concrete shrinkage are not only technically
+feasible but also practically significant. Despite these key
+contributions, limitations exist. The generalization of these
+models to full-scale field environments with greater variability
+needs further validation, as the data set is derived from
+controlled laboratory conditions with a common mix design
+and specific curing conditions. Investigation of validating the
+framework under field-scale variability and environmental
+fluctuations should be conducted. The study does not yet
+incorporate uncertainty quantification, which is essential for
+assessing the confidence bounds of predictions under data
+variability and environmental fluctuations. Likewise, a
+comprehensive sensitivity analysis is not conducted to
+determine the relative influence of individual input parameters
+and their potential interactions on the model outcomes.
+Incorporating domain knowledge such as moisture transport
+dynamics can improve predictive robustness and interpretability.
+
+4. DISCUSSIONS AND IMPLICATIONS
+Based on all findings from the work, the ML can be utilized for
+prediction of the real-time drying shrinkage values of fly ashcontaining concrete. This is not only applied for laboratory
+investigation, but also for the quality control process of
+concrete manufacturing plants.81 Many works have been
+performed to reduce labor force in quality control and quality
+insurance in batching plants. This can reduce labor cost and
+reduce testing time, while providing more accurate outcomes.82,83 Moreover, it can be implemented as the SHM
+system in any infrastructure under service with the aims of
+reducing human workforces and enhancing smart, sustainable,
+and resilient cities.84,85 It is assumed that, compared to manual
+shrinkage testing protocols (i.e., ASTM requiring periodic
+measurements over 28−90 days), the proposed real-time
+predictive framework reduces experimental frequency by up to
+83% (12 times to 1 time), which corresponds to an estimated
+reduction of 67% in material consumption (3 sample to 1
+sample) and associated laboratory energy demand. This
+reduction arises from minimizing repeated specimen preparation and long-term monitoring requirements. In addition,
+improved prediction of shrinkage evolution enables earlier
+mitigation of cracking risk, thereby reducing maintenance
+frequency and contributing to lower lifecycle CO2 emissions in
+cementitious systems.
+The comparison reveals clear differences in predictive
+capability, particularly in the early-age regime. ACI 209
+produces smooth, monotonic shrinkage curves governed by
+fixed empirical coefficients, which are unable to capture the
+rapid nonlinear evolution observed within the first 100−200 h.
+In contrast, the ML models accurately reproduce these
+transient dynamics due to their ability to learn high-resolution
+temporal dependencies from hourly data. This distinction is
+critical, as early-age shrinkage contributes disproportionately to
+cracking risk and structural performance.
+At intermediate and long-term durations, ACI 209 provides
+reasonable trend approximation but exhibits systematic bias in
+magnitude and the rate of shrinkage development, particularly
+for fly ash-modified mixtures. This limitation arises from the
+model’s inability to explicitly account for microstructural
+evolution associated with pozzolanic reactions and pore
+refinement. The ML framework, by contrast, implicitly
+captures these effects through data-driven relationships
+between material composition and temporal progression.
+Quantitatively, the ML models achieve significantly higher
+predictive accuracy (R2 ≈ 0.99) compared to the ACI 209
+formulation, with substantially lower error dispersion across all
+time scales. More importantly, however, is the difference in
+temporal resolution and adaptability. While ACI 209 is
+constrained to predefined functional forms and discrete input
+assumptions, the ML approach can continuously predict at
+
+5. CONCLUSIONS
+This work establishes an interpretable, mechanism-informed
+ML framework that transforms shrinkage prediction from a
+manual laboratory assessment into a real-time engineering tool
+for monitoring and controlling moisture-driven deformation in
+concrete. Results can be summarized below:
+1. Fly ash incorporated in simultaneously reducing binder
+CO2 emissions and improving shrinkage performance,
+which is accurately validated by ML-driven analysis.
+2. Hourly input data significantly improved prediction
+accuracy, particularly in reducing the RMSE. Topperforming models such as KNN, RF, ETR, and MLP
+achieved R2 values of 0.99, with RMSE values under 1.2
+microstrain. This indicates a high degree of precision
+suitable for real-time applications in concrete monitoring.
+3. While gains in R2 were modest, the reduction in RMSE
+confirmed that a finer temporal resolution enhanced
+local accuracy.
+4. SHAP analysis strengthened the findings by revealing
+that temporal features consistently dominated model
+predictions, while material properties, such as fly ash
+content and aggregate type, played a critical role.
+5. These insights validated the experimental design and
+highlighted the potential for integrating interpretable
+ML models into engineering workflows for transparent
+and trustworthy decision making.
+Despite these key contributions, limitations exist. The
+present data set is derived from controlled laboratory
+conditions using Portland Type I cement, one fly ash source,
+20% fly ash replacement level, and 24-MPa concrete mixtures.
+Nevertheless, the data set still includes multiple aggregate
+types, curing environments, and mixture configurations,
+allowing the ML models to learn across different shrinkage
+patterns. Future work should extend the framework toward
+broader concrete classes, additional supplementary cementitious materials, and field-scale validation. Note that the present
+validation framework is based on repeated random train−test
+splitting of high-frequency shrinkage observations. Because
+temporally adjacent measurements from the same specimen
+34782
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+may appear in both training and testing data sets, partial
+temporal information leakage may occur. Future work should
+investigate stricter temporal and specimen-level validation
+strategies to further assess the deployment-level generalization.
+This paper demonstrates that real-time, explainable ML
+prediction of concrete shrinkage is both technically viable and
+practically impactful for the pathway toward smart, low-carbon
+infrastructure management. Future work will focus on
+extending this framework for deployment for other low- and
+high-strength as well as special concrete mix designs and
+integrating it with sensor-based monitoring systems to enable
+intelligent, adaptive concrete management. Also, uncertainty
+bounds for predictions, sensitivity analysis, and physicsinformed neural networks (PINNs), which rely on physical
+and chemical mechanisms of concrete, shall be further
+investigated. Also, in this research, statistical descriptors were
+incorporated to represent overall temporal evolution characteristics across different mixture configurations and curing
+conditions while also emulating prior shrinkage knowledge
+obtainable from historical databases and empirical standards.
+Nevertheless, because these descriptors were derived from
+measured shrinkage trajectories within the present data set and
+combined with random train−test splitting, partial temporal
+information leakage may occur. Future work should investigate
+stricter temporal and specimen-level validation together with
+externally available prior descriptors.
+
+■
+
+This article does not contain studies with human participants
+or animals. Statement of informed consent is not applicable
+since the manuscript does not contain any patient data.
+
+■
+
+REFERENCES
+
+(1) Prasittisopin, L. Power plant waste (fly ash, bottom ash, biomass
+ash) management for promoting circular economy in sustainable
+construction: emerging economy context. Smart Sustainable Built
+Environ. 2026, 15, 1341.
+(2) Kandalai, S.; John, N. J.; Patel, A. Effects of climate change on
+geotechnical infrastructures�state of the art. Environmental Science
+and Pollution Research 2023, 30 (7), 16878−16904.
+(3) Yu, S.; Liu, X.; Li, Y.; He, S.; Yao, Y.; Sun, S. Experimental and
+numerical simulation study on hygrothermal migration of damaged
+envelope walls during wind-driven rain. Building and Environment
+2023, 243, No. 110653.
+(4) Huo, Y.; Sun, H.; Lu, D.; Chen, Z.; Yang, Y. Mechanical
+properties of concrete at low and ultra-low temperatures-a review. J.
+Infrastructure Preserv. Resilience 2022, 3 (1), 20.
+(5) Xie, F.; Jin, Z.; Yang, T.; Han, X.; Chen, X.; Zhang, Y. Dynamic
+Splitting Tensile Strength of Precast Concrete Samples with Varying
+Moisture Contents. J. Mater. Civil Eng. 2024, 36 (2), No. 04023547.
+(6) Jin, L.; Lu, B.; Yu, W.; Xie, C.; Du, X. Direct tensile failures of
+concrete with various moisture contents and sizes at low temperatures
+via mesoscale simulations with ice explicit modelling. Construction and
+Building Materials 2024, 449, No. 138300.
+(7) Francioso, V.; Moro, C.; Velay-Lizancos, M. Effect of recycled
+concrete aggregate (RCA) on mortar’s thermal conductivity
+susceptibility to variations of moisture content and ambient
+temperature. Journal of Building Engineering 2021, 43, No. 103208.
+(8) He, R.; Nantung, T.; Olek, J.; Lu, N. Field study of the dielectric
+constant of concrete: A parameter less sensitive to environmental
+variations than electrical resistivity. Journal of Building Engineering
+2023, 74, No. 106938.
+(9) Li, W.; Guo, Y.; Zhang, X.; Dong, W.; Li, X.; Yu, T.; Wang, K.
+Development of self-sensing ultra-high-performance concrete using
+hybrid carbon black and carbon nanofibers. Cement and Concrete
+Composites 2024, 148, No. 105466.
+(10) Podhajecky, A.-L.; Oneschkow, N.; Kern, B.; Lohaus, L.;
+Müller, H. S.; Haist, M. Influence of initial moisture content on creep
+and shrinkage of concrete at constant and cyclic ambient humidity.
+Mater. Struct. 2023, 56 (9), 170.
+(11) Abubakar Ali, M.; Tomann, C.; Aldakheel, F.; Mahlbacher, M.;
+Noii, N.; Oneschkow, N.; Drake, K.-H.; Lohaus, L.; Wriggers, P.;
+Haist, M. Influence of moisture content and wet environment on the
+fatigue behaviour of high-strength concrete. Materials 2022, 15 (3),
+1025.
+(12) Markert, M.; Katzmann, J.; Birtel, V.; Garrecht, H.; Steeb, H.
+Investigation of the influence of moisture content on fatigue
+behaviour of HPC by using DMA and XRCT. Materials 2022, 15
+(1), 91.
+(13) Leemann, A.; Winnefeld, F.; Münch, B.; Tiefenthaler, J.
+Accelerated carbonation of recycled concrete aggregates and its
+implications for the production of recycling concrete. Journal of
+Building Engineering 2023, 79, No. 107779.
+(14) Zhou, D.; Liu, J.; Cheng, L.; An, S.; Huo, L. Pore structures and
+deterioration mechanism of concrete after cryogenic freeze-thaw
+cycles: Effects of moisture contents and aggregates. Journal of Building
+Engineering 2024, 96, No. 110620.
+(15) Li, D.; Li, L.-y.; Li, P.; Wang, Y.-c. Modelling of convection,
+diffusion and binding of chlorides in concrete during wetting-drying
+cycles. Marine Structures 2022, 84, No. 103240.
+(16) Sereewatthanawut, I.; Pansuk, W.; Pheinsusom, P.;
+Prasittisopin, L. Chloride-induced corrosion of a galvanized steelembedded calcium sulfoaluminate stucco system. Journal of Building
+Engineering 2021, 44, No. 103376.
+(17) Ahmed, A. A.; Shakouri, M.; Trejo, D.; Vaddey, N. P. Effect of
+curing temperature and water-to-cement ratio on corrosion of steel in
+
+ASSOCIATED CONTENT
+
+Data Availability Statement
+
+The data supporting this study are available within the
+manuscript.
+
+■
+
+Article
+
+AUTHOR INFORMATION
+
+Corresponding Author
+
+Lapyote Prasittisopin − Centre of Excellence on Green Tech in
+Architecture, Department of Materials Science,
+Chulalongkorn University, Bangkok 10330, Thailand;
+orcid.org/0000-0003-4860-7357; Email: lapyote.p@
+chula.ac.th
+Author
+
+Chi-tathon Kupwiwat − Department of Architecture, Faculty
+of Architecture, Chulalongkorn University, Bangkok 10330,
+Thailand
+Complete contact information is available at:
+https://pubs.acs.org/10.1021/acsomega.6c04596
+Author Contributions
+
+C.K.: Formal analysis; investigation; software; methodology;
+validation; visualization; writing�original draft; and writing�
+review and editing. L.P.: Conceptualization; data curation;
+project administration; resources; writing� original draft; and
+writing�review and editing.
+Funding
+
+This project was also funded by the Thailand Science Research
+and Innovation Fund, Chulalongkorn University
+(SOC_FF_69_049_2300_014).
+Notes
+
+The authors declare no competing financial interest.
+34783
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+calcium aluminate cement concrete. Const. Building Mater. 2022, 350,
+No. 128875.
+(18) Trejo, D.; Vaddey, N. P.; Halmen, C. Standardizing test to
+quantify chloride threshold of steel in concrete. ACI Mater. J. 2021,
+118 (1), 177−187.
+(19) Wang, Y.; Zhao, Y.; Gong, F.; Dong, J.; Maekawa, K.
+Developing a three-dimensional finite element analysis approach to
+simulate corrosion-induced concrete cracking in reinforced concrete
+beams. Engineering Structures 2022, 257, No. 114072.
+(20) Wang, Z.; Maekawa, K. Lifetime assessment of structural
+concrete−multi-scale integrated hygro-thermal-chemo-electricalmechanistic approach and statistical evaluation. Structure and
+Infrastructure Engineering 2022, 18 (7), 933−949.
+(21) Duque-Redondo, E.; Bonnaud, P. A.; Manzano, H. A
+comprehensive review of CSH empirical and computational models,
+their applications, and practical aspects. Cem. Concr. Res. 2022, 156,
+No. 106784.
+(22) Ahmad, J.; Zhou, Z.; Deifalla, A. F. Self-compacting concrete
+with partially substitution of waste marble: a review. Int. J. Concr.
+Struct. Mater. 2023, 17 (1), 25.
+(23) Su, X.; Jia, M.; Wu, Y.; Yao, L.; Xu, W. A hierarchical creep
+model for cement paste: from decoding nano-microscopic CSH creep
+to considering microstructure evolution. Journal of Building Engineering 2023, 78, No. 107606.
+(24) Tan, X.; Du, J.; Zhang, Q.; Meng, W.; Bao, Y. Monitoring
+restrained shrinkage and cracks of ultra-high-performance concrete
+(UHPC) using distributed fiber optic sensors. Construction and
+Building Materials 2024, 422, No. 135789.
+(25) Yazdizadeh, Z.; Marzouk, H.; Hadianfard, M. A. Monitoring of
+concrete shrinkage and creep using Fiber Bragg Grating sensors.
+Construction and Building Materials 2017, 137, 505−512.
+(26) ASTM C596-23, Standard Test Method for Drying Shrinkage of
+Mortar Containing Hydraulic Cement, 2023.
+(27) ASTM C157/C157M-17 Standard Test Method for Length
+Change of Hardened Hydraulic-Cement Mortar and Concrete; 2017.
+(28) BS EN 12390-16:2019; Testing Hardened Concrete�Determination of the Shrinkage of Concrete, 2019.
+(29) Zhang, H.; Li, J.; Kang, F. Real-time monitoring of humidity
+inside concrete structures utilizing embedded smart aggregates.
+Construction and Building Materials 2022, 331, No. 127317.
+(30) Chen, S.; Zhao, H.; Chen, Y.; Huang, D.; Chen, Y.; Chen, X.
+Experimental study on interior relative humidity development in
+early-age concrete mixed with shrinkage-reducing and expansive
+admixtures. Construction and Building Materials 2020, 232,
+No. 117204.
+(31) Sangkeaw, P.; Thongchom, C.; Sanit-in Penpichcha, K.;
+Prasittisopin, L.; Pansuk, W. Restrained Shrinkage Behavior of
+High-Strength Concrete with Various Synthetic Fiber and Cellulose
+Fiber Proportions. J. Mater. Civil Eng. 2025, 37 (6), No. 04025165.
+(32) Prasittisopin, L. Artificial Intelligence-Driven Materiality: A
+Systematic Review and Perspective. Engineered Science 2025, 35, 1587.
+(33) Asif, U.; Khan, W. A.; Naseem, K. A.; Rizvi, S. A. S. Enhancing
+the predictive accuracy of marshall design tests using generative
+adversarial networks and advanced machine learning techniques.
+Materials Today Communications 2025, 45, No. 112379.
+(34) Liu, Y.; Dong, J.; Yuan, S.; Li, K.; Hu, X.; Wang, Q. Variable
+fatigue loading effects on corrugated steel box girders with recycled
+concrete. Journal of Constructional Steel Research 2024, 215,
+No. 108526.
+(35) Chen, D.; Kang, F.; Li, J.; Zhu, S.; Liang, X. Enhancement of
+underwater dam crack images using multi-feature fusion. Automation
+in Construction 2024, 167, No. 105727.
+(36) Kang, F.; Han, S.; Salgado, R.; Li, J. System probabilistic
+stability analysis of soil slopes using Gaussian process regression with
+Latin hypercube sampling. Computers and Geotechnics 2015, 63, 13−
+25.
+(37) Wattanapanich, C.; Imjai, T.; Sridhar, R.; Garcia, R.; Thomas,
+B. S. Optimizing recycled aggregate concrete for severe conditions
+
+Article
+
+through machine learning techniques: a review. Eng. Sci. 2024, 31,
+No. 1191.
+(38) Liu, K.; Zheng, J.; Dong, S.; Xie, W.; Zhang, X. Mixture
+optimization of mechanical, economical, and environmental objectives
+for sustainable recycled aggregate concrete based on machine learning
+and metaheuristic algorithms. Journal of Building Engineering 2023, 63,
+No. 105570.
+(39) Tuvayanond, W.; Kamchoom, V.; Prasittisopin, L. Efficient
+machine learning for strength prediction of ready-mix concrete
+production (prolonged mixing). Construct. Innov. 2026, 26, 369.
+(40) Sau, D.; Shiuly, A.; Hazra, T. Study on green concrete replacing
+natural fine and coarse aggregate by plastic waste − An experimental
+and machine learning approach. Materials Today: Proceedings 2023.
+(41) Prasittisopin, L.; Tuvayanond, W.; Kang, T. H.-K.;
+Kaewunruen, S. Concrete Mix Design of Recycled Concrete
+Aggregate (RCA): Analysis of Review Papers, Characteristics,
+Research Trends, and Underexplored Topics. Resources 2025, 14
+(2), 21.
+(42) Prasittisopin, L. How 3D Printing Technology Makes Cities
+Smarter: A Review, Thematic Analysis, and Perspectives. Smart Cities
+2024, 7 (6), 3458−3488.
+(43) Wang, S.; Xia, P.; Chen, K.; Gong, F.; Wang, H.; Wang, Q.;
+Zhao, Y.; Jin, W. Prediction and optimization model of sustainable
+concrete properties using machine learning, deep learning and swarm
+intelligence: A review. Journal of Building Engineering 2023, 80,
+No. 108065.
+(44) Nafees, A.; Amin, M. N.; Khan, K.; Nazir, K.; Ali, M.; Javed, M.
+F.; Aslam, F.; Musarat, M. A.; Vatin, N. I. Modeling of mechanical
+properties of silica fume-based green concrete using machine learning
+techniques. Polymers 2022, 14 (1), 30.
+(45) Rahmati, M.; Toufigh, V. Evaluation of geopolymer concrete at
+high temperatures: An experimental study using machine learning.
+Journal of Cleaner Production 2022, 372, No. 133608.
+(46) Latif, S. D. Concrete compressive strength prediction modeling
+utilizing deep learning long short-term memory algorithm for a
+sustainable environment. Environmental Science and Pollution Research
+2021, 28 (23), 30294−30302.
+(47) Prasittisopin, L.; Tuvayanond, W. Machine Learning for Strength
+Prediction of Ready-Mix Concretes Containing Chemical and Mineral
+Admixtures and Cured at Different Temperatures; Springer Nature
+Singapore: Singapore, 2024; pp 242−249.
+(48) Zain, M.; Keawsawasvong, S.; Thongchom, C.;
+Sereewatthanawut, I.; Usman, M.; Prasittisopin, L. Establishing
+Efficacy of Machine Learning Techniques for Vulnerability
+Information of Tubular Buildings. Eng. Sci. 2024, 27, No. 1008.
+(49) Kittinaraporn, W.; Tuprakay, S.; Prasittisopin, L. Effective
+Modeling for Construction Activities of Recycled Aggregate Concrete
+Using Artificial Neural Network. J. Const. Eng. Manage. 2022, 148 (3),
+No. 04021206.
+(50) Zain, M.; Prasittisopin, L.; Mehmood, T.; Ngamkhanong, C.;
+Keawsawasvong, S.; Thongchom, C. A novel framework for effective
+structural vulnerability assessment of tubular structures using machine
+learning algorithms (GA and ANN) for hybrid simulations. Nonlinear
+Eng. 2024, 13 (1), No. 20220365.
+(51) Nazar, S.; Yang, J.; Ahmad, A.; Shah, S. F. A. Comparative
+study of evolutionary artificial intelligence approaches to predict the
+rheological properties of fresh concrete. Materials Today Communications 2022, 32, No. 103964.
+(52) Nguyen, T. D.; Cherif, R.; Mahieux, P. Y.; Lux, J.; Aït-Mokhtar,
+A.; Bastidas-Arteaga, E. Artificial intelligence algorithms for prediction
+and sensitivity analysis of mechanical properties of recycled aggregate
+concrete: A review. J. Building Eng. 2023, 66, No. 105929.
+(53) Bouras, Y.; Li, L. Utilisation of Machine Learning Techniques
+to Model Creep Behaviour of Low-Carbon Concretes. Buildings 2023,
+13 (9), 2252.
+(54) Zhang, H.; Guo, Q.-Q.; Xu, L.-Y. Prediction of long-term
+prestress loss for prestressed concrete cylinder structures using
+machine learning. Engineering Structures 2023, 279, No. 115577.
+34784
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+(55) Hilloulin, B.; Umunnakwe, R. Machine learning-aided
+prediction of shrinkage in modern concrete: Focus on mix
+proportions and SCMs. Journal of Building Engineering 2024, 98,
+No. 111410.
+(56) Wang, Q.; Dai, R.; Zhang, H.; Zheng, H.; Liang, X. Machine
+learning-based prediction method for drying shrinkage of recycled
+aggregate concrete. Journal of Building Engineering 2024, 96,
+No. 110493.
+(57) Ocak, A.; Bekdaş, G.; Işıkdağ, Ü .; Nigdeli, S. M.; Bilir, T.
+Drying shrinkage and crack width prediction using machine learning
+in mortars containing different types of industrial by-product fine
+aggregates. Journal of Building Engineering 2024, 97, No. 110737.
+(58) Luo, X.; Li, Y.; Lin, H.; Hao, M.; Wang, H. Machine learningdriven modeling and interpretative analysis of drying shrinkage
+behavior in magnesium silicate hydrate cement. Journal of Building
+Engineering 2025, 107, No. 112721.
+(59) Shen, J.; Li, Y.; Lin, H.; Li, Y. Development of autogenous
+shrinkage prediction model of alkali-activated slag-fly ash geopolymer
+based on machine learning. Journal of Building Engineering 2023, 71,
+No. 106538.
+(60) Hilloulin, B.; Tran, V. Q. Interpretable machine learning model
+for autogenous shrinkage prediction of low-carbon cementitious
+materials. Construction and Building Materials 2023, 396, No. 132343.
+(61) Li, Y.; Shen, J.; Li, Y.; Wang, K.; Lin, H. The data-driven
+research on the autogenous shrinkage of ultra-high performance
+concrete (UHPC) based on machine learning. Journal of Building
+Engineering 2024, 82, No. 108373.
+(62) Hao, J.; Jiao, W.; Xie, X.; Man, D.; Huang, S. Intelligent
+prediction and understanding of self-shrinkage in ultra-high performance concrete based on machine learning. Case Studies in Construction
+Materials 2025, 22, No. e04255.
+(63) Toker Beeson, S.; Korkmaz, K. A.; Abualkibash, M.; Cakiroglu,
+C. Rapid damage assessment using satellite images after hurricane
+harvey with gradient boosting models. Spatial Information Research
+2025, 33 (4), 30.
+(64) Uçankale, M.; Cakiroglu, C.; Bekdaş, G.; Korkmaz, K. A. Datadriven modeling of dose-dependent chlorhexidine release from glass
+ionomer cements using gradient boosting models. Dental Mater. 2026.
+.
+(65) Cakiroglu, C.; Almasarwah, N.; Ö zdemir, M. H.; Aylak, B. L.;
+Singh, M.; Deveci, M. Data-driven modelling of unloading hours using
+explainable gradient boosting models. Advanced Engineering Informatics 2026, 71, No. 104353.
+(66) Abdelghafar, S.; Alshater, H.; Abouelmagd, L. M.; Darwish, A.;
+Hassanien, A. E. Organic photovoltaic prediction model based on
+Bayesian optimization and explainable AI. Sci. Rep. 2025, 15 (1),
+32559.
+(67) Khurshid, M. R.; Manzoor, S.; Sadiq, T.; Hussain, L.; Khan, M.
+S.; Dutta, A. K. Unveiling diabetes onset: Optimized XGBoost with
+Bayesian optimization for enhanced prediction. PLoS One 2025, 20
+(1), No. e0310218.
+(68) Win, T. T.; Wattanapornprom, R.; Prasittisopin, L.; Pansuk,
+W.; Pheinsusom, P. Investigation of fineness and calcium-oxide
+content in fly ash from ASEAN region on properties and durability of
+cement−fly ash system. Engineering Journal 2022, 26 (5), 77−90.
+(69) Zanovello, M.; John, V. M.; White, C. E.; Angulo, S. C.
+Engineered blended thermoactivated recycled cement: a study on
+reactivity, water demand, strength-porosity, and CO2 emissions. ACS
+Sustainable Chem. Eng. 2025, 13 (2), 800−814.
+(70) Sereewatthanawut, I.; Panwisawas, C.; Ngamkhanong, C.;
+Prasittisopin, L. Effects of extended mixing processes on fresh,
+hardened and durable properties of cement systems incorporating fly
+ash. Sci. Rep. 2023, 13 (1), 6091.
+(71) Ş imşek, O.; Sefidehkhan, H. P.; Gökçe, H. Performance of fly
+ash-blended Portland cement concrete developed by using fine or
+coarse recycled concrete aggregate. Const. Building Mater. 2022, 357,
+No. 129431.
+(72) Moghaddam, S. C.; Madandoust, R.; Jamshidi, M.; Nikbin, I.
+M. Mechanical properties of fly ash-based geopolymer concrete with
+
+Article
+
+crumb rubber and steel fiber under ambient and sulfuric acid
+conditions. Const. Building Mater. 2021, 281, No. 122571.
+(73) Arezoumandi, M.; Ezzell, M.; Volz, J. S. A comparative study of
+the mechanical properties, fracture behavior, creep, and shrinkage of
+chemically based self-consolidating concrete. Frontiers of Structural
+and Civil Engineering 2014, 8 (1), 36−45.
+(74) Gao, P.; Chen, Y.; Huang, H.; Qian, Z.; Schlangen, E.; Wei, J.;
+Yu, Q. Effect of coarse aggregate size on non-uniform stress/strain
+and drying-induced microcracking in concrete. Composites Part B:
+Engineering 2021, 216, No. 108880.
+(75) Kumar, A.; Sen, S.; Sinha, S. Machine learning based prediction
+models for the compressive strength of high-volume fly ash concrete
+reinforced with silica fume. Asian Journal of Civil Engineering 2025, 26
+(4), 1683−1701.
+(76) Win, T. T.; Wattanapornprom, R.; Prasittisopin, L.; Pansuk,
+W.; Pheinsusom, P. Exploring ASEAN Fly Ash for Enhancing Cement
+Hydration and Service Life Prediction of Portland Cement Mortar.
+Engineering Journal 2023, 27 (9), 1−13.
+(77) Kupwiwat, C.-t.; Kaewunruen, S.; Prasittisopin, L. Advancing
+urban thermal comfort: adaptive ensemble machine learning models
+for tropical climates. Energy and Buildings 2025, 339, No. 115762.
+(78) Onyelowe, K. C.; Ebid, A. M.; Awoyera, P.; Kamchoom, V.;
+Rosero, E.; Albuja, M.; Mancheno, C. Prediction and validation of
+mechanical properties of self-compacting geopolymer concrete using
+combined machine learning methods a comparative and suitability
+assessment of the best analysis. Sci. Rep. 2025, 15 (1), 6361.
+(79) Tipu, R. K.; Bansal, S.; Batra, V.; Suman; Patel, G. A. Ensemble
+machine learning models for predicting concrete compressive strength
+incorporating various sand types. Multiscale and Multidisciplinary
+Modeling, Experiments and Design 2025, 8 (4), 222.
+(80) Bentz, D. P. A review of early-age properties of cement-based
+materials. Cem. Concr. Res. 2008, 38 (2), 196−204.
+(81) Ng, W. L.; Goh, G. L.; Goh, G. D.; Ten, J. S. J.; Yeong, W. Y.
+Progress and Opportunities for Machine Learning in Materials and
+Processes of Additive Manufacturing. Adv. Mater. 2024, 36 (34),
+No. 2310006.
+(82) Zain, M.; Dackermann, U.; Prasittisopin, L. Machine learning
+(ML) algorithms for seismic vulnerability assessment of school
+buildings in high-intensity seismic zones. Structures 2024, 70,
+No. 107639.
+(83) Babaei, H.; Zamani, M.; Mohammadi, S. The impact of data
+splitting methods on machine learning models: A case study for
+predicting concrete workability. Mach. Learning Comput. Sci. Eng.
+2025, 1 (1), 21.
+(84) Maqsoom, A.; Saqib, S. E.; Basharat, M. u.; Prasittisopin, L.
+Integrating circular economy into sustainable construction: research
+trends and gaps identified. Arch. Eng. Des. Manage. 2025, 1−24.
+(85) Prasittisopin, L. Machine learning (ML) and deep learning
+(DL) in sustainable concrete construction: review, trend and gap
+analyses. Journal of Asian Architecture and Building Engineering 2025,
+1−29.
+
+34785
+
+https://doi.org/10.1021/acsomega.6c04596
+ACS Omega 2026, 11, 34768−34785
+
+

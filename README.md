@@ -675,7 +675,9 @@ The long prompt is what costs: facts+prose 132 of 246, picked pages 128, the con
 156 with the one paper in view.
 Letting keyword search pick the paper first and giving the model only that paper's condensed form plus
 sentences gets 184 of 246, as many as with the right paper handed over, from a 7k-token prompt
-(`experiments/routed/`).
+(`experiments/routed/`). On a 120-paper library with 2 or 3 papers per ChemE topic and other fields mixed in, search
+still finds the paper for 381 of 388 questions and the same pipeline gets 304 right, as many as with the right paper
+handed over; sending search's top 2 papers gets 242 (p < 0.0001; `experiments/big-library/`).
 Method and numbers: the methodology doc (https://claude.ai/code/artifact/efe49cff-4c52-4f7f-9eb9-180920121aa6);
 how to pick the work up: `experiments/bench-llama/HANDOFF.md`.
 

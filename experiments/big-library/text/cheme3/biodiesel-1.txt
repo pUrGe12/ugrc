@@ -1,0 +1,1427 @@
+This article is licensed under CC-BY-NC-ND 4.0
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Investigation of Delay-Induced Dynamics and Optimal Control
+Using Ultrasound Technology in a Mathematical Model of Biodiesel
+Production
+Xianbing Cao, Xinyi Wang, Huina Zhang, Satyajit Mukherjee, Salil Ghosh,* and Priti Kumar Roy*
+Cite This: ACS Omega 2026, 11, 51964−51974
+
+ACCESS
+
+Read Online
+
+Metrics & More
+
+Article Recommendations
+
+ABSTRACT: In this study, a delay-induced mathematical model
+for biodiesel production is proposed by introducing a discrete time
+delay into a reaction kinetic framework. The delay represents the
+intrinsic lag associated with intermediate biochemical processes
+during biodiesel synthesis. An optimal control strategy based on
+ultrasound-assisted production is further incorporated to regulate
+biodiesel yield while minimizing control cost. The resulting delayed
+optimal control system is analyzed using Pontryagin’s Maximum
+Principle. To efficiently simulate the delayed dynamics, a fixed-step
+RK4 solver for delay differential equations is developed and
+validated against the ddeint method. Numerical simulations
+demonstrate that delay significantly affects transient biodiesel
+dynamics and may induce oscillatory behavior. Sensitivity and
+uncertainty analyses identify key kinetic parameters governing oscillation amplitude and system robustness. The results highlight the
+potential of ultrasound-assisted control strategies for enhancing biodiesel production.
+
+■
+
+density and viscosity as functions of temperature.6,7 These
+investigations highlight the complex kinetic mechanisms
+underlying biodiesel synthesis and emphasize the importance
+of accurate modeling tools for optimizing production processes.
+In recent years, mathematical modeling has emerged as a
+powerful approach for understanding and optimizing biodiesel
+production systems. Mathematical models allow researchers to
+analyze reaction kinetics, investigate system stability, and
+explore the influence of key parameters on biodiesel yield.
+Various modeling approaches, including regression models,
+polynomial approximations, and nonlinear differential equation
+systems, have been employed to describe biodiesel production
+dynamics.8,9 In particular, ordinary differential equation (ODE)
+models have been used to represent the interaction between
+triglycerides, diglycerides, monoglycerides, methanol, and
+catalysts during the transesterification process.10 These models
+provide valuable insights into the dynamic behavior of biodiesel
+production systems and enable the identification of optimal
+operating conditions.
+
+INTRODUCTION
+The rapid depletion of fossil fuel reserves and the increasing
+environmental concerns associated with greenhouse gas
+emissions have intensified the search for sustainable and
+renewable energy sources. Among the various alternatives,
+biodiesel has attracted considerable attention due to its
+biodegradability, lower toxicity, and compatibility with existing
+diesel engines. Biodiesel is commonly produced from nonedible
+vegetable oil from the fruit of Jatropha Curcas plant, animal fats,
+or waste cooking oils through a catalytic transesterification
+process, in which triglycerides react with alcohol in the presence
+of a catalyst to form fatty acid methyl esters (FAME) and
+glycerol.1,2 Because of its favorable environmental profile and
+renewable nature, biodiesel has been widely studied as a
+promising substitute for conventional petroleum-based diesel
+fuels.
+The efficiency of biodiesel production strongly depends on
+several physicochemical parameters such as temperature,
+catalyst concentration, molar ratio of alcohol to oil, reaction
+time, and mixing conditions.3,4 Numerous experimental studies
+have investigated the influence of these parameters on biodiesel
+yield and reaction kinetics. For example, temperature-dependent transesterification processes have been explored to enhance
+biodiesel yield and reaction efficiency.5 Other studies have
+examined the thermophysical properties of biodiesel−diesel
+mixtures and developed empirical models to predict their
+© 2026 The Authors. Published by
+American Chemical Society
+
+Received: June 10, 2026
+Revised: August 7, 2026
+Accepted: August 11, 2026
+Published: August 19, 2026
+
+51964
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Despite the progress achieved in existing modeling studies,
+most available mathematical models assume instantaneous
+reaction responses and neglect the inherent time delays
+associated with intermediate reaction stages. In practical
+biodiesel production processes, however, delays may arise due
+to several factors, including intermediate chemical transformations, catalyst activation periods, diffusion effects, and
+mixing limitations within the reaction medium. Such delays
+introduce memory effects into the system, meaning that the
+current production rate may depend not only on the present
+state variables but also on their past values. These phenomena
+cannot be adequately captured by classical ODE models.
+Delay differential equations (DDEs) provide a natural
+mathematical framework for representing such processes with
+memory. In delay models, the rate of change of a state variable
+depends on its value at a previous time, thereby incorporating
+the effects of reaction lag or intermediate biochemical
+processes.17 In the context of biodiesel production, a delay
+may arise in the formation of biodiesel from intermediate
+compounds such as diglycerides and monoglycerides, or in the
+activation dynamics of catalysts involved in the transesterification process. Consequently, incorporating delay into
+biodiesel reaction models may provide a more realistic
+description of the underlying kinetic mechanisms.
+Another important aspect of biodiesel production is the use of
+technological interventions to enhance reaction efficiency.
+Ultrasound-assisted transesterification has been recognized as
+an effective technique for accelerating biodiesel production by
+improving mass transfer and reducing reaction time.18 However,
+the application of such techniques involves operational costs,
+making it desirable to determine optimal strategies that balance
+production efficiency and energy expenditure.19 Optimal
+control theory provides a systematic framework for determining
+such strategies by identifying control inputs that maximize
+desired outcomes while minimizing associated costs.
+Motivated by these considerations, the present study
+proposes a delay-induced mathematical model for biodiesel
+production by incorporating a discrete time delay into an
+existing reaction kinetic framework. The delay term captures the
+intrinsic lag associated with biodiesel formation during the
+transesterification process. Furthermore, an optimal control
+mechanism representing ultrasound-assisted production is
+introduced to regulate biodiesel yield while minimizing control
+effort. The resulting delayed optimal control system is analyzed
+using Pontryagin’s Maximum Principle. The main objectives of
+this work are therefore summarized as follows: (i) to develop a
+delay-induced mathematical model describing biodiesel production dynamics; (ii) to incorporate an optimal control
+mechanism representing ultrasound-assisted production; (iii)
+to construct an efficient numerical scheme for solving the
+resulting delay differential system; and (iv) to investigate the
+influence of delay and key kinetic parameters on biodiesel
+production dynamics through extensive numerical simulations
+and sensitivity analysis.
+The remainder of the paper is organized as follows: Section
+“Formulation of the Delay-Induced Mathematical Model” and
+Section “The Optimal Control Problem” presents the
+formulation of the delay-induced biodiesel production system
+together with the corresponding analysis of optimal controlinduced framework. Numerical experiments of the proposed
+systems, sensitivity analysis, uncertainty analysis, and solver
+validation results are discussed in Section “Results” while the
+
+Article
+
+principal findings and concluding remarks of the present study
+are summarized in Sections “Discussion” and “Conclusions”.
+
+■
+
+FORMULATION OF THE DELAY-INDUCED
+MATHEMATICAL MODEL
+The delayed biodiesel production model considered in this
+study is developed by extending the kinetic transesterification
+framework reported in ref 11 In the original formulation,
+biodiesel synthesis from Jatropha curcas oil and methanol was
+described through three reversible transesterification steps,
+together with side saponification reactions in the presence of a
+KOH catalyst. The model accounts for the conversion of
+triglyceride, diglyceride, and monoglyceride into biodiesel and
+glycerol, while also incorporating the influence of catalystmediated soap formation. In addition, the mass transfer
+contribution induced by ultrasound irradiation was included
+through the mass transfer coefficient, which depends on the
+Reynolds and Schmidt numbers and reflects the enhancement of
+molecular transport within the reaction vessel.
+In practical biodiesel production, the formation of biodiesel is
+not always an instantaneous process. The overall conversion
+depends on intermediate reaction stages, catalyst activation,
+molecular diffusion, alcohol−oil phase interaction, and ultrasound-assisted mass transfer.12−14 In ultrasound-assisted transesterification systems, transport enhancement and cavitationinduced mixing further influence the temporal evolution of the
+reaction process.15,16 These mechanisms may introduce a finite
+response time between the availability of reactants and the
+measurable accumulation of biodiesel. To capture this memory
+effect, we introduce a discrete time delay τ into the biodiesel
+production term of the previously established kinetic model.
+Specifically, the logistic production contribution is replaced by
+the delayed feedback form
+i
+McXBjjjj1
+k
+
+XB(t
+K
+
+) yz
+zz
+z
+{
+
+where XB(t−τ) represents the past biodiesel concentration
+affecting the present production rate, and K denotes the
+maximum attainable biodiesel concentration. This modification
+allows the model to represent delayed conversion effects arising
+from intermediate transesterification steps and transport
+limitations during ultrasound-assisted biodiesel synthesis.
+Accordingly, the discrete delay is incorporated exclusively in
+the biodiesel production term to represent the dominant
+cumulative lag associated with mixing, mass transfer, and the
+overall biodiesel production process. Although intermediate
+reaction stages may also experience finite delays, these processes
+generally occur on comparatively shorter time scales and are
+therefore approximated as instantaneous relative to the overall
+biodiesel production dynamics. Consequently, a single
+representative delay is adopted to capture the dominant
+temporal memory effect while maintaining mathematical
+tractability and avoiding unnecessary model complexity.
+Since the detailed chemical reaction pathways, parameter
+meanings, and assumptions of the original kinetic model have
+already been discussed in ref 11 the present work focuses mainly
+on the delay-induced extension and its dynamical consequences.
+The remaining reaction terms are retained from the established
+framework, while the delayed biodiesel production mechanism
+is introduced to investigate how reaction lag influences transient
+dynamics, oscillatory behavior, and production stability. The
+state variables of the proposed system represent the concen51965
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+trations of biodiesel (XB), triglyceride (XT), diglyceride (XD),
+monoglyceride (XM), methanol (XA), glycerol (XG), potassium
+hydroxide catalyst (XK), soap (XS), free fatty acid i.e., FFA (XF),
+and water (XW), respectively. Hence, based on the discussions
+above, the delay-induced mathematical model is presented as
+below
+dXB
+=
+dt
+
+1XT XA
+6 XGXB
+
+2 XDXB +
+
+3 XDXA
+
+4 XM XB + 5 XM XA
+
+ij
+j
+k
+
+8 XBXK + McXBj
+j1
+
+XB(t
+K
+
+) yz
+zz
+z
+{
+
+dXT
+= 1XT XA + 2 XDXB
+X X
+7 T K
+dt
+dXD
+= 1XT XA
+X X
+X X + 4 XM XB
+2 D B
+3 D A
+dt
+dXM
+= 3 XDXA
+4 XM XB
+5 XM XA + 6 X GXB
+dt
+dXA
+= 1XT XA + 2 XDXB
+X X + 4 XM XB
+3 D A
+dt
+X X + 6 XGXB + 8 XBXK
+5 M A
+
+contact between reactants and catalyst. However, continuous
+application of ultrasound may increase operational cost and
+energy consumption. Therefore, it is desirable to apply
+ultrasound in an optimized manner rather than maintaining
+maximum intensity throughout the entire reaction period.
+Let (t ) denote the normalized ultrasound control intensity
+(t ) 1. Here, (t ) = 0 represents the
+at time t, where 0
+absence of ultrasound application, while (t ) = 1 corresponds
+to the maximum admissible ultrasound intensity. Accordingly,
+the optimal control-induced delayed mathematical model is
+formulated as follows
+
+dXG
+= 5 XM XA
+6 XGXB + 7 X T XK
+dt
+dXK
+= ( 7 XT XK + 8 XBXK + 9 XK XF )
+dt
+dXS
+= ( 7 XT XK + 8 XBXK + 9 XK XF )
+dt
+dXF
+= 9 XF XK
+dt
+dXW
+= 9 XF XK
+dt
+
+dXB
+=
+dt
+
+1XT XA
+
+ij
+jj1
+j
+k
+
+6 XGXB
+
+XB(t
+K
+
+2 XDXB +
+
+3 XDXA
+
+8 XBXK + McXB
+
+4 XM XB + 5 XM XA
+
+(t )
+
+) yz
+zz
+z
+{
+
+dXT
+= 1XT XA + 2 XDXB
+X X
+7 T K
+dt
+dXD
+= 1XT XA
+X X
+X X + 4 XM XB
+2 D B
+3 D A
+dt
+dXM
+= 3 XDXA
+4 XM XB
+5 XM XA + 6 X GXB
+dt
+dXA
+= 1XT XA + 2 XDXB
+X X + 4 XM XB
+3 D A
+dt
+X X + 6 XGXB + 8 XBXK
+5 M A
+
+(1)
+
+The system is subject to the following initial conditions
+XB(0) = 0, XT (0) = YT 0 , XD(0) = 0,
+XM (0) = 0, XA(0) = YA 0
+XG(0) = 0, XK (0) = YK 0 , XS(0) = 0,
+XF (0) = YF 0 , XW (0) = 0
+
+Since the system contains the delayed term XB(t−τ), the
+biodiesel concentration is supplemented with the history
+condition XB(t) = ϕB(t), t∈[−τ, 0], where ϕB(t) is a continuous
+function satisfying ϕB(0) = XB(0). For numerical simulations,
+we assume the constant history XB(t) = 0, −τ ≤ t ≤ 0. This
+assumption represents the startup phase of the ultrasoundassisted biodiesel production process, during which biodiesel
+has not yet been generated and the reactor has not experienced
+any delayed production effects.
+
+dXG
+= 5 XM XA
+6 XGXB + 7 X T XK
+dt
+dXK
+= ( 7 XT XK + 8 XBXK + 9 XK XF )
+dt
+dXS
+= ( 7 XT XK + 8 XBXK + 9 XK XF )
+dt
+dXF
+= 9 XF XK
+dt
+dXW
+= 9 XF XK
+dt
+
+■
+
+THE OPTIMAL CONTROL PROBLEM
+Motivated by the role of ultrasound in reducing mass transfer
+resistance between methanol and Jatropha curcas oil, we further
+extend the proposed delay-induced biodiesel model (1) by
+incorporating a time-dependent control variable. In ultrasoundassisted transesterification, acoustic cavitation improves phase
+mixing, enhances molecular transport, and accelerates the
+
+(2)
+
+The system is subject to the following initial conditions
+51966
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+XB(0) = 0, XT (0) = YT 0 , XD(0) = 0,
+XM (0) = 0, XA(0) = YA 0
+
++
+
+(t ),
+
+t
+
+B
+
+[
+
+, 0]
+
+t
+
+tf
+t0
+
+[C1
+
+2
+
+(t )
+
+C2XB2(t )]dt
+
+L ([t 0 , t f ])|0
+
+(t )
+
+t
+
+d
+
+X X
+6 G B
+É
+10
+Ñ
+) zyÑÑÑ
+zzÑÑ +
+i i
+zÑÑ
+{ÑÖ i = 2
+
+XB(t
+K
+
+XX
+8 B K
+
+(7)
+
+xi
+
+(t ) + [t , t
+
+(t + )
+,
+xi , (t + )
+
+] (t )
+
+0 f
+
+(8)
+
+d
+
+jij
+k
+
+X
+2 D
+
+X(
+1 A 1
+
+2 +
+
+3
+
+5)
+
++
+
+2 +
+
+6
+
+7 +
+
+1(t ) =
+
+1j
+jj
+
+2C2XB +
+
+X
+4 M
+
+X
+6 G
+
+X
+8 K
+
+i
+XB(t
+) yzyzz
+zzzz + 2 XD
++ Mc (t )jjjj1
+2
+zz
+K
+k
+{{
++ 3( 2 XD + 4 XM ) + 4( 4 XM + 6 XG)
++ 5( 2 XD + 4 XM + 6 XG + 8 XK )
+6 6 XG
+(t )
+7 8 XK + 8 8 XK
+[t 0 , t f ]
+Mc
+1(t + )XB(t + ) (t + )
+K
+2 (t ) =
+
+3(t ) =
+
+[t0 , t f ]}
+(5)
+
+X (
+7 K
+
+X(
+2 B
+
+2
+
+3 +
+
+5)
+
+3 +
+
+4
+
+5)
+
+3
+
+4 +
+
+5)
+
++ 5 XA( 1
+
+4
+
+5 +
+
+6)
+
+X (
+1 T 1
+
+2 +
+
++
+
+Here L ([t0, tf ]) denotes the space of essentially bounded
+measurable functions on the interval [t0, tf ], ensuring that the
+control function (t ) remains bounded throughout the control
+period. The optimal control problem consists of finding a
+control *(t )
+such that
+
+5(t ) =
+
+1 +
+
+X(
+3 A 1
+
+4 (t ) = 4 XB(
+
+∞
+
+J( *) = min J( )
+
+X X + 5 XM XA
+4 M B
+
+where χ[t0,tf−τ](t) denotes the characteristic function on [t0, tf −
+τ], and xi,τ(t) = xi(t−τ). Since only the delayed term XB(t−τ)
+appears in the state system, the advanced term occurs only in the
+adjoint equation corresponding to XB.
+Thus, the adjoint equations can be written explicitly as follows
+
+(4)
+
+1
+
+2 XDXB
+
+i = 1, 2, ···, 10
+
+where C1 and C2 are positive weighting constants representing
+the relative cost of the control effort and the benefit of biodiesel
+production, respectively. The integral production term is
+adopted because the present control objective concerns the
+cumulative production performance over the entire processing
+horizon rather than only the biodiesel concentration attained at
+the terminal time. This formulation rewards control strategies
+that enhance biodiesel concentration earlier and maintain it
+throughout the batch period, while a terminal-only objective
+would not distinguish between trajectories having similar final
+concentrations but substantially different production histories.
+Moreover, expressing both biodiesel benefit and ultrasound
+expenditure as running terms provides a consistent balance
+between production enhancement and control cost over the
+complete operating interval. As the control variable (t )
+represents the intensity of ultrasound technology applied during
+the biodiesel production process, we now define the admissible
+control set as
+= { (t )
+
+X X
+3 D A
+
+i (t ) =
+
+0
+
+The objective of the control strategy is to maximize biodiesel
+production while minimizing the cost associated with the
+application of ultrasound technology. Therefore, the objective
+functional is defined as
+J( ) =
+
+(t )
+
+Here i , i = 2,···,10, are given by the corresponding right-hand
+sides of system (2).
+The corresponding adjoint system is given by
+
+(3)
+
+where ϕB(t) is a continuous function satisfying ϕB(0) = XB(0).
+For numerical simulations, we assume a constant history
+XB(t ) = 0,
+
+ÅÄÅ
+ÅÅ
+Å 1XT XA
+1Å
+ÅÅ
+ÅÇ
+
+C2XB2(t ) +
+
+i
++ McXB (t )jjjj1
+k
+
+Since the system involves a discrete delay τ, the biodiesel
+concentration is supplemented with the history condition
+XB(t ) =
+
+2
+
+= C1
+
+XG(0) = 0, XK (0) = YK 0 , XS(0) = 0,
+XF (0) = YF 0 , XW (0) = 0
+
+Article
+
+1 +
+
++ 3 XD( 1
++ 5 XM ( 1
+
+(6)
+
+subject to the control-induced delayed biodiesel production
+system (1) together with appropriate initial conditions and delay
+history functions.
+By Pontryagin’s Maximum Principle20−22 for delayed optimal
+control systems, if *(t )
+is an optimal control and
+
+5)
+
+3
+
+3 +
+
+4
+
+5)
+
+4
+
+5 +
+
+6)
+
+6(t ) = 6 XB(
+
+1 +
+
+4 +
+
+5
+
+7 (t ) =
+
+1 +
+
+5
+
+7 +
+
+X(
+8 B
++
++
+
+7 XT (
+9 XF (
+
+2 + 6
+7 + 8
+
+8)
+
+6)
+8)
++
+7
+8)
+9 + 10)
+
+8(t ) = 0
+
+* , X A*, XG*, X K*, XS*, XF*, XW
+*)
+(X B*, XT*, X D*, X M
+
+9 (t ) =
+
+is the corresponding optimal state trajectory, then there exist
+adjoint variables λi(t), i = 1, 2,···, 10 such that the Hamiltonian
+function is given by
+
+X (
+9 K
+
+7 +
+
+8
+
+9 +
+
+10)
+
+10(t ) = 0
+
+(9)
+51967
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+■
+
+RESULTS
+In this present section, various scenarios of the delayed
+dynamical properties, validation of our proposed solver scheme,
+sensitivity analysis of the system parameters and characteristics
+of the optimal-controlled systems are depicted through the
+numerical experiments while choosing values of the system
+parameters from Table 1. Figure 1 demonstrates the nature of
+
+Since there is no terminal payoff, the transversality conditions
+are given by
+i (t f ) = 0,
+
+i = 1, 2, ···, 10
+
+(10)
+
+Using the optimality condition
+=0
+
+we obtain
+
+Table 1. Values of Various Reaction Parameters Utilized in
+the Purpose of Numerical Simulations11
+
+i
+XB(t
+) yz
+zz = 0
+2C1 (t ) + 1McXBjjjj1
+z
+K
+k
+{
+Hence, the optimal control is characterized as
+*(t ) =
+
+(1
+
+1Mc XB
+
+XB(t
+K
+
+)
+
+(11)
+
+)
+
+2C1
+
+(12)
+
+Using the bounds on the admissible control set
+= { (t ) L ([t 0 , t f ]): 0
+(t ) 1}, the optimal control in a compact form is finally obtained as
+l
+l
+o
+o
+o
+o
+o
+o
+o
+o
+*(t ) = mino
+1,
+max
+0,
+m
+m
+o
+o
+o
+o
+o
+o
+o
+o
+o
+o
+n
+n
+
+(1
+
+1Mc XB
+
+2C1
+
+XB(t
+K
+
+Article
+
+)
+
+|
+
+) |ooooo}ooooo}
+o
+o
+o
+o
+o
+o
+o
+o
+o
+~o
+~
+
+parameter
+
+definition
+
+value
+
+unit
+
+ρ1
+ρ2
+ρ3
+ρ4
+ρ5
+ρ6
+ρ7
+ρ8
+ρ9
+Mc
+K
+τ
+
+forward reaction constant
+backward reaction constant
+forward reaction constant
+backward reaction constant
+forward reaction constant
+backward reaction constant
+forward reaction constant
+forward reaction constant
+forward reaction constant
+total mass transfer rate constant
+maximum biodiesel production
+Discrete biodiesel production
+delay
+
+0.0500
+0.1099
+0.1220
+0.2147
+0.2420
+0.0070
+0.00281
+0.00279
+0.2817
+1 × 10−3
+3
+5, 15, 22
+
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+mol−1 L min−1
+m s−1
+mol L−1
+min
+
+the trajectories of the state variables for the delayed system (1)
+considering different values of delay τ = 5, 15, 22 denoted by the
+colors blue, red and green, respectively. In Figure 2, the phase
+portraits of XT vs XB and XB vs XA for system (1) are presented in
+the sub Figure 2(a,b), respectively.
+Figure 3a demonstrates excellent agreement between the
+proposed RK4-based DDE solver and the established ddeint
+method. The trajectories overlap closely, confirming that the
+custom solver accurately reproduces the delayed nonlinear
+dynamics of the biodiesel production system. The pointwise
+deviation between the two numerical solutions is defined as
+
+(13)
+
+In addition, the complete computational workflow adopted for
+solving the optimal control problem is summarized in Algorithm
+2, which explicitly illustrates the forward integration of the
+delayed state equations, the backward solution of the adjoint
+system with advanced-time approximation, and the iterative
+control update until convergence.
+
+|XBproposed(t )
+
+XBddeint(t )|
+
+(14)
+
+In Figure 3b, we have shown that the absolute error between the
+two solvers remains bounded and small throughout the entire
+simulation period. The largest deviations appear near regions of
+rapid state variation, which reflects expected interpolation and
+discretization effects rather than numerical instability. Figure 3c
+compares the computational runtimes of the two methods,
+revealing that the proposed solver achieves computational
+efficiency comparable to that of the ddeint implementation.
+This confirms the practical suitability of the proposed method
+for long-term simulations and extensive parameter studies.
+In sub Figure 4a, the runtime comparison between the
+proposed solver (1) and ddeint for our system (1). The
+proposed method completes the simulation in 0.071 s while
+ddeint requires 0.086 s. This indicates that the proposed
+solver achieves a modest computational advantage while
+maintaining consistency in the simulated dynamics. Furthermore, sub Figure 4b represents the temporal evolution of
+biodiesel concentration obtained with the proposed DDE solver.
+The solution shows an initial growth phase followed by a
+pronounced overshoot near t = 48, after which XB(t) relaxes
+through damped oscillations toward a stable long-term level.
+The highlighted markers indicate representative local maxima,
+emphasizing the transient oscillatory response captured by the
+solver.
+51968
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 1. Nature of the trajectories of system (1) under different values of delay τ = 5, 15, and 22.
+
+Figure 2. Phase portraits of the delay-induced biodiesel production system (1) in two different scenarios choosing τ = 22.
+
+Figure 5a presents the partial rank correlation coefficient
+(PRCC) analysis, which reveals the independent influence of
+each parameter on the oscillation amplitude of the biodiesel
+
+concentration XB, after statistically controlling for all the other
+parameters. The results clearly demonstrate a structured
+separation between positively and negatively regulating
+51969
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 3. Investigation of the performance of the RK4-based DDE solver and the ddeint method applied for the delay-induced biodiesel production
+model denoted as system (1).
+
+Figure 4. Performance assessment of the proposed DDE solver for the biodiesel production system. (a) Computational runtime comparison with
+ddeint, showing that the proposed solver attains improved efficiency for the present simulation setting. (b) Simulated trajectory of biodiesel
+concentration XB(t) illustrating initial growth, overshoot, and subsequent damped oscillatory relaxation toward stability.
+
+mechanisms. Among the parameters, ρ5 exhibits the strongest
+positive influence (PRCC ≈ 0.8), indicating that an increase in
+
+this reaction rate significantly amplifies the oscillatory intensity.
+The delay parameter τ also shows a consistent positive
+51970
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 5. (a) Demonstration of the sensitivity indices of the system parameters using partial rank correlation coefficient (PRCC) analysis for system
+(1). (b) Spearman sensitivity indices using ranked sensitivity analysis of the model parameters with respect to the oscillation amplitudes, based on
+absolute Spearman coefficients.
+
+Figure 6. (a) Violin plot representation of the distribution of oscillation amplitudes of biodiesel concentration XB under global parameter uncertainty
+with ±20% variation in model parameters, illustrating the robustness of the oscillatory dynamics. (b) Correlation heatmap of the absolute Spearman
+rank correlation coefficients between the model parameters and the principal dynamical outputs, namely the mean biodiesel concentration and
+oscillation amplitude of XB.
+
+independent contribution, indicating that it contributes to the
+observed oscillatory behavior in the numerical simulations.
+These results indicate that while reaction rates regulate the
+intensity of oscillations, the delay mechanism influences the
+observed oscillatory dynamics through the introduction of a
+memory effect. Figure 5b presents the Spearman sensitivity
+index, providing a ranked sensitivity analysis of model
+parameters with respect to the oscillation amplitude, based on
+the absolute Spearman correlation coefficients. The ranking
+clearly identifies ρ1 as the most influential parameter, followed
+by ρ6, ρ5, and ρ4. The parameter Mc and the delay τ occupy
+intermediate positions in the sensitivity hierarchy, while
+parameters such as ρ3, ρ8, and K exhibit comparatively weak
+influence. This ordered sensitivity structure indicates that the
+amplitude of biodiesel oscillations is predominantly regulated by
+key reaction rates, whereas the delay mechanism plays a
+secondary yet non-negligible role. Such a ranking provides
+valuable insight into which kinetic mechanisms most strongly
+
+govern the system dynamics and may serve as potential targets
+for control strategies.
+Figure 6a depicts the distribution of oscillation amplitudes of
+XB under global parameter uncertainty using a violin plot
+representation. The distribution appears relatively compact,
+with the majority of amplitudes concentrated between
+approximately 0.43 and 0.50. The mean amplitude lies near
+0.46, and no multimodal structure is observed. This indicates
+that the oscillatory regime is structurally robust under ±20%
+variation of all parameters, including the delay. The absence of
+multiple peaks suggests that no qualitative changes in the
+observed oscillatory dynamics are evident within the explored
+parameter space. Consequently, the system maintains consistent
+oscillatory intensity despite significant parametric uncertainty,
+reflecting strong dynamical resilience of the biodiesel
+production process. Figure 6b (correlation heatmap) presents
+the absolute Spearman rank correlation coefficients between the
+model parameters and two key system outputs: the mean
+51971
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 7. Concentration profile of the biodiesel production evaluated through the optimal control-induced system equipped with delay with three
+different value of τ = 5, 15, 22.
+
+Figure 8. Optimal control profiles
+
+*(t ) for system (2) under three different scenarios.
+
+biodiesel concentration X̅ B and the oscillation amplitude of XB.
+The heatmap reveals that parameter ρ1 exhibits the strongest
+influence on both outputs, indicating that the associated
+reaction pathway plays a dominant role in regulating biodiesel
+dynamics. Moderate sensitivities are observed for ρ6, ρ5, and ρ4,
+suggesting that downstream reaction interactions also contribute significantly to the regulation of oscillatory behavior. In
+contrast, the delay parameter τ demonstrates only moderate
+correlation, while parameters such as ρ8 exhibit minimal
+influence. These findings indicate that the oscillatory structure
+of the system is primarily governed by intrinsic biochemical
+kinetics rather than the delay magnitude alone.
+Figure 7 presents the temporal evolution of the biodiesel
+concentration profile XB(t) obtained from the optimal control-
+
+induced delayed system (2) for three different values of the delay
+parameter τ = 5, 15, and 22. The results demonstrate that the
+incorporation of the optimal ultrasound-assisted control
+mechanism significantly enhances biodiesel production over
+the entire simulation interval. Moreover, variations in the delay
+parameter noticeably influence the transient production
+dynamics and the final biodiesel concentration attained by the
+system. Larger delay values lead to slightly higher biodiesel
+accumulation, indicating that the delayed feedback mechanism
+interacts constructively with the controlled production process
+under the present parameter configuration. The corresponding
+optimal control profiles *(t ) are illustrated in Figure 8. The
+control trajectories exhibit a specific structure which indicates
+that the control initially remains at its maximum admissible level
+51972
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+in order to accelerate biodiesel formation during the early
+reaction stage characterized by strong mass transfer resistance.
+After a critical transition time, the control intensity can be
+decreased. This depicts that sustained ultrasound application is
+no longer necessary as the earlier stage to achieve enhanced and
+sufficient biodiesel production. These findings highlight the
+cost-effective nature of the proposed control strategy and
+demonstrate how ultrasound-assisted regulation can efficiently
+optimize biodiesel synthesis.
+
+■
+
+Article
+
+important role in determining the transient behavior and overall
+efficiency of the biodiesel synthesis process. The controlled
+system achieves higher biodiesel concentration levels within the
+simulation interval while maintaining a cost-effective control
+effort. It is observed from the optimal control trajectories that
+maximum ultrasound intensity should be applied during the
+initial reaction stage to overcome strong mass transfer resistance
+and accelerate transesterification. Then, gradually, the control
+intensity can be decreased toward its lower bound. Our
+proposed scheme indicates that in this specific framework of
+ultrasound application, maximum biodiesel formation i.e., the
+goal of approximately 100% yield can be achieved in a costeffective manner.
+
+DISCUSSION
+
+In this study, a delay-induced mathematical model for biodiesel
+production was investigated by incorporating a discrete time
+delay into the production mechanism of an existing kinetic
+model. The delay term represents the inherent reaction lag
+associated with intermediate biochemical processes and catalytic
+interactions during biodiesel synthesis. Furthermore, an optimal
+control strategy was introduced to regulate the ultrasoundassisted production mechanism, allowing the system to balance
+biodiesel yield against operational control costs.
+The numerical investigations reveal several important
+dynamical properties of the proposed delayed system. The
+trajectory analysis demonstrates that increasing delay values
+significantly influence the transient behavior of the system,
+producing oscillatory dynamics before eventual stabilization.
+Phase portrait analysis further confirms the existence of
+structured dynamic patterns in the delayed system, which
+demonstrates that delay can induce oscillatory responses in
+biodiesel concentration and associated state variables.
+To efficiently simulate the delayed nonlinear dynamics, a
+fixed-step RK4-based solver for delay differential equations was
+developed in this study. Numerical validation shows strong
+agreement between the proposed solver and the widely used
+ddeint method. The absolute error between the two
+approaches remains small throughout the simulation interval,
+confirming the accuracy of the proposed scheme as presented in
+Algorithm 1. In addition, runtime comparisons demonstrate that
+the proposed solver achieves comparable or improved computational efficiency, which highlights its suitability for large-scale
+simulations and parametric investigations.
+Sensitivity analysis provides further insight into the regulatory
+mechanisms governing the oscillatory patterns. The PRCC
+results indicate that certain reaction parameters exert strong
+positive influence on oscillation amplitude, while others
+contribute negatively. In particular, the reaction rate parameter
+ρ5 exhibits the strongest positive contribution, whereas the delay
+parameter τ plays a structural role by sustaining oscillatory
+behavior through memory effects. The Spearman sensitivity
+ranking confirms that a small subset of kinetic parameters
+dominates the dynamical behavior of the system. Furthermore,
+we have performed a global uncertainty analysis using violin
+plots, which indicates that the oscillatory regime remains stable
+under significant parameter variation. The absence of multimodal amplitude distributions further suggests that the observed
+oscillatory responses remain consistent across the explored
+parameter range, highlighting the robustness of the proposed
+biodiesel production dynamics to moderate parametric
+uncertainty.
+The optimal control simulations clearly demonstrate the
+effectiveness of the ultrasound-assisted control strategy in
+enhancing biodiesel production under delayed reaction
+dynamics. Variations in the delay parameter significantly alter
+the production trajectories, confirming that reaction lag plays an
+
+■
+
+CONCLUSIONS
+Overall, this present study establishes a unified mathematical
+framework that combines delay dynamics, ultrasound-assisted
+optimal control, and efficient numerical simulation for biodiesel
+production. Our investigations confirm that delayed reaction
+effects together with optimized ultrasound regulation substantially alter the production dynamics and stability behavior of the
+system. The developed delayed control framework provides a
+systematic approach for improving biodiesel synthesis efficiency
+and should serve as a useful as well as realistic theoretical
+foundation for the design of more effective and economically
+sustainable renewable fuel production strategies. Future studies
+may undertake rigorous analytical investigations, including
+delay-dependent local stability and Hopf bifurcation analyses,
+to further characterize the dynamical properties of the proposed
+delayed biodiesel production model.
+
+■
+
+AUTHOR INFORMATION
+
+Corresponding Authors
+
+Salil Ghosh − School of Mathematics and Statistics, Beijing
+Technology and Business University, Beijing 100048, China;
+orcid.org/0009-0005-2487-521X;
+Email: salilghosh1111@gmail.com
+Priti Kumar Roy − Department of Mathematics, Jadavpur
+University, Kolkata 700032, India; orcid.org/0000-00017454-4367; Email: pritiju@gmail.com
+Authors
+
+Xianbing Cao − School of Mathematics and Statistics, Beijing
+Technology and Business University, Beijing 100048, China
+Xinyi Wang − School of Mathematics and Statistics, Beijing
+Technology and Business University, Beijing 100048, China
+Huina Zhang − School of Mathematics and Statistics, Beijing
+Technology and Business University, Beijing 100048, China
+Satyajit Mukherjee − Department of Mathematics, Jadavpur
+University, Kolkata 700032, India
+Complete contact information is available at:
+https://pubs.acs.org/10.1021/acsomega.6c06771
+Notes
+
+The authors declare no competing financial interest.
+
+■
+
+ACKNOWLEDGMENTS
+
+All the authors acknowledge X.C. for funding this research work
+through the National Natural Science Foundation of China
+(grant number 62427811), School of Mathematics and
+Statistics, Beijing Technology and Business University, Beijing,
+P. R. China. The research is also supported by the DST FIST
+51973
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Programme, Govt. of India [No.:SR/FST/MS-II/2021/
+101(C)], Department of Mathematics, Jadavpur University,
+Kolkata-700032. Furthermore, S.M. is supported by DST
+INSPIRE Fellowship [Registration No.: IF230149].
+
+■
+
+REFERENCES
+
+(1) Demirbas, A. Biodiesel production via non-catalytic SCF method
+and biodiesel fuel characteristics. Energy Convers. Manage. 2006, 47,
+2271−2282.
+(2) Ma, F.; Hanna, M. A. Biodiesel production: A review. Bioresour.
+Technol. 1999, 70, 1−15.
+(3) Knothe, G.; Van Gerpen, J.; Krahl, J. The Biodiesel Handbook;
+AOCS Press: Champaign, IL, 2005.
+(4) Meher, L. C.; Sagar, D. V.; Naik, S. N. Technical aspects of
+biodiesel production by transesterification�A review. Renewable
+Sustainable Energy Rev. 2006, 10, 248−268.
+(5) Rizqullah, A.; Bhuana, D. S.; Nugroho, A. Temperature-swing
+transesterification for biodiesel production from spent coffee grounds.
+Fuel 2020, 259, No. 116247.
+(6) Tsanaktsidis, C. G.; Kyritsis, D. C. Variation of density of diesel
+and biodiesel mixtures with temperature. Fuel 2018, 212, 236−243.
+(7) Verduzco, L. F.; Rodríguez, J. E.; Jaramillo, O. A. Density and
+viscosity of biodiesel as a function of temperature. Fuel 2012, 93, 326−
+332.
+(8) García, M.; Gonzalo, A.; Sánchez, J. L. Mathematical modelling
+and optimization of biodiesel production processes. Chem. Eng. J. 2010,
+160, 473−479.
+(9) Khan, M.; Hussain, S.; Riaz, A. Polynomial and regression models
+for biodiesel production optimization. Renewable Energy 2016, 87,
+1073−1081.
+(10) Stamenkovic, O. S.; Veljkovic, V. B.; Todorovic, Z. B. Modeling
+the kinetics of biodiesel synthesis. Fuel 2008, 87, 2680−2687.
+(11) Cao, X.; Ahammed, S. M.; Datta, S.; Chowdhury, J.; Roy, P. K.
+Enhancement of biodiesel production via ultrasound technology: a
+mathematical study. ACS Omega 2024, 9, 20502−20511.
+(12) Stamenković, O. S.; Veličković, A. V.; Veljković, V. B. The
+production of biodiesel from vegetable oils by ethanolysis: Current
+state and perspectives. Fuel 2011, 90, 3141−3155.
+(13) Meher, L. C.; Sagar, D. V.; Naik, S. N. Technical aspects of
+biodiesel production by transesterification−a review. Renewable
+Sustainable Energy Rev. 2006, 10, 248−268.
+(14) Leung, D. Y. C.; Wu, X.; Leung, M. K. H. A review on biodiesel
+production using catalyzed transesterification. Appl. Energy 2010, 87,
+1083−1095.
+(15) Ji, J.; Wang, J.; Li, Y.; Yu, Y.; Xu, Z. Preparation of biodiesel with
+the help of ultrasonic and hydrodynamic cavitation. Ultrasonics 2006,
+44, e411−e414.
+(16) Hingu, S. M.; Gogate, P. R.; Rathod, V. K. Synthesis of biodiesel
+from waste cooking oil using sonochemical reactors. Ultrasonics
+Sonochem. 2010, 17, 827−832.
+(17) Erneux, T. Applied Delay Differential Equations; Springer: New
+York, 2009.
+(18) Kumar, G.; Kumar, D.; Poonam. Ultrasound-assisted biodiesel
+production: A review. Renewable Sustainable Energy Rev. 2018, 82,
+2106−2122.
+(19) Norjannah, B.; Ong, H. C.; Masjuki, H. H.; Juan, J. C.; Chong, W.
+T. Enzymatic transesterification for biodiesel production: a comprehensive review. RSC Adv. 2016, 6, 60034−60055.
+(20) Pontryagin, L. S.; Boltyanskii, V. G.; Gamkrelidze, R. V.;
+Mishchenko, E. F. The Mathematical Theory of Optimal Processes.
+Pergamon Press. 1962.
+(21) Lenhart, S.; Workman, J. T. Optimal Control Applied to Biological
+Models. Chapman & Hall/CRC. 2007.
+(22) Göllmann, L.; Kern, D.; Maurer, H. Optimal control problems
+with delays in state and control variables subject to mixed control-state
+constraints. Optim. Control Appl. Methods 2009, 30, 341−365.
+
+51974
+
+https://doi.org/10.1021/acsomega.6c06771
+ACS Omega 2026, 11, 51964−51974
+
+
