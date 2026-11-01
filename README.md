@@ -678,7 +678,7 @@ sentences gets 184 of 246, as many as with the right paper handed over, from a 7
 (`experiments/routed/`). On a 120-paper library with 2 or 3 papers per ChemE topic and other fields mixed in, search
 still finds the paper for 381 of 388 questions and the same pipeline gets 304 right, as many as with the right paper
 handed over; sending search's top 2 papers gets 242 (p < 0.0001; `experiments/big-library/`).
-Cut to what a user might type, without the subject phrases, the same questions find their paper 360 times of 388 instead of 381 (`experiments/short-route/`, search only, no model).
+Cut to what a user might type, without the subject phrases, the same questions find their paper 360 times of 388 instead of 381, and Llama gets 287 right instead of 303 (`experiments/short-route/`); the loss is all routing, and asking the user to pick between the top two papers when search is unsure would win most of it back.
 Method and numbers: the methodology doc (https://claude.ai/code/artifact/efe49cff-4c52-4f7f-9eb9-180920121aa6);
 how to pick the work up: `experiments/bench-llama/HANDOFF.md`.
 

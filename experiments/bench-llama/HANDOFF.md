@@ -202,8 +202,9 @@ Untested: libraries of close topics, where routing misses more.
    it is hard: done on 120 papers (`experiments/big-library/`): search-then-one-paper 304 of 388, as the right paper
    handed over; sending the top 2 papers is worse (242), even only when search is unsure (`gated.py`). Short
    questions without subject words (`experiments/short-route/`, search only): right paper 360 of 388 instead of
-   381; a score-gap flag (`unsure.py`, 0.85) marks 57 questions holding 21 of the 28 misses. Next: answer the short
-   questions (top1, and the right paper for the misrouted ones) to measure the cost; try asking the user when unsure.
+   381; answered (`answer.py`, `grade.py`): 287 right against 303 (p = 0.02), all of it routing (the short form on
+   its own paper: 301). Asking the user to pick between the top 2 titles when the score gap is small (0.85, 1
+   question in 7) would give 299 (post hoc). Next: build that ask step into the routed mode.
 3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a
