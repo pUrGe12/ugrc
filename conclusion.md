@@ -182,6 +182,8 @@ The conversation's losses came from three things:
 
 The context never ran out (at most 33k of 131k tokens), and no wrong answer carried into later turns.
 
+Full account of what was tested: `experiments/benchmark/README.md`.
+
 ## 4. Against the whole PDF
 
 Every Llama test that had a whole-PDF arm, beside the best other setup:

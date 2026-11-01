@@ -5,6 +5,9 @@ in every arm, on our own vLLM server on Modal. Claude graded every answer blind 
 in `GRADING.md` and `GRADING-settled.md`). The grades were hashed in `graded.sha256` before unsealing. Jev was not
 used: it has no credits. The full printout is `report.txt`.
 
+What was tested, exactly (every setup's prompt, the retrieval settings, all 16 conversation questions with keys,
+per-question results, how the run went): `README.md`.
+
 ## Part 1: one question at a time over 130 papers (160 questions, one run)
 
 | arm | what Llama gets | right | partial | wrong | right, rounding slips and table labels forgiven | prompt tokens (mean) |
