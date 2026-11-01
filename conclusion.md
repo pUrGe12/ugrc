@@ -13,6 +13,8 @@ and the later ones froze them by hash. From `jev-pick` (2026-10-22) on, answers 
 | 8B model (Llama 3.1 8B), one paper | **facts+prose**: Jev's clause base condensed, plus the ~30 sentences that best match the question | **better**: 340 vs 273 of 456 on 19 new papers, at 7.4k tokens against 17.9k |
 | 8B model, a library | **search picks one paper, then facts+prose** | whole PDFs don't fit (10 papers are 155k–194k tokens; Llama's window is 131k). Scores as if handed the right paper: 304 vs 304 of 388 on 120 papers |
 | 8B model, a fresh paper added to a 120-paper library | **the same: add it (about a minute), then search, then facts+prose** | **better**: 63 vs 50 of 80 on 10 unseen papers (p = 0.007), at 6.7k tokens against 20.6k; search found the new paper for 80 of 80 questions |
+| 8B model, 130 papers, against standard RAG | **search, then facts+prose** | **better**: 119 vs 101 of 160 (p = 0.005); standard RAG over all papers 84, the right paper's best chunks 96 (`benchmark`) |
+| 8B model, a 16-question conversation on one paper | **facts+prose alone: 14.3 of 16;** in the conversation 12.3, the whole PDF 13.0 | about equal in a conversation; every retrieving setup lost answers to vague follow-ups and to facts sent many turns back (`benchmark`) |
 
 ## 1. The pieces, in plain words
 
@@ -166,6 +168,20 @@ pool the "prose" part is picked from. Jev's readings (role, subject, method) are
 | `pointers` | code points each number of the free answers at a passage that prints it (468 answers) | 91% of 1,589 numbers printed in the paper, 9% derived or computed, 1% printed nowhere (9 answers: 7 wrong). The Jev binding check did not run (credits out) |
 | `door-routed` | ugrc's door on the routed paper: every number must be a quote, a clause-base value or SQL | door 16, door with facts+prose and ids 21, against the free answer 61 of 80 (p < 0.0001); absence 0–1 of 10, false premise 0–1 of 10 |
 
+### H. Against standard RAG, and in a long conversation (Llama, `benchmark`)
+
+| test | setup | result |
+|---|---|---|
+| part 1: 160 questions over 130 papers, one run | search, then facts+prose; the right paper's whole text; the right paper's best 200-word chunks; standard RAG (hybrid BM25 + embedding retrieval over 7,932 chunks of all 130 papers) | **119**, 101, 96, 84. Table questions 22 / 9 / 5 / 7 of 37. Every RAG prompt held the right paper; it lost on picking the right passage |
+| part 2: 16 linked questions on one paper, asked in one conversation and alone, 3 runs | the same four | alone: **ours 14.3**, pdf 12.3, chunks 12.3, rag 11.0 of 16. In the conversation: pdf 13.0, ours 12.3, chunks 10.3, rag 8.3. Over all four, the conversation cost 18 of 192 (p = 0.02) |
+
+The conversation's losses came from three things:
+- **vague follow-ups retrieving the wrong text:** "that synthesis" pulled another paper's 180 °C for 12 h;
+- **facts sent on turn 1 being missed 14k tokens later;**
+- **a false premise accepted mid-conversation:** 0 of 9 caught, against 9 of 9 when asked alone.
+
+The context never ran out (at most 33k of 131k tokens), and no wrong answer carried into later turns.
+
 ## 4. Against the whole PDF
 
 Every Llama test that had a whole-PDF arm, beside the best other setup:
@@ -184,6 +200,7 @@ Every Llama test that had a whole-PDF arm, beside the best other setup:
 | `routed` (246) | search picks 1 of 10 | 145 | **facts+prose 184** |
 | `big-library` (388) | 120 (2.06M tokens) | does not fit | **search, then facts+prose 304** |
 | `fresh` (80), unseen papers | 121 (search picks 1) | 50 (the right paper's) | **search, then facts+prose 63** (p = 0.007) |
+| `benchmark` (160) | 130 (search picks 1) | 101 (the right paper's) | **search, then facts+prose 119** (p = 0.005); RAG over all 130 papers 84 |
 
 **With a strong model, the whole PDF is as good.** Opus got all 71 right from the whole PDF, against 69 through ugrc.
 Haiku got more right from the whole PDF (67 vs 58), but 2 of its answers were wrong and none of ugrc's were. With
@@ -354,9 +371,11 @@ extractor flatten: lost ± signs, blank cells that shift columns, and rows picke
    person spot-check about 30 grades.
 2. **Build it into ugrc as a mode:** route, then facts+prose, then one answer, then code pointers and the Jev checker,
    with the ask step when search is unsure. Not the door: through it Llama 8B kept 21 of 61 right answers.
-3. **Attack the model's limit:**
+3. **Fix the conversation case** (`benchmark`). Each turn, re-send the facts rows that match the new question, and
+   route and retrieve on a stand-alone rewrite of the follow-up. Then rerun part 2 with a second paper.
+4. **Attack the model's limit:**
    - let code do the arithmetic;
    - fix the table cases above (± signs, blank cells, ACS Omega layout);
    - or try a stronger open model on the same frozen questions.
-4. **Questions across papers** at library scale.
-5. **Fine-tune Laya** on Jev's recorded decisions, then compare it with Jev again.
+5. **Questions across papers** at library scale.
+6. **Fine-tune Laya** on Jev's recorded decisions, then compare it with Jev again.

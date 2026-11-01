@@ -154,6 +154,7 @@ All Llama 3.1 8B, graded blind to which setup wrote each answer, on questions wr
 
 | test | what | the procedure | comparison |
 |---|---|---|---|
+| `benchmark` | 130 papers; the fresh test's 80 questions and 80 drawn from the 388 | **119 of 160 (74%)** | right paper's whole PDF 101 (p = 0.005); standard RAG over all 130 papers 84; right paper's best chunks 96 |
 | `fresh` | 10 papers no test had seen, each added to the 120; 80 new questions | **63 of 80 (79%)** | right paper's whole PDF 50 (p = 0.007); right paper's facts+prose 63 |
 | `big-library` | 120 papers, 2–3 per ChemE topic plus other fields; 388 questions | **304 of 388 (78%)** | right paper handed over 304; top 2 papers 242 |
 | `short-route` | the same 388 cut to what a user might type | 287 of 388 | the long questions 303; asking the user when search is unsure 299 (estimate) |
@@ -184,6 +185,12 @@ By question type on the new papers (procedure / whole PDF): lookup 12 / 11 of 12
 - **Tables** the extractor flattens or misses: lost ± signs, blank cells that shift columns.
 - **A wrong paper is never recovered:** of 18 misrouted questions that had an answer, Llama got 0 right.
 - **Questions that need two papers** are not handled: only one paper is sent.
+- **Long conversations** (`benchmark`, part 2): asked alone, 14.3 of 16 questions on one paper were right; asked as one
+  16-turn conversation, 12.3, against 13.0 for the whole PDF.
+  - Follow-ups like "that synthesis" route and retrieve poorly.
+  - The facts sent on turn 1 get missed many turns later.
+  - The fix to test: each turn, re-send the facts the new question matches, and search on a stand-alone rewrite of
+    the question.
 
 ## 8. Not in it yet
 
