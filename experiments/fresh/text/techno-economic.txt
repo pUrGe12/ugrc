@@ -1,0 +1,2031 @@
+This article is licensed under CC-BY-NC-ND 4.0
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Stacking Learning for Smart Proxy Modeling in CO2−WAG
+Optimization: A Techno-Economic Approach to Sustainable
+Enhanced Oil Recovery
+Mahdi Kanaani, AliMohammad Sedaghat Kameholiya, Alireza Amarzadeh, and Behnam Sedaee*
+Cite This: ACS Omega 2025, 10, 9563−9582
+
+ACCESS
+
+Read Online
+
+Metrics & More
+
+Article Recommendations
+
+ABSTRACT: Climate change and greenhouse gas emissions are
+critical global challenges, driving the need for innovative solutions
+to reduce carbon footprints while meeting energy demands. This
+study addresses these challenges by optimizing the CO2−WAG
+(water-alternating gas) injection process, a technique that enhances
+oil recovery while sequestering carbon dioxide in oil reservoirs. The
+optimization framework integrates machine learning methods with
+the non-dominated sorting genetic algorithm II (NSGA-II) to
+simultaneously maximize cumulative oil production and CO2
+sequestration, minimize water production, and ensure economic
+viability through the net present value (NPV) objective function.
+The study employs stacking learning to develop smart proxy
+models, which significantly reduce computational time while maintaining high accuracy in predicting objective functions. These
+models are trained on a comprehensive data set generated from reservoir simulations, enabling efficient optimization across diverse
+reservoir conditions. The NSGA-II algorithm is used to generate a three-dimensional Pareto front, representing optimal trade-offs
+between the conflicting objectives. To facilitate decision-making, a clustering-based approach is introduced, categorizing solutions
+into groups such as gold, silver, and bronze based on their performance metrics. The results demonstrate the effectiveness of the
+proposed framework, with the NSGA-II algorithm producing 500 optimal solutions on the Pareto front. Among these, 60 solutions
+are identified as gold, offering the best balance between technical and economic objectives. Compared to previous studies, the
+introduced framework significantly improves computational efficiency and prediction accuracy, reducing optimization time while
+maintaining high precision in the results. This approach not only enhances the accuracy of CO2−WAG optimization but also
+provides a scalable and adaptable framework for sustainable oil recovery and carbon management in various reservoir settings.
+energy, the tendency to use fossil fuels still exists seriously.7−9
+So, a solution should be provided for the CO2 produced by
+burning fossil fuels. This practical solution is now known as
+carbon capture and storage (CCS). CCS refers to a set of
+activities that capture CO2 gas from various industries, such as
+power plants, refineries, cement factories, steel factories, and
+waste-burning plants, and then, by transferring it to storage or
+deposition hubs, it injects and stores it inside natural
+underground structures. CCS can be considered a transitional
+technology until humanity slowly replaces fossil fuels with
+environmentally friendly ones.7−9 Underground structures can
+be used to store CO2, including depleted oil and gas reservoirs,
+
+1. INTRODUCTION
+Global warming, driven by rising greenhouse gas concentrations, particularly carbon dioxide (CO2), poses a severe
+threat to the climate system. Since the Industrial Revolution,
+fossil fuel combustion has significantly increased atmospheric
+CO2 levels, leading to rising temperatures, melting ice caps,
+and extreme weather events. Despite international efforts like
+the Paris Agreement (2015) and initiatives by organizations
+such as the International Energy Agency (IEA),1 the excessive
+accumulation of greenhouse gases, particularly CO2, as a
+primary driver of climate change and global warming.2−4
+Among the types of greenhouse gases, carbon dioxide has the
+most significant effect on increasing Earth’s temperature.5,6
+Concerns about climate change and the increase in Earth’s
+temperature have forced humanity to confront and prevent
+these challenges. One of the first steps toward solving this
+problem is to use clean or renewable energy sources and
+reduce the use of fossil fuels. However, due to the increasing
+need for humans to consume energy and the high cost of clean
+© 2025 The Authors. Published by
+American Chemical Society
+
+Received: November 27, 2024
+Revised: February 18, 2025
+Accepted: February 21, 2025
+Published: March 3, 2025
+
+9563
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+enhanced oil recovery (EOR), as well as some shale reservoirs,
+which are typical sources of hydrocarbon production, saline
+aquifers, and coal beds that cannot be extracted.10−12 CO2
+sequestration has two general injection processes: 1 carbon
+dioxide injection to enhance hydrocarbon recovery and 2
+carbon dioxide injection only for carbon sequestration.
+Although fossil fuels are gradually losing importance in the
+energy transition, they will remain part of the global energy
+mix, even in the best scenarios projected by the Intergovernmental Panel on Climate Change (IPCC).13 Therefore,
+well-designed CO2-EOR projects can offer dual benefits:
+maximizing oil production and enhancing CO2 sequestration.
+Key questions include how to achieve an optimal design and
+what features such a design should have. To address these,
+decision parameters and operational controls must prioritize
+maximizing both oil recovery and CO2 storage while balancing
+technical and economic considerations.
+Past studies on optimizing CO2−WAG-EOR processes fall
+into two categories: earlier studies using statistical methods
+and more recent studies employing meta-heuristic algorithms
+and artificial intelligence (AI). Bedrikovetsky et al. (1996)
+developed a mathematical model for WAG injection, focusing
+on oil recovery and the gas-oil mobility ratio. They found that
+increasing the water-to-gas injection ratio not only reduces oil
+recovery but also improves gas phase control, highlighting the
+need for an optimal ratio. Similarly, gas slug size inversely
+affected the objective functions, emphasizing the complexity of
+balancing operational parameters.14 Kovscek and Wang (2005)
+studied to determine the best CO2 injection scenarios that lead
+to maximum oil recovery and maximum CO2 storage in the
+reservoir.15 Homian et al. (2008) used response surface
+analysis to study the impact of operational parameters like the
+water−gas injection ratio, gas slug volume, hysteresis, and
+reservoir heterogeneity on WAG injection optimization at the
+field scale.16 Ghaderi et al. (2012) evaluated CO2-EOR
+performance in a low-permeability reservoir, focusing on oil
+recovery, CO2 storage, and net present value (NPV) as key
+objective functions.17 Dai et al. (2014) developed an integrated
+statistical framework combining reservoir simulation, geological modeling, and response surface analysis to optimize
+CO2-EOR in a depleted Texas oil reservoir. Their framework
+analyzed the effects of operational and reservoir parameters on
+oil recovery and CO2 sequestration separately.18
+The framework of research in the past decade has changed.
+Meta-heuristic optimization algorithms and artificial intelligence play a decisive role in the optimization of the CO2-EOR
+process. Extensive studies have investigated the role of these
+tools and measured their capabilities.19−22 Carbon sequestration has emerged as a key objective function in CO2-EOR
+projects alongside oil production and is now a primary
+optimization criterion in many studies. Research on carbon
+sequestration has expanded significantly, not only in CO2-EOR
+but also in related areas like carbon storage in aquifers and
+natural gas and hydrogen storage projects.23 The study by
+Safarzadeh et al. (2014)24 did not employ an AI-based
+approach but focused on CO2-EOR. It utilized stochastic
+optimization algorithms and emphasized multiobjective
+optimization within the CO2-EOR context. W. Ampomah et
+al. (2017)20 incorporated an AI-based approach and focused
+on CO2-EOR, concentrating on multiobjective optimization
+and using neural networks to develop a smart proxy model.
+Junyu You et al. (2020)19 adopted an AI-based approach and
+worked on CO2-EOR, introducing an optimization framework
+
+Article
+
+based on machine learning methods. This research was notable
+for its introduction of the smart proxy model and its
+combination of economic and technical analyses. In a
+subsequent study, You et al. (2020)22 continued with an AIbased approach, focusing on CO2-EOR, developing a multiobjective optimization framework and providing decision
+criteria on the Pareto front. Menad et al. (2020)21 employed
+an AI-based approach for CO2-EOR, developing a multiobjective optimization framework and implementing a timedependent proxy model. In 2022, Junyu You et al.25 advanced
+the field by combining economic and technical analyses in
+CO2-EOR and proposed a three-objective approach to solve
+the optimization problem. K. V. Thanh et al. (2022)26 used an
+AI-based approach but did not focus on CO2-EOR. This
+research explored the application of machine learning in
+predicting CO2 trapping and developed intelligent models for
+forecasting carbon sequestration in saline aquifers using various
+machine learning algorithms. M.Safaei-Farouji et al. (2022)27
+applied an AI-based approach to CO2-EOR, utilizing the
+random forest regression algorithm to predict objective
+functions related to quality control in CO2−WAG-EOR
+operations. P. Vaziri et al. (2022)28 used an AI-based approach
+but did not focus on CO2-EOR. This study applied neural
+networks, SVM, and MARS algorithms to predict objective
+functions related to carbon sequestration and water production
+in saline aquifers and performed multiobjective optimization of
+carbon storage operations using a genetic algorithm.
+Abdulwahab Alqahtani et al. (2023)29 employed an AI-based
+approach but did not focus on CO2-EOR. The research
+conducted an uncertainty analysis of CO2 storage in deep
+saline aquifers using a smart model. M. Kanaani et al. (2023)30
+incorporated an AI-based approach, focusing on the sequestration of carbon as cushion gas in the process of underground
+hydrogen storage in depleted reservoirs. The study created an
+intelligent prediction model for hydrogen recovery coefficients,
+carbon sequestration, and net present value (NPV) and
+optimized the underground hydrogen storage process from
+both biobjective and triobjective perspectives using a
+combination of a smart proxy model and the NSGA-II
+optimization algorithm. Finally, A. O. Bocoum et al. (2023)31
+employed an AI-based approach for CO2-EOR, focusing on the
+simultaneous optimization of objective functions related to the
+net present value and oil recovery coefficient. M. Azizi et al.
+(2024) conducted a study to optimize CO2 injection in oil
+reservoirs using the water alternating gas (WAG) method,
+aiming to enhance both oil recovery and CO2 sequestration.
+They developed a multiobjective optimization framework,
+incorporating various CO2 trapping mechanisms. By applying
+machine learning models for simulation, the study demonstrated that including these mechanisms significantly improved
+CO2 sequestration, highlighting their critical role in optimizing
+the WAG process.32
+Optimizing a process involves finding the optimal values of
+the control parameters to accomplish a specific goal.
+Optimization aims to find the maximum or minimum value
+of one or more objective functions of a specific process with
+several control variables while respecting the operational
+constraints of the process. The number of objective functions
+is influential in determining the type of optimization process,
+so the world of single-objective and multiobjective optimization is entirely distinct and separate. When we optimize a
+problem for one objective, the solution is achieved by setting
+the system control variables as the maximum and minimum
+9564
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+values of the objective function. Hence, a single-objective
+optimization will give us a unique solution, while a multiobjective process will give us all the same mathematical
+answers. Based on the theory of the Pareto front, these sets of
+identical solutions will be placed on one front, and none of the
+other solutions will overcome them. The WAG injection
+process is a complex procedure with several control variables
+for which several different objective functions can be
+considered that have conflicting interests, so multiobjective
+optimization is required in such a problem. Considering such
+conditions for a CO2-EOR project, the decision variables
+should be designed regarding the operational and economic
+conditions to achieve the maximum value of the primary
+objective functions, i.e., oil production and carbon dioxide
+sequestration. One of the objective functions that have
+received less attention in past studies is the cumulative water
+production function. This objective function must be
+minimized in a successful CO2−WAG-EOR operation.
+Excessive production of water increases both operating costs
+and damages the ecosystem due to high salinity. Therefore, this
+study’s main issue is optimizing a CO2−WAG-EOR project to
+achieve an ideal design to maximize carbon dioxide
+sequestration and oil production and minimize water
+production in the most economical possible conditions.
+Achieving the mentioned objective functions considering the
+economic conditions will not be possible without improving
+the framework created in the previous study. This improvement includes enhancing the sensitivity analysis of decision
+variables based on objective functions, constructing highprecision proxy models using the stacking learning method,
+and providing decision-making criteria on the 3D Pareto front.
+
+Article
+
+4 Building an intelligent alternative model based on the
+data bank
+5 Implementation of a multiobjective optimization algorithm and generation of Pareto front
+6 Establishing decision criteria on Pareto and measuring
+Pareto front solutions
+Figure 1 summarizes the steps of the study method. Each of
+the mentioned stages has its substages. All these steps will be
+explained in detail, and possible substeps will be addressed.
+
+2. METHODOLOGY
+The crucial step to start the process of multiobjective
+optimization of CO2−WAG injection is the selection of
+objective functions; in this study, three essential objective
+functions were selected:
+1 Cumulative amount of oil production (reach the
+maximum)
+2 The net amount of carbon dioxide sequestration. The
+difference between injected and produced carbon
+dioxide gas is considered the basis for calculating carbon
+sequestration (reach the maximum)
+3 Production of water with oil (to be minimized)
+The three objective functions considered in this study are all
+responsible for the technical supervision of the quality of the
+CO2−WAG-EOR project’s quality. In order to economically
+control the optimal solutions, a fourth objective function will
+be calculated separately from the technical objective functions.
+This objective function is the net present value (NPV), and the
+purpose of calculating this function will be to create an
+economic decision criterion on the solutions of the Pareto
+front.
+The optimization steps of the CO2−WAG-EOR process
+using machine learning methods and multiobjective optimization algorithms include several main steps. The main steps of
+optimization include the following:
+1 Building a reservoir model to simulate CO2−WAG-EOR
+operation
+2 Sensitivity analysis and selection of decision parameters
+and objective functions
+3 Experiment design and data bank generation
+
+Figure 1. An overview of the research process.
+
+2.1. Reservoir Dynamic Simulation. In this study, all
+simulations are implemented by CMG (Computer Modeling
+Group). An actual reservoir model, in which the conditions for
+the EOR stage are ready, was chosen as the study case. This
+reservoir has gone through 20 years of natural oil production
+and then experienced a secondary production phase with water
+injection for 20 years. After this stage, the amount of oil
+recovery from the reservoir was 20%. Figure 2 presents the
+pressure distribution in the reservoir before the WAG injection
+operation and the locations of the injection and production
+wells. Enhanced oil recovery by injecting carbon dioxide in
+WAG form will be studied in this reservoir for ten years. This
+study will be done only in a sector of the reservoir that
+contains more residual oil so that both oil production and
+9565
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 2. Pressure distribution map before the WAG injection process.
+
+carbon sequestration will be investigated. Table 1 shows the
+properties of the reservoir model.
+
+Table 2. Oil Composition of the Reservoir Fluid
+Components
+
+fraction
+
+H2S
+CO2
+N2
+CH4
+C2H6
+C3H8
+IC4
+NC4
+IC5
+NC5
+FC6
+FC7
+FC8
+FC9
+FC10
+FC11
+C11+
+
+0.001
+0.0215
+0.0009
+0.4868
+0.0906
+0.0594
+0.0119
+0.0314
+0.0125
+0.0146
+0.0358
+0.296
+0.0235
+0.0235
+0.0166
+0.0182
+0.098
+
+Table 1. Properties of the Reservoir Model
+properties
+
+value
+
+The number of grid blocks
+Average reservoir porosity (%)
+Average horizontal permeability (md)
+Average vertical permeability (md)
+Average water saturation (%)
+Reservoir depth (ft)
+Initial reservoir pressure (psi)
+
+487475
+17
+8
+0.5
+14
+13910
+9576
+
+This reservoir in the CO2−WAG-EOR process includes 19
+injection wells and ten oil production wells. The arrangement
+of the injection and production wells of the EOR process in the
+desired reservoir section was in the form of a 5-point model
+(Figure 2). This sector contains 3.5 billion barrels of remaining
+oil after the primary and secondary production stages.
+The WinProp module of the CMG software was used to
+create the fluid model. The oil composition of the reservoir
+contains the components of Table 2.
+Figure 3 presents the relative permeability values of reservoir
+rock for different fluids according to water and gas saturation.
+Four sets of equations have been utilized to simulate the
+CO2−WAG-EOR operation:
+a) Flow in porous media
+Tomyiom ( pn + 1
+
+i =
+
++
+
+m
+0
+
+D)
+
+Tgmyigm ( pn + 1 +
+
+m
+pcog
+
+V
+[Nin + 1
+t
+
+b) Phase equilibrium:
+gi
+
+ln fig
+
+c) Saturation equation:
+Sw = Nnc + 1/(
+
+So = (1
+m
+g
+
+ln fio = 0i = 1, ..., nc
+
+Sw)
+
+D) + qim
+
+w
+
+)
+
+No/ o
+No/ o + / g
+Ng
+
+Nin]
+
+Sg = (1
+
+=0
+
+Sw)
+
+g
+
+No
+
++
+
+Ng
+
+o
+
+Ni =
+
+=1
+
+Sw
+
+So
+
+g
+
+( o Soyio + g Sg Yig )i = 1, ..., nc
+
+Nnc + 1 =
+
+S
+w w
+
+d) Mole consistency:
+9566
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 3. Relative permeability curves derived from laboratory SCAL (Special Core Analysis) studies for the reservoir. Oil-water system (a) and oilgas system (b).
+nc + 1
+
+Nin + 1
+
+P
+
+3 Maximum bottomhole injection pressure during water
+injection (BHPW (psi))
+4 Carbon dioxide injection rate (Qg (MMscf/d))
+5 Water injection rate (Qw (bbl/d))
+6 Minimum bottomhole pressure of production wells
+(BHP (psi))
+7 Oil production flow rate (Qo (bbl/d)
+Every alternating cycle of carbon dioxide gas injection and
+water injection was considered in the simulation for one year.
+After determining the decision variables, their optimization
+range should be determined based on the operating conditions
+of the studied reservoir. Determining a guideline for the
+operating parameters of the CO2−WAG-EOR process that
+depends on the reservoir conditions and acts as a general
+procedure can be helpful. Therefore, based on past studies and
+some operational reports, the following were considered as
+operation boundaries or limits for the optimization of decision
+parameters:
+1 The ratio of the duration of gas injection to the duration
+of water injection in each WAG cycle was considered to
+be at least 0.32 and at most 1.
+2 The minimum limit for the parameters of the maximum
+bottomhole injection pressure (gas and water) is
+determined as the initial pressure of the reservoir, and
+the maximum limit is 10% lower than the fracture
+pressure of the formation.
+3 The minimum limit for the parameters of the minimum
+bottomhole pressure of the production well is set to the
+minimum miscible pressure (MMP) of the CO2 and
+reservoir oil so that the operation does not go out of the
+mixing state. Its maximum limit is determined based on
+the conditions of pressure, reservoir production, and the
+minimum economic rate of production from the field.
+Now, by introducing decision variables and objective
+functions, the impact of decision variables on the performance
+of each objective function should be measured. At this stage,
+the decision variables that have little effect on the operation are
+removed since their optimization increases the computational
+load while bringing the objective functions closer to their ideal
+values has little effect. For this purpose, a certain number of
+preliminary tests should be designed, and by implementing
+these tests on the simulation model, the objective functions
+should be obtained. The number of initial tests should be large
+enough to determine the behavior of each objective function
+
+n+ 1
+
+( o So + g Sg + w Sw)n + 1 = 0
+
+i=1
+
+2.2. Selection of Decision Variables and Objective
+Functions. Four objective functions are considered in this
+optimization problem:
+1 Maximization of oil production during the WAG
+injection process after ten years in terms of barrels
+2 Maximization of carbon dioxide sequestration after ten
+years of carbon dioxide injection as WAG in tons
+3 Minimizing water production after ten years of CO2−
+WAG-EOR operation in barrels
+4 Maximizing the net present value or NPV for ten years
+of CO2−WAG-EOR operation in dollars: The NPV
+objective function measures the project’s utility, which is
+obtained by discounting the project’s revenues and costs
+minus the investment costs. The NPV calculation
+considers carbon sequestration and oil production as
+sources of income, while water production is considered
+a current expense.
+ÅÄÅ (Q × OP + CO × SP) Q × WC ÑÉÑ
+Å
+ÑÑ
+2
+W
+ÑÑ
+NPV = ÅÅÅÅ oil
+ÑÑ
+ÅÅÇ
+(1 + D)N
+ÑÖ
+CAPEX
+
+where QOil and QW are the cumulative volume of oil
+produced and cumulative volume of water produced in barrels,
+OP is the price per barrel of oil in dollars, CO2 is the
+cumulative volume of carbon sequestered in tons, SP is the
+sequestration bonus per ton of carbon, WC is the cost per
+barrel of water in dollars, D is the discount rate, and N is the
+number of years of the project. The cost of drilling wells and
+other fixed costs for setting up a CO2−WAG-EOR project
+including carbon dioxide gas separation equipment are
+summarized in the CAPEX parameter.
+Decision variables are a reservoir engineer’s tool for
+controlling CO2−WAG-EOR operations. Therefore, any
+operational parameter that can be changed and create
+acceptable results regarding objective functions is known as a
+decision parameter. In this study, the decision parameters are
+1 The ratio of the gas to water injection duration WAG
+cycle (WGR)
+2 Maximum bottomhole injection pressure during carbon
+dioxide gas injection (BHPG (psi))
+9567
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Table 3. CO2−WAG Injection Scenarios Based on Gas and
+Water Injection Period
+
+based on the decision parameters. Using test design methods
+to determine the exact number of tests and the appropriate
+distribution of decision parameters in operational ranges is a
+way forward. Test design methods can be used in any process
+to determine the impact of inputs on outputs, while the range
+of changes in input parameters is different. In this study, all of
+the activities related to the construction and design of the
+experiment were carried out by the CMOST module of the
+CMG software. The CMOST module uses the Latin
+hypercube sampling (LHS) test design method. The LHS
+method can be used to sample random numbers in which the
+samples are evenly distributed in a sample space.33−35 The
+main advantage of LHS sampling is that its samples reflect the
+appropriate underlying distribution and tend to require much
+smaller sample sizes than simple random sampling. This
+sampling method can be beneficial if the database has high
+dimensions and requires random samples that reliably reflect
+the accurate distribution of the data. Therefore, a certain
+number of tests that can measure the performance of the
+objective functions based on the decision parameters are
+created by the LHS method; all of these experiments are
+simulated, and the objective functions are calculated.
+Now, it is necessary to separately assess the impact of
+decision variables on objective functions using another tool. In
+this study, a supervised machine learning approach is used to
+evaluate decision variables and objective functions. Neighborhood component analysis (NCA) is a supervised learning
+method for multivariate data classification into separate classes
+based on a predefined distance metric from the data.
+Functionally, it shares goals similar to those of the K-nearest
+neighbors algorithm and directly utilizes a related concept
+called random neighbors. NCA is a nonparametric method for
+feature selection aimed at maximizing the prediction accuracy
+of regression and classification algorithms. NCA, with the given
+decision variables and objective functions, learns the relationship between them and provides a specific weight for each
+decision variable’s effect on each objective function.
+2.3. Designing Experiments and Creating a Database.
+After the decision variables for the optimization process are
+determined, it is necessary to create a database. The database
+refers to a collection that includes several different experiments, each consisting of two separate parts: the feature set,
+which corresponds to the decision variables, and the objective
+functions. The database forms the foundation for implementing machine learning methods in the optimization process.
+Machine learning methods replicate relationships between
+decision variables and objective functions in different experiments and can predict system performance when faced with
+different conditions using the database.
+The Latin hypercube sampling (LHS) experimental design
+method is used to design combinations of experiments in the
+database. Among the studied decision variables, WGR can be
+split into two separate parameters: the gas injection duration
+and water injection duration in each cycle. Based on these two
+parameters, seven different scenarios are determined, and in
+each scenario, separate experimental design methods are used
+to determine the values of other decision variables. These
+seven scenarios differ only in terms of the duration of gas and
+water injection cycles in the baseline experiment. Table 3
+presents the WAG injection schedule in different scenarios.
+The LHS method is implemented in each scenario, assigning
+values to other decision variables in different experiments.
+Therefore, a specific number of experiments is created for each
+
+Scenario
+
+Duration of CO2 gas injection
+(days)
+
+Duration of water injection
+(days)
+
+1
+2
+3
+4
+5
+6
+7
+
+183
+198
+213
+229
+243
+258
+274
+
+182
+167
+152
+136
+122
+107
+91
+
+scenario, and the sum of all these experiments will construct
+the study’s database.
+2.4. Smart Proxy Modeling. The development of proxy
+models in the oil and gas industry, as well as in many other
+industries that utilize numerical simulations, has a long
+history.36,37 Proxy models provide fast approximate solutions,
+which can replace large numerical simulation models. They
+serve specific valuable purposes such as history matching,
+uncertainty analysis, quantification, and optimization of
+processes.38,39 By employing machine learning methods, a
+precise, intelligent proxy model is constructed to accelerate the
+optimization process. Machine learning methods are broadly
+categorized into three main types: supervised learning,
+unsupervised learning, and reinforcement learning. The field
+of reservoir engineering utilizes supervised learning methods
+for building smart proxy models. These methods are datadriven and are used for both classification and regression tasks.
+In this study, a combination of neural networks and
+ensemble learning methods is employed. We introduce these
+two methods and describe how they are utilized in
+constructing the intelligent proxy model. Among machine
+learning methods, only neural networks can simultaneously
+examine and perform regression on multiple outputs and
+objective functions. In past studies, various neural network
+architectures have been considered for optimizing CO2−
+WAG-EOR operations. The architecture of a neural network
+plays a crucial role in the accuracy of network predictions,
+which can be controlled based on parameter adjustments.
+Parameters such as the number of hidden layers, neurons in
+each hidden layer, and activation functions should be tuned
+according to the constraints in Table 4 to determine the best
+network architecture.
+Table 4. Hyper Parameter in Neural Network Architecture
+Design
+Hyper parameters
+
+Possible options
+
+Number of hidden layers
+The number of neurons in each hidden layer
+Transfer function type
+
+1−3
+1−100
+{Tansig, Logsig, Softmax}
+
+Two smart proxies will be trained to have two types of
+models for predicting objective functions. The first model is
+tasked with predicting the technical objective functions of the
+study, namely, cumulative oil production, carbon dioxide
+sequestration, and water production. The second model is used
+to predict the NPV objective function. For building the first
+proxy model, an essential aspect is the proximity of the model’s
+accuracy in predicting the triplet objective functions, as a
+significant difference in the accuracy of predicting objective
+9568
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+functions can disrupt the optimization process. Therefore,
+another supervised learning method, called ensemble learning,
+is employed. Machine learning ensemble models, also known
+as collective models, are a type of machine learning method in
+which multiple base models, often referred to as weak learners
+or base models, are trained independently for a problem and
+combined to achieve better results.40,41 When weak models are
+appropriately combined, they can produce more accurate or
+stable models. In ensemble machine learning methods,
+different types of base learning algorithms are used, which
+are called heterogeneous ensemble models. Three general
+methods for combining base models are as follows:
+Bagging: Homogeneous base models are used in this
+approach, trained independently of each other, and combined
+with a deterministic averaging process.
+1 Boosting: Homogeneous base models are also trained
+sequentially and with an adaptive method (so that a base
+model depends on its previous model), and they are
+combined with a deterministic strategy.
+2 Stacking: In this method, heterogeneous base models are
+used, trained in parallel, and combined with the training
+of a meta-model on the predicted outputs of the base
+models.
+The stacking method is used to combine base neural
+network models and create a meta-model for predicting
+objective functions within the framework of the study’s
+computational calculations. The base models consist of three
+neural networks with different activation functions, each
+created in parallel with each other following the process
+mentioned for building intelligent proxy models. In training
+these networks, the training data are the same, and half of the
+database is used.42 The other half of the data are used in
+building the meta-model. Therefore, the three base models and
+the meta-model form a set that will play the role of smart proxy
+models. Additionally, the second proxy model will be used in
+the single-objective optimization of the NPV.
+2.5. Combining the Meta-Model and the Metaheuristic Optimization Algorithm. Optimization problems have
+been studied using various approaches. The use of derivativebased methods for finding extreme points of the objective
+function or various metaheuristic algorithms has effectively
+optimized single-objective problems. However, there are
+optimization problems that cannot be summarized in a
+single-objective function. As mentioned in the introduction,
+the presence of conflict of interest among the objective
+functions has led to the consideration of multiobjective
+optimization as the primary goal of the framework. However,
+a single-objective optimization step will be involved in
+optimizing the NPV function, which plays the role of the
+trade-off parameter. The optimization tool in this study is one
+of the powerful and well-known multiobjective optimization
+algorithms, namely the non-dominated sorting genetic
+algorithm version II (NSGA-II).43,44 Previously, Menad et. al
+have successfully utilized the NSGA-II algorithm within the
+optimization framework for CO2−WAG-EOR operations.21
+The summary of the implementation steps of this algorithm is
+as follows:30
+Evaluate the objective functions for each individual
+within the population, starting from a randomly
+initialized set of solutions.
+Implement dominance-based sorting to organize the
+initial population.
+
+Article
+
+Compute the crowding distance parameter for each
+individual.
+Conduct a selection process utilizing binary comparisons.
+Execute the crossover and mutation procedures.
+Assemble the new population and perform selection
+among them for the next iteration.
+For the single-objective optimization step, the NPV function
+will also be optimized using a single-objective genetic
+optimization algorithm. By adjusting the parameters of the
+single-objective and multiobjective optimization algorithms,
+the generated meta-models must be combined as objective
+functions with the optimization algorithm. The output of this
+step for single-objective optimization in the NPV function will
+be the maximum NPV value within the study’s range. In
+multiobjective optimization, the Pareto front will represent a
+set of desirable values for the three objective functions.
+2.6. Establishing a Decision Criterion on the Pareto
+Front. Using multiobjective optimization methods ultimately
+results in a Pareto front, which consists of solutions that are
+mathematically nondominated by other solutions. Given the
+three objectives of this study, the primary focus is on
+multiobjective optimization. Solutions on the Pareto front
+are obtained through several stages, and changes in the
+population size and optimization algorithm parameters lead to
+changes in the Pareto front’s shape and optimal solutions. In
+this process, solutions are evaluated based on multiple criteria,
+and they are categorized into different clusters as follows:
+1 Solutions with NPV higher than the single-objective
+optimization’s maximum NPV are gold solutions.
+2 Solutions with an NPV lower than the maximum NPV of
+single-objective optimization but have cumulative oil
+production exceeding ten percent of the reservoir
+volume or carbon dioxide sequestration of more than
+80% of the upper limit of the carbon injection range are
+recognized as silver solutions.
+3 Solutions with NPV below the average NPV in the
+database are called black solutions.
+4 Solutions that do not meet the conditions above and
+have lower water production than the average reservoir
+water production are categorized as bronze solutions.
+5 If the reservoir water production does not satisfy the
+fourth condition, it is a blue solution.
+After the creation of a database of solutions, a decision tree
+clustering algorithm is utilized to create a classification model
+for Pareto front data. The decision tree algorithm, through the
+database analysis, will generate new criteria different from the
+initial criteria.
+
+3. RESULTS AND DISCUSSION
+In the CO2−WAG-EOR process, one of the most critical
+properties is the minimum miscibility pressure (MMP). The
+minimum miscibility pressure for the fluid model at the
+reservoir temperature is 4100 psi.
+Based on reservoir performance, operational ranges for
+injection and production wells were determined for the EOR
+method. Table 5 illustrates the decision variable operating
+ranges. These ranges are crucial for optimizing the EOR
+method and ensuring efficient reservoir management.
+To calculate the NPV, costs related to CAPEX are $300
+million (the cost of drilling wells and surface facilities based on
+the range of field development in the Middle East region), the
+9569
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+using the LHS method to examine the effect of the decision
+parameters on the objective functions. A total of 36 initial
+experiments were designed and simulated. Upon determination of the outputs of these initial experiments, sensitivity
+analysis was performed using the NCA method. Given the
+single-objective performance of the NCA method and the
+multiobjective nature of the problem, it is necessary to
+facilitate the comparison of the impact of different decision
+parameters on the objective functions. Initially, since the
+numerical scale of the objective functions is not the same, we
+normalized all of them between −1 and 1 for comparison and
+performed sensitivity analysis using five different approaches.
+These approaches were designed so that the effect of each
+objective function was predominant in one approach by giving
+
+Table 5. Decision Variables Range in the Reservoir Model
+The decision variables
+
+Minimum
+
+Maximum
+
+WGR
+BHPG (psi)
+BHPW (psi)
+Qg (MMSCF/D)
+Qw (STB/D)
+BHP (psi)
+QO (STB/D)
+
+0.32
+10500
+10500
+10
+4000
+4100
+10000
+
+1
+14000
+14000
+35
+20000
+4900
+20000
+
+Article
+
+oil price is $60 per barrel (average oil price over the past 60
+years), a carbon sequestration reward is $8 per ton,45 and
+operating costs of water are $8 per barrel. For optimization, a
+limited number of experiments were designed and simulated
+
+Figure 4. Effect of decision variables on the objective functions of different approaches of the sensitivity analysis process. Impact of decision
+variables on OBJ1 (a), impact of decision variables on OBJ2 (b), impact of decision variables on OBJ3 (c), impact of decision variables on OBJ4
+(d), and impact of decision variables on OBJ5 (e).
+9570
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 5. Architecture of triple submodels in predicting objective functions.
+
+Table 6. Performance of Proxy Basic Models in Predicting
+the Objective Functions of the Reservoir Model
+
+3 Considering carbon sequestration as the dominant
+objective function:
+
+Measurement
+criteria
+
+First base
+model (Tansig)
+
+Second base
+model (Logsig)
+
+Third base
+model (Softmax)
+
+General data bank
+regression
+Train data
+regression
+Test data
+regression
+Validation data
+regression
+MSE (total bank
+data)
+MAE (total bank
+data)
+
+0.90258
+
+0.92365
+
+0.90012
+
++ 100 × CO2 storage + 10 × cumulative water
+
+0.95743
+
+0.98458
+
+0.94236
+
+production + 10 × NPV
+
+0.86301
+
+0.89558
+
+0.85236
+
+0.85796
+
+0.88239
+
+0.84023
+
+0.0587
+
+0.00961
+
+0.0701
+
++ 10 × CO2 storage + 100 × cumulative water
+
+0.903
+
+0.0852
+
+0.975
+
+production + 10 × NPV
+
+OBJ3 = 10 × cumulative oil production
+
+2 Considering cumulative water production as the
+dominant objective function:
+OBJ4 = 10 × cumulative oil production
+
+5 Considering NPV as the dominant objective function:
+OBJ5 = 10 × cumulative oil production
+
+weights to the normalized objective functions. By assigning
+weights to the normalized objective functions, the dominance
+of these objective functions was created.
+1 Considering equal weights of objective functions:
+
++ 10 × CO2 storage + 10 × cumulative water
+production + 100 × NPV
+
+The use of these approaches provides conditions for
+comparing decision variables and their impact on objective
+functions on a standard numerical scale. In the first approach,
+all objective functions were assumed to have equal importance.
+Figure 4a shows that the impact of the reservoir pressure
+decision variable in this approach is more significant than that
+of other variables. Variables such as gas injection rate and
+WAG injection timing ratio have the most negligible impact on
+this objective function. Therefore, in single-objective optimization of the CO2−WAG-EOR process from the perspective
+of the NCA algorithm, decision variables such as the gas
+
+OBJ1 = Cumulative oil production + CO2 storage
++ cumulative water production + NPV
+
+2 Considering the cumulative oil production as the
+dominant objective function:
+OBJ2 = 100 × cumulative oil production
++ 10 × CO2 storage + 10 × cumulative water
+production + 10 × NPV
+9571
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 6. Accuracy of the first base model in predicting the objective functions. Scatter plot of cumulative oil production prediction (a), cumulative
+oil production prediction error histogram (b), scatter plot of cumulative water production prediction (c), cumulative water production prediction
+error histogram (d), scatter plot of cumulative CO2 storage prediction (e), and cumulative CO2 storage prediction error histogram (f).
+
+Figure 7. Accuracy of the second base model in predicting the objective functions. Scatter plot of cumulative oil production prediction (a),
+cumulative oil production prediction error histogram (b), scatter plot of cumulative water production prediction (c), cumulative water production
+prediction error histogram (d), scatter plot of cumulative CO2 storage prediction (e), and cumulative CO2 storage prediction error histogram (f).
+
+injection rate and WAG injection timing ratio can be
+overlooked. In the second approach, the cumulative oil
+production objective function predominates. The impact of
+the reservoir pressure decision variable is also dominant in this
+approach. Another influential decision parameter is the WAG
+injection timing ratio. In this approach, the carbon dioxide
+
+injection rate, just like in the first approach, has shown a
+minimal impact. The results of the NCA algorithm in the
+second approach indicate that increasing the influence of an
+objective function can fundamentally change the role of
+decision parameters such as the WAG injection timing ratio
+(Figure 4b). The cumulative water production objective
+9572
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 8. Accuracy of the third base model in predicting the objective functions. Scatter plot of cumulative oil production prediction (a),
+cumulative oil production prediction error histogram (b), scatter plot of cumulative water production prediction (c), cumulative water production
+prediction error histogram (d), scatter plot of cumulative CO2 storage prediction (e), and cumulative CO2 storage prediction error histogram (f).
+
+Figure 9. Accuracy of the meta-model in predicting the objective functions. Scatter plot of cumulative oil production prediction (a), cumulative oil
+production prediction error histogram (b), scatter plot of cumulative water production prediction (c), cumulative water production prediction error
+histogram (d), scatter plot of cumulative CO2 storage prediction (e), and cumulative CO2 storage prediction error histogram (f).
+
+function was the main focus of sensitivity analysis in the third
+approach. Water production is significantly affected by both
+injection and production well pressures. The water injection
+rate and injection well pressure are other influential decision
+parameters in this approach (Figure 4c). The carbon
+sequestration objective function was examined in the fourth
+approach. According to Figure 4d, this objective function is
+affected most by all decision parameters simultaneously. In the
+
+fifth approach, the NPV objective function was investigated.
+The results of this study show that the NPV objective function
+has a similar influence on decision parameters as the
+cumulative oil production objective function. Therefore, it
+can be concluded that the NPV has a significant impact on the
+overall optimization process (Figure 4e).
+Based on the impact of decision variables across different
+approaches, it was decided that none of the decision variables
+9573
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 10. Neural network architecture for NPV objective function prediction.
+
+Table 7. Performance of the Smart Proxy Model for
+Predicting the NPV of the Reservoir Model with Different
+Measurement Criteria
+Measurement criteria
+
+Best model
+
+General data bank regression
+Train data regression
+Test data regression
+Validation data regression
+MSE (total bank data)
+MAE (total bank data)
+
+0.95716
+0.98852
+0.93258
+0.94203
+0.00978
+0.02126
+
+Table 8. Control Parameters of the Genetic Algorithm in
+Optimizing the NPV Objective Function
+Parameters
+
+Value
+
+The number of iteration
+The number of population members
+Population of mutants
+Population cross over
+Mutation rate
+Mutation step
+
+200
+200
+0.2 of the total population
+0.8 of the total population
+0.02
+0.05
+
+seven similar scenarios with different WAG injection timing
+ratios and then setting other decision variables by using the
+LHS algorithm. In total, the created database included 282
+experiments, and the average runtime of the physics-based
+simulation in each experiment was equivalent to 4 h. The
+process of constructing the smart proxy model begins with
+creating a meta-model. Based on creating a set of proxy models
+using the stacking learning method, the database was divided
+into two equal parts with a random distribution, where the first
+part was used to create base models and the second part was
+used to create meta-models. In each part, 110 data points were
+used for training, and the remaining data points were used for
+testing and validation. Base models were created according to
+the conditions of the reservoir model and the variable ranges
+
+should be excluded from the optimization cycle. This decision
+was made by considering the fact that each variable, even those
+with lesser impact in certain approaches, might play a
+significant role under specific conditions or in combination
+with other variables. Additionally, the predictive capabilities of
+meta-models were influential in this decision. These models
+have a high capacity to enhance weak proxy models and can
+effectively manage the effects of multiple decision variables.
+Specifically, meta-models can improve prediction accuracy,
+reduce uncertainties in the optimization process, and enable
+the exploration of complex interactions between variables.
+Consequently, a database was created based on the seven
+decision variables. The database was constructed by creating
+
+Figure 11. Regression of predictions of the smart proxy model of NPV objective functions.
+9574
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 12. Single-objective optimization result.
+
+models in predicting the training data was relatively acceptable,
+but the accuracy of the models in predicting the test data could
+disrupt the optimization process. It is necessary to assess the
+performance of the base models in predicting the objective
+functions separately. As a result, the base models were fed the
+entire database of experiments as input, and objective functions
+were calculated.
+The first base model had a relatively average performance in
+predicting the cumulative oil production objective function
+and cannot serve as a standalone model for the optimization
+process. A substantial portion of its predictions were less than
+the actual values. Another weakness of this model is predicting
+oil production with negative values for some experiments. Its
+performance was relatively more acceptable for large values of
+cumulative oil production (Figure 6a,b). From the perspective
+of the first base model, the predictions of water production
+were almost similar to those of oil production. In this objective
+function, there were also weaknesses in predicting negative
+values. Therefore, the first base model also received a moderate
+score in predicting the cumulative water production values
+(Figure 6c,d). The objective function of carbon sequestration
+is more affected by all decision variables than other objective
+functions. The base models should incorporate the influence of
+all decision parameters in predicting them. The first base
+model provided better predictions for the carbon sequestration
+objective function than other objectives and received an
+acceptable score for this objective (Figure 6e,f).
+The second base model performed better than the first in
+predicting the cumulative oil production objective function. It
+exhibited higher regression and did not have the fundamental
+weakness of the first base model, which was predicting negative
+values for cumulative oil production (Figure 7a,b). The
+performance of this model in predicting the cumulative oil
+production objective function is acceptable, even as a
+standalone model for the optimization process. While the
+performance of the second base model in predicting the
+cumulative oil production objective function was admirable, it
+
+Table 9. Values of Technical Solutions with a SingleObjective Approach Objective Functions Based on the
+Decision
+The objective function
+
+Amount (unit)
+
+Cumulative oil production (MMSTB)
+Carbon dioxide sequestration (MTONE)
+Cumulative water production (MSTBl)
+
+357.1158
+85.875
+894
+
+Table 10. Control Parameters of the NSGA-II Algorithm in
+Multiobjective Optimization
+Parameters
+
+Value
+
+The number of iteration
+The number of population members
+Population of mutants
+Population of cross over
+Mutation rate
+Mutation step
+
+500
+500
+300
+350
+0.01
+0.01
+
+mentioned in Table 5. The first base model uses the Tansig
+transfer function. This model has two hidden layers, with 24
+neurons in the first layer and 14 neurons in the second layer.
+The second base model uses the Logsig transfer function. It
+utilizes a three-layer architecture with 22 neurons in the first
+layer, 20 neurons in the second layer, and nine neurons in the
+third layer. The last transfer function used in constructing the
+base models is the Softmax transfer function. Twenty-eight
+neurons formed the architecture of the third base model in the
+first layer and 10 neurons in the second layer (Figure 5). The
+smart proxy models are capable of predicting the objective
+functions in less than 1 s.
+The accuracy of all three base models was evaluated based
+on specific filters to determine the capability of preferred
+predictors among various models and fulfill the role of base
+models. Table 6 presents the accuracy of the created base
+models based on multiple criteria. The performance of these
+9575
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 13. Pareto front includes the optimal solutions of the problem.
+
+Figure 14. Pareto front validation with random data in two different views.
+
+failed to meet expectations in predicting the cumulative water
+production objective function. It even made weaker
+predictions compared to the first base model, with an
+unacceptable number of negative value predictions for water
+production (Figure 7c,d). The second base model’s performance in predicting the carbon sequestration objective function
+has been notable, similar to the first model, with the only
+prominent weakness being the negative predictions (Figure
+7e,f). In its predictions, the second base model often estimated
+values lower than the actual values.
+The third base model had weaker regression predictions of
+cumulative oil production than the other models. However, a
+positive aspect of this model is that it did not predict negative
+values for cumulative oil production. This feature can play an
+influential role in improving the results of the first model,
+especially in the low cumulative oil production range when
+used in the meta-model (Figure 8a,b). The first and second
+base models had weaknesses in predicting the cumulative water
+production objective function. This weakness is also observed
+in the third base model, with the significant difference that the
+third model performed better than the first and second models
+in the low water production range and had much fewer
+negative value predictions (Figure 8c,d). In contrast to the first
+
+and second base models, the third base model performed
+poorly in predicting the carbon sequestration objective
+function and provided the lowest regression among the models
+(Figure 8e,f). The third base model may have had the lowest
+accuracy among the base models, but it can have a positive
+impact on the meta-model within limited ranges. Among the
+base models, only the third model predicted values higher than
+the actual values and had a wider error distribution. This
+model had a broader error distribution and was the weakest
+replacement for the base model.
+The evaluation of the base models’ performance in
+predicting the objective functions reveals distinct strengths
+and weaknesses for each model. The first model (Tansig)
+demonstrated moderate accuracy in predicting cumulative oil
+and water production, with notable limitations in generating
+negative values. However, its predictions for CO2 storage were
+relatively acceptable, suggesting its suitability for objective
+functions influenced holistically by all decision variables. The
+second model (Logsig) outperformed others in oil production
+prediction, eliminating the issue of negative values, but showed
+significant shortcomings in water production prediction
+including unrealistic negative estimates. While its CO2 storage
+predictions mirrored the first model’s performance, it
+9576
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 15. Classification of optimal solutions for creating a cluster model data bank.
+
+consistently underestimated values, reflecting a bias toward
+lower predictions. The third model (Softmax), despite weaker
+overall regression accuracy, avoided negative predictions for oil
+and water production and performed better in low-value
+ranges. However, it was the least accurate for CO2 storage and
+exhibited the widest error distribution, making it the weakest
+standalone model.
+These findings highlight the complementary nature of the
+models: no single base model excels across all of the objectives.
+The Tansig and Logsig models show promise for CO2 storage
+and oil production, respectively, while the Softmax model’s
+avoidance of negative predictions could enhance meta-model
+robustness in specific ranges. The variability in error patterns
+(e.g., underestimation by Logsig vs overestimation by Softmax)
+underscores the need for ensemble approaches, such as
+stacking, to leverage their combined strengths and mitigate
+individual weaknesses. This aligns with the rationale for
+retaining all decision variables in the optimization cycle, as
+complex interactions between variables may require diverse
+predictive frameworks to capture them accurately.
+The results of the base models indicate the need for creating
+meta-models. Therefore, using a separate data set and the
+outputs of the base models, a meta-model was built for each
+objective function. Subsequently, the capabilities of these
+meta-models in predicting the objective functions will be
+examined. Like the base models, after training and building the
+meta-models, all the experiments from the data set were fed to
+the models, and the objective functions were calculated. The
+results of the meta-model in predicting the cumulative oil
+production objective function have been inspiring, with a
+significant increase in accuracy compared to the base models
+(Figure 9a). The majority of prediction errors are clustered
+around zero, indicating that the meta-model generally provides
+accurate predictions of oil production. The histogram appears
+symmetric, with a peak near zero error, which suggests that the
+
+model has minimal bias in its predictions. The MSE value is
+given as 2.11 × 102, indicating the average squared difference
+between the predicted and actual oil production values. This
+low MSE further supports the conclusion that the meta-model
+performs well in predicting oil production, as lower MSE
+values reflect better prediction accuracy (Figure 9b). The
+meta-model successfully addressed all of the shortcomings of
+the base models. Each of the three base models struggled with
+accurately predicting cumulative water production, making it
+difficult to develop a reliable proxy model for this objective
+function. As a result, constructing an effective meta-model was
+crucial. Fortunately, the meta-model has been highly effective
+in correcting the base models’ predictions, significantly
+mitigating their substantial regression weaknesses. Importantly,
+the meta-model outputs contain no negative predictions for
+cumulative water production, eliminating the need to identify
+and exclude such values during the optimization process
+(Figure 9c). Figure 9d shows that the error distribution for
+cumulative water production predictions using the meta-model
+demonstrates a significant improvement compared to the
+submodels. The carbon dioxide sequestration objective
+function presented the slightest challenge from the perspective
+of the base models, and the base models had a high accuracy in
+predicting this objective function. Nevertheless, the metamodel constructed for the carbon dioxide sequestration
+objective function has also demonstrated exceptional performance. Similar to the other two objective functions, the metamodel further improved upon this, achieving an exceptional R2
+of 0.99 and maintaining minimal error distribution (Figure
+9e,f).
+The development of meta-models via stacking learning
+overcomes the limitations of individual base models, thereby
+revolutionizing predictive accuracy in CO2−WAG-EOR
+optimization. By synergizing the strengths of diverse base
+models (Tansig, Logsig, Softmax), the meta-model not only
+9577
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 16. Output of the decision tree clustering model for classifying Pareto front solutions.
+
+their interdependencies. Future applications could extend this
+framework to other EOR techniques or integrate machine
+learning advancements (e.g., deep learning architectures) to
+further push the boundaries of predictive accuracy and
+operational agility.
+Constructing an NPV prediction model is essential for
+economic forecasting of operations. A multilayer neural
+network approach was used to build a smart proxy model for
+NPV prediction. The NPV prediction model has three hidden
+layers with 29, 19, and 9 neurons, respectively. The Tansig
+transfer function in this model is responsible for communication between neurons in multiple layers (Figure 10).
+The selected neural network exhibits the necessary
+competence for predicting the NPV objective function, as
+shown in Table 7. It can provide acceptable performance in the
+optimization process.
+Figure 11 demonstrates the success of the created smart
+proxy model in NPV predictions, with only a tiny difference
+from the actual values, indicating that it fulfills the necessary
+predictions effectively.
+By creating proxy models to calculate objective functions
+based on decision variables, conditions are provided for
+optimization. In the first step, using a single-objective genetic
+
+Table 11. Clustering of Pareto Front Solutions by the
+Decision Tree Model
+Pareto front solution clusters
+
+Number
+
+golden
+silver
+bronze
+Blue
+Black
+
+60
+57
+18
+49
+316
+
+rectified critical flaws�such as the elimination of nonsensical
+negative predictions for water production�but also achieved
+exceptional precision across all objective functions. For
+cumulative oil production, the meta-model reduced errors
+significantly (MSE = 2.11 × 102) and centralized error
+distribution near zero, reflecting minimal bias. Its ability to
+resolve the base models’ persistent underestimation/overestimation biases demonstrates how ensemble methods can
+harmonize conflicting predictions into robust outputs.
+This innovation is not merely technical but conceptual: it
+validates the power of ensemble learning to navigate
+multiobjective, multivariable complexities in EOR processes.
+The meta-model’s success reinforces the study’s foundational
+decision to retain all decision variables, as it effectively captures
+9578
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+Figure 17. Distribution of different groups of solutions on the Pareto front.
+
+optimization algorithm and an intelligent proxy model, the
+NPV objective function is calculated, and optimization is
+performed as a single objective. In this process, the control
+parameters of the optimization algorithm were determined
+based on the values in Table 8.
+The optimization results show that the maximum achievable
+value for the NPV objective function with a single-objective
+optimization approach equals 10.527 billion dollars (Figure
+12). This value obtained in the multiobjective optimization
+process will be the basis for decision-making criteria.
+The decision variables of the optimal solution, where the
+NPV objective function is maximized, were used in the
+technical proxy model to calculate the three objective functions
+in this solution, and the values of the three technical objective
+functions were calculated (Table 9). Calculating the technical
+objective functions can be a suitable comparison criterion in
+multiobjective optimization, which will be discussed further.
+The main stage of the optimization section involves using
+the NSGA-II optimization algorithm and the meta-intelligent
+proxy model. The output of this stage will be a Pareto front
+with different optimal solutions. For this purpose, the
+multiobjective optimization algorithm NSGA-II was applied
+with various settings on the meta-intelligent proxy model, and
+ultimately, with the settings from Table 10, a valid Pareto front
+was obtained.
+In each step of calculating and repeating the NSGA-II
+algorithm, the final values of the objective functions on the
+Pareto front are stored to create a secondary data bank for
+intelligent decision criteria. These solutions are initially
+categorized based on the criteria mentioned in the methodology to create a decision tree clustering model. This model
+can provide more control for decision-making among Pareto
+front solutions. According to Figure 13, 500 members of
+optimal solutions have been generated for the reservoir model.
+The solutions available on the Pareto front are of equal value
+from a mathematical point of view and do not dominate or
+
+outperform each other. The credibility of the generated
+procedure was assessed using 5000 random experiments, and it
+demonstrated acceptable performance in this evaluation.
+The Pareto front provides decision-makers with a spectrum
+of viable strategies. For instance, economically driven solutions
+that focus on high NPV (linked to oil production) are suited
+for short-term profitability goals. On the other hand,
+environmentally driven solutions, which emphasize CO2
+storage, align with carbon tax incentives or sustainability
+mandates. Additionally, operationally balanced solutions,
+which fall within a midrange, minimize water production and
+reduce disposal costs. This framework bridges theoretical
+optimization with field-level decision-making, offering a
+scalable tool for adaptive reservoir management, in alignment
+with global energy transition goals.
+Figure 14 shows the validity of the Pareto front using 5000
+random tests. None of the random experiments have surpassed
+the Pareto plane.
+Before decision criteria for the given problem are
+formulated, it is essential to meticulously examine the Pareto
+front solutions in relation to the optimized single-objective
+outputs. The net present value (NPV) of each Pareto front
+solution is determined using the NPV proxy model.
+Subsequently, a comprehensive evaluation of the four distinct
+technical and economic objective functions is performed,
+encompassing both single-objective and multiobjective viewpoints.
+It has been previously mentioned that a database of multiple
+Pareto front solutions is created to form a clustering model
+based on them. Using 600 solutions in this database, they were
+categorized into five groups: gold, silver, bronze, blue, and
+black. The initial categorization of solutions was done based on
+the following criteria:
+1 Solutions with an NPV value more significant than the
+single-objective optimization optimal value were recognized as gold solutions.
+9579
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Article
+
+silver (CO2-focused), and bronze/black (constrained by water
+or low productivity) clusters reveals how shifts in priority alter
+operational outcomes. For instance, gold solutions sacrifice the
+CO2 storage potential for higher short-term profits, while silver
+solutions accept reduced NPV to meet sustainability targets.
+The model further uncovers nonintuitive trade-offs, such as
+bronze/black solutions achieving superior CO2 storage but
+being economically nonviable under current fiscal assumptions.
+This structured trade-off analysis transforms abstract multiobjective optimization into actionable insights, enabling
+operators to transparently weigh profitability against regulatory
+or environmental constraints. By embedding quantifiable
+thresholds (e.g., 376.283 MMbbl oil cutoff for gold status),
+the method operationalizes trade-off decisions, offering a
+replicable blueprint for balancing competing priorities in
+energy systems transitioning toward decarbonization.
+
+2 Solutions with NPV values lower than the singleobjective optimization optimal value but with a carbon
+dioxide sequestration of more than 92 million tons of oil
+production exceeding 350 million barrels were classified
+as silver solutions. A carbon sequestration value of 92
+million tons means that 90% of the maximum carbon
+dioxide injection limit (35 million standard cubic feet)
+has been achieved. A 350 million barrel oil production
+means that the oil recovery factor in the reservoir of
+interest has exceeded 10%.
+3 Solutions with NPV values less than 9 billion dollars
+were considered black solutions. The $9 billion equals
+the average NPV of the initial database experiments.
+4 Solutions that did not fall into the above categories but
+had an oil production of less than 1 million barrels were
+considered bronze solutions.
+5 If the cumulative produced water volume in case 4
+exceeds 1 million barrels, the solution will be in the blue
+category. Figure 15 illustrates the conditions for the
+initial categorization of solutions.
+
+4. CONCLUSION
+This study aimed to optimize the multiobjective process of
+enhanced oil recovery with cyclic carbon dioxide injection and
+water using machine learning methods and the multiobjective
+optimization algorithm NSGA-II. The optimization objectives
+were divided into technical and economic parts, including
+cumulative oil production, cumulative water production, and
+carbon dioxide sequestration as technical objectives, and the
+net present value (NPV) as the economic objective. The main
+results of the study are as follows:
+1 The NCA algorithm results in the sensitivity analysis
+phase showed that this method can identify the impact
+of decision variables on individual objectives. The NCA
+results predicted a strong correlation between NPV and
+cumulative oil production before the multiobjective
+optimization process, which was confirmed after the
+optimization process.
+2 Multilayer neural networks were used to create smart
+proxy models for predicting the NPV objective function
+for both reservoir models. Both models accurately
+predicted this objective function, with regression values
+more than 0.93.
+3 Meta-models were constructed based on ensemble
+learning to improve the prediction accuracy of the
+cumulative water production objective and provide
+similar accuracy for all three technical objectives. The
+meta-models predicted the cumulative oil production
+objective with a regression of 0.96, the carbon dioxide
+sequestration objective with a regression of 0.99, and the
+cumulative water production objective with an accuracy
+of 0.95. The stacking learning-based meta-model
+significantly improves prediction accuracy in complex
+oil reservoirs, allowing for precise proxy models with
+fewer data, thereby enhancing reservoir management
+decisions.
+4 The multiobjective optimization algorithm NSGA-II
+provides valid Pareto fronts for the reservoir. Multiple
+random experiments did not dominate these fronts.
+Pareto front solutions could provide objective function
+values more effectively than single-objective optimization results.
+5 Previous studies have indicated a conflict between
+cumulative oil production and carbon dioxide sequestration objective functions. The conflicting interests
+between these objective functions were a solid reason
+
+The database created is the basis for building an intelligent
+decision tree clustering model. This clustering model was
+created and, through data analysis from the database, classifies
+Pareto front solutions based on the criteria in Figure 16. A
+common point among all gold solutions is that, from the
+decision tree’s perspective, the cumulative oil production
+exceeds 376.283. This result also demonstrates that the NPV
+objective function is influenced by cumulative oil production.
+Silver solutions, on the other hand, are influenced by the
+carbon sequestration objective function. Therefore, by
+modification of the NPV model and increasing the impact of
+the carbon sequestration objective function, silver solutions
+can be more prominent in selecting the optimal solution.
+The decision tree clustering model was applied to the final
+Pareto front. The results of the clustering model on the final
+Pareto front are shown in Figure 16. With the current NPV
+model, 60 gold solutions on the Pareto front are more inclined
+toward the cumulative oil production objective function
+(Table 11).
+Figure 17, which displays the Pareto front on the coordinate
+plane of cumulative oil production and carbon dioxide
+sequestration, illustrates that some bronze and black solutions
+have higher carbon sequestration than silver and gold
+solutions. However, according to the economic model
+considered, they are not in the gold group. The strong
+inclination of gold solutions toward maximum values of
+cumulative oil production is also evident in Figure 17.
+The optimization framework was completed with the
+clustering of the Pareto front solutions, determining 60 gold
+solutions for the CO2−WAG -EOR operation and achieving
+better performance in the multiobjective optimization
+approach compared to single-objective optimization, demonstrating the effectiveness of the optimization method in the
+study.
+The core novelty of this methodology lies in its systematic
+quantification of trade-offs between conflicting technical,
+economic, and environmental objectives in CO2−WAG-EOR
+operations. By leveraging the Pareto front and a decision tree
+clustering model, the framework explicitly exposes the inherent
+compromises between maximizing NPV (via oil production),
+optimizing CO2 sequestration, and minimizing water production. The classification of solutions into gold (NPV-driven),
+9580
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+Ψ
+(k)
+N
+n+1
+I
+J
+
+for using multiobjective optimization for the CO2−
+WAG-EOR process. This study added the cumulative
+water production objective function to the optimization
+process, further highlighting the conflicting interests
+among these objectives. Therefore, the use of multiobjective optimization algorithms for CO2−WAG-EOR
+is essential.
+
+■
+
+■
+
+AUTHOR INFORMATION
+
+Article
+
+function
+iteration level
+old time level
+new time level
+component
+phase
+
+REFERENCES
+
+(1) IEA. Tracking Clean Energy Progress 2023; IEA, Paris, 2023.
+https://www.iea.org/reports/tracking-clean-energy-progress-2023.
+(2) Kweku, D.; Bismark, O.; Maxwell, A.; Desmond, K.; Danso, K.;
+Oti-Mensah, E.; Quachie, A.; Adormaa, B. Greenhouse Effect:
+Greenhouse Gases and Their Impact on Global Warming. J. Sci.
+Res. Rep. 2018, 17, 1−9.
+(3) Manabe, S. Role of greenhouse gas in climate change. Tellus A:
+Dyn Meteorol. Oceanogr. 2019, 71, 1620078.
+(4) Mikhaylov, A.; Moiseev, N.; Aleshin, K.; Burkhardt, T. Global
+climate change and greenhouse effect. Entrep., Sustain. Issues 2020, 7,
+2897−2913.
+(5) Wang, W.; Gong, J. Methanation of carbon dioxide: An
+overview. Front. Chem. Sci. Eng. 2011, 5, 2−10.
+(6) Orr, F. M., Jr. Storage of Carbon Dioxide in Geologic
+Formations. J. Pet. Technol. 2004, 56, 90−97.
+(7) Lau, H. C.; Ramakrishna, S.; Zhang, K.; Radhamani, A. V. The
+role of carbon capture and storage in the energy transition. Energy
+Fuels 2021, 35, 7364−7386.
+(8) Normann, H. E. Policy networks in energy transitions: The cases
+of carbon capture and storage and offshore wind in Norway. Technol.
+Forecast. Soc. Change 2017, 118, 80−93.
+(9) Shojaeddini, E.; Naimoli, S.; Ladislaw, S.; Bazilian, M. Oil and
+gas company strategies regarding the energy transition, Prog. Energy
+2019, 1, 012001.
+(10) Busch, A.; Alles, S.; Gensterblum, Y.; Prinz, D.; Dewhurst, D.
+N.; Raven, M. D.; Stanjek, H.; Krooss, B. M. Carbon dioxide storage
+potential of shales. Int. J. Greenhouse Gas Control 2008, 2, 297−308.
+(11) Espinoza, D. N.; Kim, S. H.; Santamarina, J. C. CO2 geological
+storage - Geotechnical implications. KSCE J. Civ. Eng. 2011, 15, 707−
+719.
+(12) Tomić, L.; Karović-Maričić, V.; Danilović, D.; Crnogorac, M.
+Criteria for CO2 storage in geological formations. Podzemn. Rad.
+2018, 32, 61−74.
+(13) Clarke, L.; Wei, Y.-M.; De La Vega Navarro, A.; Garg, A.;
+Hahmann, A. N.; Khennas, S.; Azevedo, I. M. L.; Löschel, A.; Singh,
+A. K.; Steg, L., et al. Energy Systems In IPCC, 2022: Climate Change
+2022: Mitigation of Climate Change. Contribution of Working Group III
+to the Sixth Assessment Report of the Intergovernmental Panel on Climate
+Change, Cambridge University Press, .
+(14) Bedrikovetsky, P.; Andrade, G. M.; Ferreira, L. E. A.; Menezes,
+G. L. Optimization of Tertiary Water-Alternate-CO2 Injection. In
+SPE Latin America/Caribbean Petroleum Engineering Conference SPE,
+1996. .
+(15) Kovscek, A. R.; Wang, Y. Geologic storage of carbon dioxide
+and enhanced oil recovery. I. Uncertainty quantification employing a
+streamline based proxy for reservoir flow simulation. Energy Convers.
+Manage. 2005, 46, 1920−1940.
+(16) Ghomian, Y.; Pope, G. A.; Sepehrnoori, K.Hysteresis and fieldscale optimization of WAG injection for coupled CO2-EOR and
+sequestrationSPE Symposium on Improved Oil RecoverySPE20081131−
+151
+(17) Ghaderi, S. M.; Clarkson, C. R.; Chen, S.Optimization of WAG
+process for coupled CO2 EOR-storage in tight oil formations: An
+experimental design approachSPE Canadian Unconventional Resources
+ConferenceSPE20121199−211
+(18) Dai, Z.; Middleton, R.; Viswanathan, H.; Fessenden-Rahn, J.;
+Bauman, J.; Pawar, R.; Lee, S.; Mcpherson, B. An Integrated
+Framework for Optimizing CO 2 Sequestration and Enhanced Oil
+Recovery. Environ. Sci. Technol. Lett. 2014, 1, 49−54.
+
+Corresponding Author
+
+Behnam Sedaee − Institute of Petroleum Engineering,
+Department of Chemical Engineering, College of Engineering,
+University of Tehran, Tehran 1417614418, Iran;
+Department of Chemical and Petroleum Engineering,
+Schulich School of Engineering, University of Calgary,
+Calgary T2N 1N4, Canada; The Core of the Research
+Center for Underground Hydrogen Storage, University of
+Tehran, Tehran 1417935840, Iran; orcid.org/00000002-4506-2024; Email: sedaee@ut.ac.ir
+Authors
+
+Mahdi Kanaani − Institute of Petroleum Engineering,
+Department of Chemical Engineering, College of Engineering,
+University of Tehran, Tehran 1417614418, Iran
+AliMohammad Sedaghat Kameholiya − Institute of
+Petroleum Engineering, Department of Chemical Engineering,
+College of Engineering, University of Tehran, Tehran
+1417614418, Iran
+Alireza Amarzadeh − Department of Petroleum Engineering,
+Ahvaz Faculty of Petroleum, Petroleum University of
+Technology, Ahvaz 061, Iran
+Complete contact information is available at:
+https://pubs.acs.org/10.1021/acsomega.4c10432
+Notes
+
+The authors declare no competing financial interest.
+
+■
+
+ACKNOWLEDGMENTS
+The authors would like to express their sincere gratitude to the
+Research Center for Underground Hydrogen Storage at the
+University of Tehran for their valuable insights and
+collaboration.
+
+■
+
+ABBREVIATIONS
+MMScf (unit) Million standard cubic feet
+CCS
+Carbon capture and storage
+NCA
+Neighborhood component analysis
+NPV
+Net present value
+MLNN
+Multilayer neural network
+D
+depth
+nc
+number of components
+Ni
+moles of component i per unit block volume
+P
+pressure
+Pcog
+oil-gas capillary pressure
+Q
+injection/production rate
+Tj
+transmissibility of phase j
+V
+gridblock volume
+yij
+mole fraction of component I in phase j
+γ
+specific gravity or gravity term in flow equation
+Δt
+time step
+ρm
+molar density of phase m
+ϕ
+porosity
+9581
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+ACS Omega
+
+http://pubs.acs.org/journal/acsodf
+
+(19) You, J.; Ampomah, W.; Sun, Q.; Kutsienyo, E. J.; Balch, R. S.;
+Dai, Z.; Cather, M.; Zhang, X. Machine learning based cooptimization of carbon dioxide sequestration and oil recovery in
+CO2-EOR project. J. Cleaner Prod. 2020, 260, 120866.
+(20) Ampomah, W.; Balch, R.; Will, R.; Cather, M.; Gunda, D.; Dai,
+Z. Co-optimization of CO2-EOR and Storage Processes under
+Geological Uncertainty. Energy Procedia 2017, 114, 6928−6941.
+(21) Menad, N. A.; Noureddine, Z. An efficient methodology for
+multi-objective optimization of water alternating CO2 EOR process. J.
+Taiwan Inst. Chem. Eng. 2019, 99, 154−165.
+(22) You, J.; Ampomah, W.; Sun, Q. Co-optimizing wateralternating-carbon dioxide injection projects using a machine learning
+assisted computational framework. Appl. Energy 2020, 279, 115695.
+(23) Kanaani, M.; Sedaee, B.; Asadian-Pakfar, M. Role of Cushion
+Gas on Underground Hydrogen Storage in Depleted Oil Reservoirs. J.
+Energy Storage 2022, 45, 103783.
+(24) Safarzadeh, M. A.; Motahhari, S. M. Co-optimization of carbon
+dioxide storage and enhanced oil recovery in oil reservoirs using a
+multi-objective genetic algorithm (NSGA-II). Pet. Sci. 2014, 11, 460−
+468.
+(25) You, J.; Ampomah, W.; Tu, J.; Morgan, A.; Sun, Q.; Wei, B.;
+Wang, D. Optimization of Water-Alternating-CO2 Injection Field
+Operations Using a Machine-Learning-Assisted Workflow. SPE
+Reservoir Eval. Eng. 2022, 25, 214−231.
+(26) Thanh, K. V.; Yasin, H.; Al-Mudhafar, Q.; Lee, K.-K.
+Knowledge-based machine learning techniques for accurate prediction
+of CO2 storage performance in underground saline aquifers. Appl.
+Energy 2022, 314, 118985.
+(27) Safaei-Farouji, M.; Thanh, H. V.; Dai, Z.; Mehbodniya, A.;
+Rahimi, M.; Ashraf, U.; Radwan, A. E. Exploring the power of
+machine learning to predict carbon dioxide trapping efficiency in
+saline aquifers for carbon geological storage project. J. Cleaner Prod.
+2022, 372, 133778.
+(28) Vaziri, P.; Sedaee, B. A machine learning-based approach to the
+multiobjective optimization of CO2 injection and water production
+during CCS in a saline aquifer based on field data. Energy Sci. Eng.
+2023, 11, 1671−1687.
+(29) Alqahtani, A.; He, X.; Yan, B.; Hoteit, H. Uncertainty Analysis
+of CO2 Storage in Deep Saline Aquifers Using Machine Learning and
+Bayesian Optimization. Energies 2023, 16, 1684.
+(30) Kanaani, M.; Sedaee, B.; Asadian-Pakfar, M.; Gilavand, M.;
+Almahmoudi, Z. Development of multi-objective co-optimization
+framework for underground hydrogen storage and carbon dioxide
+storage using machine learning algorithms. J. Cleaner Prod. 2023, 386,
+135785.
+(31) Bocoum, A. O.; Rasaei, M. R. Multi-objective optimization of
+WAG injection using machine learning and data-driven Proxy models.
+Appl. Energy 2023, 349, 121593.
+(32) Azizi, M.; Hasheminezhad, S. M.; Moeinpour, S.; Kanaani, M.;
+Sedaee, B. Multi-Objective Optimization of CO 2 Injection Process
+into Oil Reservoirs Using Machine Learning Algorithms: Incorporating Carbon Sequestration Mechanisms. Energy Fuels 2024, 38,
+18814−18830.
+(33) Stein, M. Large sample properties of simulations using latin
+hypercube sampling. Technometrics 1987, 29, 143−151.
+(34) Menčík, J. Latin Hypercube Sampling. Concise Reliab. Eng.
+2016, 1−5.
+(35) Pebesma, E. J.; Heuvelink, G. B. M. Latin hypercube sampling
+of gaussian random fields. Technometrics 1999, 41, 303−312.
+(36) Alenezi, F.; Mohaghegh, S.;, A data-driven smart proxy model
+for a comprehensive reservoir simulation, 2016 4th Saudi Int. In 2016
+4th Saudi International Conference on Information Technology (Big Data
+Analysis) (KACSTIT). IEEE 2016, 1−6, .
+(37) DiPippo, R.Reservoir EngineeringGeothermal Power PlantsElseveir200553−83
+(38) Jaber, A. K.; Al-Jawad, S. N.; Alhuraishawy, A. K. A review of
+proxy modeling applications in numerical reservoir simulation. Arab. J.
+Geosci. 2019, 12, 1−16.
+
+Article
+
+(39) Vanegas, J. W.; Cunha, L.; Deutsch, C. V.Proxy models for fast
+transfer of static uncertainty to reservoir performance uncertaintyAAPG MEMOIR: Uncertainty Analysis and Reservoir Modeling:
+Developing and Managing Assets in an Uncertain WorldAmerican
+Association of Petroleum Geologists201196203−215
+(40) Zhao, Y.; Wang, X.; Cheng, C.; Ding, X.Combining machine
+learning models using combo libraryProceedings of the AAAI
+Conference on Artificial IntelligenceAAAI20203413648−13649
+(41) Yu, T.; Wilkinson, D.; Castellini, A. Constructing Reservoir
+Flow Simulator Proxies Using Genetic Programming for History
+Matching and Production Forecast Uncertainty Analysis. J. Artif. Evol.
+Appl. 2008, 2008, 1−13.
+(42) Jiang, M.; Liu, J.; Zhang, L.; Liu, C. An improved Stacking
+framework for stock index prediction by leveraging tree-based
+ensemble models and deep learning algorithms. Phys. A Stat. Mech.
+Appl. 2020, 541, 122272.
+(43) Fu, Y.; Huang, M.; Wang, H.; Jiang, G.An improved NSGA-II
+to solve multi-objective optimization problemThe 26th Chinese
+Control and Decision Conference (2014 CCDC)IEEE20141037−1040
+(44) Zhao, B.; Xue, Y.; Xu, B.; Ma, T.; Liu, J. Multi-objective
+classification based on NSGA-II. Int. J. Comput. Sci. Math. 2018, 9,
+539−546.
+(45) Bosello, F.; Carraro, C.; De Cian, E. An Analysis of Adaptation
+as a Response to Climate Change. SSRN 2011.
+
+9582
+
+https://doi.org/10.1021/acsomega.4c10432
+ACS Omega 2025, 10, 9563−9582
+
+

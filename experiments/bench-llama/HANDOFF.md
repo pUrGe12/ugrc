@@ -204,7 +204,8 @@ Untested: libraries of close topics, where routing misses more.
    questions without subject words (`experiments/short-route/`, search only): right paper 360 of 388 instead of
    381; answered (`answer.py`, `grade.py`): 287 right against 303 (p = 0.02), all of it routing (the short form on
    its own paper: 301). Asking the user to pick between the top 2 titles when the score gap is small (0.85, 1
-   question in 7) would give 299 (post hoc). Next: build that ask step into the routed mode.
+   question in 7) would give 299 (post hoc). Unseen papers (`experiments/fresh/`): 10 added to the 120, search
+   found all 80 questions' paper, 63 right against the PDF's 50. Next: build that ask step into the routed mode.
 3. **Extend the checker** (`jev-check/`; `check.py dev|test`, `report SET`; Jev answers cached in `jev_cache.jsonl`,
    whose last line can be cut short if a run is killed). It misses superlatives (recompute over the table column by
    code) and false absences (search the paper); its Jev question false-alarms on 27% of right answers. Changes need a
