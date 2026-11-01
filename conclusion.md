@@ -159,6 +159,13 @@ pool the "prose" part is picked from. Jev's readings (role, subject, method) are
 | `short-route` | the same 388, cut to what a user might type | 287 against 303; own paper 301; asking when unsure about 299 (estimate) |
 | `fresh` | 10 unseen papers, each added to the 120, 80 new questions | search found the paper 80 of 80; facts+prose 63, the paper's PDF 50 |
 
+### G. Pointers for numbers on the winning setup (fresh test's 80 questions; Llama, one run)
+
+| test | setup | result |
+|---|---|---|
+| `pointers` | code points each number of the free answers at a passage that prints it (468 answers) | 91% of 1,589 numbers printed in the paper, 9% derived or computed, 1% printed nowhere (9 answers: 7 wrong). The Jev binding check did not run (credits out) |
+| `door-routed` | ugrc's door on the routed paper: every number must be a quote, a clause-base value or SQL | door 16, door with facts+prose and ids 21, against the free answer 61 of 80 (p < 0.0001); absence 0–1 of 10, false premise 0–1 of 10 |
+
 ## 4. Against the whole PDF
 
 Every Llama test that had a whole-PDF arm, beside the best other setup:
@@ -324,7 +331,9 @@ extractor flatten: lost ± signs, blank cells that shift columns, and rows picke
 - **Single-paper questions only, at scale.** Questions that need two or more papers were tested only at 10 papers.
   The winning pipeline sends one paper, so it cannot answer them as it stands.
 - **The answers are unchecked.** The free reply gives up ugrc's original promise that every number points into the
-  paper. Code pointers and the Jev checker exist, but neither has been measured on facts+prose answers.
+  paper. Putting the door back costs most right answers (21 against 61 of 80, `door-routed`). Code finds a printed
+  source for 91% of the free answers' numbers, but whether each is the right one for what the answer says needs the
+  Jev checker, which has not run on these answers (Jev's credits ran out).
 - **Untested inside facts+prose:** whether Jev's filter still matters there (it was tested on the facts form alone),
   and whether dropping as many sentences at random would do as well.
 
@@ -344,7 +353,7 @@ extractor flatten: lost ± signs, blank cells that shift columns, and rows picke
 1. **Validate before tuning more.** Collect 20–30 questions written the way the user would ask them, and have a
    person spot-check about 30 grades.
 2. **Build it into ugrc as a mode:** route, then facts+prose, then one answer, then code pointers and the Jev checker,
-   with the ask step when search is unsure.
+   with the ask step when search is unsure. Not the door: through it Llama 8B kept 21 of 61 right answers.
 3. **Attack the model's limit:**
    - let code do the arithmetic;
    - fix the table cases above (± signs, blank cells, ACS Omega layout);
